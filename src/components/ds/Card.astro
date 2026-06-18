@@ -1,0 +1,30 @@
+---
+// Card — base surface container. Hairline border on bg-1. Optional accent
+// left-rail (the DAG-node motif), padding control, and hover lift.
+interface Props {
+  accent?: boolean;
+  padding?: 'none' | 'sm' | 'md' | 'lg';
+  interactive?: boolean;
+  class?: string;
+}
+const { accent = false, padding = 'md', interactive = false, class: cls = '' } = Astro.props;
+const pads: Record<string, number> = { none: 0, sm: 12, md: 16, lg: 24 };
+const pad = pads[padding] ?? 16;
+---
+
+<div class={`ds-card${interactive ? ' ds-card--interactive' : ''} ${cls}`} style={`padding:${pad}px`}>
+  {accent && <span class="ds-card__rail" style={`top:${pad}px;bottom:${pad}px`}></span>}
+  <slot />
+</div>
+
+<style>
+  .ds-card {
+    position: relative; background: var(--oma-bg-1);
+    border: 1px solid var(--oma-border-1); border-radius: var(--radius-md);
+    box-shadow: none;
+    transition: border-color var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
+  }
+  .ds-card--interactive { cursor: pointer; }
+  .ds-card--interactive:hover { border-color: var(--oma-border-2); box-shadow: var(--shadow-md); }
+  .ds-card__rail { position: absolute; left: 0; width: 2px; background: var(--oma-accent); border-radius: 2px; }
+</style>

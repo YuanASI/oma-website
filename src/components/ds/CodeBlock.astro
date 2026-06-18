@@ -1,0 +1,65 @@
+---
+// CodeBlock — mono code surface with title/lang bar + copy button and
+// lightweight build-time token highlighting for ts / bash / json.
+interface Props {
+  code?: string;
+  lang?: string;
+  title?: string | null;
+  copyable?: boolean;
+  class?: string;
+}
+const { code = '', lang = 'ts', title = null, copyable = true, class: cls = '' } = Astro.props;
+
+type Tok = { t: string; c: string | null };
+const KEYWORDS = ['const','let','var','function','return','await','async','import','export','from','new','type','interface','if','else','for','of','in','true','false','null','undefined','class','extends'];
+const KW_RE = new RegExp('\\b(' + KEYWORDS.join('|') + ')\\b', 'g');
+
+function pushColored(text: string, out: Tok[]): void {
+  const parts = text.split(/(`[^`]*`|'[^']*'|"[^"]*")/g);
+  for (const part of parts) {
+    if (!part) continue;
+    if (/^[`'"]/.test(part)) { out.push({ t: part, c: 'str' }); continue; }
+    for (const seg of part.split(KW_RE)) {
+      if (!seg) continue;
+      if (KEYWORDS.includes(seg)) { out.push({ t: seg, c: 'kw' }); continue; }
+      for (const n of seg.split(/(\b\d+(?:\.\d+)?\b)/g)) {
+        if (!n) continue;
+        out.push({ t: n, c: /^\d/.test(n) ? 'num' : null });
+      }
+    }
+  }
+}
+function tokenize(line: string, lng: string): Tok[] {
+  const out: Tok[] = [];
+  const ci = lng === 'bash' ? line.indexOf('#') : line.indexOf('//');
+  if (ci >= 0 && !/['"`]/.test(line.slice(0, ci))) {
+    pushColored(line.slice(0, ci), out);
+    out.push({ t: line.slice(ci), c: 'cmt' });
+  } else {
+    pushColored(line, out);
+  }
+  return out;
+}
+const lines = String(code).replace(/\n$/, '').split('\n').map((l) => (l ? tokenize(l, lang) : null));
+---
+
+<div class={`ds-codeblock ${cls}`}>
+  <div class="ds-codeblock__bar">
+    <span class="ds-codeblock__lang">{title || lang}</span>
+    {copyable && <button type="button" class="ds-codeblock__copy" data-clip={code}>copy</button>}
+  </div>
+  <pre class="ds-codeblock__pre">{lines.map((line) => <div>{line === null ? ' ' : line.map((tok) => (tok.c ? <span class={tok.c}>{tok.t}</span> : tok.t))}</div>)}</pre>
+</div>
+
+<style>
+  .ds-codeblock { background: var(--oma-bg-3); border: 1px solid var(--oma-border-1); border-radius: var(--radius-md); overflow: hidden; font-family: var(--font-mono); }
+  .ds-codeblock__bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-bottom: 1px solid var(--oma-border-0); background: var(--oma-bg-2); }
+  .ds-codeblock__lang { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--oma-fg-2); font-weight: 600; }
+  .ds-codeblock__copy { font-family: var(--font-mono); font-size: 11px; color: var(--oma-fg-2); background: transparent; border: none; cursor: pointer; padding: 0; }
+  .ds-codeblock__copy.copied { color: var(--oma-accent); }
+  .ds-codeblock__pre { margin: 0; padding: 14px 16px; font-size: 13px; line-height: 1.6; color: var(--oma-fg-1); overflow-x: auto; }
+  .ds-codeblock__pre :global(.kw) { color: var(--oma-info); }
+  .ds-codeblock__pre :global(.str) { color: var(--oma-accent); }
+  .ds-codeblock__pre :global(.num) { color: var(--oma-warning); }
+  .ds-codeblock__pre :global(.cmt) { color: var(--oma-fg-2); }
+</style>
