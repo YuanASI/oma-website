@@ -1,0 +1,30 @@
+---
+// Callout — inline notice block. Tinted left-rail + soft fill keyed to tone.
+interface Props {
+  tone?: 'info' | 'accent' | 'warning' | 'danger';
+  title?: string | null;
+  class?: string;
+}
+const { tone = 'info', title = null, class: cls = '' } = Astro.props;
+---
+
+<div class={`ds-callout ds-callout--${tone} ${cls}`}>
+  <div class="ds-callout__body">
+    {title && <div class="ds-callout__title">{title}</div>}
+    <div class="ds-callout__text"><slot /></div>
+  </div>
+</div>
+
+<style>
+  .ds-callout {
+    display: flex; gap: 12px; border-radius: var(--radius-sm);
+    padding: 12px 14px; font-family: var(--font-sans); border-left: 2px solid;
+  }
+  .ds-callout--info    { background: var(--oma-info-soft); border-left-color: var(--oma-info); }
+  .ds-callout--accent  { background: var(--oma-accent-soft); border-left-color: var(--oma-accent); }
+  .ds-callout--warning { background: var(--oma-warning-soft); border-left-color: var(--oma-warning); }
+  .ds-callout--danger  { background: var(--oma-danger-soft); border-left-color: var(--oma-danger); }
+  .ds-callout__body { flex: 1; min-width: 0; }
+  .ds-callout__title { font-size: 13px; font-weight: 600; color: var(--oma-fg-0); margin-bottom: 2px; }
+  .ds-callout__text { font-size: 13px; line-height: 1.55; color: var(--oma-fg-1); }
+</style>

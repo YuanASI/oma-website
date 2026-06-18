@@ -1,0 +1,137 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Open Multi-Agent · Design tokens
+   Vendored from the OMA Claude Design system (bfaf7892). Dark-first, warm
+   near-black canvas + bone-white text + emerald accent — developer-tool /
+   terminal aesthetic, NOT a generic SaaS gradient look.
+
+   Fonts are self-hosted offline via Fontsource (see index.astro imports):
+   Geist Variable (sans) + JetBrains Mono Variable (mono). No Google Fonts.
+   ───────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Families (offline Fontsource variable fonts, with system fallbacks) ── */
+  --font-sans: 'Geist Variable', 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* ── Base surfaces (warm near-black → raised) ── */
+  --oma-bg-0: #0A0908;   /* canvas / page                       */
+  --oma-bg-1: #131210;   /* raised surface, cards               */
+  --oma-bg-2: #1A1917;   /* elevated surface, inputs, hover     */
+  --oma-bg-3: #232119;   /* highest surface, code blocks, wells */
+
+  /* ── Text (bone white → warm grays) ── */
+  --oma-fg-0: #F5F2EB;   /* primary text, headings              */
+  --oma-fg-1: #A09A8E;   /* secondary / body-dim                */
+  --oma-fg-2: #726C62;   /* tertiary / labels / disabled        */
+  --oma-fg-3: #5A5751;   /* faintest / placeholder / footnotes  */
+
+  /* ── Borders (hairlines, warm) ── */
+  --oma-border-0: #1F1D1A;  /* subtle separators               */
+  --oma-border-1: #2A2824;  /* default card / input border     */
+  --oma-border-2: #3A3731;  /* strong / focus-adjacent border  */
+
+  /* ── Accent (emerald) ── */
+  --oma-accent:        #10B981;  /* primary accent              */
+  --oma-accent-deep:   #059669;  /* pressed / deep              */
+  --oma-accent-fg:     #04140E;  /* text on accent fill         */
+  --oma-accent-soft:   rgba(16, 185, 129, 0.12);  /* tint fill  */
+  --oma-accent-line:   rgba(16, 185, 129, 0.34);  /* tint border*/
+
+  /* ── Functional ── */
+  --oma-warning: #F59E0B;  /* amber  */
+  --oma-danger:  #EF4444;  /* red    */
+  --oma-info:    #60A5FA;  /* blue   */
+  --oma-warning-soft: rgba(245, 158, 11, 0.12);
+  --oma-danger-soft:  rgba(239, 68, 68, 0.12);
+  --oma-info-soft:    rgba(96, 165, 250, 0.12);
+
+  /* ── Semantic aliases ── */
+  --surface-page:    var(--oma-bg-0);
+  --surface-card:    var(--oma-bg-1);
+  --surface-raised:  var(--oma-bg-2);
+  --surface-well:    var(--oma-bg-3);
+
+  --text-strong:     var(--oma-fg-0);
+  --text-body:       var(--oma-fg-1);
+  --text-muted:      var(--oma-fg-2);
+  --text-faint:      var(--oma-fg-3);
+
+  --border-subtle:   var(--oma-border-0);
+  --border-default:  var(--oma-border-1);
+  --border-strong:   var(--oma-border-2);
+
+  --accent:          var(--oma-accent);
+  --accent-deep:     var(--oma-accent-deep);
+  --focus-ring:      var(--oma-accent-line);
+
+  /* ── Body sizes ── */
+  --text-xs:  12px;
+  --text-sm:  14px;
+  --text-md:  16px;
+
+  /* ── Heading sizes ── */
+  --text-h4:  22px;
+  --text-h3:  32px;
+  --text-h2:  44px;
+  --text-h1:  64px;
+
+  /* ── Weights ── */
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  /* ── Line heights ── */
+  --leading-tight:   1.1;
+  --leading-snug:    1.3;
+  --leading-normal:  1.6;
+  --leading-mono:    1.5;
+
+  /* ── Tracking ── */
+  --tracking-tight:  -0.02em;
+  --tracking-normal: 0;
+  --tracking-label:  0.08em;
+
+  /* ── Spacing scale (4px base) ── */
+  --space-0:  0;
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* ── Radius (small, technical) ── */
+  --radius-xs: 3px;
+  --radius-sm: 5px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 999px;
+
+  /* ── Borders ── */
+  --border-hairline: 1px;
+  --border-thick: 2px;
+
+  /* ── Shadows (subtle on dark; depth via border + faint glow) ── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.55);
+  --shadow-accent-glow: 0 0 0 1px var(--oma-accent-line), 0 0 24px rgba(16, 185, 129, 0.18);
+
+  /* ── Motion ── */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 120ms;
+  --duration-base: 180ms;
+  --duration-slow: 280ms;
+
+  /* ── Dotted-grid backdrop (terminal canvas texture) ── */
+  --grid-dot: rgba(245, 242, 235, 0.04);
+  --grid-size: 24px;
+}

@@ -1,0 +1,488 @@
+---
+// OMA landing page (open-multi-agent.com homepage).
+// Ported 1:1 from the Claude Design system (bfaf7892) export, with the
+// fact-check corrections agreed in the handoff:
+//   • §3 global nav (Product ▾ open-multi-agent + oma-forge / Docs / Examples / Showcase / Blog / GitHub)
+//   • Production-proof cases rewritten from the OMA README ecosystem section
+//     (temodar = production · security; Engram + @agentsonar = integrations)
+//   • team.ts code uses the REAL v1.7.0 API (AgentConfig.name, real tool names, methods)
+//   • Live GitHub stats fetched at build time (no hard-coded precise numbers)
+//   • "see code" links point to real cookbook examples in the repo
+import '@fontsource-variable/geist';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/tokens.css';
+import '../styles/landing.css';
+import Badge from '../components/ds/Badge.astro';
+import Card from '../components/ds/Card.astro';
+import CodeBlock from '../components/ds/CodeBlock.astro';
+import Callout from '../components/ds/Callout.astro';
+import TaskNode from '../components/ds/TaskNode.astro';
+
+const REPO = 'https://github.com/open-multi-agent/open-multi-agent';
+const FORGE = 'https://github.com/open-multi-agent/oma-forge';
+const NPM = 'https://www.npmjs.com/package/@open-multi-agent/core';
+
+// ── Live stats, fetched at build time with a fallback (red-line §7: no
+//    hard-coded precise numbers; these refresh on every deploy). ──
+async function ghStats() {
+  const fallback = { stars: 6396, forks: 2391, contributors: 43 };
+  const headers = { Accept: 'application/vnd.github+json', 'User-Agent': 'oma-website-build' };
+  try {
+    const r = await fetch('https://api.github.com/repos/open-multi-agent/open-multi-agent', { headers });
+    if (!r.ok) return fallback;
+    const j = await r.json();
+    let contributors = fallback.contributors;
+    try {
+      const cr = await fetch('https://api.github.com/repos/open-multi-agent/open-multi-agent/contributors?per_page=1&anon=true', { headers });
+      const m = (cr.headers.get('link') || '').match(/[?&]page=(\d+)>;\s*rel="last"/);
+      if (m) contributors = parseInt(m[1], 10);
+    } catch { /* keep fallback */ }
+    return {
+      stars: j.stargazers_count ?? fallback.stars,
+      forks: j.forks_count ?? fallback.forks,
+      contributors,
+    };
+  } catch {
+    return fallback;
+  }
+}
+const stats = await ghStats();
+const fmt = (n: number) => n.toLocaleString('en-US');
+const starsK = (stats.stars / 1000).toFixed(1) + 'k';
+
+// ── Hero right-visual snippet (real API: methods on the orchestrator). ──
+const HERO_SNIPPET = `const team = oma.createTeam('api-team', { agents })
+
+// one call: goal → task DAG → result
+const result = await oma.runTeam(team, 'Build a REST API for a todo list')`;
+
+// ── Capabilities code (real v1.7.0 API — verified against the repo). ──
+const TEAM_CODE = `import { OpenMultiAgent, type AgentConfig } from '@open-multi-agent/core'
+
+const agents: AgentConfig[] = [
+  { name: 'architect', model: 'claude-sonnet-4-6', tools: ['file_write'] },
+  { name: 'developer', model: 'claude-sonnet-4-6', tools: ['bash', 'file_read', 'file_write', 'file_edit'] },
+  { name: 'reviewer',  model: 'claude-sonnet-4-6', tools: ['file_read', 'grep'] },
+]
+
+const oma  = new OpenMultiAgent({ defaultModel: 'claude-sonnet-4-6' })
+const team = oma.createTeam('api-team', { name: 'api-team', agents })
+
+// coordinator plans the DAG, runs independents in parallel, synthesizes
+const result = await oma.runTeam(team, 'Create a REST API for a todo list')`;
+
+// ── Production-proof cases — rewritten from the OMA README ecosystem section.
+//    temodar = the one confirmed production user; the other two are integrations. ──
+const CASES = [
+  {
+    pkg: 'temodar-agent', by: 'by xeloxa', href: 'https://github.com/xeloxa/temodar-agent',
+    desc: 'WordPress security analysis platform. Runs OMA built-in tools (bash, file ops, grep) inside a Docker runtime.',
+    tone: 'accent', tag: 'security', status: 'in production',
+  },
+  {
+    pkg: 'Engram', by: 'engram-memory.com', href: 'https://github.com/Agentscreator/engram-memory',
+    desc: '“Git for AI memory.” Syncs knowledge across agents instantly and flags conflicts.',
+    tone: 'info', tag: 'memory', status: 'integration',
+  },
+  {
+    pkg: '@agentsonar/oma', by: 'agentsonar/agentsonar-oma', href: 'https://github.com/agentsonar/agentsonar-oma',
+    desc: 'Sidecar that detects cross-run delegation cycles, repetition, and rate bursts.',
+    tone: 'neutral', tag: 'observability', status: 'integration',
+  },
+] as const;
+
+const CAPS = [
+  { n: '01', t: 'Goal-driven coordinator', d: 'You pass a goal, not a graph. A coordinator agent decomposes it into a task DAG, parallelizes independent nodes, and synthesizes the result.' },
+  { n: '02', t: 'Mix any model in one team', d: 'Each agent names its own model — Anthropic, OpenAI, a local Ollama, or a self-hosted endpoint — and they cooperate inside a single team.' },
+  { n: '03', t: 'Tools and MCP, default-deny', d: 'An agent gets only the tools it lists. Connect Model Context Protocol servers to expose external systems under the same opt-in contract.' },
+  { n: '04', t: 'Streaming and structured output', d: 'Stream tokens and node-state transitions as the DAG fills, or await a typed, schema-validated object at the end of the run.' },
+];
+
+const BUILDS = [
+  { scenario: 'legal · document review', title: 'Contract review', desc: 'One goal — “flag risk in this MSA” — fans out to agents reading clauses, cross-checking a policy library, and drafting redlines in parallel.', outcome: 'A single structured risk report from one runTeam() call.', code: REPO + '/blob/main/examples/cookbook/contract-review-dag.ts' },
+  { scenario: 'market · monitoring', title: 'Competitive monitoring', desc: 'Agents pull from different sources via MCP, each on the model that fits — cheap-local for scraping, frontier for analysis — and reconcile findings.', outcome: 'A deduped digest, refreshed on a schedule, mixed providers in one team.', code: REPO + '/blob/main/examples/cookbook/competitive-monitoring.ts' },
+  { scenario: 'sre · operations', title: 'Incident postmortem', desc: 'Logs, metrics, and the deploy timeline are investigated as parallel nodes; a reviewer agent synthesizes cause and contributing factors.', outcome: 'A timeline-grounded postmortem draft minutes after resolution.', code: REPO + '/blob/main/examples/cookbook/incident-postmortem-dag.ts' },
+];
+
+const STACK = [
+  { name: 'Providers', note: 'Anthropic, OpenAI, Ollama, and self-hosted endpoints', count: '13 built-in' },
+  { name: 'MCP', note: 'Connect Model Context Protocol servers as tools', count: 'native' },
+  { name: 'Vercel AI SDK', note: 'Interop with the streaming primitives you know', count: 'compatible' },
+  { name: 'Express', note: 'Mount runTeam() behind a route handler', count: 'drop-in' },
+  { name: 'Any Node.js', note: 'No daemon, no sidecar — three runtime deps', count: 'Node 18+' },
+];
+
+const FAQS = [
+  { q: 'How does the coordinator turn a goal into a DAG?', a: 'A coordinator agent plans the work: it breaks the goal into discrete tasks, infers dependencies between them, and emits a directed acyclic graph. Independent nodes run concurrently; dependent nodes wait on their inputs. Pass planOnly to inspect the DAG before any agent executes.' },
+  { q: 'Can agents in one team use different model providers?', a: 'Yes. Each agent declares its own model, so a single team can mix a frontier cloud model, a self-hosted endpoint, and a local Ollama instance. The coordinator routes each task to the agent — and therefore the model — assigned to it.' },
+  { q: 'How do tools get exposed to an agent?', a: 'Default-deny. An agent only has the tools it explicitly lists in its tools array; everything else is unavailable. External systems are connected through MCP servers under the same opt-in contract.' },
+  { q: 'What happens when a node fails?', a: 'A failed node is retried under its policy; persistent failures surface on the node with FAILED state and an error, and downstream dependents are held. The rest of the DAG keeps running, so one failure does not abort the whole run.' },
+  { q: 'Does it stream, or only return at the end?', a: 'Both. You can stream tokens and node-state transitions as the DAG fills, or simply await runTeam() for a typed, schema-validated result object once the graph resolves.' },
+];
+
+const title = 'Open Multi-Agent — From a goal to a task DAG, automatically';
+const description = 'TypeScript-native multi-agent orchestration. A coordinator turns a goal into a task DAG, parallelizes it, and synthesizes the result — three runtime dependencies, runs anywhere Node.js runs.';
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content="/github-social.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+  </head>
+  <body>
+    <!-- ── Nav (§3 global) ── -->
+    <nav class="nav">
+      <div class="container nav-inner">
+        <a class="brand" href="/" aria-label="Open Multi-Agent — home">
+          <img class="brand-mark" src="/logo-mark-dark.svg" alt="" width="26" height="26" />
+          <span class="brand-word">open<span class="dash">-</span>multi<span class="dash">-</span>agent</span>
+        </a>
+        <div class="nav-links">
+          <div class="nav-item">
+            <button type="button" class="nav-menu-btn" aria-haspopup="true">Product <span class="nav-menu-caret">▾</span></button>
+            <div class="nav-menu">
+              <a class="nav-menu-link" href={REPO} target="_blank" rel="noreferrer">
+                <span class="pkg">open-multi-agent <span class="ext">↗</span></span>
+                <span class="desc">The multi-agent orchestration framework.</span>
+              </a>
+              <a class="nav-menu-link" href={FORGE} target="_blank" rel="noreferrer">
+                <span class="pkg">oma-forge <span class="ext">↗</span></span>
+                <span class="desc">Experimental project under the open-multi-agent org.</span>
+              </a>
+            </div>
+          </div>
+          <a class="nav-link" href="/guides/example/">Docs</a>
+          <a class="nav-link" href={REPO + '/tree/main/examples'} target="_blank" rel="noreferrer">Examples</a>
+          <a class="nav-link" href="#showcase">Showcase</a>
+          <a class="nav-link" href="#blog">Blog</a>
+          <a class="nav-link" href={REPO} target="_blank" rel="noreferrer" style="display:inline-flex;align-items:center;gap:7px;">
+            <span>GitHub</span><span style="color:var(--oma-fg-2);">★ {starsK}</span>
+          </a>
+        </div>
+        <div class="nav-ghost">
+          <button type="button" class="nav-mobile-toggle" aria-label="Menu">≡</button>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <!-- ── 1. Hero ── -->
+      <header class="hero" id="top">
+        <div class="container hero-grid">
+          <div>
+            <div class="eyebrow"><span class="idx">//</span> TypeScript multi-agent orchestration</div>
+            <h1>From a goal to a task DAG, <span class="accent">automatically.</span></h1>
+            <p class="hero-sub">TypeScript-native multi-agent orchestration.</p>
+            <div class="fact-strip">
+              <div class="fact"><span class="tick">▸</span><span><b>3 runtime dependencies</b> — drops into any Node.js backend</span></div>
+              <div class="fact"><span class="tick">▸</span><span><b>Any model</b> — cloud, local, or self-hosted, mixed in one team</span></div>
+              <div class="fact"><span class="tick">▸</span><span><b>Runs anywhere</b> — local, offline, or on your own servers</span></div>
+            </div>
+            <div class="hero-cta">
+              <button type="button" class="cmd" data-cmd="npm create oma" aria-label="Copy: npm create oma">
+                <span class="prompt">$</span><span class="text">npm create oma</span><span class="copy">copy</span>
+              </button>
+              <a class="text-link" href={REPO} target="_blank" rel="noreferrer"><span>view on GitHub</span><span class="arrow">→</span></a>
+            </div>
+          </div>
+          <div>
+            <div class="io-panel">
+              <div class="io-cap"><span>input · team.ts</span><span style="color:var(--oma-accent);">goal</span></div>
+              <CodeBlock lang="ts" title="runTeam()" code={HERO_SNIPPET} copyable={false} />
+              <div class="io-connector"><span class="line"></span>decomposes into<span class="line"></span></div>
+              <div class="dag-stack">
+                <TaskNode id="#NODE_001" title="Design data model & routes" status="done" duration="2.1s" role="architect" />
+                <div class="dag-link"></div>
+                <div class="dag-parallel">
+                  <span class="dag-parallel-tag">parallel</span>
+                  <TaskNode id="#NODE_002" title="Implement endpoints" status="running" duration="4.7s" role="developer" selected />
+                  <TaskNode id="#NODE_003" title="Generate test suite" status="queued" role="developer" />
+                </div>
+                <div class="dag-link"></div>
+                <TaskNode id="#NODE_004" title="Review & harden" status="queued" role="reviewer" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ── 2. Production proof ── -->
+      <section class="section" id="proof">
+        <div class="container">
+          <div class="proof-head">
+            <div class="section-head" style="margin-bottom:0;">
+              <div class="eyebrow"><span class="idx">01</span> Adoption</div>
+              <h2 class="section-title">Already running in the wild.</h2>
+              <p class="section-sub">Open source, MIT-licensed, with real production use and integrations. Star, fork, and contributor counts read straight from the repo at build time.</p>
+            </div>
+            <div class="live-tag"><span class="live-dot"></span> live · synced from registry</div>
+          </div>
+          <div class="stats-row">
+            <div class="stat"><div class="stat-val"><span class="unit">★ </span><span data-count={stats.stars}>{fmt(stats.stars)}</span></div><div class="stat-key">stars</div></div>
+            <div class="stat"><div class="stat-val"><span data-count={stats.forks}>{fmt(stats.forks)}</span></div><div class="stat-key">forks</div></div>
+            <div class="stat"><div class="stat-val"><span data-count={stats.contributors}>{fmt(stats.contributors)}</span></div><div class="stat-key">contributors</div></div>
+            <div class="stat"><div class="stat-val">v1.7.0</div><div class="stat-key">latest release</div></div>
+            <div class="stat"><div class="stat-val">MIT</div><div class="stat-key">license</div></div>
+          </div>
+          <div class="cases-grid">
+            {CASES.map((c) => (
+              <a class="case-link" href={c.href} target="_blank" rel="noreferrer" style="text-decoration:none;">
+                <Card padding="lg" interactive>
+                  <div class="case-pkg">{c.pkg}</div>
+                  <div class="case-by">{c.by}</div>
+                  <p class="case-desc">{c.desc}</p>
+                  <div class="case-foot">
+                    <Badge tone={c.tone}>{c.tag}</Badge>
+                    <span class="case-dep">{c.status}</span>
+                  </div>
+                </Card>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 3. Capabilities ── -->
+      <section class="section" id="capabilities">
+        <div class="container">
+          <div class="section-head">
+            <div class="eyebrow"><span class="idx">02</span> How it works</div>
+            <h2 class="section-title">An agent runtime, not a graph builder.</h2>
+            <p class="section-sub">Goal-first, not graph-first. You describe the outcome; OMA owns the decomposition, the parallelism, and the synthesis.</p>
+          </div>
+          <div class="cap-grid">
+            <div class="cap-list">
+              {CAPS.map((c) => (
+                <div class="cap-item">
+                  <div class="cap-item-head"><span class="cap-num">{c.n}</span><span class="cap-title">{c.t}</span></div>
+                  <p class="cap-desc">{c.d}</p>
+                </div>
+              ))}
+            </div>
+            <div class="cap-code-wrap">
+              <CodeBlock lang="ts" title="team.ts" code={TEAM_CODE} />
+              <div style="margin-top:var(--space-4);">
+                <Callout tone="accent" title="One call">runTeam() returns when the whole DAG resolves — no manual node wiring, no scheduler to maintain.</Callout>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 4. What you can build ── -->
+      <section class="section" id="build">
+        <div class="container">
+          <div class="section-head">
+            <div class="eyebrow"><span class="idx">03</span> Use cases</div>
+            <h2 class="section-title">Three workflows that show where OMA wins.</h2>
+            <p class="section-sub">Each is a single goal that benefits from parallel, multi-model decomposition — exactly what the coordinator is built for.</p>
+          </div>
+          <div class="build-grid">
+            {BUILDS.map((b) => (
+              <Card padding="lg" interactive class="build-card">
+                <div class="build-scenario">{b.scenario}</div>
+                <div class="build-title">{b.title}</div>
+                <p class="build-desc">{b.desc}</p>
+                <div class="build-outcome"><span class="arrow">▸</span><span>{b.outcome}</span></div>
+                <div class="build-foot"><a class="text-link" href={b.code} target="_blank" rel="noreferrer"><span>see code</span><span class="arrow">→</span></a></div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 5. Works with your stack ── -->
+      <section class="section" id="stack">
+        <div class="container">
+          <div class="section-head">
+            <div class="eyebrow"><span class="idx">04</span> Integrations</div>
+            <h2 class="section-title">Works with your stack.</h2>
+            <p class="section-sub">A library, not a platform. It composes with the providers, protocols, and servers already in your backend.</p>
+          </div>
+          <div class="stack-grid">
+            {STACK.map((s) => (
+              <div class="stack-tile">
+                <div>
+                  <div class="stack-name">{s.name}</div>
+                  <div class="stack-note">{s.note}</div>
+                </div>
+                <div class="stack-count">{s.count}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 6. FAQ ── -->
+      <section class="section" id="faq">
+        <div class="container">
+          <div class="section-head">
+            <div class="eyebrow"><span class="idx">05</span> FAQ</div>
+            <h2 class="section-title">Mechanism, not marketing.</h2>
+            <p class="section-sub">How the runtime actually behaves. The full reference lives in the docs.</p>
+          </div>
+          <div class="faq-list">
+            {FAQS.map((f, i) => (
+              <div class={`faq-item${i === 0 ? ' open' : ''}`}>
+                <button type="button" class="faq-q" aria-expanded={i === 0 ? 'true' : 'false'}>
+                  <span>{f.q}</span><span class="faq-icon">+</span>
+                </button>
+                <div class="faq-a"><div class="faq-a-inner">{f.a}</div></div>
+              </div>
+            ))}
+          </div>
+          <div style="margin-top:28px;">
+            <a class="text-link" href={REPO + '#how-is-this-different-from-x'} target="_blank" rel="noreferrer"><span>view all questions</span><span class="arrow">→</span></a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 7. Final CTA ── -->
+      <section class="section" id="start" style="border-top:1px solid var(--border-subtle);">
+        <div class="container cta-final">
+          <div class="eyebrow" style="justify-content:center;"><span class="idx">//</span> get started</div>
+          <h2>Start with one goal.<br />Let the team figure out the work.</h2>
+          <div class="cta-actions">
+            <button type="button" class="cmd" data-cmd="npm create oma" aria-label="Copy: npm create oma">
+              <span class="prompt">$</span><span class="text">npm create oma</span><span class="copy">copy</span>
+            </button>
+            <a class="text-link" href={REPO} target="_blank" rel="noreferrer"><span>view on GitHub</span><span class="arrow">→</span></a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-inner">
+          <div style="max-width:280px;">
+            <div class="footer-left">
+              <img class="brand-mark" src="/logo-mark-dark.svg" alt="" width="26" height="26" />
+              <span class="brand-word">open<span class="dash">-</span>multi<span class="dash">-</span>agent</span>
+            </div>
+            <p class="footer-blurb">From a goal to a task DAG, automatically. TypeScript-native multi-agent orchestration.</p>
+          </div>
+          <div class="footer-cols">
+            <div>
+              <div class="footer-col-head">Product</div>
+              <div class="footer-col-links">
+                <a class="nav-link" href="#capabilities" style="font-size:13px;">Capabilities</a>
+                <a class="nav-link" href="#build" style="font-size:13px;">Use cases</a>
+                <a class="nav-link" href="#stack" style="font-size:13px;">Integrations</a>
+              </div>
+            </div>
+            <div>
+              <div class="footer-col-head">Resources</div>
+              <div class="footer-col-links">
+                <a class="nav-link" href="/guides/example/" style="font-size:13px;">Docs</a>
+                <a class="nav-link" href={REPO + '/tree/main/examples'} target="_blank" rel="noreferrer" style="font-size:13px;">Examples</a>
+                <a class="nav-link" href="#faq" style="font-size:13px;">FAQ</a>
+              </div>
+            </div>
+            <div>
+              <div class="footer-col-head">Project</div>
+              <div class="footer-col-links">
+                <a class="nav-link" href={REPO} target="_blank" rel="noreferrer" style="font-size:13px;">GitHub</a>
+                <a class="nav-link" href={NPM} target="_blank" rel="noreferrer" style="font-size:13px;">npm</a>
+                <a class="nav-link" href={REPO + '/blob/main/LICENSE'} target="_blank" rel="noreferrer" style="font-size:13px;">MIT license</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span class="footer-meta">MIT licensed · @open-multi-agent/core</span>
+          <span class="footer-meta">Built by <span class="by">元定义科技 (YuanASI)</span></span>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // ── Stats count-up on scroll ──
+      const fmt = (n: number) => Math.round(n).toLocaleString('en-US');
+      document.querySelectorAll<HTMLElement>('[data-count]').forEach((el) => {
+        const target = parseInt(el.dataset.count || '0', 10);
+        const io = new IntersectionObserver((entries, obs) => {
+          entries.forEach((e) => {
+            if (!e.isIntersecting) return;
+            obs.disconnect();
+            const dur = 1100;
+            const t0 = performance.now();
+            const tick = (now: number) => {
+              const p = Math.min(1, (now - t0) / dur);
+              const eased = 1 - Math.pow(1 - p, 3);
+              el.textContent = fmt(target * eased);
+              if (p < 1) requestAnimationFrame(tick);
+              else el.textContent = fmt(target);
+            };
+            requestAnimationFrame(tick);
+          });
+        }, { threshold: 0.4 });
+        io.observe(el);
+      });
+
+      // ── FAQ accordion (single-open) ──
+      const faqItems = Array.from(document.querySelectorAll<HTMLElement>('.faq-item'));
+      faqItems.forEach((item) => {
+        const q = item.querySelector('.faq-q');
+        q?.addEventListener('click', () => {
+          const isOpen = item.classList.contains('open');
+          faqItems.forEach((i) => {
+            i.classList.remove('open');
+            i.querySelector('.faq-q')?.setAttribute('aria-expanded', 'false');
+          });
+          if (!isOpen) {
+            item.classList.add('open');
+            q.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+
+      // ── Mobile nav toggle ──
+      const toggle = document.querySelector<HTMLElement>('.nav-mobile-toggle');
+      const links = document.querySelector<HTMLElement>('.nav-links');
+      toggle?.addEventListener('click', () => {
+        const open = links?.classList.toggle('open');
+        toggle.textContent = open ? '✕' : '≡';
+      });
+
+      // ── Copy: command blocks ──
+      document.querySelectorAll<HTMLElement>('.cmd').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const text = btn.dataset.cmd || btn.querySelector('.text')?.textContent || '';
+          navigator.clipboard?.writeText(text).catch(() => {});
+          btn.classList.add('copied');
+          const c = btn.querySelector('.copy');
+          const orig = c?.textContent;
+          if (c) c.textContent = '✓ copied';
+          setTimeout(() => { btn.classList.remove('copied'); if (c) c.textContent = orig; }, 1400);
+        });
+      });
+
+      // ── Copy: code blocks ──
+      document.querySelectorAll<HTMLElement>('.ds-codeblock__copy').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          navigator.clipboard?.writeText(btn.dataset.clip || '').catch(() => {});
+          btn.classList.add('copied');
+          const orig = btn.textContent;
+          btn.textContent = '✓ copied';
+          setTimeout(() => { btn.classList.remove('copied'); btn.textContent = orig; }, 1400);
+        });
+      });
+    </script>
+  </body>
+</html>
