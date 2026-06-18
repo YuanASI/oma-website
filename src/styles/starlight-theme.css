@@ -1,0 +1,65 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Open Multi-Agent · Starlight theme
+   Maps the OMA design tokens (tokens.css) onto Starlight's CSS variables so the
+   docs surface matches the landing: dark-first, warm near-black canvas, bone-
+   white text, emerald accent, JetBrains Mono for code. Reference token variables
+   only — no hardcoded color/size values, per the project design-system rule.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* Fonts + accent ramp apply to both color modes. */
+:root {
+  --sl-font: var(--font-sans);
+  --sl-font-mono: var(--font-mono);
+
+  --sl-color-accent-low: #06291d; /* dark emerald — subtle fills / active nav */
+  --sl-color-accent: var(--oma-accent);
+  --sl-color-accent-high: #6ee7b7; /* light emerald — hover / on-dark accent text */
+}
+
+/* Light mode stays available (a full warm light palette is a later effort,
+   coordinated with the landing). Until then, deepen the accent so links keep
+   readable contrast on a light background. */
+:root[data-theme='light'] {
+  --sl-color-accent: var(--oma-accent-deep);
+  --sl-color-text-accent: var(--oma-accent-deep);
+}
+
+/* Dark-first palette — the primary OMA experience. Starlight derives most
+   surfaces from this gray ramp + white/black; explicit surfaces follow. */
+:root[data-theme='dark'] {
+  --sl-color-white: var(--oma-fg-0);
+  --sl-color-gray-1: #ece8e0;
+  --sl-color-gray-2: var(--oma-fg-1);
+  --sl-color-gray-3: var(--oma-fg-2);
+  --sl-color-gray-4: var(--oma-fg-3);
+  --sl-color-gray-5: var(--oma-border-2);
+  --sl-color-gray-6: var(--oma-bg-3);
+  --sl-color-black: var(--oma-bg-0);
+
+  --sl-color-bg: var(--oma-bg-0);
+  --sl-color-bg-nav: var(--oma-bg-1);
+  --sl-color-bg-sidebar: var(--oma-bg-0);
+  --sl-color-bg-inline-code: var(--oma-bg-2);
+  --sl-color-bg-gutter: var(--oma-bg-1);
+
+  --sl-color-hairline: var(--oma-border-0);
+  --sl-color-hairline-light: var(--oma-border-1);
+  --sl-color-hairline-shade: var(--oma-border-0);
+
+  --sl-color-text-accent: var(--oma-accent);
+}
+
+/* Re-tone the `tip` aside from Starlight's default purple to OMA emerald — the
+   brand deliberately avoids the generic-SaaS purple/violet accent. */
+.starlight-aside--tip {
+  --sl-color-asides-text-accent: var(--sl-color-accent-high);
+  --sl-color-asides-border: var(--oma-accent);
+  background-color: var(--oma-accent-soft);
+}
+
+/* Dotted-grid backdrop on the main content area — the terminal-canvas texture
+   the landing uses, kept subtle so it never competes with prose. */
+:root[data-theme='dark'] .main-frame {
+  background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+}
