@@ -17,6 +17,7 @@ import Card from '../components/ds/Card.astro';
 import CodeBlock from '../components/ds/CodeBlock.astro';
 import Callout from '../components/ds/Callout.astro';
 import TaskNode from '../components/ds/TaskNode.astro';
+import heroRun from '../data/hero-run.json';
 
 const REPO = 'https://github.com/open-multi-agent/open-multi-agent';
 const FORGE = 'https://github.com/open-multi-agent/oma-forge';
@@ -50,11 +51,40 @@ const stats = await ghStats();
 const fmt = (n: number) => n.toLocaleString('en-US');
 const starsK = (stats.stars / 1000).toFixed(1) + 'k';
 
-// ── Hero right-visual snippet (real API: methods on the orchestrator). ──
+// ── Hero right-visual: a REAL captured runTeam() DAG. The nodes below are
+//    rendered from src/data/hero-run.json, produced by a real DeepSeek run
+//    (scripts/capture-hero-dag.mjs) — no hand-built mockup (PRD §4.1 ①). The
+//    snippet's goal is the exact goal that produced the DAG shown. ──
 const HERO_SNIPPET = `const team = oma.createTeam('api-team', { agents })
 
 // one call: goal → task DAG → result
-const result = await oma.runTeam(team, 'Build a REST API for a todo list')`;
+const result = await oma.runTeam(
+  team,
+  ${JSON.stringify(heroRun.goal)},
+)`;
+
+// Group the captured tasks into dependency levels (depth = longest path from a
+// root). Same-depth tasks ran in parallel; this drives the DAG layout below.
+const heroById = new Map(heroRun.tasks.map((t) => [t.id, t]));
+const heroDepthCache = new Map<string, number>();
+const heroDepth = (t: (typeof heroRun.tasks)[number]): number => {
+  const cached = heroDepthCache.get(t.id);
+  if (cached !== undefined) return cached;
+  const deps = (t.dependsOn ?? []).filter((id) => heroById.has(id));
+  const d = deps.length === 0 ? 0 : 1 + Math.max(...deps.map((id) => heroDepth(heroById.get(id)!)));
+  heroDepthCache.set(t.id, d);
+  return d;
+};
+const heroMaxDepth = Math.max(...heroRun.tasks.map(heroDepth));
+const heroLevels = Array.from({ length: heroMaxDepth + 1 }, (_, d) =>
+  heroRun.tasks.filter((t) => heroDepth(t) === d),
+);
+const heroStatusMap: Record<string, 'done' | 'running' | 'queued' | 'failed' | 'skipped'> = {
+  completed: 'done', in_progress: 'running', pending: 'queued', failed: 'failed', skipped: 'skipped', blocked: 'queued',
+};
+const heroDur = (ms: number | null) => (ms == null ? null : (ms / 1000).toFixed(1) + 's');
+const heroNodeId = (id: string) => '#' + id.slice(0, 8);
+const heroWallS = Math.round(heroRun.wallMs / 1000);
 
 // ── Capabilities code (real v1.7.0 API — verified against the repo). ──
 const TEAM_CODE = `import { OpenMultiAgent, type AgentConfig } from '@open-multi-agent/core'
@@ -255,15 +285,25 @@ const jsonLd = {
               <CodeBlock lang="ts" title="runTeam()" code={HERO_SNIPPET} copyable={false} />
               <div class="io-connector"><span class="line"></span>decomposes into<span class="line"></span></div>
               <div class="dag-stack">
-                <TaskNode id="#NODE_001" title="Design data model & routes" status="done" duration="2.1s" role="architect" />
-                <div class="dag-link"></div>
-                <div class="dag-parallel">
-                  <span class="dag-parallel-tag">parallel</span>
-                  <TaskNode id="#NODE_002" title="Implement endpoints" status="running" duration="4.7s" role="developer" selected />
-                  <TaskNode id="#NODE_003" title="Generate test suite" status="queued" role="developer" />
-                </div>
-                <div class="dag-link"></div>
-                <TaskNode id="#NODE_004" title="Review & harden" status="queued" role="reviewer" />
+                {heroLevels.map((level, li) => (
+                  <Fragment>
+                    {li > 0 && <div class="dag-link"></div>}
+                    {level.length > 1 ? (
+                      <div class="dag-parallel">
+                        <span class="dag-parallel-tag">parallel</span>
+                        {level.map((t) => (
+                          <TaskNode id={heroNodeId(t.id)} title={t.title} status={heroStatusMap[t.status] ?? 'done'} duration={heroDur(t.durationMs)} role={t.assignee} />
+                        ))}
+                      </div>
+                    ) : (
+                      <TaskNode id={heroNodeId(level[0].id)} title={level[0].title} status={heroStatusMap[level[0].status] ?? 'done'} duration={heroDur(level[0].durationMs)} role={level[0].assignee} />
+                    )}
+                  </Fragment>
+                ))}
+              </div>
+              <div class="dag-meta">
+                <span class="dag-meta-dot"></span>
+                <span>real <code>runTeam()</code> · {heroRun.model} · {heroRun.tasks.length} tasks · {heroWallS}s</span>
               </div>
             </div>
           </div>
