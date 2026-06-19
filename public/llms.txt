@@ -1,0 +1,47 @@
+# Open Multi-Agent
+
+> TypeScript-native multi-agent orchestration. A coordinator turns a goal into a task DAG, parallelizes the independent nodes, and synthesizes the result — three runtime dependencies, runs anywhere Node.js runs.
+
+Open Multi-Agent (OMA) is an open-source (MIT) agent runtime, not a graph builder. You pass a goal, not a graph: a coordinator agent decomposes it into a task DAG, runs independent nodes in parallel, and returns a typed, schema-validated result. Each agent in a team can name its own model — Anthropic, OpenAI, a local Ollama, or a self-hosted endpoint — and they cooperate inside a single team. Tools are default-deny; Model Context Protocol (MCP) servers connect external systems under the same opt-in contract.
+
+- Install: `npm create oma-app@latest`
+- Package: `@open-multi-agent/core` (npm)
+- License: MIT
+- Runtime: Node.js 18+, three runtime dependencies
+
+## Capabilities
+
+- **Goal-driven coordinator**: you pass a goal, not a graph. A coordinator agent decomposes it into a task DAG, parallelizes independent nodes, and synthesizes the result.
+- **Mix any model in one team**: each agent names its own model — Anthropic, OpenAI, a local Ollama, or a self-hosted endpoint — and they cooperate inside a single team.
+- **Tools and MCP, default-deny**: an agent gets only the tools it lists. Model Context Protocol servers expose external systems under the same opt-in contract.
+- **Streaming and structured output**: stream tokens and node-state transitions as the DAG fills, or await a typed, schema-validated object at the end of the run.
+
+## Docs
+
+- [Introduction](https://open-multi-agent.com/getting-started/introduction/): what open-multi-agent is, how goal-first orchestration differs from graph-first frameworks, and how the runtime is structured.
+- [Quick Start](https://open-multi-agent.com/getting-started/quick-start/): scaffold a project with npm create oma-app, or install the core package and run your first auto-orchestrated team.
+- [Three Ways to Run](https://open-multi-agent.com/getting-started/three-ways-to-run/): runAgent, runTeam, and runTasks — plus plan preview, plan replay, and consensus verification.
+- [Orchestration Controls](https://open-multi-agent.com/guides/orchestration-controls/): team context injection, approval gates, cancellation, coordinator config, and fan-out.
+- [Production Checklist](https://open-multi-agent.com/guides/production-checklist/): token budget, timeouts, retries, tool-output limits, loop detection, tracing, and tool grants.
+
+## Reference
+
+- [Providers](https://open-multi-agent.com/reference/providers/): configure hosted, cloud, and local model providers — built-in shortcuts, OpenAI-compatible endpoints, env vars, and local tool-calling.
+- [MiniMax setup](https://open-multi-agent.com/reference/providers/minimax/): use MiniMax models in OMA via the built-in minimax provider.
+- [Tool configuration](https://open-multi-agent.com/reference/tool-configuration/): grant built-in tools (default-deny), presets and allowlists, the filesystem sandbox, custom tools, and MCP.
+- [Observability](https://open-multi-agent.com/reference/observability/): onProgress events, onTrace spans, and the static post-run dashboard.
+- [Shared memory](https://open-multi-agent.com/reference/shared-memory/): a namespaced key-value store shared across a team, in-process or via a custom MemoryStore backend.
+- [Context management](https://open-multi-agent.com/reference/context-management/): keep long runs under the token ceiling with context strategies, tool-result compression, and cross-provider reasoning.
+- [Consensus](https://open-multi-agent.com/reference/consensus/): runConsensus proposer-to-judge verification, the per-task verify hook, and the shared token-budget invariant.
+- [Model routing](https://open-multi-agent.com/reference/model-routing/): opt-in deterministic policy that routes orchestration phases to different models by phase, agent, task role, priority, or leaf.
+- [CLI](https://open-multi-agent.com/reference/cli/): the JSON-first oma binary for shell and CI — commands, config files, output, and exit codes.
+
+## Project
+
+- [GitHub repository](https://github.com/open-multi-agent/open-multi-agent): source, examples, and issues.
+- [Examples (cookbook)](https://github.com/open-multi-agent/open-multi-agent/tree/main/examples): runnable multi-agent recipes — contract review, competitive monitoring, incident postmortem, and more.
+- [npm package](https://www.npmjs.com/package/@open-multi-agent/core)
+
+## Optional
+
+- [Full text for LLMs](https://open-multi-agent.com/llms-full.txt): capabilities, use cases, and FAQ assembled into one document.
