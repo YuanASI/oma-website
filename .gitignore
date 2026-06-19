@@ -23,3 +23,6 @@ pnpm-debug.log*
 _internal/
 design/
 CLAUDE.md
+
+# local agent / preview tooling
+.claude/
