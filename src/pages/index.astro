@@ -18,35 +18,12 @@ import CodeBlock from '../components/ds/CodeBlock.astro';
 import Callout from '../components/ds/Callout.astro';
 import TaskNode from '../components/ds/TaskNode.astro';
 import heroRun from '../data/hero-run.json';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { REPO, NPM, ghStats } from '../lib/site';
 
-const REPO = 'https://github.com/open-multi-agent/open-multi-agent';
-const FORGE = 'https://github.com/open-multi-agent/oma-forge';
-const NPM = 'https://www.npmjs.com/package/@open-multi-agent/core';
-
-// ── Live stats, fetched at build time with a fallback (red-line §7: no
-//    hard-coded precise numbers; these refresh on every deploy). ──
-async function ghStats() {
-  const fallback = { stars: 6396, forks: 2391, contributors: 43 };
-  const headers = { Accept: 'application/vnd.github+json', 'User-Agent': 'oma-website-build' };
-  try {
-    const r = await fetch('https://api.github.com/repos/open-multi-agent/open-multi-agent', { headers });
-    if (!r.ok) return fallback;
-    const j = await r.json();
-    let contributors = fallback.contributors;
-    try {
-      const cr = await fetch('https://api.github.com/repos/open-multi-agent/open-multi-agent/contributors?per_page=1&anon=true', { headers });
-      const m = (cr.headers.get('link') || '').match(/[?&]page=(\d+)>;\s*rel="last"/);
-      if (m) contributors = parseInt(m[1], 10);
-    } catch { /* keep fallback */ }
-    return {
-      stars: j.stargazers_count ?? fallback.stars,
-      forks: j.forks_count ?? fallback.forks,
-      contributors,
-    };
-  } catch {
-    return fallback;
-  }
-}
+// REPO / NPM constants and ghStats() now live in ../lib/site (shared with the
+// Nav/Footer components and the /examples page). FORGE is only used by Nav.
 const stats = await ghStats();
 const fmt = (n: number) => n.toLocaleString('en-US');
 const starsK = (stats.stars / 1000).toFixed(1) + 'k';
@@ -129,9 +106,9 @@ const CAPS = [
 ];
 
 const BUILDS = [
-  { scenario: 'legal · document review', title: 'Contract review', desc: 'One goal — “flag risk in this MSA” — fans out to agents reading clauses, cross-checking a policy library, and drafting redlines in parallel.', outcome: 'A single structured risk report from one runTeam() call.', code: REPO + '/blob/main/examples/cookbook/contract-review-dag.ts' },
-  { scenario: 'market · monitoring', title: 'Competitive monitoring', desc: 'Agents pull from different sources via MCP, each on the model that fits — cheap-local for scraping, frontier for analysis — and reconcile findings.', outcome: 'A deduped digest, refreshed on a schedule, mixed providers in one team.', code: REPO + '/blob/main/examples/cookbook/competitive-monitoring.ts' },
-  { scenario: 'sre · operations', title: 'Incident postmortem', desc: 'Logs, metrics, and the deploy timeline are investigated as parallel nodes; a reviewer agent synthesizes cause and contributing factors.', outcome: 'A timeline-grounded postmortem draft minutes after resolution.', code: REPO + '/blob/main/examples/cookbook/incident-postmortem-dag.ts' },
+  { scenario: 'legal · document review', title: 'Contract review', desc: 'One goal — “flag risk in this MSA” — fans out to agents reading clauses, cross-checking a policy library, and drafting redlines in parallel.', outcome: 'A single structured risk report from one runTeam() call.', code: REPO + '/blob/main/packages/core/examples/cookbook/contract-review-dag.ts' },
+  { scenario: 'market · monitoring', title: 'Competitive monitoring', desc: 'Agents pull from different sources via MCP, each on the model that fits — cheap-local for scraping, frontier for analysis — and reconcile findings.', outcome: 'A deduped digest, refreshed on a schedule, mixed providers in one team.', code: REPO + '/blob/main/packages/core/examples/cookbook/competitive-monitoring.ts' },
+  { scenario: 'sre · operations', title: 'Incident postmortem', desc: 'Logs, metrics, and the deploy timeline are investigated as parallel nodes; a reviewer agent synthesizes cause and contributing factors.', outcome: 'A timeline-grounded postmortem draft minutes after resolution.', code: REPO + '/blob/main/packages/core/examples/cookbook/incident-postmortem-dag.ts' },
 ];
 
 const STACK = [
@@ -224,40 +201,8 @@ const jsonLd = {
     <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
   </head>
   <body>
-    <!-- ── Nav (§3 global) ── -->
-    <nav class="nav">
-      <div class="container nav-inner">
-        <a class="brand" href="/" aria-label="Open Multi-Agent — home">
-          <img class="brand-mark" src="/logo-mark-dark.svg" alt="" width="26" height="26" />
-          <span class="brand-word">open<span class="dash">-</span>multi<span class="dash">-</span>agent</span>
-        </a>
-        <div class="nav-links">
-          <div class="nav-item">
-            <button type="button" class="nav-menu-btn" aria-haspopup="true">Product <span class="nav-menu-caret">▾</span></button>
-            <div class="nav-menu">
-              <a class="nav-menu-link" href={REPO} target="_blank" rel="noreferrer">
-                <span class="pkg">open-multi-agent <span class="ext">↗</span></span>
-                <span class="desc">The multi-agent orchestration framework.</span>
-              </a>
-              <a class="nav-menu-link" href={FORGE} target="_blank" rel="noreferrer">
-                <span class="pkg">oma-forge <span class="ext">↗</span></span>
-                <span class="desc">Experimental project under the open-multi-agent org.</span>
-              </a>
-            </div>
-          </div>
-          <a class="nav-link" href="/getting-started/introduction/">Docs</a>
-          <a class="nav-link" href={REPO + '/tree/main/examples'} target="_blank" rel="noreferrer">Examples</a>
-          <a class="nav-link" href="#showcase">Showcase</a>
-          <a class="nav-link" href="#blog">Blog</a>
-          <a class="nav-link" href={REPO} target="_blank" rel="noreferrer" style="display:inline-flex;align-items:center;gap:7px;">
-            <span>GitHub</span><span style="color:var(--oma-fg-2);">★ {starsK}</span>
-          </a>
-        </div>
-        <div class="nav-ghost">
-          <button type="button" class="nav-mobile-toggle" aria-label="Menu">≡</button>
-        </div>
-      </div>
-    </nav>
+    <!-- ── Nav (§3 global) — shared component ── -->
+    <Nav current="home" starsK={starsK} />
 
     <main>
       <!-- ── 1. Hero ── -->
@@ -456,51 +401,8 @@ const jsonLd = {
       </section>
     </main>
 
-    <!-- ── Footer ── -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-inner">
-          <div style="max-width:280px;">
-            <div class="footer-left">
-              <img class="brand-mark" src="/logo-mark-dark.svg" alt="" width="26" height="26" />
-              <span class="brand-word">open<span class="dash">-</span>multi<span class="dash">-</span>agent</span>
-            </div>
-            <p class="footer-blurb">From a goal to a task DAG, automatically. TypeScript-native multi-agent orchestration.</p>
-          </div>
-          <div class="footer-cols">
-            <div>
-              <div class="footer-col-head">Product</div>
-              <div class="footer-col-links">
-                <a class="nav-link" href="#capabilities" style="font-size:13px;">Capabilities</a>
-                <a class="nav-link" href="#build" style="font-size:13px;">Use cases</a>
-                <a class="nav-link" href="#stack" style="font-size:13px;">Integrations</a>
-              </div>
-            </div>
-            <div>
-              <div class="footer-col-head">Resources</div>
-              <div class="footer-col-links">
-                <a class="nav-link" href="/getting-started/introduction/" style="font-size:13px;">Docs</a>
-                <a class="nav-link" href={REPO + '/tree/main/examples'} target="_blank" rel="noreferrer" style="font-size:13px;">Examples</a>
-                <a class="nav-link" href="#faq" style="font-size:13px;">FAQ</a>
-              </div>
-            </div>
-            <div>
-              <div class="footer-col-head">Project</div>
-              <div class="footer-col-links">
-                <a class="nav-link" href={REPO} target="_blank" rel="noreferrer" style="font-size:13px;">GitHub</a>
-                <a class="nav-link" href={NPM} target="_blank" rel="noreferrer" style="font-size:13px;">npm</a>
-                <a class="nav-link" href={REPO + '/blob/main/LICENSE'} target="_blank" rel="noreferrer" style="font-size:13px;">MIT license</a>
-                <a class="nav-link" href="/llms.txt" style="font-size:13px;">llms.txt</a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="footer-bottom">
-          <span class="footer-meta">MIT licensed · @open-multi-agent/core</span>
-          <span class="footer-meta">Built by <span class="by">元定义科技 (YuanASI)</span></span>
-        </div>
-      </div>
-    </footer>
+    <!-- ── Footer — shared component ── -->
+    <Footer />
 
     <script>
       // ── Stats count-up on scroll ──
@@ -541,14 +443,6 @@ const jsonLd = {
             q.setAttribute('aria-expanded', 'true');
           }
         });
-      });
-
-      // ── Mobile nav toggle ──
-      const toggle = document.querySelector<HTMLElement>('.nav-mobile-toggle');
-      const links = document.querySelector<HTMLElement>('.nav-links');
-      toggle?.addEventListener('click', () => {
-        const open = links?.classList.toggle('open');
-        toggle.textContent = open ? '✕' : '≡';
       });
 
       // ── Copy: command blocks ──

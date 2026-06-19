@@ -1,0 +1,49 @@
+---
+// Global footer. Shared by the landing page and /examples.
+import { REPO, NPM } from '../lib/site';
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div style="max-width:280px;">
+        <div class="footer-left">
+          <img class="brand-mark" src="/logo-mark-dark.svg" alt="" width="26" height="26" />
+          <span class="brand-word">open<span class="dash">-</span>multi<span class="dash">-</span>agent</span>
+        </div>
+        <p class="footer-blurb">From a goal to a task DAG, automatically. TypeScript-native multi-agent orchestration.</p>
+      </div>
+      <div class="footer-cols">
+        <div>
+          <div class="footer-col-head">Product</div>
+          <div class="footer-col-links">
+            <a class="nav-link" href="#capabilities" style="font-size:13px;">Capabilities</a>
+            <a class="nav-link" href="#build" style="font-size:13px;">Use cases</a>
+            <a class="nav-link" href="#stack" style="font-size:13px;">Integrations</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-head">Resources</div>
+          <div class="footer-col-links">
+            <a class="nav-link" href="/getting-started/introduction/" style="font-size:13px;">Docs</a>
+            <a class="nav-link" href="/examples/" style="font-size:13px;">Examples</a>
+            <a class="nav-link" href="#faq" style="font-size:13px;">FAQ</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-head">Project</div>
+          <div class="footer-col-links">
+            <a class="nav-link" href={REPO} target="_blank" rel="noreferrer" style="font-size:13px;">GitHub</a>
+            <a class="nav-link" href={NPM} target="_blank" rel="noreferrer" style="font-size:13px;">npm</a>
+            <a class="nav-link" href={REPO + '/blob/main/LICENSE'} target="_blank" rel="noreferrer" style="font-size:13px;">MIT license</a>
+            <a class="nav-link" href="/llms.txt" style="font-size:13px;">llms.txt</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-meta">MIT licensed · @open-multi-agent/core</span>
+      <span class="footer-meta">Built by <span class="by">元定义科技 (YuanASI)</span></span>
+    </div>
+  </div>
+</footer>
