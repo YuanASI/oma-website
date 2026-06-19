@@ -22,6 +22,7 @@ import heroRun from '../data/hero-run.json';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import { REPO, NPM, ghStats } from '../lib/site';
+import { SHOWCASE } from '../lib/showcase';
 
 // REPO / NPM constants and ghStats() now live in ../lib/site (shared with the
 // Nav/Footer components and the /examples page). FORGE is only used by Nav.
@@ -79,25 +80,9 @@ const team = oma.createTeam('api-team', { name: 'api-team', agents })
 // coordinator plans the DAG, runs independents in parallel, synthesizes
 const result = await oma.runTeam(team, 'Create a REST API for a todo list')`;
 
-// ── Production-proof cases — rewritten from the OMA README ecosystem section.
-//    temodar = the one confirmed production user; the other two are integrations. ──
-const CASES = [
-  {
-    pkg: 'temodar-agent', by: 'by xeloxa', href: 'https://github.com/xeloxa/temodar-agent',
-    desc: 'WordPress security analysis platform. Runs OMA built-in tools (bash, file ops, grep) inside a Docker runtime.',
-    tone: 'accent', tag: 'security', status: 'in production',
-  },
-  {
-    pkg: 'Engram', by: 'engram-memory.com', href: 'https://github.com/Agentscreator/engram-memory',
-    desc: '“Git for AI memory.” Syncs knowledge across agents instantly and flags conflicts.',
-    tone: 'info', tag: 'memory', status: 'integration',
-  },
-  {
-    pkg: '@agentsonar/oma', by: 'agentsonar/agentsonar-oma', href: 'https://github.com/agentsonar/agentsonar-oma',
-    desc: 'Sidecar that detects cross-run delegation cycles, repetition, and rate bursts.',
-    tone: 'neutral', tag: 'observability', status: 'integration',
-  },
-] as const;
+// ── Production-proof cases — the `featured` subset of the shared ecosystem
+//    list (src/lib/showcase.ts), rendered in full on /showcase. ──
+const CASES = SHOWCASE.filter((c) => c.featured);
 
 const CAPS = [
   { n: '01', t: 'Goal-driven coordinator', d: 'You pass a goal, not a graph. A coordinator agent decomposes it into a task DAG, parallelizes independent nodes, and synthesizes the result.' },
