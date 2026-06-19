@@ -14,6 +14,8 @@
 // null and the page degrades to a "browse on GitHub" link (same fetch-with-
 // fallback discipline as ghStats in ./site).
 
+import { ghApiHeaders } from './site';
+
 const SLUG = 'open-multi-agent/open-multi-agent';
 const BRANCH = 'main';
 const ROOT = 'packages/core/examples';
@@ -128,7 +130,7 @@ async function fetchText(url: string): Promise<string | null> {
 }
 
 export async function getExamples(): Promise<ExamplesData | null> {
-  const headers = { 'User-Agent': 'oma-website-build', Accept: 'application/vnd.github+json' };
+  const headers = ghApiHeaders();
   let paths: { path: string; type: string }[];
   try {
     const res = await fetch(`https://api.github.com/repos/${SLUG}/git/trees/${BRANCH}?recursive=1`, { headers });
