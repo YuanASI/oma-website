@@ -15,6 +15,11 @@ export default defineConfig({
 	redirects: {
 		'/github': 'https://github.com/open-multi-agent/open-multi-agent',
 	},
+	// Blog posts (src/content/blog) render monochrome code blocks styled in
+	// blog.css — disabling Astro's Shiki here keeps every code glyph at a
+	// controlled >=4.5:1 contrast. Starlight docs use Expressive Code (configured
+	// on the integration below), which this setting does not touch.
+	markdown: { syntaxHighlight: false },
 	integrations: [
 		starlight({
 			title: 'Open Multi-Agent',
