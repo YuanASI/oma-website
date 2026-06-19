@@ -1,0 +1,79 @@
+name: Sync Reference docs
+
+# Keeps the vendored Reference docs (src/content/docs/reference) in step with the
+# framework repo's `main` branch (PRD §4.2 / §7 — prevent dual-source drift).
+# Runs scripts/sync-reference-docs.mjs, validates the build, then opens a PR with
+# any changes. It NEVER pushes to main: the build CI + a human review gate it.
+
+on:
+  schedule:
+    # Weekly, Monday 06:17 UTC — after the framework's weekend release cadence.
+    # Adjust the cron to taste; off-the-hour avoids GitHub's scheduling congestion.
+    - cron: '17 6 * * 1'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync-reference
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync Reference from framework main
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Sync Reference docs from framework main
+        run: node scripts/sync-reference-docs.mjs
+        env:
+          # Authenticates the upstream "new docs" check so a shared-runner IP
+          # doesn't hit the unauthenticated rate limit. Raw doc fetches need no auth.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Validate the synced docs before proposing them, so a broken upstream
+      # change fails the run instead of opening a red PR.
+      - name: Validate build
+        run: pnpm build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Open PR if the Reference docs changed
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          add-paths: src/content/docs/reference
+          branch: chore/sync-reference
+          delete-branch: true
+          base: main
+          commit-message: 'chore(docs): sync Reference from framework main'
+          title: 'chore(docs): sync Reference from framework main'
+          labels: |
+            docs
+            automated
+          body: |
+            Automated sync of the vendored Reference docs from
+            [`open-multi-agent/open-multi-agent@main`](https://github.com/open-multi-agent/open-multi-agent/tree/main/docs).
+
+            - Curated front-matter (`title` + `description`) is preserved; only the
+              bodies and links are refreshed.
+            - The build was validated in this run before the PR was opened.
+            - New upstream docs are **not** auto-added — check the run log; they
+              need a sidebar slot (`astro.config.mjs`) and a red-line review.
+
+            Review the diff before merging. Re-run anytime via **Actions →
+            Sync Reference docs → Run workflow**.
