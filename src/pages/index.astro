@@ -123,6 +123,55 @@ const FAQS = [
 const title = 'Open Multi-Agent — From a goal to a task DAG, automatically';
 const description = 'TypeScript-native multi-agent orchestration. A coordinator turns a goal into a task DAG, parallelizes it, and synthesizes the result — three runtime dependencies, runs anywhere Node.js runs.';
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+// ── JSON-LD structured data (PRD §4.6 GEO) ──
+// SoftwareApplication + Organization + FAQPage in one @graph. The FAQPage
+// reuses the FAQS array above verbatim, so the markup always matches the
+// visible FAQ section (Google requires structured-data ↔ on-page parity).
+// No aggregateRating: there is no real rating data, and inventing one would
+// violate red-line §5.1. `offers` (free/MIT) makes the entry rich-eligible.
+const orgId = new URL('/#organization', Astro.site).href;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': orgId,
+      name: 'YuanASI',
+      alternateName: '元定义科技',
+      url: 'https://yuanasi.com',
+      logo: new URL('/logo-mark-dark.svg', Astro.site).href,
+    },
+    {
+      '@type': 'SoftwareApplication',
+      '@id': new URL('/#software', Astro.site).href,
+      name: 'Open Multi-Agent',
+      alternateName: ['OMA', '@open-multi-agent/core'],
+      description,
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem: 'Node.js 18+',
+      url: new URL('/', Astro.site).href,
+      downloadUrl: NPM,
+      codeRepository: REPO,
+      programmingLanguage: 'TypeScript',
+      license: 'https://opensource.org/licenses/MIT',
+      isAccessibleForFree: true,
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      author: { '@id': orgId },
+      publisher: { '@id': orgId },
+      sameAs: [REPO, NPM],
+    },
+    {
+      '@type': 'FAQPage',
+      '@id': new URL('/#faq', Astro.site).href,
+      mainEntity: FAQS.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  ],
+};
 ---
 
 <!doctype html>
@@ -142,6 +191,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
   </head>
   <body>
     <!-- ── Nav (§3 global) ── -->
@@ -400,6 +450,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
                 <a class="nav-link" href={REPO} target="_blank" rel="noreferrer" style="font-size:13px;">GitHub</a>
                 <a class="nav-link" href={NPM} target="_blank" rel="noreferrer" style="font-size:13px;">npm</a>
                 <a class="nav-link" href={REPO + '/blob/main/LICENSE'} target="_blank" rel="noreferrer" style="font-size:13px;">MIT license</a>
+                <a class="nav-link" href="/llms.txt" style="font-size:13px;">llms.txt</a>
               </div>
             </div>
           </div>
