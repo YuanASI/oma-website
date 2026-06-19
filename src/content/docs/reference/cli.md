@@ -23,7 +23,7 @@ npm run build
 node packages/core/dist/cli/oma.js help
 ```
 
-Set the usual provider API keys in the environment (see [README](/getting-started/quick-start/)); the CLI does not read secrets from flags. MiniMax additionally reads `MINIMAX_BASE_URL` to select the global (`https://api.minimax.io/v1`) or China (`https://api.minimaxi.com/v1`) endpoint. MiMo additionally reads `MIMO_BASE_URL` for Token Plan cluster endpoints such as `https://token-plan-cn.xiaomimimo.com/v1`.
+Set the usual provider API keys in the environment (see [README](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/README.md#quick-start)); the CLI does not read secrets from flags. MiniMax additionally reads `MINIMAX_BASE_URL` to select the global (`https://api.minimax.io/v1`) or China (`https://api.minimaxi.com/v1`) endpoint. MiMo additionally reads `MIMO_BASE_URL` for Token Plan cluster endpoints such as `https://token-plan-cn.xiaomimimo.com/v1`.
 
 OpenRouter works through the OpenAI-compatible adapter: set `provider` to `openai`, `baseURL` to `https://openrouter.ai/api/v1`, and pass `OPENROUTER_API_KEY` as the agent or orchestrator `apiKey`.
 
