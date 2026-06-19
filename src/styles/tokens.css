@@ -22,8 +22,8 @@
   /* ── Text (bone white → warm grays) ── */
   --oma-fg-0: #F5F2EB;   /* primary text, headings              */
   --oma-fg-1: #A09A8E;   /* secondary / body-dim                */
-  --oma-fg-2: #726C62;   /* tertiary / labels / disabled        */
-  --oma-fg-3: #5A5751;   /* faintest / placeholder / footnotes  */
+  --oma-fg-2: #948D82;   /* tertiary / labels / disabled — ≥4.5:1 on bg-3 (WCAG AA) */
+  --oma-fg-3: #827E76;   /* faintest / placeholder / footnotes — ≥4.5:1 on bg-0 (WCAG AA) */
 
   /* ── Borders (hairlines, warm) ── */
   --oma-border-0: #1F1D1A;  /* subtle separators               */
