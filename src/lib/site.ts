@@ -10,9 +10,26 @@ export const REPO = 'https://github.com/open-multi-agent/open-multi-agent';
 export const FORGE = 'https://github.com/open-multi-agent/oma-forge';
 export const NPM = 'https://www.npmjs.com/package/@open-multi-agent/core';
 
+// Headers for api.github.com calls at build time. Adds Authorization when a
+// token is present (GITHUB_TOKEN / GH_TOKEN), lifting GitHub's 60-req/hr
+// unauthenticated, per-IP limit to 5,000/hr. This matters for repeated local
+// builds and for shared-IP CI / CDN build environments (e.g. Cloudflare Pages),
+// where the unauthenticated pool is easily exhausted and a fetch would fall back
+// to placeholder data. Raw CDN fetches (raw.githubusercontent.com) aren't
+// rate-limited the same way and stay tokenless.
+export function ghApiHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
+    Accept: 'application/vnd.github+json',
+    'User-Agent': 'oma-website-build',
+  };
+  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return headers;
+}
+
 export async function ghStats() {
   const fallback = { stars: 6396, forks: 2391, contributors: 43 };
-  const headers = { Accept: 'application/vnd.github+json', 'User-Agent': 'oma-website-build' };
+  const headers = ghApiHeaders();
   try {
     const r = await fetch('https://api.github.com/repos/open-multi-agent/open-multi-agent', { headers });
     if (!r.ok) return fallback;
