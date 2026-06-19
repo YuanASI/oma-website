@@ -3,7 +3,7 @@ title: "MiniMax setup guide"
 description: "Use MiniMax M3 in OMA via the built-in minimax provider, plus the limited-time community offer."
 ---
 
-<img src="https://raw.githubusercontent.com/open-multi-agent/open-multi-agent/main/.github/brand/minimax-banner.png" alt="MiniMax" width="600">
+<img src="../../.github/brand/minimax-banner.png" alt="MiniMax" width="600">
 
 MiniMax M3 can be used in OMA's TypeScript multi-agent workflows with a simple provider config.
 
