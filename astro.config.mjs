@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import sitemap from '@astrojs/sitemap';
 import { omaDark, omaLight } from './src/styles/code-theme.mjs';
 
 // https://astro.build/config
@@ -86,5 +87,9 @@ export default defineConfig({
 				},
 			],
 		}),
+		// Emits sitemap-index.xml + sitemap-0.xml at the site root (PRD §4.6 GEO).
+		// robots.txt already points crawlers at /sitemap-index.xml; this integration
+		// is what generates it. Needs `site` (set above) to build absolute URLs.
+		sitemap(),
 	],
 });
