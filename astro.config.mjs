@@ -7,6 +7,13 @@ import { omaDark, omaLight } from './src/styles/code-theme.mjs';
 export default defineConfig({
 	// Required for sitemap / canonical / OG absolute URLs (PRD §4.6 GEO).
 	site: 'https://open-multi-agent.com',
+	// `/github` → repo, preserving the old direct-to-GitHub habit (PRD §3 / §9).
+	// In static output this emits a meta-refresh redirect page that works on any
+	// host. A true HTTP 301 is set at the host during deploy (PRD §12 item 6) —
+	// e.g. a Cloudflare Pages `_redirects` line: `/github https://github.com/open-multi-agent/open-multi-agent 301`.
+	redirects: {
+		'/github': 'https://github.com/open-multi-agent/open-multi-agent',
+	},
 	integrations: [
 		starlight({
 			title: 'Open Multi-Agent',

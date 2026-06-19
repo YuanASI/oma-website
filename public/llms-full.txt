@@ -1,0 +1,144 @@
+# Open Multi-Agent — full text for LLMs
+
+> TypeScript-native multi-agent orchestration. A coordinator turns a goal into a task DAG, parallelizes the independent nodes, and synthesizes the result — three runtime dependencies, runs anywhere Node.js runs.
+
+This document assembles the substantive copy from open-multi-agent.com into a single
+plain-text file for LLM ingestion. Source of truth for the API is the GitHub repository
+and the docs at https://open-multi-agent.com.
+
+- Install: `npm create oma-app@latest`
+- Package: `@open-multi-agent/core` (npm)
+- License: MIT
+- Runtime: Node.js 18+, three runtime dependencies
+- Repository: https://github.com/open-multi-agent/open-multi-agent
+
+## What it is
+
+Open Multi-Agent (OMA) is an agent runtime, not a graph builder. It is goal-first, not
+graph-first: you describe the outcome, and OMA owns the decomposition, the parallelism,
+and the synthesis. You pass a goal, not a graph — a coordinator agent decomposes it into
+a task DAG, parallelizes the independent nodes, and synthesizes the result. It is a
+library, not a platform: it composes with the providers, protocols, and servers already
+in your backend, with no daemon and no sidecar.
+
+## Minimal example
+
+```ts
+import { OpenMultiAgent, type AgentConfig } from '@open-multi-agent/core'
+
+const agents: AgentConfig[] = [
+  { name: 'architect', model: 'claude-sonnet-4-6', tools: ['file_write'] },
+  { name: 'developer', model: 'claude-sonnet-4-6', tools: ['bash', 'file_read', 'file_write', 'file_edit'] },
+  { name: 'reviewer',  model: 'claude-sonnet-4-6', tools: ['file_read', 'grep'] },
+]
+
+const oma  = new OpenMultiAgent({ defaultModel: 'claude-sonnet-4-6' })
+const team = oma.createTeam('api-team', { name: 'api-team', agents })
+
+// coordinator plans the DAG, runs independents in parallel, synthesizes
+const result = await oma.runTeam(team, 'Create a REST API for a todo list')
+```
+
+`runTeam()` returns when the whole DAG resolves — no manual node wiring, no scheduler to
+maintain.
+
+## Capabilities
+
+**Goal-driven coordinator.** You pass a goal, not a graph. A coordinator agent decomposes
+it into a task DAG, parallelizes independent nodes, and synthesizes the result.
+
+**Mix any model in one team.** Each agent names its own model — Anthropic, OpenAI, a local
+Ollama, or a self-hosted endpoint — and they cooperate inside a single team.
+
+**Tools and MCP, default-deny.** An agent gets only the tools it lists. Connect Model
+Context Protocol servers to expose external systems under the same opt-in contract.
+
+**Streaming and structured output.** Stream tokens and node-state transitions as the DAG
+fills, or await a typed, schema-validated object at the end of the run.
+
+## What you can build
+
+Each of these is a single goal that benefits from parallel, multi-model decomposition —
+exactly what the coordinator is built for.
+
+**Contract review (legal · document review).** One goal — "flag risk in this MSA" — fans
+out to agents reading clauses, cross-checking a policy library, and drafting redlines in
+parallel. Outcome: a single structured risk report from one runTeam() call.
+
+**Competitive monitoring (market · monitoring).** Agents pull from different sources via
+MCP, each on the model that fits — cheap-local for scraping, frontier for analysis — and
+reconcile findings. Outcome: a deduped digest, refreshed on a schedule, mixed providers
+in one team.
+
+**Incident postmortem (sre · operations).** Logs, metrics, and the deploy timeline are
+investigated as parallel nodes; a reviewer agent synthesizes cause and contributing
+factors. Outcome: a timeline-grounded postmortem draft minutes after resolution.
+
+Runnable versions of these live in the cookbook:
+https://github.com/open-multi-agent/open-multi-agent/tree/main/examples
+
+## Works with your stack
+
+A library, not a platform. It composes with the providers, protocols, and servers already
+in your backend.
+
+- **Providers** — Anthropic, OpenAI, Ollama, and self-hosted endpoints (13 built-in).
+- **MCP** — connect Model Context Protocol servers as tools (native).
+- **Vercel AI SDK** — interop with the streaming primitives you know (compatible).
+- **Express** — mount runTeam() behind a route handler (drop-in).
+- **Any Node.js** — no daemon, no sidecar; three runtime deps (Node 18+).
+
+## FAQ
+
+**How does the coordinator turn a goal into a DAG?**
+A coordinator agent plans the work: it breaks the goal into discrete tasks, infers
+dependencies between them, and emits a directed acyclic graph. Independent nodes run
+concurrently; dependent nodes wait on their inputs. Pass planOnly to inspect the DAG
+before any agent executes.
+
+**Can agents in one team use different model providers?**
+Yes. Each agent declares its own model, so a single team can mix a frontier cloud model,
+a self-hosted endpoint, and a local Ollama instance. The coordinator routes each task to
+the agent — and therefore the model — assigned to it.
+
+**How do tools get exposed to an agent?**
+Default-deny. An agent only has the tools it explicitly lists in its tools array;
+everything else is unavailable. External systems are connected through MCP servers under
+the same opt-in contract.
+
+**What happens when a node fails?**
+A failed node is retried under its policy; persistent failures surface on the node with
+FAILED state and an error, and downstream dependents are held. The rest of the DAG keeps
+running, so one failure does not abort the whole run.
+
+**Does it stream, or only return at the end?**
+Both. You can stream tokens and node-state transitions as the DAG fills, or simply await
+runTeam() for a typed, schema-validated result object once the graph resolves.
+
+## Documentation
+
+Getting started:
+- Introduction: https://open-multi-agent.com/getting-started/introduction/
+- Quick Start: https://open-multi-agent.com/getting-started/quick-start/
+- Three Ways to Run: https://open-multi-agent.com/getting-started/three-ways-to-run/
+
+Guides:
+- Orchestration Controls: https://open-multi-agent.com/guides/orchestration-controls/
+- Production Checklist: https://open-multi-agent.com/guides/production-checklist/
+
+Reference:
+- Providers: https://open-multi-agent.com/reference/providers/
+- MiniMax setup: https://open-multi-agent.com/reference/providers/minimax/
+- Tool configuration: https://open-multi-agent.com/reference/tool-configuration/
+- Observability: https://open-multi-agent.com/reference/observability/
+- Shared memory: https://open-multi-agent.com/reference/shared-memory/
+- Context management: https://open-multi-agent.com/reference/context-management/
+- Consensus: https://open-multi-agent.com/reference/consensus/
+- Model routing: https://open-multi-agent.com/reference/model-routing/
+- CLI: https://open-multi-agent.com/reference/cli/
+
+## Project links
+
+- GitHub: https://github.com/open-multi-agent/open-multi-agent
+- npm: https://www.npmjs.com/package/@open-multi-agent/core
+- License: MIT
