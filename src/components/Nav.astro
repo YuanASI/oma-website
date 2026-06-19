@@ -1,0 +1,56 @@
+---
+// Global top nav (§3). Shared by the landing page and /examples so the chrome
+// stays in one place. `current` marks the active in-site link; `starsK` is the
+// build-time star count (e.g. "6.4k") passed in by the page.
+import { REPO, FORGE } from '../lib/site';
+
+interface Props {
+  current?: 'home' | 'docs' | 'examples';
+  starsK: string;
+}
+const { current = 'home', starsK } = Astro.props;
+---
+
+<nav class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="/" aria-label="Open Multi-Agent — home">
+      <img class="brand-mark" src="/logo-mark-dark.svg" alt="" width="26" height="26" />
+      <span class="brand-word">open<span class="dash">-</span>multi<span class="dash">-</span>agent</span>
+    </a>
+    <div class="nav-links">
+      <div class="nav-item">
+        <button type="button" class="nav-menu-btn" aria-haspopup="true">Product <span class="nav-menu-caret">▾</span></button>
+        <div class="nav-menu">
+          <a class="nav-menu-link" href={REPO} target="_blank" rel="noreferrer">
+            <span class="pkg">open-multi-agent <span class="ext">↗</span></span>
+            <span class="desc">The multi-agent orchestration framework.</span>
+          </a>
+          <a class="nav-menu-link" href={FORGE} target="_blank" rel="noreferrer">
+            <span class="pkg">oma-forge <span class="ext">↗</span></span>
+            <span class="desc">Experimental project under the open-multi-agent org.</span>
+          </a>
+        </div>
+      </div>
+      <a class="nav-link" href="/getting-started/introduction/" aria-current={current === 'docs' ? 'page' : undefined}>Docs</a>
+      <a class="nav-link" href="/examples/" aria-current={current === 'examples' ? 'page' : undefined}>Examples</a>
+      <a class="nav-link" href="#showcase">Showcase</a>
+      <a class="nav-link" href="#blog">Blog</a>
+      <a class="nav-link" href={REPO} target="_blank" rel="noreferrer" style="display:inline-flex;align-items:center;gap:7px;">
+        <span>GitHub</span><span style="color:var(--oma-fg-2);">★ {starsK}</span>
+      </a>
+    </div>
+    <div class="nav-ghost">
+      <button type="button" class="nav-mobile-toggle" aria-label="Menu">≡</button>
+    </div>
+  </div>
+</nav>
+
+<script>
+  // Mobile nav toggle (co-located with the markup it drives).
+  const toggle = document.querySelector<HTMLElement>('.nav-mobile-toggle');
+  const links = document.querySelector<HTMLElement>('.nav-links');
+  toggle?.addEventListener('click', () => {
+    const open = links?.classList.toggle('open');
+    toggle.textContent = open ? '✕' : '≡';
+  });
+</script>
