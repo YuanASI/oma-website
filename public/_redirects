@@ -1,0 +1,6 @@
+# Cloudflare Pages redirects.
+# True HTTP 301 for /github → framework repo (PRD §3 / §9). This takes
+# precedence over the Astro-generated /github/index.html meta-refresh page,
+# which stays as a fallback for any other host. Keep in sync with the
+# `redirects` entry in astro.config.mjs.
+/github  https://github.com/open-multi-agent/open-multi-agent  301
