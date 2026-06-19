@@ -1,0 +1,45 @@
+# robots.txt — open-multi-agent.com
+# GEO posture (PRD §4.6): AI crawlers are explicitly welcome. Allowing
+# collection is the precondition for being cited in LLM search results.
+# The per-bot Allow blocks are redundant with the wildcard below — they
+# exist to make the "do not block AI crawlers" intent legible and durable.
+
+User-agent: *
+Allow: /
+
+# OpenAI
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+
+# Google / Apple AI training opt-in signals
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Common Crawl (feeds many LLM training sets)
+User-agent: CCBot
+Allow: /
+
+Sitemap: https://open-multi-agent.com/sitemap-index.xml
