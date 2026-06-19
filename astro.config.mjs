@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import { omaDark, omaLight } from './src/styles/code-theme.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,6 +12,24 @@ export default defineConfig({
 			title: 'Open Multi-Agent',
 			description:
 				'TypeScript-native multi-agent orchestration. From a goal to a task DAG, automatically — three runtime dependencies, runs anywhere Node.js runs.',
+			// Code blocks use the OMA syntax palette (blue/emerald/amber/muted) to
+			// match the landing CodeBlock. `themes` carries only the token hues
+			// (see src/styles/code-theme.mjs); `useStarlightUiThemeColors: true`
+			// keeps the warm-dark frame driven by the --sl-color-* vars in
+			// starlight-theme.css, and `minSyntaxHighlightingColorContrast: 0`
+			// renders the palette exactly (no automatic contrast lightening).
+			//
+			// If you edit these hues, clear Astro's content-render cache before
+			// rebuilding: `rm -rf node_modules/.astro .astro`. That cache keys the
+			// rendered code-block HTML (inline token colors + the ec.<hash>.css
+			// link) on source content, NOT on this config — so a stale cache keeps
+			// the old link while the build emits a new hash → 404 / unstyled blocks.
+			// (Fresh CI checkouts have no cache, so production builds are unaffected.)
+			expressiveCode: {
+				themes: [omaDark, omaLight],
+				useStarlightUiThemeColors: true,
+				minSyntaxHighlightingColorContrast: 0,
+			},
 			social: [
 				{
 					icon: 'github',
@@ -20,11 +39,6 @@ export default defineConfig({
 			],
 			// OMA design tokens themed onto Starlight (dark-first). Order matters:
 			// offline Fontsource fonts → tokens (single source of truth) → the SL mapping.
-			// NOTE: a custom Expressive Code syntax theme (OMA blue/emerald/amber palette,
-			// to match the landing CodeBlock) is deferred — overriding `expressiveCode.themes`
-			// in this Starlight 0.40 / astro-expressive-code 0.43.1 combo leaves the docs
-			// referencing ec.v4551.css while the build emits a content-hashed file → 404.
-			// Default EC dark theme is kept until that's root-caused. See PR notes.
 			customCss: [
 				'@fontsource-variable/geist/index.css',
 				'@fontsource-variable/jetbrains-mono/index.css',
