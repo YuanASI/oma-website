@@ -281,6 +281,19 @@ a { color: inherit; }
 }
 .rel-foot { margin-top: auto; padding-top: 18px; }
 
+/* ── Post-run dashboard shot (in the production section) ── */
+.dashboard-shot { margin: 40px 0 0; }
+.dashboard-shot img {
+  display: block; width: 100%; height: auto; aspect-ratio: 1600 / 760;
+  border: 1px solid var(--border-default); border-radius: var(--radius-lg);
+  background: var(--oma-bg-1); box-shadow: var(--shadow-md);
+}
+.dashboard-shot figcaption {
+  font-size: 13px; line-height: 1.6; color: var(--oma-fg-2);
+  margin-top: 16px; max-width: 760px;
+}
+.dashboard-shot figcaption .text-link { font-size: inherit; }
+
 /* ── What you can build ── */
 .build-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .build-scenario {
