@@ -81,11 +81,10 @@
 
           <!-- ===== LAYER 5b: LLM ADAPTER (right column) ===== -->
           <rect x="780" y="510" width="280" height="120" rx="6" fill="#131210" stroke="#A09A8E" stroke-width="1.5" stroke-dasharray="4 3"/>
-          <text x="800" y="538" font-family="JetBrains Mono" font-size="11" fill="#A09A8E" letter-spacing="2">INTERFACE · MULTIPLE IMPLEMENTATIONS</text>
+          <text x="800" y="538" font-family="JetBrains Mono" font-size="11" fill="#A09A8E" letter-spacing="2">INTERFACE · MULTI-PROVIDER</text>
           <text x="800" y="562" font-family="JetBrains Mono" font-size="16" fill="#F5F2EB" font-weight="500">LLMAdapter</text>
-          <text x="800" y="586" font-family="JetBrains Mono" font-size="10" fill="#726C62">AnthropicAdapter · OpenAIAdapter · AzureOpenAIAdapter</text>
-          <text x="800" y="602" font-family="JetBrains Mono" font-size="10" fill="#726C62">CopilotAdapter · GeminiAdapter · GrokAdapter</text>
-          <text x="800" y="618" font-family="JetBrains Mono" font-size="10" fill="#726C62">MiniMaxAdapter · DeepSeekAdapter · QiniuAdapter</text>
+          <text x="800" y="588" font-family="JetBrains Mono" font-size="10" fill="#726C62">Anthropic · OpenAI · Gemini · Bedrock</text>
+          <text x="800" y="606" font-family="JetBrains Mono" font-size="10" fill="#726C62">+ OpenAI-compatible &amp; local models</text>
 
           <!-- ===== LAYER 5c: TOOL REGISTRY (right column) ===== -->
           <rect x="780" y="680" width="280" height="100" rx="6" fill="#131210" stroke="#A09A8E" stroke-width="1.5" stroke-dasharray="4 3"/>
