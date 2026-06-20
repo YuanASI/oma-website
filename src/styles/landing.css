@@ -35,6 +35,11 @@ a { color: inherit; }
 }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
 .brand-mark { width: 26px; height: 26px; display: block; }
+/* Theme-aware brand mark: dark mark on the dark canvas, the warm-black/emerald-
+   deep light mark on the light canvas (mirrors logo-mark-{dark,light}.svg). */
+.brand-mark--light { display: none; }
+:root[data-theme='light'] .brand-mark--dark { display: none; }
+:root[data-theme='light'] .brand-mark--light { display: block; }
 .brand-word {
   font-family: var(--font-mono); font-size: 15px; font-weight: 500;
   letter-spacing: -0.03em; color: var(--oma-fg-0);
