@@ -8,6 +8,7 @@ import '../styles/tokens.css';
 import '../styles/landing.css';
 import Card from '../components/ds/Card.astro';
 import Nav from '../components/Nav.astro';
+import ThemeInit from '../components/ThemeInit.astro';
 import Footer from '../components/Footer.astro';
 import { REPO, ghStats } from '../lib/site';
 import { getExamples } from '../lib/examples';
@@ -51,6 +52,7 @@ const jsonLd = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <ThemeInit />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
     <meta name="description" content={description} />

@@ -24,7 +24,7 @@ a { color: inherit; }
 /* ── Nav ── */
 .nav {
   position: sticky; top: 0; z-index: 50;
-  background: rgba(10, 9, 8, 0.78);
+  background: var(--nav-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border-subtle);
@@ -48,6 +48,22 @@ a { color: inherit; }
 .nav-link:hover { color: var(--oma-fg-0); }
 .nav-ghost { display: flex; align-items: center; gap: 18px; }
 .nav-mobile-toggle { display: none; }
+
+/* Theme toggle (shown on desktop + mobile). The visible icon reflects the
+   current theme — moon in dark, sun in light. */
+.nav-theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; padding: 0; flex: none;
+  background: none; border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm); color: var(--oma-fg-1); cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
+}
+.nav-theme-toggle:hover { color: var(--oma-fg-0); border-color: var(--border-strong); }
+.nav-theme-toggle svg { width: 16px; height: 16px; }
+.nav-theme-toggle .theme-icon-sun { display: none; }
+.nav-theme-toggle .theme-icon-moon { display: block; }
+:root[data-theme='light'] .nav-theme-toggle .theme-icon-moon { display: none; }
+:root[data-theme='light'] .nav-theme-toggle .theme-icon-sun { display: block; }
 
 /* Product dropdown (§3 global nav) */
 .nav-item { position: relative; display: inline-flex; align-items: center; }

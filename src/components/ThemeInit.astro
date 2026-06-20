@@ -1,0 +1,19 @@
+---
+// No-flash theme initializer for the self-contained marketing pages (landing,
+// examples, showcase, blog). Mirrors Starlight's ThemeProvider exactly — same
+// `data-theme` attribute on <html> and the same `localStorage['starlight-theme']`
+// key — so a theme chosen in the docs carries over here and vice versa. With no
+// stored choice it follows the system `prefers-color-scheme`. Inlined at the top
+// of <head> so it runs before first paint (no flash of the wrong theme).
+---
+<script is:inline>
+  (() => {
+    try {
+      const stored = localStorage.getItem('starlight-theme');
+      const theme = stored || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+    } catch {
+      document.documentElement.dataset.theme = 'dark';
+    }
+  })();
+</script>
