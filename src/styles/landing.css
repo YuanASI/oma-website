@@ -155,6 +155,8 @@ a { color: inherit; }
   font-size: 11px; color: var(--oma-fg-2); border: 1px solid var(--border-default);
   border-radius: var(--radius-xs); padding: 4px 8px; background: var(--oma-bg-2);
   white-space: nowrap;
+  /* reserve the widest state ("✓ copied") so toggling copy→copied never resizes .cmd */
+  min-width: 78px; text-align: center;
 }
 .cmd.copied .copy { color: var(--oma-accent); border-color: var(--oma-accent-line); }
 .text-link {
