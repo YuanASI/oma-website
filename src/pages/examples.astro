@@ -11,7 +11,7 @@ import Nav from '../components/Nav.astro';
 import ThemeInit from '../components/ThemeInit.astro';
 import Footer from '../components/Footer.astro';
 import { REPO, ghStats } from '../lib/site';
-import { getExamples } from '../lib/examples';
+import { getExamples, FALLBACK_EXAMPLES } from '../lib/examples';
 
 const stats = await ghStats();
 const starsK = (stats.stars / 1000).toFixed(1) + 'k';
@@ -256,16 +256,29 @@ const jsonLd = {
         <section class="section ex-first">
           <div class="container">
             <div class="section-head">
-              <div class="eyebrow"><span class="idx">01</span> Cookbook · integrations · patterns</div>
-              <h2 class="section-title">Browse the examples on GitHub.</h2>
+              <div class="eyebrow"><span class="idx">01</span> Cookbook</div>
+              <h2 class="section-title">Recipes for real problems.</h2>
               <p class="section-sub">
-                The full, runnable example suite lives in the repo — cookbook recipes, integrations, orchestration
-                patterns, and one example per model provider.
+                A few end-to-end recipes to start from. The full, always-in-sync suite — integrations, orchestration
+                patterns, and one example per model provider — lives in the repo.
               </p>
             </div>
-            <a class="text-link" href={EXAMPLES_GH} target="_blank" rel="noreferrer">
-              <span>open packages/core/examples</span><span class="arrow">→</span>
-            </a>
+            <div class="build-grid">
+              {FALLBACK_EXAMPLES.map((e) => (
+                <Card padding="lg" interactive>
+                  <div class="build-title">{e.title}</div>
+                  <p class="build-desc">{e.blurb}</p>
+                  <div class="build-foot">
+                    <a class="text-link" href={e.href} target="_blank" rel="noreferrer">
+                      <span>see source</span><span class="arrow">→</span>
+                    </a>
+                  </div>
+                </Card>
+              ))}
+            </div>
+            <p class="ex-foot">
+              <a class="text-link inline" href={EXAMPLES_GH} target="_blank" rel="noreferrer"><span>Browse all on GitHub</span><span class="arrow">→</span></a>
+            </p>
           </div>
         </section>
       )}
