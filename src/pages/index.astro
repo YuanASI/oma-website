@@ -90,6 +90,7 @@ const CAPS = [
   { n: '02', t: 'Mix any model in one team', d: 'Each agent names its own model — Anthropic, OpenAI, a local Ollama, or a self-hosted endpoint — and they cooperate inside a single team.' },
   { n: '03', t: 'Tools and MCP, default-deny', d: 'An agent gets only the tools it lists. Connect Model Context Protocol servers to expose external systems under the same opt-in contract.' },
   { n: '04', t: 'Streaming and structured output', d: 'Stream tokens and node-state transitions as the DAG fills, or await a typed, schema-validated object at the end of the run.' },
+  { n: '05', t: 'Cross-provider reasoning', d: 'One thinking config maps to Anthropic thinking, Gemini thinkingConfig, and OpenAI reasoning_effort — reasoning streams as events, with opt-in preservation across a provider switch.' },
 ];
 
 // ── Reliability / control narrative (§02). Every API named here was verified
@@ -307,6 +308,9 @@ const jsonLd = {
               <CodeBlock lang="ts" title="team.ts" code={TEAM_CODE} />
               <div style="margin-top:var(--space-4);">
                 <Callout tone="accent" title="One call">runTeam() returns when the whole DAG resolves — no manual node wiring, no scheduler to maintain.</Callout>
+                <div style="margin-top:var(--space-4);">
+                  <a class="text-link" href="/getting-started/three-ways-to-run/"><span>runAgent · runTeam · runTasks — three ways to run</span><span class="arrow">→</span></a>
+                </div>
               </div>
             </div>
           </div>
@@ -397,7 +401,7 @@ const jsonLd = {
             <div class="stat"><div class="stat-val"><span class="unit">★ </span><span data-count={stats.stars}>{fmt(stats.stars)}</span></div><div class="stat-key">stars</div></div>
             <div class="stat"><div class="stat-val"><span data-count={stats.forks}>{fmt(stats.forks)}</span></div><div class="stat-key">forks</div></div>
             <div class="stat"><div class="stat-val"><span data-count={stats.contributors}>{fmt(stats.contributors)}</span></div><div class="stat-key">contributors</div></div>
-            <div class="stat"><div class="stat-val">{stats.latestRelease}</div><div class="stat-key">latest release</div></div>
+            <div class="stat"><a href={REPO + '/releases'} target="_blank" rel="noreferrer" style="color:inherit;text-decoration:none;"><div class="stat-val">{stats.latestRelease}</div><div class="stat-key">latest release</div></a></div>
             <div class="stat"><div class="stat-val">MIT</div><div class="stat-key">license</div></div>
           </div>
           <div class="cases-grid">

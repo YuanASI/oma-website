@@ -56,6 +56,28 @@ Context Protocol servers to expose external systems under the same opt-in contra
 **Streaming and structured output.** Stream tokens and node-state transitions as the DAG
 fills, or await a typed, schema-validated object at the end of the run.
 
+**Cross-provider reasoning.** One `thinking` config maps to Anthropic thinking, Gemini
+`thinkingConfig`, and OpenAI `reasoning_effort`; reasoning streams as events, with opt-in
+preservation across a provider switch.
+
+## Built for production
+
+Handing real work to autonomous agents raises three fair questions — do they run off the
+rails, burn the budget, or fail where you can't see it? Each one has an answer in the API.
+
+**Stay in the loop.** Inspect the plan before any agent runs with `onPlanReady`, then
+approve each round with `onApproval`. A proposer→judge pass (`runConsensus`) has one agent
+check another's output, and loop detection halts an agent that starts repeating itself.
+
+**Control spend.** Route planning to a flagship model and the leaf tasks to cheap ones with
+`modelRouting`. `maxTokenBudget` caps a run's spend — cross it and the orchestrator stops
+issuing calls instead of running up the bill.
+
+**Inspect, replay, resume.** Stream every LLM and tool call to your tracing stack with
+`onTrace`, or open a self-contained HTML dashboard after the run (`oma run --dashboard`).
+Checkpoints resume a crashed run from its last completed task, and secrets are redacted
+from traces and dashboards on a best-effort basis.
+
 ## What you can build
 
 Each of these is a single goal that benefits from parallel, multi-model decomposition —
@@ -82,9 +104,9 @@ https://open-multi-agent.com/examples/
 A library, not a platform. It composes with the providers, protocols, and servers already
 in your backend.
 
-- **Providers** — Anthropic, OpenAI, Ollama, and self-hosted endpoints (13 built-in).
+- **Providers** — Anthropic, Gemini, OpenAI, Bedrock, Azure, DeepSeek, and more — or any OpenAI-compatible endpoint (13 built-in).
 - **MCP** — connect Model Context Protocol servers as tools (native).
-- **Vercel AI SDK** — interop with the streaming primitives you know (compatible).
+- **Vercel AI SDK** — bridge to 60+ AI SDK providers and hosts (compatible).
 - **Express** — mount runTeam() behind a route handler (drop-in).
 - **Any Node.js** — no daemon, no sidecar; three runtime deps (Node 18+).
 
@@ -110,6 +132,18 @@ the same opt-in contract.
 A failed node is retried under its policy; persistent failures surface on the node with
 FAILED state and an error, and downstream dependents are held. The rest of the DAG keeps
 running, so one failure does not abort the whole run.
+
+**How do I keep a multi-agent run from going off the rails?**
+Layered controls, all opt-in. onPlanReady hands you the decomposed plan to inspect before
+any agent runs, and onApproval gates each round; return false and the remaining tasks are
+skipped. runConsensus adds a proposer→judge check that a second agent must accept, and loop
+detection halts an agent that keeps repeating the same tool call or output.
+
+**How do I cap what a run costs?**
+Two levers. modelRouting sends planning and synthesis to a flagship model while leaf tasks
+run on a cheaper one, so you pay frontier rates only where they matter. maxTokenBudget is a
+hard ceiling on cumulative tokens: cross it and the orchestrator stops issuing calls and
+skips the remaining tasks instead of running up the bill.
 
 **Does it stream, or only return at the end?**
 Both. You can stream tokens and node-state transitions as the DAG fills, or simply await
