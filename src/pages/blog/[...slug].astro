@@ -9,6 +9,7 @@ import '../../styles/landing.css';
 import '../../styles/blog.css';
 import Badge from '../../components/ds/Badge.astro';
 import Nav from '../../components/Nav.astro';
+import ThemeInit from '../../components/ThemeInit.astro';
 import Footer from '../../components/Footer.astro';
 import { ghStats } from '../../lib/site';
 import { getCollection, render } from 'astro:content';
@@ -57,6 +58,7 @@ const jsonLd = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <ThemeInit />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
     <meta name="description" content={description} />
