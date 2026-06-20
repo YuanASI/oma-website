@@ -75,7 +75,7 @@ investigated as parallel nodes; a reviewer agent synthesizes cause and contribut
 factors. Outcome: a timeline-grounded postmortem draft minutes after resolution.
 
 Runnable versions of these live in the cookbook:
-https://github.com/open-multi-agent/open-multi-agent/tree/main/examples
+https://open-multi-agent.com/examples/
 
 ## Works with your stack
 

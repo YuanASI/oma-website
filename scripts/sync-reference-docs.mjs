@@ -24,7 +24,7 @@ const REFDIR = 'src/content/docs/reference';
 
 // Vendored reference files ↔ framework `docs/<name>.md`. Only these sync.
 const FILES = [
-  'cli', 'consensus', 'context-management', 'model-routing', 'observability',
+  'checkpoint', 'cli', 'consensus', 'context-management', 'model-routing', 'observability',
   'providers', 'providers/minimax', 'shared-memory', 'tool-configuration',
 ];
 
