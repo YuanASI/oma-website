@@ -5,7 +5,7 @@
 //   • §3 global nav (Product ▾ open-multi-agent + oma-forge / Docs / Examples / Showcase / GitHub)
 //     Showcase → /#proof (the adoption section); Blog dropped from nav until /blog ships (no dead anchor pre-launch)
 //   • Production-proof cases rewritten from the OMA README ecosystem section
-//     (temodar = production · security; Engram + @agentsonar = integrations)
+//     (temodar = security · on Docker Hub; Engram + @agentsonar = integrations)
 //   • team.ts code uses the REAL v1.7.0 API (AgentConfig.name, real tool names, methods)
 //   • Live GitHub stats fetched at build time (no hard-coded precise numbers)
 //   • "see code" links point to real cookbook examples in the repo
@@ -115,7 +115,7 @@ const FAQS = [
 ];
 
 const title = 'Open Multi-Agent — From a goal to a task DAG, automatically';
-const description = 'TypeScript-native multi-agent orchestration. A coordinator turns a goal into a task DAG, parallelizes it, and synthesizes the result — three runtime dependencies, runs anywhere Node.js runs.';
+const description = 'TypeScript-native multi-agent orchestration. A coordinator turns a goal into a task DAG, parallelizes it, and synthesizes the result — runs anywhere Node.js runs.';
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 
 // ── JSON-LD structured data (PRD §4.6 GEO) ──
@@ -242,14 +242,85 @@ const jsonLd = {
         </div>
       </header>
 
-      <!-- ── 2. Production proof ── -->
+      <!-- ── 2. Capabilities ── -->
+      <section class="section" id="capabilities">
+        <div class="container">
+          <div class="section-head">
+            <div class="eyebrow"><span class="idx">01</span> How it works</div>
+            <h2 class="section-title">An agent runtime, not a graph builder.</h2>
+            <p class="section-sub">Goal-first, not graph-first. You describe the outcome; OMA owns the decomposition, the parallelism, and the synthesis.</p>
+          </div>
+          <div class="cap-grid">
+            <div class="cap-list">
+              {CAPS.map((c) => (
+                <div class="cap-item">
+                  <div class="cap-item-head"><span class="cap-num">{c.n}</span><span class="cap-title">{c.t}</span></div>
+                  <p class="cap-desc">{c.d}</p>
+                </div>
+              ))}
+            </div>
+            <div class="cap-code-wrap">
+              <CodeBlock lang="ts" title="team.ts" code={TEAM_CODE} />
+              <div style="margin-top:var(--space-4);">
+                <Callout tone="accent" title="One call">runTeam() returns when the whole DAG resolves — no manual node wiring, no scheduler to maintain.</Callout>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 3. What you can build ── -->
+      <section class="section" id="build">
+        <div class="container">
+          <div class="section-head">
+            <div class="eyebrow"><span class="idx">02</span> Use cases</div>
+            <h2 class="section-title">Three workflows worth a team.</h2>
+            <p class="section-sub">Each is a single goal that benefits from parallel, multi-model decomposition — exactly what the coordinator is built for.</p>
+          </div>
+          <div class="build-grid">
+            {BUILDS.map((b) => (
+              <Card padding="lg" interactive class="build-card">
+                <div class="build-scenario">{b.scenario}</div>
+                <div class="build-title">{b.title}</div>
+                <p class="build-desc">{b.desc}</p>
+                <div class="build-outcome"><span class="arrow">▸</span><span>{b.outcome}</span></div>
+                <div class="build-foot"><a class="text-link" href={b.code} target="_blank" rel="noreferrer"><span>see code</span><span class="arrow">→</span></a></div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 4. Works with your stack ── -->
+      <section class="section" id="stack">
+        <div class="container">
+          <div class="section-head">
+            <div class="eyebrow"><span class="idx">03</span> Integrations</div>
+            <h2 class="section-title">Works with your stack.</h2>
+            <p class="section-sub">OMA composes with the providers, protocols, and servers already in your backend — no platform to migrate to.</p>
+          </div>
+          <div class="stack-grid">
+            {STACK.map((s) => (
+              <div class="stack-tile">
+                <div>
+                  <div class="stack-name">{s.name}</div>
+                  <div class="stack-note">{s.note}</div>
+                </div>
+                <div class="stack-count">{s.count}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 5. Production proof ── -->
       <section class="section" id="proof">
         <div class="container">
           <div class="proof-head">
             <div class="section-head" style="margin-bottom:0;">
-              <div class="eyebrow"><span class="idx">01</span> Adoption</div>
+              <div class="eyebrow"><span class="idx">04</span> Adoption</div>
               <h2 class="section-title">Already running in the wild.</h2>
-              <p class="section-sub">Open source, MIT-licensed, with real production use and integrations. Star, fork, and contributor counts read straight from the repo at build time.</p>
+              <p class="section-sub">Open source and MIT-licensed, with a growing ecosystem of projects and integrations. Star, fork, and contributor counts read straight from the repo at build time.</p>
             </div>
             <div class="live-tag"><span class="live-dot"></span> live · synced from registry</div>
           </div>
@@ -273,77 +344,6 @@ const jsonLd = {
                   </div>
                 </Card>
               </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <!-- ── 3. Capabilities ── -->
-      <section class="section" id="capabilities">
-        <div class="container">
-          <div class="section-head">
-            <div class="eyebrow"><span class="idx">02</span> How it works</div>
-            <h2 class="section-title">An agent runtime, not a graph builder.</h2>
-            <p class="section-sub">Goal-first, not graph-first. You describe the outcome; OMA owns the decomposition, the parallelism, and the synthesis.</p>
-          </div>
-          <div class="cap-grid">
-            <div class="cap-list">
-              {CAPS.map((c) => (
-                <div class="cap-item">
-                  <div class="cap-item-head"><span class="cap-num">{c.n}</span><span class="cap-title">{c.t}</span></div>
-                  <p class="cap-desc">{c.d}</p>
-                </div>
-              ))}
-            </div>
-            <div class="cap-code-wrap">
-              <CodeBlock lang="ts" title="team.ts" code={TEAM_CODE} />
-              <div style="margin-top:var(--space-4);">
-                <Callout tone="accent" title="One call">runTeam() returns when the whole DAG resolves — no manual node wiring, no scheduler to maintain.</Callout>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ── 4. What you can build ── -->
-      <section class="section" id="build">
-        <div class="container">
-          <div class="section-head">
-            <div class="eyebrow"><span class="idx">03</span> Use cases</div>
-            <h2 class="section-title">Three workflows that show where OMA wins.</h2>
-            <p class="section-sub">Each is a single goal that benefits from parallel, multi-model decomposition — exactly what the coordinator is built for.</p>
-          </div>
-          <div class="build-grid">
-            {BUILDS.map((b) => (
-              <Card padding="lg" interactive class="build-card">
-                <div class="build-scenario">{b.scenario}</div>
-                <div class="build-title">{b.title}</div>
-                <p class="build-desc">{b.desc}</p>
-                <div class="build-outcome"><span class="arrow">▸</span><span>{b.outcome}</span></div>
-                <div class="build-foot"><a class="text-link" href={b.code} target="_blank" rel="noreferrer"><span>see code</span><span class="arrow">→</span></a></div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <!-- ── 5. Works with your stack ── -->
-      <section class="section" id="stack">
-        <div class="container">
-          <div class="section-head">
-            <div class="eyebrow"><span class="idx">04</span> Integrations</div>
-            <h2 class="section-title">Works with your stack.</h2>
-            <p class="section-sub">A library, not a platform. It composes with the providers, protocols, and servers already in your backend.</p>
-          </div>
-          <div class="stack-grid">
-            {STACK.map((s) => (
-              <div class="stack-tile">
-                <div>
-                  <div class="stack-name">{s.name}</div>
-                  <div class="stack-note">{s.note}</div>
-                </div>
-                <div class="stack-count">{s.count}</div>
-              </div>
             ))}
           </div>
         </div>
