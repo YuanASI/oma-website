@@ -23,6 +23,14 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'Open Multi-Agent',
+			// Brand mark in the docs header — light/dark variants mirror the landing
+			// nav (warm-black-body mark on the light canvas, bone-body on dark).
+			// replacesTitle stays false so the "Open Multi-Agent" wordmark sits beside it.
+			logo: {
+				light: './src/assets/logo-mark-light.svg',
+				dark: './src/assets/logo-mark-dark.svg',
+				alt: 'Open Multi-Agent',
+			},
 			description:
 				'TypeScript-native multi-agent orchestration. From a goal to a task DAG, automatically — three runtime dependencies, runs anywhere Node.js runs.',
 			// Code blocks use the OMA syntax palette (blue/emerald/amber/muted) to
