@@ -132,6 +132,7 @@ Reference:
 - Tool configuration: https://open-multi-agent.com/reference/tool-configuration/
 - Observability: https://open-multi-agent.com/reference/observability/
 - Shared memory: https://open-multi-agent.com/reference/shared-memory/
+- Checkpoint & resume: https://open-multi-agent.com/reference/checkpoint/
 - Context management: https://open-multi-agent.com/reference/context-management/
 - Consensus: https://open-multi-agent.com/reference/consensus/
 - Model routing: https://open-multi-agent.com/reference/model-routing/
