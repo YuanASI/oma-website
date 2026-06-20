@@ -1,6 +1,6 @@
 ---
 title: "Adding Multi-Agent Orchestration to a Vercel AI SDK App"
-description: "I hit a wall recently. I had a working AI SDK app -- streamText, useChat, the whole thing -- and then..."
+description: "Add multi-agent orchestration to an existing Vercel AI SDK app: the AI SDK streams tokens and talks to models while open-multi-agent's runTeam() decomposes the goal and coordinates the agents — sharing a single Next.js API route."
 pubDate: 2026-04-15
 tags: ["ai","nextjs","webdev","typescript"]
 devtoUrl: "https://dev.to/jackchenme/adding-multi-agent-orchestration-to-a-vercel-ai-sdk-app-4536"
@@ -285,8 +285,8 @@ The OMA orchestration phase takes 30-60 seconds (coordinator planning + two agen
 
 
 
-![The streamed article output produced by the researcher and writer agents](/blog/vercel-ai-sdk-2.png)
-![The streamed article output produced by the researcher and writer agents](/blog/vercel-ai-sdk-3.png)
+![The streamed article output produced by the researcher and writer agents — its title, introduction, and opening sections](/blog/vercel-ai-sdk-2.png)
+![The same article scrolled down to its later sections and conclusion](/blog/vercel-ai-sdk-3.png)
 
 
 One gotcha: `@ai-sdk/openai` v2 defaults to OpenAI's new Responses API (`/responses` endpoint). If your provider doesn't support it (most don't yet), use `@ai-sdk/openai-compatible` instead, or call `provider.chat('model-name')` explicitly rather than `provider('model-name')`. Burned about 20 minutes on this.

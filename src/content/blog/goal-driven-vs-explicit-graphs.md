@@ -1,6 +1,6 @@
 ---
 title: "Goal-Driven Agent Orchestration vs Explicit Graphs: A TypeScript Framework Taxonomy"
-description: "Most multi-agent framework reviews compare features. This post argues you should compare a different..."
+description: "Most multi-agent framework reviews compare features. This post compares a different axis: where the framework places the decomposition cost. Goal-first frameworks pay it at runtime in tokens; graph-first frameworks pay it at design time in code."
 pubDate: 2026-06-03
 tags: ["typescript","ai"]
 devtoUrl: "https://dev.to/jackchenme/goal-driven-agent-orchestration-vs-explicit-graphs-a-typescript-framework-taxonomy-6i3"
