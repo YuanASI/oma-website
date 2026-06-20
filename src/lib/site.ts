@@ -28,7 +28,10 @@ export function ghApiHeaders(): Record<string, string> {
 }
 
 export async function ghStats() {
-  const fallback = { stars: 6396, forks: 2391, contributors: 43 };
+  // latestRelease fallback is the last-known tag — like the counts, the displayed
+  // value is refetched on every deploy (red-line §7); the literal here is only the
+  // offline floor, never the claim.
+  const fallback = { stars: 6396, forks: 2391, contributors: 43, latestRelease: 'v1.8.0' };
   const headers = ghApiHeaders();
   try {
     const r = await fetch('https://api.github.com/repos/open-multi-agent/open-multi-agent', { headers });
@@ -40,10 +43,19 @@ export async function ghStats() {
       const m = (cr.headers.get('link') || '').match(/[?&]page=(\d+)>;\s*rel="last"/);
       if (m) contributors = parseInt(m[1], 10);
     } catch { /* keep fallback */ }
+    let latestRelease = fallback.latestRelease;
+    try {
+      const rel = await fetch('https://api.github.com/repos/open-multi-agent/open-multi-agent/releases/latest', { headers });
+      if (rel.ok) {
+        const rj = await rel.json();
+        if (rj.tag_name) latestRelease = rj.tag_name;
+      }
+    } catch { /* keep fallback */ }
     return {
       stars: j.stargazers_count ?? fallback.stars,
       forks: j.forks_count ?? fallback.forks,
       contributors,
+      latestRelease,
     };
   } catch {
     return fallback;
