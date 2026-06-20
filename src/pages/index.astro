@@ -352,13 +352,15 @@ const jsonLd = {
           </div>
           <div class="build-grid">
             {BUILDS.map((b) => (
-              <Card padding="lg" interactive class="build-card">
-                <div class="build-scenario">{b.scenario}</div>
-                <div class="build-title">{b.title}</div>
-                <p class="build-desc">{b.desc}</p>
-                <div class="build-outcome"><span class="arrow">▸</span><span>{b.outcome}</span></div>
-                <div class="build-foot"><a class="text-link" href={b.code} target="_blank" rel="noreferrer"><span>see code</span><span class="arrow">→</span></a></div>
-              </Card>
+              <a class="case-link" href={b.code} target="_blank" rel="noreferrer" style="text-decoration:none;">
+                <Card padding="lg" interactive class="build-card">
+                  <div class="build-scenario">{b.scenario}</div>
+                  <div class="build-title">{b.title}</div>
+                  <p class="build-desc">{b.desc}</p>
+                  <div class="build-outcome"><span class="arrow">▸</span><span>{b.outcome}</span></div>
+                  <div class="build-foot"><span class="text-link"><span>see code</span><span class="arrow">→</span></span></div>
+                </Card>
+              </a>
             ))}
           </div>
         </div>
