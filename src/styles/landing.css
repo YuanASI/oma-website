@@ -164,6 +164,9 @@ a { color: inherit; }
   min-width: 78px; text-align: center;
 }
 .cmd.copied .copy { color: var(--oma-accent); border-color: var(--oma-accent-line); }
+/* bg-3 is dark-first (a raised well on near-black); in light mode it inverts to the
+   darkest warm surface and reads as a muddy tan for a standalone CTA — drop to bg-1. */
+:root[data-theme='light'] .cmd { background: var(--oma-bg-1); }
 .text-link {
   display: inline-flex; align-items: center; gap: 7px; text-decoration: none;
   font-family: var(--font-mono); font-size: 14px; color: var(--oma-fg-1);
