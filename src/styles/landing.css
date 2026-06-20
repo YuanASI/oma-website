@@ -166,6 +166,11 @@ a { color: inherit; }
 .text-link:hover { color: var(--oma-fg-0); }
 .text-link .arrow { color: var(--oma-fg-2); transition: transform var(--duration-base) var(--ease-out); }
 .text-link:hover .arrow { transform: translateX(3px); color: var(--oma-accent); }
+/* Whole-card hover: cookbook/use-case cards wrap the Card in a .case-link, so the
+   see-code affordance must light up when hovering anywhere on the card, not just
+   the text itself (the inner link is a <span>, the whole card is the anchor). */
+.case-link:hover .text-link { color: var(--oma-fg-0); }
+.case-link:hover .text-link .arrow { transform: translateX(3px); color: var(--oma-accent); }
 
 /* ── Hero right visual ── */
 .io-panel {
@@ -314,8 +319,8 @@ a { color: inherit; }
    the footer/outcome to the bottom (margin-top:auto) — keeps see-code and the
    outcome callout on one baseline across cards whatever the description length.
    .cases-grid is shared by the landing proof cases and the /showcase page. */
-.cases-grid > .case-link { display: flex; }
-.cases-grid .case-link > .ds-card { flex: 1; display: flex; flex-direction: column; }
+.cases-grid > .case-link, .build-grid > .case-link { display: flex; }
+.cases-grid .case-link > .ds-card, .build-grid .case-link > .ds-card { flex: 1; display: flex; flex-direction: column; }
 .case-foot { margin-top: auto; }
 .build-card { display: flex; flex-direction: column; }
 .build-outcome { margin-top: auto; }
