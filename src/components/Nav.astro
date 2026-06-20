@@ -56,6 +56,8 @@ const { current = 'home', starsK } = Astro.props;
   toggle?.addEventListener('click', () => {
     const open = links?.classList.toggle('open');
     toggle.textContent = open ? '✕' : '≡';
+    // Lock background scroll while the mobile menu is open.
+    document.body.style.overflow = open ? 'hidden' : '';
   });
 
   // Theme toggle — flips <html data-theme> and persists to the SAME key Starlight
