@@ -17,13 +17,13 @@ A quick router; the mechanism breakdown follows.
 
 | If you need | Pick |
 |-------------|------|
-| Fixed production topology with mature checkpointing | LangGraph JS |
+| Fixed production topology with a mature persistence + time-travel ecosystem | LangGraph JS |
 | Explicit Supervisor + hand-wired workflows | Mastra |
 | Python stack with mature multi-agent ecosystem | CrewAI |
 | AI app toolkit with broad model-provider support | Vercel AI SDK |
 | **TypeScript, goal to result with auto task decomposition** | **open-multi-agent** |
 
-**vs. LangGraph JS.** LangGraph compiles a declarative graph (nodes, edges, conditional routing) into an invokable. `open-multi-agent` runs a Coordinator that decomposes the goal into a task DAG at runtime, then auto-parallelizes independents. Same end (orchestrated execution), opposite directions: LangGraph is graph-first, OMA is goal-first.
+**vs. LangGraph JS.** LangGraph compiles a declarative graph (nodes, edges, conditional routing) into an invokable; OMA runs a Coordinator that decomposes the goal into a task DAG at runtime and auto-parallelizes independents. Same end, opposite directions: graph-first vs goal-first. Both checkpoint and resume — OMA snapshots completed tasks over any `MemoryStore` and resumes after a crash with `restore()` — but LangGraph's persistence ecosystem is deeper, so reach for it when time-travel over durable state history is the deciding factor.
 
 **vs. Mastra.** Both are TypeScript-native. Mastra's Supervisor pattern requires you to wire agents and workflows by hand; OMA's Coordinator does the wiring at runtime from the goal string. If the workflow is known up front, Mastra's explicitness pays off. If you'd rather not enumerate every step, OMA's `runTeam(team, goal)` is one call.
 
