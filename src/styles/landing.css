@@ -305,6 +305,35 @@ a { color: inherit; }
 .stack-note { font-size: 12px; line-height: 1.45; color: var(--oma-fg-2); }
 .stack-count { font-family: var(--font-mono); font-size: 11px; color: var(--oma-accent); letter-spacing: 0.04em; }
 
+/* ── Production-grade control ── */
+.control-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 48px; }
+.control-col {
+  display: flex; flex-direction: column;
+  padding: 22px; background: var(--oma-bg-1);
+  border: 1px solid var(--border-default); border-radius: var(--radius-md);
+}
+.control-col-head {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+  color: var(--oma-accent); margin: 0;
+}
+.control-items { display: flex; flex-direction: column; margin-top: 8px; }
+.control-item { padding: 13px 0; border-top: 1px solid var(--border-subtle); }
+.control-item:first-child { border-top: none; padding-top: 2px; }
+.control-item-name { font-size: 15px; font-weight: 600; color: var(--oma-fg-0); letter-spacing: -0.01em; }
+.control-item-desc { font-size: 13px; line-height: 1.55; color: var(--oma-fg-2); margin: 5px 0 0; }
+.control-col .text-link { margin-top: auto; padding-top: 16px; }
+.dashboard-shot { margin: 0; }
+.dashboard-shot img {
+  display: block; width: 100%; height: auto; aspect-ratio: 1600 / 760;
+  border: 1px solid var(--border-default); border-radius: var(--radius-lg);
+  background: var(--oma-bg-1); box-shadow: var(--shadow-md);
+}
+.dashboard-shot figcaption {
+  font-size: 13px; line-height: 1.6; color: var(--oma-fg-2);
+  margin-top: 16px; max-width: 760px;
+}
+
 /* ── FAQ ── */
 .faq-list { border-top: 1px solid var(--border-subtle); max-width: 860px; }
 .faq-item { border-bottom: 1px solid var(--border-subtle); }
@@ -359,7 +388,7 @@ a { color: inherit; }
   .stats-row { grid-template-columns: repeat(2, 1fr); }
   .stat:nth-child(2) { border-right: none; }
   .stat { border-bottom: 1px solid var(--border-subtle); }
-  .cases-grid, .build-grid { grid-template-columns: 1fr; }
+  .cases-grid, .build-grid, .control-grid { grid-template-columns: 1fr; }
   .stack-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 640px) {

@@ -99,11 +99,51 @@ const BUILDS = [
 ];
 
 const STACK = [
-  { name: 'Providers', note: 'Anthropic, OpenAI, Ollama, and self-hosted endpoints', count: '13 built-in' },
+  { name: 'Providers', note: 'Anthropic, Gemini, OpenAI, Bedrock, Azure, DeepSeek — or any OpenAI-compatible endpoint', count: '13 built-in' },
   { name: 'MCP', note: 'Connect Model Context Protocol servers as tools', count: 'native' },
-  { name: 'Vercel AI SDK', note: 'Interop with the streaming primitives you know', count: 'compatible' },
+  { name: 'Vercel AI SDK', note: 'Bridge to 60+ AI SDK providers and hosts', count: 'compatible' },
   { name: 'Express', note: 'Mount runTeam() behind a route handler', count: 'drop-in' },
   { name: 'Any Node.js', note: 'No daemon, no sidecar — three runtime deps', count: 'Node 18+' },
+];
+
+// ── Production-grade control — reliability / cost / safety knobs, all real
+//    AgentConfig / OrchestratorConfig options (see Production Checklist + the
+//    Checkpoint & resume reference). E (approval gates + plan replay) folds in
+//    under Safety; the three run modes stay in the docs, not on the landing. ──
+const CONTROLS = [
+  {
+    label: 'Reliability',
+    href: '/guides/production-checklist/',
+    cta: 'Production checklist',
+    items: [
+      { name: 'Retries with backoff', desc: 'Per-task maxRetries, retryDelayMs, and an exponential retryBackoff multiplier.' },
+      { name: 'Timeouts', desc: 'timeoutMs per agent aborts a run that hangs — common with local models.' },
+      { name: 'Loop detection', desc: 'loopDetection terminates an agent caught repeating itself.' },
+      { name: 'Checkpoint & resume', desc: 'Snapshot after each task; restore() resumes after a crash, skipping completed work.' },
+    ],
+  },
+  {
+    label: 'Cost',
+    href: '/reference/model-routing/',
+    cta: 'Model routing',
+    items: [
+      { name: 'Hard token budget', desc: 'maxTokenBudget caps total spend across the run — delegation and consensus included.' },
+      { name: 'Model routing', desc: 'A flagship model plans; cheaper models run the leaves, routed by phase, role, or priority.' },
+      { name: 'Context strategies', desc: 'sliding-window, summarize, or compact keep long runs under the token ceiling.' },
+      { name: 'Tool-output limits', desc: 'Cap and compress tool results before they re-enter the prompt.' },
+    ],
+  },
+  {
+    label: 'Safety & control',
+    href: '/guides/orchestration-controls/',
+    cta: 'Orchestration controls',
+    items: [
+      { name: 'Default-deny tools', desc: 'An agent gets only the tools it lists; built-ins are opt-in, MCP under the same contract.' },
+      { name: 'Filesystem sandbox', desc: 'Tools are scoped to an .agent-workspace directory unless you widen it on purpose.' },
+      { name: 'Secret redaction', desc: 'API keys, tokens, and Authorization headers are stripped from traces and the dashboard — on by default.' },
+      { name: 'Approval gates & plan replay', desc: 'onPlanReady / onApproval gate execution; pin a plan and runFromPlan replays the exact graph.' },
+    ],
+  },
 ];
 
 const FAQS = [
@@ -313,12 +353,43 @@ const jsonLd = {
         </div>
       </section>
 
-      <!-- ── 5. Production proof ── -->
+      <!-- ── 5. Production-grade control (reliability / cost / safety) ── -->
+      <section class="section" id="control">
+        <div class="container">
+          <div class="section-head">
+            <div class="eyebrow"><span class="idx">04</span> Production</div>
+            <h2 class="section-title">Built for production, not demos.</h2>
+            <p class="section-sub">The controls that keep a long multi-agent run inside its budget, recover it from failure, and keep tool access on a leash — opt-in, and documented.</p>
+          </div>
+          <div class="control-grid">
+            {CONTROLS.map((g) => (
+              <div class="control-col">
+                <div class="control-col-head">{g.label}</div>
+                <div class="control-items">
+                  {g.items.map((it) => (
+                    <div class="control-item">
+                      <div class="control-item-name">{it.name}</div>
+                      <p class="control-item-desc">{it.desc}</p>
+                    </div>
+                  ))}
+                </div>
+                <a class="text-link" href={g.href}><span>{g.cta}</span><span class="arrow">→</span></a>
+              </div>
+            ))}
+          </div>
+          <figure class="dashboard-shot">
+            <img src="/demo-dashboard.gif" width="1600" height="760" loading="lazy" decoding="async" alt="Post-run dashboard replaying a completed team run: the task DAG with per-node assignee, status, token breakdown, and the agent output log." />
+            <figcaption>Every run can render an auditable dashboard — the task DAG, per-node assignee and status, token breakdown, and the agent output log. <a class="text-link" href="/reference/observability/"><span>Observability</span><span class="arrow">→</span></a></figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ── 6. Production proof ── -->
       <section class="section" id="proof">
         <div class="container">
           <div class="proof-head">
             <div class="section-head" style="margin-bottom:0;">
-              <div class="eyebrow"><span class="idx">04</span> Adoption</div>
+              <div class="eyebrow"><span class="idx">05</span> Adoption</div>
               <h2 class="section-title">Already running in the wild.</h2>
               <p class="section-sub">Open source and MIT-licensed, with a growing ecosystem of projects and integrations. Star, fork, and contributor counts read straight from the repo at build time.</p>
             </div>
@@ -349,11 +420,11 @@ const jsonLd = {
         </div>
       </section>
 
-      <!-- ── 6. FAQ ── -->
+      <!-- ── 7. FAQ ── -->
       <section class="section" id="faq">
         <div class="container">
           <div class="section-head">
-            <div class="eyebrow"><span class="idx">05</span> FAQ</div>
+            <div class="eyebrow"><span class="idx">06</span> FAQ</div>
             <h2 class="section-title">Mechanism, not marketing.</h2>
             <p class="section-sub">How the runtime actually behaves. The full reference lives in the docs.</p>
           </div>
@@ -373,7 +444,7 @@ const jsonLd = {
         </div>
       </section>
 
-      <!-- ── 7. Final CTA ── -->
+      <!-- ── 8. Final CTA ── -->
       <section class="section" id="start" style="border-top:1px solid var(--border-subtle);">
         <div class="container cta-final">
           <div class="eyebrow" style="justify-content:center;"><span class="idx">//</span> get started</div>
