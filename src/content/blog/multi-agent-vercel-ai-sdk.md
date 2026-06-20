@@ -329,8 +329,8 @@ OMA's strengths are orchestration-specific: automatic task decomposition, depend
 The working code is in the open-multi-agent repo:
 
 
-[github.com/open-multi-agent/open-multi-agent/tree/main/examples/with-vercel-ai-sdk](https://github.com/open-multi-agent/open-multi-agent/tree/main/examples/with-vercel-ai-sdk)
+[github.com/open-multi-agent/open-multi-agent/tree/main/packages/core/examples/integrations/with-vercel-ai-sdk](https://github.com/open-multi-agent/open-multi-agent/tree/main/packages/core/examples/integrations/with-vercel-ai-sdk)
 
 Clone it, set your API key, `npm install && npm run dev`.
 
-If multi-agent orchestration is new to you, the [single-agent example](https://github.com/open-multi-agent/open-multi-agent/blob/main/examples/01-single-agent.ts) might be a better starting point.
+If multi-agent orchestration is new to you, the [single-agent example](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/basics/single-agent.ts) might be a better starting point.
