@@ -23,7 +23,7 @@ export const SHOWCASE: ShowcaseEntry[] = [
   {
     pkg: 'temodar-agent', by: 'by xeloxa', href: 'https://github.com/xeloxa/temodar-agent',
     desc: 'WordPress security analysis platform. Runs OMA built-in tools (bash, file ops, grep) inside a Docker runtime.',
-    tone: 'accent', tag: 'security', status: 'in production', kind: 'built-with', featured: true,
+    tone: 'accent', tag: 'security', status: 'on Docker Hub', kind: 'built-with', featured: true,
   },
   {
     pkg: 'PR-Copilot', by: 'by kidoom', href: 'https://github.com/kidoom/PR-Copilot',
@@ -32,8 +32,8 @@ export const SHOWCASE: ShowcaseEntry[] = [
   },
   {
     pkg: 'Engram', by: 'engram-memory.com', href: 'https://github.com/Agentscreator/engram-memory',
-    desc: '“Git for AI memory.” Syncs knowledge across agents instantly and flags conflicts.',
-    tone: 'info', tag: 'memory', status: 'integration', kind: 'integration', featured: true,
+    desc: '“Git for AI memory” — shared memory across agents with conflict detection, via an OMA MemoryStore + ToolRegistry toolkit.',
+    tone: 'info', tag: 'memory', status: 'toolkit', kind: 'integration', featured: true,
   },
   {
     pkg: '@agentsonar/oma', by: 'agentsonar/agentsonar-oma', href: 'https://github.com/agentsonar/agentsonar-oma',
