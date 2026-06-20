@@ -51,8 +51,26 @@ a { color: inherit; }
   text-decoration: none; transition: color var(--duration-fast) var(--ease-out);
 }
 .nav-link:hover { color: var(--oma-fg-0); }
-.nav-ghost { display: flex; align-items: center; gap: 18px; }
+/* Active page gets a quiet lift from fg-1 to fg-0. Footer links carry no
+   aria-current, so this only marks the current page in the top nav. */
+.nav-link[aria-current='page'] { color: var(--oma-fg-0); }
+.nav-ghost { display: flex; align-items: center; gap: 12px; }
 .nav-mobile-toggle { display: none; }
+
+/* GitHub moved into the right-side ghost cluster as an icon + star pill, so the
+   main nav can carry the in-site pages (Docs/Architecture/Examples/…). Matches
+   the theme toggle's height/border so the two sit as a pair. */
+.nav-github {
+  display: inline-flex; align-items: center; gap: 7px; flex: none;
+  height: 34px; padding: 0 11px;
+  background: none; border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm); color: var(--oma-fg-1);
+  font-family: var(--font-mono); font-size: 13px; text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
+}
+.nav-github:hover { color: var(--oma-fg-0); border-color: var(--border-strong); }
+.nav-github svg { width: 16px; height: 16px; }
+.nav-github .nav-github-stars { color: var(--oma-fg-2); }
 
 /* Theme toggle (shown on desktop + mobile). The visible icon reflects the
    current theme — moon in dark, sun in light. */
@@ -413,6 +431,10 @@ a { color: inherit; }
   .section { padding: 60px 0; }
   .section-title { font-size: 32px; }
   .nav-links { display: none; }
+  /* Collapse the GitHub pill to an icon-only square (like the theme toggle) so
+     the brand wordmark keeps its single line on narrow screens. */
+  .nav-github { width: 34px; padding: 0; justify-content: center; }
+  .nav-github .nav-github-stars { display: none; }
   .nav-links.open {
     display: flex; flex-direction: column; align-items: flex-start; gap: 18px;
     position: absolute; top: 64px; left: 0; right: 0; z-index: 60;
