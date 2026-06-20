@@ -16,12 +16,35 @@
   --sl-color-accent-high: #6ee7b7; /* light emerald — hover / on-dark accent text */
 }
 
-/* Light mode stays available (a full warm light palette is a later effort,
-   coordinated with the landing). Until then, deepen the accent so links keep
-   readable contrast on a light background. */
+/* Light mode — the warm OMA palette mapped onto Starlight, mirroring the dark
+   block below (this is the "full warm light palette, coordinated with the
+   landing" the tokens promise). The --oma-* values flip in tokens.css under
+   [data-theme='light']; here we re-point Starlight's vars at them and invert the
+   gray ramp (gray-1 darkest → gray-6 lightest, as Starlight's light mode wants). */
 :root[data-theme='light'] {
+  --sl-color-accent-low: #d1fae5;  /* light emerald tint — subtle fills / active nav */
   --sl-color-accent: var(--oma-accent-deep);
+  --sl-color-accent-high: var(--oma-accent-deep); /* deep emerald — accent text on light */
   --sl-color-text-accent: var(--oma-accent-deep);
+
+  --sl-color-white: var(--oma-fg-0);     /* near-black — max-contrast text */
+  --sl-color-gray-1: var(--oma-fg-1);
+  --sl-color-gray-2: var(--oma-fg-2);
+  --sl-color-gray-3: var(--oma-fg-3);
+  --sl-color-gray-4: var(--oma-border-2);
+  --sl-color-gray-5: var(--oma-border-1);
+  --sl-color-gray-6: var(--oma-border-0);
+  --sl-color-black: var(--oma-bg-0);     /* warm off-white — page background */
+
+  --sl-color-bg: var(--oma-bg-0);
+  --sl-color-bg-nav: var(--oma-bg-1);
+  --sl-color-bg-sidebar: var(--oma-bg-0);
+  --sl-color-bg-inline-code: var(--oma-bg-2);
+  --sl-color-bg-gutter: var(--oma-bg-1);
+
+  --sl-color-hairline: var(--oma-border-0);
+  --sl-color-hairline-light: var(--oma-border-1);
+  --sl-color-hairline-shade: var(--oma-border-0);
 }
 
 /* Dark-first palette — the primary OMA experience. Starlight derives most
@@ -58,8 +81,9 @@
 }
 
 /* Dotted-grid backdrop on the main content area — the terminal-canvas texture
-   the landing uses, kept subtle so it never competes with prose. */
-:root[data-theme='dark'] .main-frame {
+   the landing uses, kept subtle so it never competes with prose. Theme-aware via
+   --grid-dot (light gets a dark dot), so it shows correctly in both modes. */
+.main-frame {
   background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
   background-size: var(--grid-size) var(--grid-size);
 }
