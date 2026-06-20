@@ -282,6 +282,16 @@ a { color: inherit; }
 .build-outcome .arrow { color: var(--oma-accent); flex: none; }
 .build-foot { margin-top: 18px; }
 
+/* Footer bottom-alignment: cards are grid-stretched to equal height, so push
+   the footer/outcome to the bottom (margin-top:auto) — keeps see-code and the
+   outcome callout on one baseline across cards whatever the description length.
+   .cases-grid is shared by the landing proof cases and the /showcase page. */
+.cases-grid > .case-link { display: flex; }
+.cases-grid .case-link > .ds-card { flex: 1; display: flex; flex-direction: column; }
+.case-foot { margin-top: auto; }
+.build-card { display: flex; flex-direction: column; }
+.build-outcome { margin-top: auto; }
+
 /* ── Works with stack ── */
 .stack-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
 .stack-tile {
