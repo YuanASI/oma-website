@@ -12,9 +12,11 @@ Open Multi-Agent (OMA) is an open-source (MIT) agent runtime, not a graph builde
 ## Capabilities
 
 - **Goal-driven coordinator**: you pass a goal, not a graph. A coordinator agent decomposes it into a task DAG, parallelizes independent nodes, and synthesizes the result.
-- **Mix any model in one team**: each agent names its own model — Anthropic, OpenAI, a local Ollama, or a self-hosted endpoint — and they cooperate inside a single team.
+- **Mix any model in one team**: each agent names its own model — Anthropic, Gemini, OpenAI, Bedrock, Azure, DeepSeek, or any OpenAI-compatible endpoint (13 built-in) — and they cooperate inside a single team.
 - **Tools and MCP, default-deny**: an agent gets only the tools it lists. Model Context Protocol servers expose external systems under the same opt-in contract.
 - **Streaming and structured output**: stream tokens and node-state transitions as the DAG fills, or await a typed, schema-validated object at the end of the run.
+- **Cross-provider reasoning**: one thinking config maps to Anthropic thinking, Gemini thinkingConfig, and OpenAI reasoning_effort; reasoning streams as events, with opt-in preservation across a provider switch.
+- **Built for production**: stay in the loop (onPlanReady / onApproval gates, runConsensus proposer→judge, loop detection), control spend (modelRouting, maxTokenBudget hard ceiling), and inspect any run (onTrace, a self-contained HTML dashboard, checkpoint/resume, best-effort secret redaction).
 
 ## Docs
 
