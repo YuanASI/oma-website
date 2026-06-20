@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1280 900" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <!-- background grid -->
+          <defs>
+            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1F1D1A" stroke-width="0.5"/>
+            </pattern>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="#A09A8E"/>
+            </marker>
+            <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="#10B981"/>
+            </marker>
+          </defs>
+          <rect width="1280" height="900" fill="url(#grid)" opacity="0.5"/>
+
+          <!-- ===== LAYER 1: ORCHESTRATOR ===== -->
+          <!-- big rounded rect, accent border -->
+          <rect x="240" y="60" width="800" height="120" rx="6" fill="#131210" stroke="#10B981" stroke-width="1.5"/>
+
+          <!-- mini logo on the left -->
+          <g transform="translate(280, 90)">
+            <path d="M 5 5 C 12 1, 24 1, 30 8 C 35 13, 36 23, 31 28 C 26 33, 16 32, 11 28 C 6 24, 5 17, 6 12 C 7 9, 8 7, 5 5 Z" fill="#F5F2EB" transform="scale(1.6)"/>
+            <ellipse cx="36" cy="26" rx="6" ry="9" fill="#10B981" transform="rotate(20 36 26)"/>
+            <circle cx="51" cy="20" r="2" fill="#10B981"/>
+          </g>
+
+          <text x="360" y="100" font-family="JetBrains Mono" font-size="11" fill="#10B981" letter-spacing="2">LAYER 01 · ENTRY</text>
+          <text x="360" y="125" font-family="JetBrains Mono" font-size="22" fill="#F5F2EB" font-weight="500">OpenMultiAgent</text>
+          <text x="360" y="148" font-family="JetBrains Mono" font-size="11" fill="#726C62">createTeam() · runTeam() · runTasks() · runAgent() · getStatus()</text>
+
+          <!-- arrow down to Team -->
+          <line x1="640" y1="180" x2="640" y2="220" stroke="#A09A8E" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <!-- ===== LAYER 2: TEAM ===== -->
+          <rect x="320" y="220" width="640" height="100" rx="6" fill="#131210" stroke="#F5F2EB" stroke-width="1.5"/>
+          <text x="340" y="248" font-family="JetBrains Mono" font-size="11" fill="#A09A8E" letter-spacing="2">LAYER 02 · COORDINATION</text>
+          <text x="340" y="272" font-family="JetBrains Mono" font-size="20" fill="#F5F2EB" font-weight="500">Team</text>
+          <text x="340" y="294" font-family="JetBrains Mono" font-size="11" fill="#726C62">AgentConfig[] · MessageBus · TaskQueue · SharedMemory</text>
+
+          <!-- arrows down to AgentPool & TaskQueue -->
+          <line x1="540" y1="320" x2="540" y2="360" stroke="#A09A8E" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <line x1="740" y1="320" x2="740" y2="360" stroke="#A09A8E" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <!-- ===== LAYER 3a: AGENT POOL ===== -->
+          <rect x="380" y="360" width="320" height="100" rx="6" fill="#131210" stroke="#F5F2EB" stroke-width="1.5"/>
+          <text x="400" y="388" font-family="JetBrains Mono" font-size="11" fill="#A09A8E" letter-spacing="2">LAYER 03 · CONCURRENCY</text>
+          <text x="400" y="412" font-family="JetBrains Mono" font-size="18" fill="#F5F2EB" font-weight="500">AgentPool</text>
+          <text x="400" y="432" font-family="JetBrains Mono" font-size="11" fill="#726C62">Semaphore · runParallel()</text>
+
+          <!-- ===== LAYER 3b: TASK QUEUE ===== -->
+          <rect x="720" y="360" width="320" height="100" rx="6" fill="#131210" stroke="#F5F2EB" stroke-width="1.5"/>
+          <text x="740" y="388" font-family="JetBrains Mono" font-size="11" fill="#A09A8E" letter-spacing="2">LAYER 03 · SCHEDULING</text>
+          <text x="740" y="412" font-family="JetBrains Mono" font-size="18" fill="#F5F2EB" font-weight="500">TaskQueue</text>
+          <text x="740" y="432" font-family="Geist" font-size="12" fill="#A09A8E">Dependency graph.</text>
+          <text x="740" y="450" font-family="JetBrains Mono" font-size="11" fill="#726C62">auto unblock · cascade failure</text>
+
+          <!-- arrow from pool down to Agent -->
+          <line x1="540" y1="460" x2="540" y2="510" stroke="#A09A8E" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <!-- ===== LAYER 4: AGENT ===== -->
+          <rect x="380" y="510" width="320" height="120" rx="6" fill="#131210" stroke="#F5F2EB" stroke-width="1.5"/>
+          <text x="400" y="538" font-family="JetBrains Mono" font-size="11" fill="#A09A8E" letter-spacing="2">LAYER 04 · UNIT OF WORK</text>
+          <text x="400" y="562" font-family="JetBrains Mono" font-size="18" fill="#F5F2EB" font-weight="500">Agent</text>
+          <text x="400" y="584" font-family="JetBrains Mono" font-size="11" fill="#726C62">run() · prompt() · stream()</text>
+
+          <!-- horizontal arrow from Agent to LLMAdapter -->
+          <line x1="700" y1="570" x2="780" y2="570" stroke="#A09A8E" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <!-- arrow down to AgentRunner -->
+          <line x1="540" y1="630" x2="540" y2="680" stroke="#A09A8E" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <!-- ===== LAYER 5a: AGENT RUNNER ===== -->
+          <rect x="380" y="680" width="320" height="100" rx="6" fill="#131210" stroke="#F5F2EB" stroke-width="1.5"/>
+          <text x="400" y="708" font-family="JetBrains Mono" font-size="11" fill="#A09A8E" letter-spacing="2">LAYER 05 · LOOP</text>
+          <text x="400" y="732" font-family="JetBrains Mono" font-size="16" fill="#F5F2EB" font-weight="500">AgentRunner</text>
+          <text x="400" y="752" font-family="JetBrains Mono" font-size="11" fill="#726C62">conversation loop · tool dispatch</text>
+
+          <!-- arrow right to ToolRegistry -->
+          <line x1="700" y1="730" x2="780" y2="730" stroke="#A09A8E" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <!-- ===== LAYER 5b: LLM ADAPTER (right column) ===== -->
+          <rect x="780" y="510" width="280" height="120" rx="6" fill="#131210" stroke="#A09A8E" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <text x="800" y="538" font-family="JetBrains Mono" font-size="11" fill="#A09A8E" letter-spacing="2">INTERFACE · MULTIPLE IMPLEMENTATIONS</text>
+          <text x="800" y="562" font-family="JetBrains Mono" font-size="16" fill="#F5F2EB" font-weight="500">LLMAdapter</text>
+          <text x="800" y="586" font-family="JetBrains Mono" font-size="10" fill="#726C62">AnthropicAdapter · OpenAIAdapter · AzureOpenAIAdapter</text>
+          <text x="800" y="602" font-family="JetBrains Mono" font-size="10" fill="#726C62">CopilotAdapter · GeminiAdapter · GrokAdapter</text>
+          <text x="800" y="618" font-family="JetBrains Mono" font-size="10" fill="#726C62">MiniMaxAdapter · DeepSeekAdapter · QiniuAdapter</text>
+
+          <!-- ===== LAYER 5c: TOOL REGISTRY (right column) ===== -->
+          <rect x="780" y="680" width="280" height="100" rx="6" fill="#131210" stroke="#A09A8E" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <text x="800" y="708" font-family="JetBrains Mono" font-size="11" fill="#A09A8E" letter-spacing="2">INTERFACE · OPEN REGISTRATION</text>
+          <text x="800" y="732" font-family="JetBrains Mono" font-size="16" fill="#F5F2EB" font-weight="500">ToolRegistry</text>
+          <text x="800" y="752" font-family="JetBrains Mono" font-size="11" fill="#726C62">defineTool() · 6 built-in tools</text>
+
+          <!-- ===== Footer label ===== -->
+          <line x1="80" y1="830" x2="1200" y2="830" stroke="#1F1D1A" stroke-width="1"/>
+          <text x="80" y="855" font-family="JetBrains Mono" font-size="11" fill="#726C62" letter-spacing="2">OPEN-MULTI-AGENT · ARCHITECTURE</text>
+          <text x="1200" y="855" font-family="JetBrains Mono" font-size="11" fill="#10B981" letter-spacing="2" text-anchor="end">v1.8.0</text>
+          <text x="80" y="876" font-family="JetBrains Mono" font-size="10" fill="#5A5751" letter-spacing="2">SOLID = CONCRETE TYPE · DASHED = INTERFACE WITH MULTIPLE IMPLEMENTATIONS · ACCENT BORDER = USER ENTRY POINT</text>
+        </svg>
