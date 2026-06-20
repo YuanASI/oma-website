@@ -37,6 +37,14 @@ Open Multi-Agent (OMA) is an open-source (MIT) agent runtime, not a graph builde
 - [Model routing](https://open-multi-agent.com/reference/model-routing/): opt-in deterministic policy that routes orchestration phases to different models by phase, agent, task role, priority, or leaf.
 - [CLI](https://open-multi-agent.com/reference/cli/): the JSON-first oma binary for shell and CI — commands, config files, output, and exit codes.
 
+## Blog
+
+- [Give Your TypeScript AI Agents Long-Term Memory with TencentDB-Agent-Memory](https://open-multi-agent.com/blog/agent-long-term-memory-tencentdb/): wiring OMA's MemoryStore to TencentDB-Agent-Memory for cross-run agent memory.
+- [Goal-Driven Agent Orchestration vs Explicit Graphs: A TypeScript Framework Taxonomy](https://open-multi-agent.com/blog/goal-driven-vs-explicit-graphs/): a taxonomy of TypeScript multi-agent frameworks — goal-driven orchestration vs explicit graphs.
+- [5 walls multi-agent frameworks hit](https://open-multi-agent.com/blog/multi-agent-framework-walls/): the engineering walls frameworks hit, with receipts from Mastra's .network() → Supervisor migration.
+- [How to Run a Mixed-Model AI Agent Team in TypeScript?](https://open-multi-agent.com/blog/mixed-model-agent-team/): a walkthrough from a single-model baseline to a mixed-provider agent team.
+- [Adding Multi-Agent Orchestration to a Vercel AI SDK App](https://open-multi-agent.com/blog/multi-agent-vercel-ai-sdk/): layering OMA orchestration onto an existing Vercel AI SDK app.
+
 ## Project
 
 - [GitHub repository](https://github.com/open-multi-agent/open-multi-agent): source, examples, and issues.
