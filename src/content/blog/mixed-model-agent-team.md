@@ -21,10 +21,10 @@ This post shows the alternative. Three agents, three different model tiers, one 
 
 The repository examples this post connects are:
 
-- [`examples/basics/multi-model-team.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/examples/basics/multi-model-team.ts): different hosted models per agent.
-- [`examples/providers/ollama.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/examples/providers/ollama.ts): Claude plus a local Ollama reviewer through an OpenAI-compatible `baseURL`.
-- [`examples/patterns/cost-tiered-pipeline.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/examples/patterns/cost-tiered-pipeline.ts): token usage and cost comparison across model tiers.
-- [`examples/providers/gemini.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/examples/providers/gemini.ts): Pro/Flash tiering inside one provider.
+- [`packages/core/examples/basics/multi-model-team.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/basics/multi-model-team.ts): different hosted models per agent.
+- [`packages/core/examples/providers/ollama.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/ollama.ts): Claude plus a local Ollama reviewer through an OpenAI-compatible `baseURL`.
+- [`packages/core/examples/patterns/cost-tiered-pipeline.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/cost-tiered-pipeline.ts): token usage and cost comparison across model tiers.
+- [`packages/core/examples/providers/gemini.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/gemini.ts): Pro/Flash tiering inside one provider.
 
 There is no separate companion repo for this post. The point is the pattern: per-agent model assignment is already a first-class field on `AgentConfig`.
 
@@ -197,7 +197,7 @@ Suppose your team runs the same three-agent task 100 times a day (real-world cad
 - Developer: 2.2K input, 2.1K output
 - Reviewer: 2.7K input, 0.5K output
 
-Use this as a representative shape, not a benchmark. Your numbers will differ; the math below shows how to do it. If you want to measure your own workload, start with [`examples/patterns/cost-tiered-pipeline.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/examples/patterns/cost-tiered-pipeline.ts).
+Use this as a representative shape, not a benchmark. Your numbers will differ; the math below shows how to do it. If you want to measure your own workload, start with [`packages/core/examples/patterns/cost-tiered-pipeline.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/cost-tiered-pipeline.ts).
 
 **All-Opus run (Step 1 baseline)** runs to about $0.15 per execution on the token shape above. At 100/day that is roughly $450/month.
 
@@ -223,7 +223,7 @@ The post would be useless if it told you to always mix. Here is the honest list 
 
 ## What the cookbook example looks like in mixed-model form
 
-open-multi-agent ships a [personalized interview simulator cookbook](https://github.com/open-multi-agent/open-multi-agent/blob/main/examples/cookbook/personalized-interview-simulator.ts) that runs three agents on Claude Sonnet 4.6: an interviewer, an observer, and a reporter. It is a nice match for the mixed-model pattern.
+open-multi-agent ships a [personalized interview simulator cookbook](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/cookbook/personalized-interview-simulator.ts) that runs three agents on Claude Sonnet 4.6: an interviewer, an observer, and a reporter. It is a nice match for the mixed-model pattern.
 
 The interviewer does deep, candidate-specific question generation across many turns. That role earns Opus.
 
@@ -331,7 +331,7 @@ Three takeaways:
 2. **Start with two providers, then add local.** Step 2 captures most of the savings with two API keys and zero infrastructure. Step 3 is incremental and depends on whether you can spare the local-model latency.
 3. **`onProgress` is the cheapest insurance you can buy.** Twenty lines of TypeScript turn token counts into dollar numbers per run. Without it, mixed-model teams silently regress and you find out from the bill.
 
-Start with the existing repo examples: [`multi-model-team`](https://github.com/open-multi-agent/open-multi-agent/blob/main/examples/basics/multi-model-team.ts), [`providers/ollama`](https://github.com/open-multi-agent/open-multi-agent/blob/main/examples/providers/ollama.ts), and [`cost-tiered-pipeline`](https://github.com/open-multi-agent/open-multi-agent/blob/main/examples/patterns/cost-tiered-pipeline.ts). Run the one closest to your workload, then add the per-agent ledger before you scale it up. If you push this pattern to production, I would like to hear what your real cost shape looks like. The reasonable model split is probably different from the examples, and the right answer is workload-specific.
+Start with the existing repo examples: [`multi-model-team`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/basics/multi-model-team.ts), [`providers/ollama`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/ollama.ts), and [`cost-tiered-pipeline`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/cost-tiered-pipeline.ts). Run the one closest to your workload, then add the per-agent ledger before you scale it up. If you push this pattern to production, I would like to hear what your real cost shape looks like. The reasonable model split is probably different from the examples, and the right answer is workload-specific.
 
 ---
 

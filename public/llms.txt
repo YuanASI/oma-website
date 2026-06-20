@@ -31,6 +31,7 @@ Open Multi-Agent (OMA) is an open-source (MIT) agent runtime, not a graph builde
 - [Tool configuration](https://open-multi-agent.com/reference/tool-configuration/): grant built-in tools (default-deny), presets and allowlists, the filesystem sandbox, custom tools, and MCP.
 - [Observability](https://open-multi-agent.com/reference/observability/): onProgress events, onTrace spans, and the static post-run dashboard.
 - [Shared memory](https://open-multi-agent.com/reference/shared-memory/): a namespaced key-value store shared across a team, in-process or via a custom MemoryStore backend.
+- [Checkpoint & resume](https://open-multi-agent.com/reference/checkpoint/): opt-in per-run snapshots over any MemoryStore — persist task progress and resume after a crash, abort, or restart with restore().
 - [Context management](https://open-multi-agent.com/reference/context-management/): keep long runs under the token ceiling with context strategies, tool-result compression, and cross-provider reasoning.
 - [Consensus](https://open-multi-agent.com/reference/consensus/): runConsensus proposer-to-judge verification, the per-task verify hook, and the shared token-budget invariant.
 - [Model routing](https://open-multi-agent.com/reference/model-routing/): opt-in deterministic policy that routes orchestration phases to different models by phase, agent, task role, priority, or leaf.
@@ -39,7 +40,7 @@ Open Multi-Agent (OMA) is an open-source (MIT) agent runtime, not a graph builde
 ## Project
 
 - [GitHub repository](https://github.com/open-multi-agent/open-multi-agent): source, examples, and issues.
-- [Examples (cookbook)](https://github.com/open-multi-agent/open-multi-agent/tree/main/examples): runnable multi-agent recipes — contract review, competitive monitoring, incident postmortem, and more.
+- [Examples (cookbook)](https://open-multi-agent.com/examples/): runnable multi-agent recipes — contract review, competitive monitoring, incident postmortem, and more.
 - [npm package](https://www.npmjs.com/package/@open-multi-agent/core)
 
 ## Optional
