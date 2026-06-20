@@ -31,6 +31,20 @@ export interface Example {
   href: string; // link to source on GitHub
 }
 
+// Static fallback for the /examples page when the build-time fetch fails (no
+// GITHUB_TOKEN / rate limit) and getExamples() returns null. A small curated
+// slice of the real cookbook — slugs and blurbs verified against
+// packages/core/examples/README.md so they match the live gallery — so the
+// page degrades to real, clickable recipes instead of an empty "go to GitHub"
+// dead end. Keep in sync if a cookbook entry is renamed/removed upstream.
+export const FALLBACK_EXAMPLES: Example[] = [
+  { name: 'contract-review-dag', title: 'Contract Review DAG', blurb: 'A 4-task DAG — extract, then a parallel compliance-check and summary, then notify — with step-level retry.', href: BLOB(`${ROOT}/cookbook/contract-review-dag.ts`) },
+  { name: 'incident-postmortem-dag', title: 'Incident Postmortem DAG', blurb: 'A 5-task DAG: three parallel root investigations feed a root-cause hypothesis and final postmortem synthesis.', href: BLOB(`${ROOT}/cookbook/incident-postmortem-dag.ts`) },
+  { name: 'competitive-monitoring', title: 'Competitive Monitoring', blurb: 'Parallel source monitoring, contradiction detection, and an aggregated intelligence report.', href: BLOB(`${ROOT}/cookbook/competitive-monitoring.ts`) },
+  { name: 'meeting-summarizer', title: 'Meeting Summarizer', blurb: 'Fan a transcript out into a summary, structured action items, and sentiment.', href: BLOB(`${ROOT}/cookbook/meeting-summarizer.ts`) },
+  { name: 'paper-replication-triage', title: 'Paper Replication Triage', blurb: 'Multi-source paper-replication triage with artifact discovery and a structured go/no-go plan.', href: BLOB(`${ROOT}/cookbook/paper-replication-triage.ts`) },
+];
+
 export interface ExamplesData {
   cookbook: Example[];
   apps: Example[];
