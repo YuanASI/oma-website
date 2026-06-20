@@ -102,15 +102,15 @@ const jsonLd = {
               </div>
               <div class="build-grid">
                 {ex.cookbook.map((e) => (
-                  <Card padding="lg" interactive>
-                    <div class="build-title">{e.title}</div>
-                    <p class="build-desc">{e.blurb}</p>
-                    <div class="build-foot">
-                      <a class="text-link" href={e.href} target="_blank" rel="noreferrer">
-                        <span>see source</span><span class="arrow">→</span>
-                      </a>
-                    </div>
-                  </Card>
+                  <a class="case-link" href={e.href} target="_blank" rel="noreferrer" style="text-decoration:none;">
+                    <Card padding="lg" interactive>
+                      <div class="build-title">{e.title}</div>
+                      <p class="build-desc">{e.blurb}</p>
+                      <div class="build-foot">
+                        <span class="text-link"><span>see source</span><span class="arrow">→</span></span>
+                      </div>
+                    </Card>
+                  </a>
                 ))}
               </div>
             </div>
@@ -265,15 +265,15 @@ const jsonLd = {
             </div>
             <div class="build-grid">
               {FALLBACK_EXAMPLES.map((e) => (
-                <Card padding="lg" interactive>
-                  <div class="build-title">{e.title}</div>
-                  <p class="build-desc">{e.blurb}</p>
-                  <div class="build-foot">
-                    <a class="text-link" href={e.href} target="_blank" rel="noreferrer">
-                      <span>see source</span><span class="arrow">→</span>
-                    </a>
-                  </div>
-                </Card>
+                <a class="case-link" href={e.href} target="_blank" rel="noreferrer" style="text-decoration:none;">
+                  <Card padding="lg" interactive>
+                    <div class="build-title">{e.title}</div>
+                    <p class="build-desc">{e.blurb}</p>
+                    <div class="build-foot">
+                      <span class="text-link"><span>see source</span><span class="arrow">→</span></span>
+                    </div>
+                  </Card>
+                </a>
               ))}
             </div>
             <p class="ex-foot">
