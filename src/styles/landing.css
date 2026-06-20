@@ -390,6 +390,8 @@ a { color: inherit; }
 .footer-bottom { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
 .footer-meta { font-family: var(--font-mono); font-size: 12px; color: var(--oma-fg-2); }
 .footer-meta .by { color: var(--oma-fg-1); }
+.footer-meta a.by { text-decoration: none; transition: color var(--duration-base) var(--ease-out); }
+.footer-meta a.by:hover { color: var(--oma-accent); }
 
 /* ── Responsive ── */
 @media (max-width: 920px) {

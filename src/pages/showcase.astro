@@ -72,7 +72,7 @@ const jsonLd = {
   <body>
     <Nav current="showcase" starsK={starsK} />
     <main>
-      <section class="section" id="top">
+      <section class="section sc-hero" id="top">
         <div class="container">
           <div class="section-head">
             <div class="eyebrow"><span class="idx">//</span> Showcase</div>
@@ -86,7 +86,7 @@ const jsonLd = {
         </div>
       </section>
 
-      <section class="section" id="built-with" style="padding-top:0;">
+      <section class="section" id="built-with">
         <div class="container">
           <div class="section-head">
             <div class="eyebrow"><span class="idx">01</span> Built with OMA</div>
@@ -137,5 +137,16 @@ const jsonLd = {
       </section>
     </main>
     <Footer />
+
+    <style>
+      /* Hero mirrors /examples (.ex-hero): the generic .section rhythm leaves a
+         too-large gap below the hero (104px padding + 48px section-head margin)
+         and the .section + .section rule draws a divider here. Tighten the
+         bottom, drop that divider, and give the first section the same 56px top
+         as .ex-first so /showcase and /examples open with identical spacing. */
+      .section.sc-hero { padding: 72px 0 8px; }
+      .sc-hero .section-head { margin-bottom: 0; }
+      .section.sc-hero + .section { border-top: none; padding-top: 56px; }
+    </style>
   </body>
 </html>
