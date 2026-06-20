@@ -84,6 +84,7 @@ export default defineConfig({
 						{ label: 'Tool configuration', slug: 'reference/tool-configuration' },
 						{ label: 'Observability', slug: 'reference/observability' },
 						{ label: 'Shared memory', slug: 'reference/shared-memory' },
+						{ label: 'Checkpoint & resume', slug: 'reference/checkpoint' },
 						{ label: 'Context management', slug: 'reference/context-management' },
 						{ label: 'Consensus', slug: 'reference/consensus' },
 						{ label: 'Model routing', slug: 'reference/model-routing' },

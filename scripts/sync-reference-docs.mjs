@@ -24,8 +24,9 @@ const REFDIR = 'src/content/docs/reference';
 
 // Vendored reference files ↔ framework `docs/<name>.md`. Only these sync.
 const FILES = [
-  'cli', 'consensus', 'context-management', 'model-routing', 'observability',
-  'providers', 'providers/minimax', 'shared-memory', 'tool-configuration',
+  'checkpoint', 'cli', 'consensus', 'context-management', 'model-routing',
+  'observability', 'providers', 'providers/minimax', 'shared-memory',
+  'tool-configuration',
 ];
 
 const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
