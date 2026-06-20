@@ -59,11 +59,11 @@
           <line x1="280" y1="350" x2="320" y2="350" stroke="#10B981" stroke-width="1.5" marker-end="url(#arrFlowAcc)"/>
 
           <!-- ====== PHASE 2: DECOMPOSE ====== -->
-          <!-- Decomposer / Team box -->
-          <rect x="320" y="290" width="180" height="120" rx="6" fill="#F5F2EB"/>
-          <text x="410" y="320" font-family="JetBrains Mono, monospace" font-size="10" fill="#3A3731" letter-spacing="1.5" text-anchor="middle">TEAM · COORDINATOR</text>
-          <text x="410" y="345" font-family="JetBrains Mono, monospace" font-size="14" fill="#0A0908" font-weight="500" text-anchor="middle">decompose</text>
-          <text x="410" y="362" font-family="JetBrains Mono, monospace" font-size="14" fill="#0A0908" font-weight="500" text-anchor="middle">→ Task DAG</text>
+          <!-- Decomposer / Team box (concrete node — dark fill + bone stroke, matches architecture.svg) -->
+          <rect x="320" y="290" width="180" height="120" rx="6" fill="#131210" stroke="#F5F2EB" stroke-width="1.5"/>
+          <text x="410" y="320" font-family="JetBrains Mono, monospace" font-size="10" fill="#A09A8E" letter-spacing="1.5" text-anchor="middle">TEAM · COORDINATOR</text>
+          <text x="410" y="345" font-family="JetBrains Mono, monospace" font-size="14" fill="#F5F2EB" font-weight="500" text-anchor="middle">decompose</text>
+          <text x="410" y="362" font-family="JetBrains Mono, monospace" font-size="14" fill="#F5F2EB" font-weight="500" text-anchor="middle">→ Task DAG</text>
           <text x="410" y="385" font-family="Geist, sans-serif" font-size="10" fill="#726C62" font-style="italic" text-anchor="middle">4 tasks · 2 layers</text>
 
           <!-- Arrows phase 2 → phase 3 (one per agent track) -->
@@ -73,34 +73,36 @@
           <path d="M 500 380 L 540 380 L 540 480" fill="none" stroke="#A09A8E" stroke-width="1.5" marker-end="url(#arrFlow)"/>
 
           <!-- ====== PHASE 3: PARALLEL EXECUTION ====== -->
-          <!-- Each agent gets a horizontal track -->
+          <!-- Each agent gets a horizontal track. Task cards share the architecture
+               diagram's concrete-node language: dark fill #131210 + bone stroke,
+               bone title, muted #726C62 subtitle. -->
 
           <!-- Track 1: architect -->
           <text x="555" y="180" font-family="JetBrains Mono, monospace" font-size="10" fill="#A09A8E" letter-spacing="1.5">AGENT · architect</text>
-          <rect x="560" y="190" width="160" height="50" rx="4" fill="#F5F2EB"/>
-          <text x="640" y="210" font-family="JetBrains Mono, monospace" font-size="11" fill="#0A0908" font-weight="500" text-anchor="middle">design schema</text>
-          <text x="640" y="227" font-family="Geist, sans-serif" font-size="10" fill="#3A3731" font-style="italic" text-anchor="middle">Claude Opus</text>
+          <rect x="560" y="190" width="160" height="50" rx="4" fill="#131210" stroke="#F5F2EB" stroke-width="1.5"/>
+          <text x="640" y="210" font-family="JetBrains Mono, monospace" font-size="11" fill="#F5F2EB" font-weight="500" text-anchor="middle">design schema</text>
+          <text x="640" y="227" font-family="Geist, sans-serif" font-size="10" fill="#726C62" font-style="italic" text-anchor="middle">Claude Opus</text>
           <line x1="725" y1="215" x2="930" y2="215" stroke="#3A3731" stroke-width="1" stroke-dasharray="2 3"/>
 
           <!-- Track 2: developer -->
           <text x="555" y="280" font-family="JetBrains Mono, monospace" font-size="10" fill="#A09A8E" letter-spacing="1.5">AGENT · developer.1</text>
-          <rect x="560" y="290" width="160" height="50" rx="4" fill="#F5F2EB"/>
-          <text x="640" y="310" font-family="JetBrains Mono, monospace" font-size="11" fill="#0A0908" font-weight="500" text-anchor="middle">write routes</text>
-          <text x="640" y="327" font-family="Geist, sans-serif" font-size="10" fill="#3A3731" font-style="italic" text-anchor="middle">GPT-5.4 · bash · file</text>
+          <rect x="560" y="290" width="160" height="50" rx="4" fill="#131210" stroke="#F5F2EB" stroke-width="1.5"/>
+          <text x="640" y="310" font-family="JetBrains Mono, monospace" font-size="11" fill="#F5F2EB" font-weight="500" text-anchor="middle">write routes</text>
+          <text x="640" y="327" font-family="Geist, sans-serif" font-size="10" fill="#726C62" font-style="italic" text-anchor="middle">GPT-5.4 · bash · file</text>
           <line x1="725" y1="315" x2="930" y2="315" stroke="#3A3731" stroke-width="1" stroke-dasharray="2 3"/>
 
           <!-- Track 3: developer 2 -->
           <text x="555" y="380" font-family="JetBrains Mono, monospace" font-size="10" fill="#A09A8E" letter-spacing="1.5">AGENT · developer.2</text>
-          <rect x="560" y="390" width="160" height="50" rx="4" fill="#F5F2EB"/>
-          <text x="640" y="410" font-family="JetBrains Mono, monospace" font-size="11" fill="#0A0908" font-weight="500" text-anchor="middle">write tests</text>
-          <text x="640" y="427" font-family="Geist, sans-serif" font-size="10" fill="#3A3731" font-style="italic" text-anchor="middle">Gemma 4 · bash · grep</text>
+          <rect x="560" y="390" width="160" height="50" rx="4" fill="#131210" stroke="#F5F2EB" stroke-width="1.5"/>
+          <text x="640" y="410" font-family="JetBrains Mono, monospace" font-size="11" fill="#F5F2EB" font-weight="500" text-anchor="middle">write tests</text>
+          <text x="640" y="427" font-family="Geist, sans-serif" font-size="10" fill="#726C62" font-style="italic" text-anchor="middle">Gemma 4 · bash · grep</text>
           <line x1="725" y1="415" x2="930" y2="415" stroke="#3A3731" stroke-width="1" stroke-dasharray="2 3"/>
 
           <!-- Track 4: reviewer -->
           <text x="555" y="480" font-family="JetBrains Mono, monospace" font-size="10" fill="#A09A8E" letter-spacing="1.5">AGENT · reviewer</text>
-          <rect x="780" y="490" width="160" height="50" rx="4" fill="#F5F2EB"/>
-          <text x="860" y="510" font-family="JetBrains Mono, monospace" font-size="11" fill="#0A0908" font-weight="500" text-anchor="middle">review + sign-off</text>
-          <text x="860" y="527" font-family="Geist, sans-serif" font-size="10" fill="#3A3731" font-style="italic" text-anchor="middle">Claude · waits for upstream</text>
+          <rect x="780" y="490" width="160" height="50" rx="4" fill="#131210" stroke="#F5F2EB" stroke-width="1.5"/>
+          <text x="860" y="510" font-family="JetBrains Mono, monospace" font-size="11" fill="#F5F2EB" font-weight="500" text-anchor="middle">review + sign-off</text>
+          <text x="860" y="527" font-family="Geist, sans-serif" font-size="10" fill="#726C62" font-style="italic" text-anchor="middle">Claude · waits for upstream</text>
           <line x1="540" y1="515" x2="775" y2="515" stroke="#3A3731" stroke-width="1" stroke-dasharray="2 3"/>
 
           <!-- MessageBus: horizontal band cutting across all tracks -->
