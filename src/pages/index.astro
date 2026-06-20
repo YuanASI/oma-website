@@ -92,6 +92,48 @@ const CAPS = [
   { n: '04', t: 'Streaming and structured output', d: 'Stream tokens and node-state transitions as the DAG fills, or await a typed, schema-validated object at the end of the run.' },
 ];
 
+// ── Reliability / control narrative (§02). Every API named here was verified
+//    against the framework repo (open-multi-agent main, v1.8.0) before shipping
+//    — no aspirational claims (red-line §1). Two deliberately honest limits the
+//    copy states plainly: checkpoint resumes at the last *completed* task (not
+//    mid-task), and secret redaction is best-effort. ──
+const RELIABILITY: { tag: string; t: string; ref: string; refLabel: string; parts: (string | { c: string })[] }[] = [
+  {
+    tag: "won't run away",
+    t: 'You stay in the loop',
+    ref: '/guides/orchestration-controls/',
+    refLabel: 'orchestration controls',
+    parts: [
+      'Inspect the plan before any agent runs with ', { c: 'onPlanReady' },
+      ', then approve each round with ', { c: 'onApproval' },
+      '. A proposer→judge pass (', { c: 'runConsensus' },
+      ') has one agent check another\'s output, and loop detection halts an agent that starts repeating itself.',
+    ],
+  },
+  {
+    tag: "won't burn the budget",
+    t: 'Spend where it counts',
+    ref: '/reference/model-routing/',
+    refLabel: 'model routing',
+    parts: [
+      'Route planning to a flagship model and the leaf tasks to cheap ones with ', { c: 'modelRouting' },
+      '. ', { c: 'maxTokenBudget' },
+      ' caps a run\'s spend — cross it and the orchestrator stops issuing calls instead of running up the bill.',
+    ],
+  },
+  {
+    tag: 'debug any run',
+    t: 'Inspect, replay, resume',
+    ref: '/reference/observability/',
+    refLabel: 'observability',
+    parts: [
+      'Stream every LLM and tool call to your tracing stack with ', { c: 'onTrace' },
+      ', or open a self-contained HTML dashboard after the run (', { c: 'oma run --dashboard' },
+      '). Checkpoints resume a crashed run from its last completed task, and secrets are redacted from traces and dashboards on a best-effort basis.',
+    ],
+  },
+];
+
 const BUILDS = [
   { scenario: 'legal · document review', title: 'Contract review', desc: 'One goal — “flag risk in this MSA” — fans out to agents reading clauses, cross-checking a policy library, and drafting redlines in parallel.', outcome: 'A single structured risk report from one runTeam() call.', code: REPO + '/blob/main/packages/core/examples/cookbook/contract-review-dag.ts' },
   { scenario: 'market · monitoring', title: 'Competitive monitoring', desc: 'Agents pull from different sources via MCP, each on the model that fits — cheap-local for scraping, frontier for analysis — and reconcile findings.', outcome: 'A deduped digest, refreshed on a schedule, mixed providers in one team.', code: REPO + '/blob/main/packages/core/examples/cookbook/competitive-monitoring.ts' },
@@ -111,6 +153,8 @@ const FAQS = [
   { q: 'Can agents in one team use different model providers?', a: 'Yes. Each agent declares its own model, so a single team can mix a frontier cloud model, a self-hosted endpoint, and a local Ollama instance. The coordinator routes each task to the agent — and therefore the model — assigned to it.' },
   { q: 'How do tools get exposed to an agent?', a: 'Default-deny. An agent only has the tools it explicitly lists in its tools array; everything else is unavailable. External systems are connected through MCP servers under the same opt-in contract.' },
   { q: 'What happens when a node fails?', a: 'A failed node is retried under its policy; persistent failures surface on the node with FAILED state and an error, and downstream dependents are held. The rest of the DAG keeps running, so one failure does not abort the whole run.' },
+  { q: 'How do I keep a multi-agent run from going off the rails?', a: 'Layered controls, all opt-in. onPlanReady hands you the decomposed plan to inspect before any agent runs, and onApproval gates each round; return false and the remaining tasks are skipped. runConsensus adds a proposer→judge check that a second agent must accept, and loop detection halts an agent that keeps repeating the same tool call or output.' },
+  { q: 'How do I cap what a run costs?', a: 'Two levers. modelRouting sends planning and synthesis to a flagship model while leaf tasks run on a cheaper one, so you pay frontier rates only where they matter. maxTokenBudget is a hard ceiling on cumulative tokens: cross it and the orchestrator stops issuing calls and skips the remaining tasks instead of running up the bill.' },
   { q: 'Does it stream, or only return at the end?', a: 'Both. You can stream tokens and node-state transitions as the DAG fills, or simply await runTeam() for a typed, schema-validated result object once the graph resolves.' },
 ];
 
@@ -269,11 +313,32 @@ const jsonLd = {
         </div>
       </section>
 
-      <!-- ── 3. What you can build ── -->
+      <!-- ── 3. Built for production (reliability / control narrative) ── -->
+      <section class="section" id="reliability">
+        <div class="container">
+          <div class="section-head">
+            <div class="eyebrow"><span class="idx">02</span> Reliability</div>
+            <h2 class="section-title">Built to run in production.</h2>
+            <p class="section-sub">Handing real work to autonomous agents raises three fair questions: do they run off the rails, burn the budget, or fail where you can't see it? Each one has an answer in the API.</p>
+          </div>
+          <div class="rel-grid">
+            {RELIABILITY.map((c) => (
+              <Card padding="lg" accent class="rel-card">
+                <div class="rel-tag">{c.tag}</div>
+                <div class="rel-title">{c.t}</div>
+                <p class="rel-desc">{c.parts.map((p) => (typeof p === 'string' ? p : <code>{p.c}</code>))}</p>
+                <div class="rel-foot"><a class="text-link" href={c.ref}><span>{c.refLabel}</span><span class="arrow">→</span></a></div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 4. What you can build ── -->
       <section class="section" id="build">
         <div class="container">
           <div class="section-head">
-            <div class="eyebrow"><span class="idx">02</span> Use cases</div>
+            <div class="eyebrow"><span class="idx">03</span> Use cases</div>
             <h2 class="section-title">Three workflows worth a team.</h2>
             <p class="section-sub">Each is a single goal that benefits from parallel, multi-model decomposition — exactly what the coordinator is built for.</p>
           </div>
@@ -291,11 +356,11 @@ const jsonLd = {
         </div>
       </section>
 
-      <!-- ── 4. Works with your stack ── -->
+      <!-- ── 5. Works with your stack ── -->
       <section class="section" id="stack">
         <div class="container">
           <div class="section-head">
-            <div class="eyebrow"><span class="idx">03</span> Integrations</div>
+            <div class="eyebrow"><span class="idx">04</span> Integrations</div>
             <h2 class="section-title">Works with your stack.</h2>
             <p class="section-sub">OMA composes with the providers, protocols, and servers already in your backend — no platform to migrate to.</p>
           </div>
@@ -313,12 +378,12 @@ const jsonLd = {
         </div>
       </section>
 
-      <!-- ── 5. Production proof ── -->
+      <!-- ── 6. Production proof ── -->
       <section class="section" id="proof">
         <div class="container">
           <div class="proof-head">
             <div class="section-head" style="margin-bottom:0;">
-              <div class="eyebrow"><span class="idx">04</span> Adoption</div>
+              <div class="eyebrow"><span class="idx">05</span> Adoption</div>
               <h2 class="section-title">Already running in the wild.</h2>
               <p class="section-sub">Open source and MIT-licensed, with a growing ecosystem of projects and integrations. Star, fork, and contributor counts read straight from the repo at build time.</p>
             </div>
@@ -349,11 +414,11 @@ const jsonLd = {
         </div>
       </section>
 
-      <!-- ── 6. FAQ ── -->
+      <!-- ── 7. FAQ ── -->
       <section class="section" id="faq">
         <div class="container">
           <div class="section-head">
-            <div class="eyebrow"><span class="idx">05</span> FAQ</div>
+            <div class="eyebrow"><span class="idx">06</span> FAQ</div>
             <h2 class="section-title">Mechanism, not marketing.</h2>
             <p class="section-sub">How the runtime actually behaves. The full reference lives in the docs.</p>
           </div>
@@ -373,7 +438,7 @@ const jsonLd = {
         </div>
       </section>
 
-      <!-- ── 7. Final CTA ── -->
+      <!-- ── 8. Final CTA ── -->
       <section class="section" id="start" style="border-top:1px solid var(--border-subtle);">
         <div class="container cta-final">
           <div class="eyebrow" style="justify-content:center;"><span class="idx">//</span> get started</div>
