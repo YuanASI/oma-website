@@ -101,9 +101,9 @@ a { color: inherit; }
 }
 
 /* ── Hero ── */
-.hero { padding: 72px 0 96px; }
+.hero { padding: 56px 0 96px; }
 .hero-grid {
-  display: grid; grid-template-columns: 1fr 1.02fr; gap: 64px; align-items: center;
+  display: grid; grid-template-columns: 1fr 1.02fr; gap: 64px; align-items: start;
 }
 /* Let grid columns shrink below their content's min-content (the wide code
    line in the hero visual) so the page never scrolls horizontally; the
