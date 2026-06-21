@@ -31,6 +31,11 @@ export const SHOWCASE: ShowcaseEntry[] = [
     tone: 'info', tag: 'code review', status: 'built with OMA', kind: 'built-with',
   },
   {
+    pkg: 'StuFlow', by: 'by znc15', href: 'https://github.com/znc15/StuFlow',
+    desc: 'Terminal AI coding assistant. Drives an OMA team through runAgent / runTasks / runTeam with a custom RunTeamOptions coordinator, paired with DeepSeek.',
+    tone: 'neutral', tag: 'coding agent', status: 'built with OMA', kind: 'built-with',
+  },
+  {
     pkg: 'Engram', by: 'engram-memory.com', href: 'https://github.com/Agentscreator/engram-memory',
     desc: '“Git for AI memory” — shared memory across agents with conflict detection, via an OMA MemoryStore + ToolRegistry toolkit.',
     tone: 'info', tag: 'memory', status: 'toolkit', kind: 'integration', featured: true,
@@ -39,5 +44,10 @@ export const SHOWCASE: ShowcaseEntry[] = [
     pkg: '@agentsonar/oma', by: 'agentsonar/agentsonar-oma', href: 'https://github.com/agentsonar/agentsonar-oma',
     desc: 'Sidecar that detects cross-run delegation cycles, repetition, and rate bursts.',
     tone: 'neutral', tag: 'observability', status: 'integration', kind: 'integration', featured: true,
+  },
+  {
+    pkg: 'CodingScaffold', by: 'JRS1986/CodingScaffold', href: 'https://github.com/JRS1986/CodingScaffold',
+    desc: 'Agentic-coding scaffold that lists OMA as an optional orchestration backend, with a runTeam workflow template.',
+    tone: 'info', tag: 'scaffold', status: 'optional backend', kind: 'integration',
   },
 ];
