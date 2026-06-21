@@ -30,6 +30,13 @@ const POSTS = [
       'https://dev-to-uploads.s3.amazonaws.com/uploads/articles/wkzo5gk6c6ufbtz30zg0.png': '/blog/vercel-ai-sdk-3.png',
     },
   },
+  {
+    slug: 'goal-in-dag-out-how-open-multi-agent-turns-a-goal-into-a-task-dag-1n0m',
+    out: 'goal-to-task-dag-coordinator',
+    images: {
+      'https://dev-to-uploads.s3.us-east-2.amazonaws.com/uploads/articles/inhte0q9kjrrukznvngy.png': '/blog/goal-to-task-dag-coordinator-run.png',
+    },
+  },
 ];
 
 // dev.to embeds its own `--- … ---` front-matter at the top of body_markdown for
@@ -57,7 +64,10 @@ for (const p of POSTS) {
     `description: ${y(a.description)}`,
     `pubDate: ${a.published_at.slice(0, 10)}`,
     `tags: ${JSON.stringify(a.tags ?? [])}`,
-    `devtoUrl: ${y(a.canonical_url || a.url)}`,
+    // dev.to original = a.url, NOT a.canonical_url: once a post's dev.to
+    // canonical_url is pointed back at this site (our SEO setup), using it here
+    // would make the "originally published" back-link point at ourselves.
+    `devtoUrl: ${y(a.url)}`,
     `readingMinutes: ${a.reading_time_minutes ?? 1}`,
     '---',
     '',

@@ -21,10 +21,10 @@ This post shows the alternative. Three agents, three different model tiers, one 
 
 The repository examples this post connects are:
 
-- [`packages/core/examples/basics/multi-model-team.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/basics/multi-model-team.ts): different hosted models per agent.
-- [`packages/core/examples/providers/ollama.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/ollama.ts): Claude plus a local Ollama reviewer through an OpenAI-compatible `baseURL`.
-- [`packages/core/examples/patterns/cost-tiered-pipeline.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/cost-tiered-pipeline.ts): token usage and cost comparison across model tiers.
-- [`packages/core/examples/providers/gemini.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/gemini.ts): Pro/Flash tiering inside one provider.
+- [`examples/basics/multi-model-team.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/basics/multi-model-team.ts): different hosted models per agent.
+- [`examples/providers/ollama.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/ollama.ts): Claude plus a local Ollama reviewer through an OpenAI-compatible `baseURL`.
+- [`examples/patterns/cost-tiered-pipeline.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/cost-tiered-pipeline.ts): token usage and cost comparison across model tiers.
+- [`examples/providers/gemini.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/gemini.ts): Pro/Flash tiering inside one provider.
 
 There is no separate companion repo for this post. The point is the pattern: per-agent model assignment is already a first-class field on `AgentConfig`.
 
@@ -197,7 +197,7 @@ Suppose your team runs the same three-agent task 100 times a day (real-world cad
 - Developer: 2.2K input, 2.1K output
 - Reviewer: 2.7K input, 0.5K output
 
-Use this as a representative shape, not a benchmark. Your numbers will differ; the math below shows how to do it. If you want to measure your own workload, start with [`packages/core/examples/patterns/cost-tiered-pipeline.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/cost-tiered-pipeline.ts).
+Use this as a representative shape, not a benchmark. Your numbers will differ; the math below shows how to do it. If you want to measure your own workload, start with [`examples/patterns/cost-tiered-pipeline.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/cost-tiered-pipeline.ts).
 
 **All-Opus run (Step 1 baseline)** runs to about $0.15 per execution on the token shape above. At 100/day that is roughly $450/month.
 

@@ -49,7 +49,7 @@ You declare agents (role, model, system prompt). You hand the orchestrator a sen
 Canonical examples:
 
 - **CrewAI** (Python): the prototype. `Crew.kickoff()` on a list of agents plus tasks. CrewAI uses the role/goal/backstory metaphor to seed agent behavior.
-- **open-multi-agent**: `OpenMultiAgent` orchestrator plus `runTeam(team, goal)`. The coordinator pattern lives in [`src/orchestrator/orchestrator.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/src/orchestrator/orchestrator.ts) (`runTeam` method) and is described inline in the JSDoc, six steps: decompose, queue, schedule, execute with parallelism, persist results, synthesize.
+- **open-multi-agent**: `OpenMultiAgent` orchestrator plus `runTeam(team, goal)`. The coordinator pattern lives in [`src/orchestrator/orchestrator.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/src/orchestrator/orchestrator.ts) (`runTeam` method) and is described inline in the JSDoc, six steps: decompose, queue, schedule, execute with parallelism, persist results, synthesize.
 
 ### What about KaibanJS
 
@@ -185,7 +185,7 @@ This is the part most comparisons skip. Picking a framework is not picking a fea
 
 Goal-first sounds magical when you describe it from outside. From inside, the trick is mundane: it is one well-prompted LLM call.
 
-When you call `runTeam(team, goal)` in open-multi-agent, the orchestrator does this in the `runTeam` method (full source in [`src/orchestrator/orchestrator.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/src/orchestrator/orchestrator.ts), see the JSDoc on the method):
+When you call `runTeam(team, goal)` in open-multi-agent, the orchestrator does this in the `runTeam` method (full source in [`src/orchestrator/orchestrator.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/src/orchestrator/orchestrator.ts), see the JSDoc on the method):
 
 1. A temporary coordinator agent receives the goal and the list of agents on the team, with their names, models, and system prompts.
 2. The coordinator is asked to output a JSON array of tasks. Each task has a title, description, assignee (one of the agent names), and an optional `dependsOn` field listing which earlier tasks must complete first.
@@ -250,7 +250,7 @@ None of this is provably right; it is what I would tell a friend. The frameworks
 
 **About open-multi-agent.** TypeScript-native multi-agent orchestration framework, MIT-licensed. Goal-first by design, with a coordinator pattern that decomposes a sentence-level goal into a parallel task DAG at runtime. Three runtime dependencies (`@anthropic-ai/sdk`, `openai`, `zod`). The TypeScript-ecosystem answer to CrewAI's role/goal/crew pattern.
 
-Repo: <https://github.com/open-multi-agent/open-multi-agent>. Coordinator implementation: [`src/orchestrator/orchestrator.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/src/orchestrator/orchestrator.ts).
+Repo: <https://github.com/open-multi-agent/open-multi-agent>. Coordinator implementation: [`src/orchestrator/orchestrator.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/src/orchestrator/orchestrator.ts).
 
 **Related posts.**
 
