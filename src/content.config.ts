@@ -13,6 +13,10 @@ export const collections = {
 			title: z.string(),
 			description: z.string(),
 			pubDate: z.coerce.date(),
+			// Set only when a post is materially revised after publish; drives
+			// dateModified (BlogPosting JSON-LD) + article:modified_time. Omitted
+			// posts fall back to pubDate, so unedited posts read as unmodified.
+			updatedDate: z.coerce.date().optional(),
 			tags: z.array(z.string()).default([]),
 			// The dev.to original. The site self-canonicals; this is the "originally
 			// published" back-link shown on each post.

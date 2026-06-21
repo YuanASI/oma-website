@@ -33,6 +33,9 @@ export default defineConfig({
 			},
 			description:
 				'TypeScript-native multi-agent orchestration. From a goal to a task DAG, automatically — three runtime dependencies, runs anywhere Node.js runs.',
+			// Override Starlight's default <head>: it emits og:* + twitter:card but
+			// no social-card image and no JSON-LD. StarlightHead adds both for docs.
+			components: { Head: './src/components/StarlightHead.astro' },
 			// Code blocks use the OMA syntax palette (blue/emerald/amber/muted) to
 			// match the landing CodeBlock. `themes` carries only the token hues
 			// (see src/styles/code-theme.mjs); `useStarlightUiThemeColors: true`
