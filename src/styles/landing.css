@@ -411,6 +411,20 @@ a { color: inherit; }
 .footer-meta a.by { text-decoration: none; transition: color var(--duration-base) var(--ease-out); }
 .footer-meta a.by:hover { color: var(--oma-accent); }
 
+/* ── Endorsement pull-quote (single third-party quote, lower landing) ── */
+.endorse .container { max-width: 820px; text-align: center; }
+.pullquote { margin: 0; }
+.pullquote blockquote {
+  margin: 0; font-family: var(--font-sans); font-weight: var(--weight-medium);
+  font-size: clamp(22px, 4.5vw, var(--text-h3)); line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight); color: var(--oma-fg-0); text-wrap: balance;
+}
+.pullquote blockquote::before { content: "\201C"; color: var(--oma-accent); }
+.pullquote blockquote::after  { content: "\201D"; color: var(--oma-accent); }
+.pullquote-cite { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: var(--space-6); }
+.pullquote-cite .text-link { color: var(--oma-fg-0); }
+.pullquote-meta { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.02em; color: var(--oma-fg-2); }
+
 /* ── Responsive ── */
 @media (max-width: 920px) {
   .section { padding: 72px 0; }
