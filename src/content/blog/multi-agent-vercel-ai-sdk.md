@@ -285,8 +285,8 @@ The OMA orchestration phase takes 30-60 seconds (coordinator planning + two agen
 
 
 
-![The streamed article output produced by the researcher and writer agents — its title, introduction, and opening sections](/blog/vercel-ai-sdk-2.png)
-![The same article scrolled down to its later sections and conclusion](/blog/vercel-ai-sdk-3.png)
+![The streamed article output produced by the researcher and writer agents](/blog/vercel-ai-sdk-2.png)
+![The streamed article output produced by the researcher and writer agents](/blog/vercel-ai-sdk-3.png)
 
 
 One gotcha: `@ai-sdk/openai` v2 defaults to OpenAI's new Responses API (`/responses` endpoint). If your provider doesn't support it (most don't yet), use `@ai-sdk/openai-compatible` instead, or call `provider.chat('model-name')` explicitly rather than `provider('model-name')`. Burned about 20 minutes on this.
