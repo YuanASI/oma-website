@@ -1,8 +1,8 @@
 # Open Multi-Agent
 
-> TypeScript-native multi-agent orchestration. A coordinator turns a goal into a task DAG, parallelizes the independent nodes, and synthesizes the result — three runtime dependencies, runs anywhere Node.js runs.
+> TypeScript-native multi-agent orchestration. Describe a goal and a coordinator agent turns it into a task DAG, parallelizes the independent nodes, and synthesizes a typed result. Drops into any Node.js backend.
 
-Open Multi-Agent (OMA) is an open-source (MIT) agent runtime, not a graph builder. You pass a goal, not a graph: a coordinator agent decomposes it into a task DAG, runs independent nodes in parallel, and returns a typed, schema-validated result. Each agent in a team can name its own model — Anthropic, OpenAI, a local Ollama, or a self-hosted endpoint — and they cooperate inside a single team. Tools are default-deny; Model Context Protocol (MCP) servers connect external systems under the same opt-in contract.
+Open Multi-Agent (OMA) is a goal-driven agent runtime for TypeScript backends. Instead of wiring a graph of nodes and edges ahead of time, you hand it a goal: a coordinator agent decomposes the goal into a task DAG at runtime, runs the independent nodes in parallel, and returns a typed, schema-validated result. Every agent in a team can name its own model (Anthropic, OpenAI, Gemini, a local Ollama, or any OpenAI-compatible endpoint), and they cooperate inside one team. Tools and Model Context Protocol (MCP) servers follow a default-deny contract: an agent gets only the capabilities it is granted. The core stays lean, and extra providers, MCP, and the Vercel AI SDK bridge load only when you opt in.
 
 - Install: `npm create oma-app@latest`
 - Package: `@open-multi-agent/core` (npm)
@@ -11,12 +11,12 @@ Open Multi-Agent (OMA) is an open-source (MIT) agent runtime, not a graph builde
 
 ## Capabilities
 
-- **Goal-driven coordinator**: you pass a goal, not a graph. A coordinator agent decomposes it into a task DAG, parallelizes independent nodes, and synthesizes the result.
-- **Mix any model in one team**: each agent names its own model — Anthropic, Gemini, OpenAI, Bedrock, Azure, DeepSeek, or any OpenAI-compatible endpoint (13 built-in) — and they cooperate inside a single team.
-- **Tools and MCP, default-deny**: an agent gets only the tools it lists. Model Context Protocol servers expose external systems under the same opt-in contract.
-- **Streaming and structured output**: stream tokens and node-state transitions as the DAG fills, or await a typed, schema-validated object at the end of the run.
-- **Cross-provider reasoning**: one thinking config maps to Anthropic thinking, Gemini thinkingConfig, and OpenAI reasoning_effort; reasoning streams as events, with opt-in preservation across a provider switch.
-- **Built for production**: stay in the loop (onPlanReady / onApproval gates, runConsensus proposer→judge, loop detection), control spend (modelRouting, maxTokenBudget hard ceiling), and inspect any run (onTrace, a self-contained HTML dashboard, checkpoint/resume, best-effort secret redaction).
+- **Goal-driven coordinator**: you pass a goal, not a graph. The coordinator decomposes it into a task DAG, runs the independent nodes in parallel, and synthesizes the final result.
+- **Mix any model in one team**: each agent names its own model, and they cooperate inside a single team. Built-in providers include Anthropic, OpenAI, Gemini, Bedrock, Azure OpenAI, and DeepSeek (13 in total), plus any OpenAI-compatible endpoint.
+- **Tools and MCP, default-deny**: an agent gets only the tools it is granted. Model Context Protocol servers expose external systems under the same opt-in contract.
+- **Streaming and structured output**: stream tokens and node-state transitions as the DAG fills, or await a typed, schema-validated object when the run completes.
+- **Cross-provider reasoning**: one thinking config maps to Anthropic thinking, Gemini thinkingConfig, and OpenAI reasoning_effort. Reasoning streams as events, and can be preserved across a provider switch when you opt in.
+- **Built for production**: stay in the loop (onPlanReady / onApproval gates, runConsensus proposer-to-judge, loop detection), control spend (modelRouting, maxTokenBudget hard ceiling), and inspect any run (onTrace spans, a self-contained HTML dashboard, checkpoint/resume, best-effort secret redaction).
 
 ## Docs
 
@@ -25,6 +25,7 @@ Open Multi-Agent (OMA) is an open-source (MIT) agent runtime, not a graph builde
 - [Three Ways to Run](https://open-multi-agent.com/getting-started/three-ways-to-run/): runAgent, runTeam, and runTasks — plus plan preview, plan replay, and consensus verification.
 - [Orchestration Controls](https://open-multi-agent.com/guides/orchestration-controls/): team context injection, approval gates, cancellation, coordinator config, and fan-out.
 - [Production Checklist](https://open-multi-agent.com/guides/production-checklist/): token budget, timeouts, retries, tool-output limits, loop detection, tracing, and tool grants.
+- [Architecture](https://open-multi-agent.com/architecture/): how OMA works — the architecture and the runTeam() execution flow, from a goal to a task DAG to a synthesized result.
 
 ## Reference
 
@@ -41,6 +42,7 @@ Open Multi-Agent (OMA) is an open-source (MIT) agent runtime, not a graph builde
 
 ## Blog
 
+- [Goal In, DAG Out: How Open-Multi-Agent Turns a Goal into a Task DAG](https://open-multi-agent.com/blog/goal-to-task-dag-coordinator/): how runTeam() hands a goal to a coordinator that builds the task DAG for you, with the mechanism step by step.
 - [Give Your TypeScript AI Agents Long-Term Memory with TencentDB-Agent-Memory](https://open-multi-agent.com/blog/agent-long-term-memory-tencentdb/): wiring OMA's MemoryStore to TencentDB-Agent-Memory for cross-run agent memory.
 - [Goal-Driven Agent Orchestration vs Explicit Graphs: A TypeScript Framework Taxonomy](https://open-multi-agent.com/blog/goal-driven-vs-explicit-graphs/): a taxonomy of TypeScript multi-agent frameworks — goal-driven orchestration vs explicit graphs.
 - [5 walls multi-agent frameworks hit](https://open-multi-agent.com/blog/multi-agent-framework-walls/): the engineering walls frameworks hit, with receipts from Mastra's .network() → Supervisor migration.
@@ -51,6 +53,7 @@ Open Multi-Agent (OMA) is an open-source (MIT) agent runtime, not a graph builde
 
 - [GitHub repository](https://github.com/open-multi-agent/open-multi-agent): source, examples, and issues.
 - [Examples (cookbook)](https://open-multi-agent.com/examples/): runnable multi-agent recipes — contract review, competitive monitoring, incident postmortem, and more.
+- [Showcase](https://open-multi-agent.com/showcase/): open-source projects built with OMA and tools that integrate with it.
 - [npm package](https://www.npmjs.com/package/@open-multi-agent/core)
 
 ## Optional

@@ -1,6 +1,6 @@
 # Open Multi-Agent — full text for LLMs
 
-> TypeScript-native multi-agent orchestration. A coordinator turns a goal into a task DAG, parallelizes the independent nodes, and synthesizes the result — three runtime dependencies, runs anywhere Node.js runs.
+> TypeScript-native multi-agent orchestration. Describe a goal and a coordinator agent turns it into a task DAG, parallelizes the independent nodes, and synthesizes a typed result. Drops into any Node.js backend.
 
 This document assembles the substantive copy from open-multi-agent.com into a single
 plain-text file for LLM ingestion. Source of truth for the API is the GitHub repository
@@ -44,21 +44,22 @@ maintain.
 
 ## Capabilities
 
-**Goal-driven coordinator.** You pass a goal, not a graph. A coordinator agent decomposes
-it into a task DAG, parallelizes independent nodes, and synthesizes the result.
+**Goal-driven coordinator.** You pass a goal, not a graph. The coordinator decomposes it
+into a task DAG, runs the independent nodes in parallel, and synthesizes the final result.
 
-**Mix any model in one team.** Each agent names its own model — Anthropic, OpenAI, a local
-Ollama, or a self-hosted endpoint — and they cooperate inside a single team.
+**Mix any model in one team.** Each agent names its own model, and they cooperate inside a
+single team. Built-in providers include Anthropic, OpenAI, Gemini, Bedrock, Azure OpenAI,
+and DeepSeek (13 in total), plus any OpenAI-compatible endpoint.
 
-**Tools and MCP, default-deny.** An agent gets only the tools it lists. Connect Model
-Context Protocol servers to expose external systems under the same opt-in contract.
+**Tools and MCP, default-deny.** An agent gets only the tools it is granted. Model Context
+Protocol servers expose external systems under the same opt-in contract.
 
 **Streaming and structured output.** Stream tokens and node-state transitions as the DAG
-fills, or await a typed, schema-validated object at the end of the run.
+fills, or await a typed, schema-validated object when the run completes.
 
 **Cross-provider reasoning.** One `thinking` config maps to Anthropic thinking, Gemini
-`thinkingConfig`, and OpenAI `reasoning_effort`; reasoning streams as events, with opt-in
-preservation across a provider switch.
+`thinkingConfig`, and OpenAI `reasoning_effort`. Reasoning streams as events, and can be
+preserved across a provider switch when you opt in.
 
 ## Built for production
 
@@ -159,6 +160,7 @@ Getting started:
 Guides:
 - Orchestration Controls: https://open-multi-agent.com/guides/orchestration-controls/
 - Production Checklist: https://open-multi-agent.com/guides/production-checklist/
+- Architecture: https://open-multi-agent.com/architecture/
 
 Reference:
 - Providers: https://open-multi-agent.com/reference/providers/
@@ -174,6 +176,7 @@ Reference:
 
 ## Blog
 
+- Goal In, DAG Out: How Open-Multi-Agent Turns a Goal into a Task DAG: https://open-multi-agent.com/blog/goal-to-task-dag-coordinator/
 - Give Your TypeScript AI Agents Long-Term Memory with TencentDB-Agent-Memory: https://open-multi-agent.com/blog/agent-long-term-memory-tencentdb/
 - Goal-Driven Agent Orchestration vs Explicit Graphs — A TypeScript Framework Taxonomy: https://open-multi-agent.com/blog/goal-driven-vs-explicit-graphs/
 - 5 walls multi-agent frameworks hit (Mastra .network() → Supervisor receipts): https://open-multi-agent.com/blog/multi-agent-framework-walls/
@@ -184,4 +187,5 @@ Reference:
 
 - GitHub: https://github.com/open-multi-agent/open-multi-agent
 - npm: https://www.npmjs.com/package/@open-multi-agent/core
+- Showcase: https://open-multi-agent.com/showcase/
 - License: MIT
