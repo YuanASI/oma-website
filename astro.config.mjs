@@ -32,7 +32,7 @@ export default defineConfig({
 				alt: 'Open Multi-Agent',
 			},
 			description:
-				'TypeScript-native multi-agent orchestration. From a goal to a task DAG, automatically — three runtime dependencies, runs anywhere Node.js runs.',
+				'TypeScript-native multi-agent orchestration. From a goal to a task DAG, automatically — three runtime dependencies, drops into any Node.js backend.',
 			// Override Starlight's default <head>: it emits og:* + twitter:card but
 			// no social-card image and no JSON-LD. StarlightHead adds both for docs.
 			components: { Head: './src/components/StarlightHead.astro' },
