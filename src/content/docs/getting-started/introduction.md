@@ -3,7 +3,7 @@ title: Introduction
 description: "What open-multi-agent is, how goal-first orchestration differs from graph-first frameworks, and how the runtime is structured."
 ---
 
-`open-multi-agent` is a multi-agent orchestration framework for TypeScript backends. Give it a goal; a coordinator agent decomposes it into a task DAG, parallelizes independents, and synthesizes the result. Three runtime dependencies, drops into any Node.js backend.
+`open-multi-agent` is a multi-agent orchestration framework for TypeScript backends. Give it a goal; a coordinator agent decomposes it into a task DAG, parallelizes independents, and synthesizes a typed, schema-validated result. Three runtime dependencies, drops into any Node.js backend.
 
 :::tip[Your engineers describe the goal, not the graph.]
 Graph-first frameworks make you enumerate every node and edge up front. `open-multi-agent` is goal-first: you describe the outcome and the coordinator builds the task DAG at runtime, so the orchestration adapts to the goal instead of being hand-wired for one.

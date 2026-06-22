@@ -85,11 +85,11 @@ const result = await oma.runTeam(team, 'Create a REST API for a todo list')`;
 const CASES = SHOWCASE.filter((c) => c.featured);
 
 const CAPS = [
-  { n: '01', t: 'Goal-driven coordinator', d: 'You pass a goal, not a graph. A coordinator agent decomposes it into a task DAG, parallelizes independent nodes, and synthesizes the result.' },
-  { n: '02', t: 'Mix any model in one team', d: 'Each agent names its own model — Anthropic, OpenAI, a local Ollama, or a self-hosted endpoint — and they cooperate inside a single team.' },
-  { n: '03', t: 'Tools and MCP, default-deny', d: 'An agent gets only the tools it lists. Connect Model Context Protocol servers to expose external systems under the same opt-in contract.' },
-  { n: '04', t: 'Streaming and structured output', d: 'Stream tokens and node-state transitions as the DAG fills, or await a typed, schema-validated object at the end of the run.' },
-  { n: '05', t: 'Cross-provider reasoning', d: 'One thinking config maps to Anthropic thinking, Gemini thinkingConfig, and OpenAI reasoning_effort — reasoning streams as events, with opt-in preservation across a provider switch.' },
+  { n: '01', t: 'Goal-driven coordinator', d: 'You pass a goal, not a graph. The coordinator decomposes it into a task DAG, runs the independent nodes in parallel, and synthesizes the final result.' },
+  { n: '02', t: 'Mix any model in one team', d: 'Each agent names its own model, and they cooperate inside a single team. Built-in providers include Anthropic, OpenAI, Gemini, Bedrock, Azure OpenAI, and DeepSeek (13 in total), plus any OpenAI-compatible endpoint.' },
+  { n: '03', t: 'Tools and MCP, default-deny', d: 'An agent gets only the tools it is granted. Model Context Protocol servers expose external systems under the same opt-in contract.' },
+  { n: '04', t: 'Streaming and structured output', d: 'Stream tokens and node-state transitions as the DAG fills, or await a typed, schema-validated object when the run completes.' },
+  { n: '05', t: 'Cross-provider reasoning', d: 'One thinking config maps to Anthropic thinking, Gemini thinkingConfig, and OpenAI reasoning_effort. Reasoning streams as events, and can be preserved across a provider switch when you opt in.' },
 ];
 
 // ── Reliability / control narrative (§02). Every API named here was verified
@@ -159,7 +159,7 @@ const FAQS = [
 ];
 
 const title = 'Open Multi-Agent — From a goal to a task DAG, automatically';
-const description = 'TypeScript-native multi-agent orchestration. A coordinator turns a goal into a task DAG, parallelizes it, and synthesizes the result — runs anywhere Node.js runs.';
+const description = 'TypeScript-native multi-agent orchestration. A coordinator turns a goal into a task DAG, parallelizes it, and synthesizes a typed result — drops into any Node.js backend.';
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 
 // ── JSON-LD structured data (PRD §4.6 GEO) ──
