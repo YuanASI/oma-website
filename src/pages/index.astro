@@ -402,8 +402,8 @@ const jsonLd = {
             <div class="live-tag"><span class="live-dot"></span> live · synced from registry</div>
           </div>
           <div class="stats-row">
-            <div class="stat"><div class="stat-val"><span class="unit">★ </span><span data-count={stats.stars}>{fmt(stats.stars)}</span></div><div class="stat-key">stars</div></div>
-            <div class="stat"><div class="stat-val"><span data-count={stats.forks}>{fmt(stats.forks)}</span></div><div class="stat-key">forks</div></div>
+            <div class="stat"><div class="stat-val"><span class="unit">★ </span><span data-count={stats.stars} data-live="stars">{fmt(stats.stars)}</span></div><div class="stat-key">stars</div></div>
+            <div class="stat"><div class="stat-val"><span data-count={stats.forks} data-live="forks">{fmt(stats.forks)}</span></div><div class="stat-key">forks</div></div>
             <div class="stat"><div class="stat-val"><span data-count={stats.contributors}>{fmt(stats.contributors)}</span></div><div class="stat-key">contributors</div></div>
             <div class="stat"><a href={REPO + '/releases'} target="_blank" rel="noreferrer" style="color:inherit;text-decoration:none;"><div class="stat-val">{stats.latestRelease}</div><div class="stat-key">latest release</div></a></div>
             <div class="stat"><div class="stat-val">MIT</div><div class="stat-key">license</div></div>
@@ -489,23 +489,52 @@ const jsonLd = {
 
     <script>
       // ── Stats count-up on scroll ──
+      // 动画终点优先用客户端实时抓取的 GitHub 数(stars/forks),fetch 失败或
+      // 超时则回退到构建期烤进 data-count 的值。因为动画本来就是 0→终点,把
+      // 终点换成实时值不会有数字跳变 —— 滚动动画天然掩护了「构建期值 → 实时值」
+      // 的差异。无 JS / 抓取失败的访客看到的就是构建期值(合理 fallback)。
       const fmt = (n: number) => Math.round(n).toLocaleString('en-US');
+
+      type LiveCounts = { stars: number; forks: number };
+      const live: Promise<LiveCounts | null> = fetch(
+        'https://api.github.com/repos/open-multi-agent/open-multi-agent',
+        { headers: { Accept: 'application/vnd.github+json' } },
+      )
+        .then((r) => (r.ok ? r.json() : null))
+        .then((j: any) =>
+          j && typeof j.stargazers_count === 'number'
+            ? { stars: j.stargazers_count, forks: j.forks_count }
+            : null,
+        )
+        .catch(() => null);
+
+      // 滚到该区域时实时值还没回来,最多等 800ms 就用构建期值,避免动画卡住。
+      const liveOrTimeout: Promise<LiveCounts | null> = Promise.race([
+        live,
+        new Promise<null>((res) => setTimeout(() => res(null), 800)),
+      ]);
+
       document.querySelectorAll<HTMLElement>('[data-count]').forEach((el) => {
-        const target = parseInt(el.dataset.count || '0', 10);
+        const baked = parseInt(el.dataset.count || '0', 10);
+        const liveKey = el.dataset.live as keyof LiveCounts | undefined;
         const io = new IntersectionObserver((entries, obs) => {
           entries.forEach((e) => {
             if (!e.isIntersecting) return;
             obs.disconnect();
-            const dur = 1100;
-            const t0 = performance.now();
-            const tick = (now: number) => {
-              const p = Math.min(1, (now - t0) / dur);
-              const eased = 1 - Math.pow(1 - p, 3);
-              el.textContent = fmt(target * eased);
-              if (p < 1) requestAnimationFrame(tick);
-              else el.textContent = fmt(target);
-            };
-            requestAnimationFrame(tick);
+            liveOrTimeout.then((data) => {
+              const fromLive = data && liveKey ? data[liveKey] : undefined;
+              const target = typeof fromLive === 'number' && fromLive > 0 ? fromLive : baked;
+              const dur = 1100;
+              const t0 = performance.now();
+              const tick = (now: number) => {
+                const p = Math.min(1, (now - t0) / dur);
+                const eased = 1 - Math.pow(1 - p, 3);
+                el.textContent = fmt(target * eased);
+                if (p < 1) requestAnimationFrame(tick);
+                else el.textContent = fmt(target);
+              };
+              requestAnimationFrame(tick);
+            });
           });
         }, { threshold: 0.4 });
         io.observe(el);

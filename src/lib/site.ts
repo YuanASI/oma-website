@@ -31,7 +31,7 @@ export async function ghStats() {
   // latestRelease fallback is the last-known tag — like the counts, the displayed
   // value is refetched on every deploy (red-line §7); the literal here is only the
   // offline floor, never the claim.
-  const fallback = { stars: 6396, forks: 2391, contributors: 43, latestRelease: 'v1.8.0' };
+  const fallback = { stars: 6400, forks: 2391, contributors: 43, latestRelease: 'v1.8.0' };
   const headers = ghApiHeaders();
   try {
     const r = await fetch('https://api.github.com/repos/open-multi-agent/open-multi-agent', { headers });
