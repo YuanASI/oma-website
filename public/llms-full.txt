@@ -176,6 +176,7 @@ Reference:
 
 ## Blog
 
+- From Transcript to Typed Action Items: Three Parallel Agents in TypeScript: https://open-multi-agent.com/blog/meeting-summarizer-parallel-agents/
 - Goal In, DAG Out: How Open-Multi-Agent Turns a Goal into a Task DAG: https://open-multi-agent.com/blog/goal-to-task-dag-coordinator/
 - Give Your TypeScript AI Agents Long-Term Memory with TencentDB-Agent-Memory: https://open-multi-agent.com/blog/agent-long-term-memory-tencentdb/
 - Goal-Driven Agent Orchestration vs Explicit Graphs — A TypeScript Framework Taxonomy: https://open-multi-agent.com/blog/goal-driven-vs-explicit-graphs/
