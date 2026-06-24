@@ -37,6 +37,13 @@ const POSTS = [
       'https://dev-to-uploads.s3.us-east-2.amazonaws.com/uploads/articles/inhte0q9kjrrukznvngy.png': '/blog/goal-to-task-dag-coordinator-run.png',
     },
   },
+  {
+    slug: 'from-transcript-to-typed-action-items-three-parallel-agents-in-typescript-3oe',
+    out: 'meeting-summarizer-parallel-agents',
+    images: {
+      'https://dev-to-uploads.s3.us-east-2.amazonaws.com/uploads/articles/1g7q3llxmh23bttamsk9.png': '/blog/meeting-summarizer-parallel-agents-run.png',
+    },
+  },
 ];
 
 // dev.to embeds its own `--- … ---` front-matter at the top of body_markdown for

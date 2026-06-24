@@ -42,6 +42,7 @@ Open Multi-Agent (OMA) is a goal-driven agent runtime for TypeScript backends. I
 
 ## Blog
 
+- [From Transcript to Typed Action Items: Three Parallel Agents in TypeScript](https://open-multi-agent.com/blog/meeting-summarizer-parallel-agents/): three specialist agents run in parallel — two return typed Zod output — and a fourth aggregates them into one meeting report.
 - [Goal In, DAG Out: How Open-Multi-Agent Turns a Goal into a Task DAG](https://open-multi-agent.com/blog/goal-to-task-dag-coordinator/): how runTeam() hands a goal to a coordinator that builds the task DAG for you, with the mechanism step by step.
 - [Give Your TypeScript AI Agents Long-Term Memory with TencentDB-Agent-Memory](https://open-multi-agent.com/blog/agent-long-term-memory-tencentdb/): wiring OMA's MemoryStore to TencentDB-Agent-Memory for cross-run agent memory.
 - [Goal-Driven Agent Orchestration vs Explicit Graphs: A TypeScript Framework Taxonomy](https://open-multi-agent.com/blog/goal-driven-vs-explicit-graphs/): a taxonomy of TypeScript multi-agent frameworks — goal-driven orchestration vs explicit graphs.
