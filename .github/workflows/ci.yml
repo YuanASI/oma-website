@@ -27,6 +27,12 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # i18n key-parity gate: tsc type-checks the locale dicts against the en
+      # UiDict (zh must match it key-for-key). `astro build` uses esbuild and
+      # does NOT type-check, so a missing zh key would otherwise ship green and
+      # render as `undefined` under /zh/. `pnpm check` catches it before build.
+      - run: pnpm check
+
       # `pnpm build` is the project's primary gate: it runs the build-time GitHub
       # fetches (repo stats + the /examples inventory) and catches TS / import /
       # ESM / content-collection errors. GITHUB_TOKEN authenticates those fetches
