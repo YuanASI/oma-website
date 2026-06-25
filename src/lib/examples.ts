@@ -143,16 +143,33 @@ async function fetchText(url: string): Promise<string | null> {
   }
 }
 
-export async function getExamples(): Promise<ExamplesData | null> {
+// Build-time memo — getExamples() is awaited from both /examples and /zh/examples,
+// and the git/trees fetch below is the single heaviest GitHub call in the build.
+// Fetching once (not per locale) keeps the request burst down and out of GitHub's
+// secondary rate limit. See the matching note on ghStats() in ./site.
+let examplesPromise: Promise<ExamplesData | null> | null = null;
+export function getExamples(): Promise<ExamplesData | null> {
+  return (examplesPromise ??= fetchExamples());
+}
+
+async function fetchExamples(): Promise<ExamplesData | null> {
+  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
   const headers = ghApiHeaders();
   let paths: { path: string; type: string }[];
   try {
     const res = await fetch(`https://api.github.com/repos/${SLUG}/git/trees/${BRANCH}?recursive=1`, { headers });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.warn(`[getExamples] git/trees ${res.status} (token ${token ? 'present' : 'MISSING'}, x-ratelimit-remaining=${res.headers.get('x-ratelimit-remaining') ?? '?'}) — using fallback`);
+      return null;
+    }
     const json = await res.json();
     paths = (json.tree as { path: string; type: string }[]).filter((t) => t.path.startsWith(ROOT + '/'));
-    if (!paths.length) return null;
-  } catch {
+    if (!paths.length) {
+      console.warn(`[getExamples] git/trees ok but 0 entries under ${ROOT}/ — using fallback`);
+      return null;
+    }
+  } catch (e) {
+    console.warn(`[getExamples] git/trees threw (token ${token ? 'present' : 'MISSING'}): ${e instanceof Error ? e.message : e} — using fallback`);
     return null;
   }
 
