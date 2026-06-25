@@ -67,7 +67,7 @@ export function blogSlugOf(id: string): string {
 
 // The custom pages that exist in every locale. The language switcher uses this to
 // decide whether the current page has a same-page counterpart in the other locale
-// (it does for these; non-localized routes like /blog/ fall back to the home).
+// (true for these; a route absent here falls back to the locale's home).
 export const LOCALIZED_PATHS: readonly string[] = ['/', '/examples/', '/showcase/', '/architecture/', '/blog/'];
 
 export type { UiDict };

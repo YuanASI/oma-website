@@ -5,7 +5,7 @@
 // language. A 3rd locale would need a menu instead; the i18n dict + routing
 // already scale, only this button assumes two. `path` is this page's
 // default-locale path so the link points at the same page in the other locale;
-// non-localized routes (e.g. /blog/) fall back to that locale's home.
+// a route with no localized counterpart falls back to that locale's home.
 import { useTranslations, localizePath, localeMeta, otherLocale, defaultLocale, type Locale } from '../i18n';
 
 interface Props {

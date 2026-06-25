@@ -86,7 +86,7 @@ const jsonLd = {
   ogType="article"
 >
   <Fragment slot="head">
-    <link rel="alternate" type="application/rss+xml" title="Open Multi-Agent blog" href="/rss.xml" />
+    {locale === 'en' && <link rel="alternate" type="application/rss+xml" title="Open Multi-Agent blog" href="/rss.xml" />}
     <meta property="article:published_time" content={post.data.pubDate.toISOString()} />
     <meta property="article:modified_time" content={(post.data.updatedDate ?? post.data.pubDate).toISOString()} />
   </Fragment>

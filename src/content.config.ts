@@ -6,7 +6,7 @@ import { docsSchema } from '@astrojs/starlight/schema';
 export const collections = {
 	docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
 	// Blog posts migrated from dev.to (scripts/migrate-devto-blog.mjs). Custom
-	// landing-style pages, not Starlight docs — see src/pages/blog/.
+	// landing-style pages, not Starlight docs — see src/pages/[...locale]/blog/.
 	blog: defineCollection({
 		loader: glob({ pattern: '**/*.md', base: './src/content/blog' }),
 		schema: z.object({
