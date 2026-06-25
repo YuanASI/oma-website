@@ -26,8 +26,8 @@ export const en = {
   },
 
   langSwitcher: {
-    // sr-only label on the <select>, mirroring Starlight's "Select language".
-    label: 'Select language',
+    // aria-label + title on the icon toggle; {lang} → the target locale's label.
+    toAria: 'Switch to {lang}',
   },
 
   footer: {

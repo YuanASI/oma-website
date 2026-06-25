@@ -24,7 +24,7 @@ export const zh: UiDict = {
   },
 
   langSwitcher: {
-    label: '选择语言',
+    toAria: '切换到 {lang}',
   },
 
   footer: {
