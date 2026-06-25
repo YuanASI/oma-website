@@ -5,15 +5,22 @@
 // the shared social image (matching the custom pages in src/pages/), and emits
 // a per-page TechArticle — mirroring architecture.astro's shape. Custom
 // landing/blog pages set their own <head>; this only covers Starlight docs.
+//
+// i18n: once `locales` is configured (astro.config.mjs), Starlight's default
+// head already emits the hreflang alternates and og:locale for each locale, so
+// we don't — duplicating them would emit two of each. The one thing Starlight
+// does NOT carry is JSON-LD, so we add `inLanguage` (from the route's BCP-47
+// `lang`) to the TechArticle below.
 import Default from '@astrojs/starlight/components/Head.astro';
 
-const { entry } = Astro.locals.starlightRoute;
+const { entry, lang } = Astro.locals.starlightRoute;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL('/github-social.png', Astro.site).href;
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'TechArticle',
+  inLanguage: lang,
   headline: entry.data.title,
   description: entry.data.description,
   url: canonical,

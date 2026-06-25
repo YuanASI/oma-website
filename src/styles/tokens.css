@@ -9,9 +9,14 @@
    ───────────────────────────────────────────────────────────────────────── */
 
 :root {
-  /* ── Families (offline Fontsource variable fonts, with system fallbacks) ── */
-  --font-sans: 'Geist Variable', 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  /* ── Families (offline Fontsource variable fonts, with system fallbacks) ──
+     CJK system fonts sit AFTER the Latin faces. Font-family is resolved per
+     glyph, so Latin/digits/punctuation always render in Geist/JetBrains; only
+     CJK codepoints (the zh docs at /zh/) fall through to PingFang/YaHei/Noto.
+     → English pages stay pixel-identical, and no CJK webfont is downloaded
+     (all are OS-bundled: PingFang=macOS, Microsoft YaHei=Windows, Noto=Linux). */
+  --font-sans: 'Geist Variable', 'Geist', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'Noto Sans SC', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, 'PingFang SC', 'Microsoft YaHei', monospace;
 
   /* ── Base surfaces (warm near-black → raised) ── */
   --oma-bg-0: #0A0908;   /* canvas / page                       */
