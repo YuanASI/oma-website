@@ -28,6 +28,24 @@ An untranslated page is **not** an error — Starlight falls back to the English
 page automatically (with a small "not translated" notice). Translate
 incrementally, one page at a time.
 
+## Blog posts
+
+The blog follows the same rules with one wrinkle. For each English post
+`src/content/blog/<slug>.md`, produce `src/content/blog/zh/<slug>.md` — **same
+filename**, one extra `zh/` level (mirrors the docs convention above). Translate
+the `title`/`description` values and the body; keep code, identifiers, and URLs
+verbatim; prefix in-site links with the locale.
+
+Two blog-specific points:
+
+- **Omit the `devtoUrl` front-matter field.** It's the dev.to back-link for the
+  English original, which a translation doesn't have — the zh post instead shows
+  an "阅读英文原文" link back to the English post automatically.
+- Keep `pubDate`, `tags` (English), and `readingMinutes` unchanged.
+
+Unlike the Starlight docs, the blog has no English fallback: an untranslated
+post simply does not appear under `/zh/blog/` until its `zh/` file exists.
+
 ## Translate these
 
 - Body prose, headings, list items, blockquote text.
