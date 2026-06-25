@@ -6,6 +6,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
+    "check": "tsc --noEmit -p tsconfig.i18n.json",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -19,5 +20,8 @@
     "clsx": "^2.1.1",
     "sharp": "^0.34.5"
   },
-  "packageManager": "pnpm@10.34.3+sha512.f2c531b08829d7be7f03c90addc266615f9c5477463e4bf1d275cb263ce9ea57cf0d5599110d94649a9bb3fed9f0b5efcea74a7016b61532a24cb9ad87860c1d"
+  "packageManager": "pnpm@10.34.3+sha512.f2c531b08829d7be7f03c90addc266615f9c5477463e4bf1d275cb263ce9ea57cf0d5599110d94649a9bb3fed9f0b5efcea74a7016b61532a24cb9ad87860c1d",
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
 }
