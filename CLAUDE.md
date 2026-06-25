@@ -4,7 +4,7 @@
 
 ## 这是什么
 
-open-multi-agent 的官网 + 文档站，部署在 **open-multi-agent.com**。Astro 6 + Starlight：Starlight 渲染**文档**，自定义 Astro 页面渲染 **landing / blog / `/examples` / `/showcase`**。
+open-multi-agent 的官网 + 文档站，部署在 **open-multi-agent.com**。Astro 6 + Starlight：Starlight 渲染**文档**，自定义 Astro 页面渲染 **landing / `/examples` / `/showcase` / `/architecture` / blog**。**英文在站点根 `/`、简体中文在 `/zh/`**——文档站（Starlight `locales`）和自定义页（`[...locale]` 路由 + `src/i18n` 字典）都做了 zh-CN i18n（blog 暂不译）。
 
 **这不是框架本体** —— 框架在 `open-multi-agent/open-multi-agent` 仓库，发布为 `@open-multi-agent/core`。本仓库只是站点，别把框架代码改动塞这里。
 
@@ -16,18 +16,20 @@ open-multi-agent 的官网 + 文档站，部署在 **open-multi-agent.com**。As
 
 ## 关键文件 / 入口
 
-- `astro.config.mjs` — 站点配置、侧边栏 IA、`redirects`（`/github`→repo）、`sitemap`、Expressive Code 主题。
-- `src/pages/index.astro` — landing；hero 渲染**真实 OMA run**（`src/data/hero-run.json`，硬约束：不是 mockup）。
+- `astro.config.mjs` — 站点配置、侧边栏 IA、**`locales`（en 根 + zh@`/zh/`，`ja` 已注释留位）**、`redirects`（`/github`→repo）、`sitemap`、Expressive Code 主题。
+- `src/pages/[...locale]/` — 自定义页（`index`=landing / `examples` / `showcase` / `architecture`）：rest 参数 + `getStaticPaths`，**一套模板出 `/` 和 `/zh/`**（不 fork 成 `/zh/*.astro`）。landing 的 hero 渲染**真实 OMA run**（en `src/data/hero-run.json` / zh `hero-run.zh.json`，硬约束：不是 mockup）。blog 在 `src/pages/blog/`（英文，不译）。
+- `src/i18n/{index,en,zh}.ts` — 自定义页文案字典（`en` 是真源，`UiDict = typeof en`，`zh: UiDict` 同构）+ `localizePath` / `localeStaticPaths` / `useTranslations` 等路由助手。`src/layouts/BaseLayout.astro` — 自定义页共享的 locale-aware `<head>`（`<html lang>` / og:locale / hreflang / canonical / JSON-LD）。
 - `src/lib/site.ts` — 站点常量（REPO/FORGE/NPM）+ `ghStats()` 构建期抓 GitHub 数据。
 - `src/lib/examples.ts` / `showcase.ts` — `/examples`、`/showcase` 的构建期数据源。
-- `src/content/docs/` — Starlight 文档；`src/content/blog/` — 从 dev.to 迁移的博客。
-- `src/styles/tokens.css` — 设计 token 唯一真源（→ `starlight-theme.css`，dark-first）。
-- `scripts/` — `capture-hero-dag` / `migrate-devto-blog` / `sync-reference-docs`，按需或 CI 跑，不进 `pnpm build`。
+- `src/content/docs/`（en 根）+ `src/content/docs/zh/`（15 页译文）— Starlight 文档；`src/content/blog/` — 从 dev.to 迁移的博客。
+- `src/styles/tokens.css` — 设计 token 唯一真源（→ `starlight-theme.css`，dark-first；CJK 字体栈也在这）。`TRANSLATING.md` — 翻译规范（术语表 + 保留规则）。
+- `scripts/` — `capture-hero-dag`（`OMA_LANG=zh` 出中文 run）/ `migrate-devto-blog` / `sync-reference-docs` / `check-reference-drift` / `update-translation-manifest`，按需或 CI 跑，不进 `pnpm build`。
 
 ## 本项目特有纪律（覆盖/补充 DEV 层）
 
 - **数字一律不写死**：stars/forks/contributors、examples 清单、showcase 全部构建期实时抓取 + magnitude fallback。永远不手填精确数字当声明（红线 §7）。
 - **Reference 是 vendored，别在本仓库直接改正文**：`src/content/docs/reference/` 从框架 `main` 自动同步（`.github/workflows/sync-reference.yml` 周一 06:17 UTC 开 PR）。要改 Reference 先改上游框架仓库再 re-vendor，否则下次同步覆盖你的改动、且造成 drift。**Getting Started + Guides 才是本仓库直接维护的。**
+- **i18n（en 根 / zh `/zh/`）**：自定义页文案进 `src/i18n` 字典、模板写一遍 locale 取词（**别 fork 成 `/zh/*.astro`**）；翻译照 `TRANSLATING.md` 术语表、和已上线 zh 文档一致。坑：**`astro build` 用 esbuild 不做类型检查**——zh 缺键不会让 build 失败、会静默渲染成 `undefined`，靠 `grep -rc undefined dist/zh` 验，不是靠 build 红。hero 中文 run 必须 `OMA_LANG=zh … node scripts/capture-hero-dag.mjs` 真实捕获，不手改 JSON。细节见 memory `project_oma_website_custom_pages_i18n` / `project_oma_website_docs_i18n`。
 - **本地 build 设 `GITHUB_TOKEN`**：否则 `/examples` + landing 数字走 fallback（GitHub 未认证 IP 限流）。`GITHUB_TOKEN=… pnpm build`。详见 memory `project_oma_website_build_github_token`。
 - **改 code-block 配色先清缓存**：`rm -rf node_modules/.astro .astro`（Astro 渲染缓存按源内容 key，不按 `astro.config.mjs`，否则发旧样式 / 404）。
 - **发布过 guard 的细节**见 memory `reference_oma_website_publish_guard`（本仓库 commit/push/PR 的 grant 与 footgun）。
