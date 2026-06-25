@@ -295,6 +295,29 @@ export const en = {
       quickStart: 'Quick Start',
     },
   },
+
+  blog: {
+    seo: {
+      title: 'Blog — Open Multi-Agent',
+      description:
+        'Writing on TypeScript multi-agent orchestration: goal-driven task DAGs, mixed-model teams, long-term memory, and lessons from the agent-framework ecosystem.',
+    },
+    eyebrow: 'Blog',
+    title: 'Notes on multi-agent orchestration.',
+    // Index lede. The inline link renders only when `ledeLink` is set: the en
+    // index points at dev.to ("Cross-posted from dev.to"); the zh index drops it
+    // (translations aren't cross-posted) by leaving ledeLink/ledePost empty.
+    ledePre:
+      'Deep dives on goal-driven task DAGs, mixed-model teams, and the TypeScript agent ecosystem. Cross-posted from ',
+    ledeLink: 'dev.to',
+    ledePost: '.',
+    minRead: 'min read',
+    allPosts: '← All posts',
+    // en posts show "Originally published on dev.to"; zh translations show the
+    // "translated from" link to the en original instead.
+    originallyOn: 'Originally published on',
+    translatedFrom: 'Read the English original',
+  },
 };
 
 export type UiDict = typeof en;
