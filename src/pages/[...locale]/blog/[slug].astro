@@ -1,0 +1,145 @@
+---
+// /blog/<slug> and /zh/blog/<slug> — a single post, one template for both locales.
+// getStaticPaths emits the locale × posts-in-that-locale cross product; the slug is
+// the post id minus any `zh/` prefix, so an en/zh pair shares one slug. The shared
+// locale-aware <head> comes from BaseLayout (ogType="article", article meta in the
+// head slot). hreflang is emitted only when a translated counterpart exists.
+import '@fontsource-variable/geist';
+import '@fontsource-variable/jetbrains-mono';
+import '../../../styles/tokens.css';
+import '../../../styles/landing.css';
+import '../../../styles/blog.css';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Badge from '../../../components/ds/Badge.astro';
+import Nav from '../../../components/Nav.astro';
+import Footer from '../../../components/Footer.astro';
+import { ghStats } from '../../../lib/site';
+import { getCollection, render } from 'astro:content';
+import { toLocale, useTranslations, localizePath, defaultLocale, blogLocaleOf, blogSlugOf } from '../../../i18n';
+
+export async function getStaticPaths() {
+  const all = await getCollection('blog');
+  const enSlugs = new Set(all.filter((p) => blogLocaleOf(p.id) === 'en').map((p) => blogSlugOf(p.id)));
+  const zhSlugs = new Set(all.filter((p) => blogLocaleOf(p.id) === 'zh').map((p) => blogSlugOf(p.id)));
+  return all.map((post) => {
+    const loc = blogLocaleOf(post.id);
+    const slug = blogSlugOf(post.id);
+    const hasCounterpart = (loc === 'en' ? zhSlugs : enSlugs).has(slug);
+    return {
+      params: { locale: loc === defaultLocale ? undefined : loc, slug },
+      props: { post, hasCounterpart },
+    };
+  });
+}
+
+const { post, hasCounterpart } = Astro.props;
+const locale = toLocale(Astro.params.locale);
+const bt = useTranslations(locale).blog;
+const slug = blogSlugOf(post.id);
+const { Content } = await render(post);
+
+const stats = await ghStats();
+const starsK = (stats.stars / 1000).toFixed(1) + 'k';
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+const title = `${post.data.title} — Open Multi-Agent`;
+const description = post.data.description;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL('/github-social.png', Astro.site).href;
+const orgId = new URL('/#organization', Astro.site).href;
+// The en original of a translation always lives at the root /blog/<slug>/.
+const enOriginal = `/blog/${slug}/`;
+// No counterpart → point the language switcher at the other locale's blog index
+// (localizePath turns /blog/ into /zh/blog/), not a 404 post URL or the site home.
+const navPath = hasCounterpart ? `/blog/${slug}/` : '/blog/';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description,
+  inLanguage: locale === 'zh' ? 'zh-CN' : 'en',
+  datePublished: post.data.pubDate.toISOString(),
+  dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
+  url: canonical,
+  mainEntityOfPage: canonical,
+  image: ogImage,
+  keywords: post.data.tags.join(', '),
+  author: { '@type': 'Person', name: 'Jack Chen', url: 'https://dev.to/jackchenme' },
+  publisher: {
+    '@type': 'Organization',
+    '@id': orgId,
+    name: 'YuanASI',
+    logo: new URL('/logo-mark-dark.svg', Astro.site).href,
+  },
+};
+---
+
+<BaseLayout
+  locale={locale}
+  title={title}
+  description={description}
+  jsonLd={jsonLd}
+  path={`/blog/${slug}/`}
+  localized={hasCounterpart}
+  ogType="article"
+>
+  <Fragment slot="head">
+    <link rel="alternate" type="application/rss+xml" title="Open Multi-Agent blog" href="/rss.xml" />
+    <meta property="article:published_time" content={post.data.pubDate.toISOString()} />
+    <meta property="article:modified_time" content={(post.data.updatedDate ?? post.data.pubDate).toISOString()} />
+  </Fragment>
+
+  <Nav current="blog" starsK={starsK} locale={locale} path={navPath} />
+  <main>
+    <article class="section">
+      <div class="container container--narrow">
+        <a class="blog-back" href={localizePath('/blog/', locale)}>{bt.allPosts}</a>
+        <header class="blog-post-head">
+          <div class="blog-card-meta">
+            <time datetime={post.data.pubDate.toISOString()}>{fmtDate(post.data.pubDate)}</time>
+            {' · '}{post.data.readingMinutes} {bt.minRead}
+          </div>
+          <h1>{post.data.title}</h1>
+          <div class="blog-card-tags">
+            {post.data.tags.map((tag) => <Badge tone="neutral">{tag}</Badge>)}
+          </div>
+        </header>
+        <div class="prose">
+          <Content />
+        </div>
+        <hr class="blog-rule" />
+        {post.data.devtoUrl ? (
+          <p class="blog-origin">
+            {bt.originallyOn}
+            <a href={post.data.devtoUrl} target="_blank" rel="noreferrer">dev.to</a>.
+          </p>
+        ) : (
+          <p class="blog-origin">
+            <a href={enOriginal}>{bt.translatedFrom}</a>
+          </p>
+        )}
+      </div>
+    </article>
+  </main>
+  <Footer locale={locale} />
+
+  <script>
+    // Make *scrollable* code blocks and tables keyboard-focusable so they can
+    // be scrolled without a mouse — only when they actually overflow, so blocks
+    // that fit don't become useless tab stops (axe: scrollable-region-focusable).
+    const focusIfScrollable = (el: HTMLElement) => {
+      if (el.scrollWidth > el.clientWidth) el.setAttribute('tabindex', '0');
+    };
+    document.querySelectorAll<HTMLElement>('.prose pre').forEach(focusIfScrollable);
+    document.querySelectorAll<HTMLTableElement>('.prose table').forEach((table) => {
+      if (table.parentElement?.classList.contains('table-wrap')) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'table-wrap';
+      table.parentNode?.insertBefore(wrap, table);
+      wrap.appendChild(table);
+      focusIfScrollable(wrap);
+    });
+  </script>
+</BaseLayout>

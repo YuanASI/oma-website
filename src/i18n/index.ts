@@ -53,9 +53,21 @@ export function localizePath(path: string, locale: Locale): string {
   return `/${locale}${path}`;
 }
 
+// A blog post's collection id is its path under src/content/blog without the
+// extension: en posts are flat (`goal-to-task-dag-coordinator`), zh translations
+// live under `zh/` (`zh/goal-to-task-dag-coordinator`). The locale comes from the
+// prefix; the trailing slug is shared by an en/zh pair, which is how the two are
+// matched (hreflang, the "translated from" back-link, the language switcher).
+export function blogLocaleOf(id: string): Locale {
+  return id.startsWith('zh/') ? 'zh' : 'en';
+}
+export function blogSlugOf(id: string): string {
+  return id.startsWith('zh/') ? id.slice('zh/'.length) : id;
+}
+
 // The custom pages that exist in every locale. The language switcher uses this to
 // decide whether the current page has a same-page counterpart in the other locale
 // (it does for these; non-localized routes like /blog/ fall back to the home).
-export const LOCALIZED_PATHS: readonly string[] = ['/', '/examples/', '/showcase/', '/architecture/'];
+export const LOCALIZED_PATHS: readonly string[] = ['/', '/examples/', '/showcase/', '/architecture/', '/blog/'];
 
 export type { UiDict };

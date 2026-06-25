@@ -1,9 +1,8 @@
 ---
 // Global top nav (§3). Shared by every custom page so the chrome stays in one
 // place. `current` marks the active in-site link; `starsK` is the build-time star
-// count (e.g. "6.4k"); `locale` localizes the labels and the in-site links (Blog
-// is intentionally not localized — the blog stays English); `path` is this page's
-// default-locale path, handed to the language switcher.
+// count (e.g. "6.4k"); `locale` localizes the labels and the in-site links; `path`
+// is this page's default-locale path, handed to the language switcher.
 import { REPO, FORGE } from '../lib/site';
 import { useTranslations, localizePath, type Locale } from '../i18n';
 import LangSwitcher from './LangSwitcher.astro';
@@ -44,7 +43,7 @@ const L = (p: string) => localizePath(p, locale);
       <a class="nav-link" href={L('/architecture/')} aria-current={current === 'architecture' ? 'page' : undefined}>{t.nav.architecture}</a>
       <a class="nav-link" href={L('/examples/')} aria-current={current === 'examples' ? 'page' : undefined}>{t.nav.examples}</a>
       <a class="nav-link" href={L('/showcase/')} aria-current={current === 'showcase' ? 'page' : undefined}>{t.nav.showcase}</a>
-      <a class="nav-link" href="/blog/" aria-current={current === 'blog' ? 'page' : undefined}>{t.nav.blog}</a>
+      <a class="nav-link" href={L('/blog/')} aria-current={current === 'blog' ? 'page' : undefined}>{t.nav.blog}</a>
     </div>
     <div class="nav-ghost">
       <a class="nav-github" href={REPO} target="_blank" rel="noreferrer" aria-label={`GitHub — ${starsK} ${t.nav.stars}`} title="GitHub">

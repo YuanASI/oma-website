@@ -294,4 +294,21 @@ export const zh: UiDict = {
       quickStart: '快速开始',
     },
   },
+
+  blog: {
+    seo: {
+      title: '博客 — Open Multi-Agent',
+      description:
+        '关于 TypeScript 多智能体编排的写作：目标驱动的任务 DAG、混合模型团队、长期记忆，以及智能体框架生态里的经验教训。',
+    },
+    eyebrow: '博客',
+    title: '关于多智能体编排的笔记。',
+    ledePre: '深入探讨目标驱动的任务 DAG、混合模型团队，以及 TypeScript 智能体生态。',
+    ledeLink: '',
+    ledePost: '',
+    minRead: '分钟阅读',
+    allPosts: '← 所有文章',
+    originallyOn: '最初发表于',
+    translatedFrom: '阅读英文原文',
+  },
 };

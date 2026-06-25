@@ -4,7 +4,7 @@
 
 ## 这是什么
 
-open-multi-agent 的官网 + 文档站，部署在 **open-multi-agent.com**。Astro 6 + Starlight：Starlight 渲染**文档**，自定义 Astro 页面渲染 **landing / `/examples` / `/showcase` / `/architecture` / blog**。**英文在站点根 `/`、简体中文在 `/zh/`**——文档站（Starlight `locales`）和自定义页（`[...locale]` 路由 + `src/i18n` 字典）都做了 zh-CN i18n（blog 暂不译）。
+open-multi-agent 的官网 + 文档站，部署在 **open-multi-agent.com**。Astro 6 + Starlight：Starlight 渲染**文档**，自定义 Astro 页面渲染 **landing / `/examples` / `/showcase` / `/architecture` / blog**。**英文在站点根 `/`、简体中文在 `/zh/`**——文档站（Starlight `locales`）和自定义页（`[...locale]` 路由 + `src/i18n` 字典）都做了 zh-CN i18n（blog 同样 en 根 / zh `/zh/blog/`，按篇翻译、未翻不进 zh 索引）。
 
 **这不是框架本体** —— 框架在 `open-multi-agent/open-multi-agent` 仓库，发布为 `@open-multi-agent/core`。本仓库只是站点，别把框架代码改动塞这里。
 
@@ -17,11 +17,11 @@ open-multi-agent 的官网 + 文档站，部署在 **open-multi-agent.com**。As
 ## 关键文件 / 入口
 
 - `astro.config.mjs` — 站点配置、侧边栏 IA、**`locales`（en 根 + zh@`/zh/`，`ja` 已注释留位）**、`redirects`（`/github`→repo）、`sitemap`、Expressive Code 主题。
-- `src/pages/[...locale]/` — 自定义页（`index`=landing / `examples` / `showcase` / `architecture`）：rest 参数 + `getStaticPaths`，**一套模板出 `/` 和 `/zh/`**（不 fork 成 `/zh/*.astro`）。landing 的 hero 渲染**真实 OMA run**（en `src/data/hero-run.json` / zh `hero-run.zh.json`，硬约束：不是 mockup）。blog 在 `src/pages/blog/`（英文，不译）。
+- `src/pages/[...locale]/` — 自定义页（`index`=landing / `examples` / `showcase` / `architecture`）：rest 参数 + `getStaticPaths`，**一套模板出 `/` 和 `/zh/`**（不 fork 成 `/zh/*.astro`）。landing 的 hero 渲染**真实 OMA run**（en `src/data/hero-run.json` / zh `hero-run.zh.json`，硬约束：不是 mockup）。blog 同在 `src/pages/[...locale]/blog/`（`index` + `[slug]`，一套模板出 `/blog` 和 `/zh/blog`）。
 - `src/i18n/{index,en,zh}.ts` — 自定义页文案字典（`en` 是真源，`UiDict = typeof en`，`zh: UiDict` 同构）+ `localizePath` / `localeStaticPaths` / `useTranslations` 等路由助手。`src/layouts/BaseLayout.astro` — 自定义页共享的 locale-aware `<head>`（`<html lang>` / og:locale / hreflang / canonical / JSON-LD）。
 - `src/lib/site.ts` — 站点常量（REPO/FORGE/NPM）+ `ghStats()` 构建期抓 GitHub 数据。
 - `src/lib/examples.ts` / `showcase.ts` — `/examples`、`/showcase` 的构建期数据源。
-- `src/content/docs/`（en 根）+ `src/content/docs/zh/`（15 页译文）— Starlight 文档；`src/content/blog/` — 从 dev.to 迁移的博客。
+- `src/content/docs/`（en 根）+ `src/content/docs/zh/`（15 页译文）— Starlight 文档；`src/content/blog/`（en 扁平）+ `src/content/blog/zh/`（译文，镜像 docs 约定）— 从 dev.to 迁移的博客；`devtoUrl` 对 zh 译文 optional、zh 文章回链英文原文。
 - `src/styles/tokens.css` — 设计 token 唯一真源（→ `starlight-theme.css`，dark-first；CJK 字体栈也在这）。`TRANSLATING.md` — 翻译规范（术语表 + 保留规则）。
 - `scripts/` — `capture-hero-dag`（`OMA_LANG=zh` 出中文 run）/ `migrate-devto-blog` / `sync-reference-docs` / `check-reference-drift` / `update-translation-manifest`，按需或 CI 跑，不进 `pnpm build`。
 

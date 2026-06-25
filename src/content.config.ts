@@ -18,9 +18,10 @@ export const collections = {
 			// posts fall back to pubDate, so unedited posts read as unmodified.
 			updatedDate: z.coerce.date().optional(),
 			tags: z.array(z.string()).default([]),
-			// The dev.to original. The site self-canonicals; this is the "originally
-			// published" back-link shown on each post.
-			devtoUrl: z.string().url(),
+			// The dev.to original (en posts only). The site self-canonicals; this is
+			// the "originally published" back-link shown on each post. zh translations
+			// aren't on dev.to — they omit this and link back to the en original.
+			devtoUrl: z.string().url().optional(),
 			readingMinutes: z.number().default(1),
 		}),
 	}),

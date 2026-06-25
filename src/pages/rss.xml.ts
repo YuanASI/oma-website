@@ -1,13 +1,15 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 import type { APIContext } from 'astro';
+import { blogLocaleOf } from '../i18n';
 
-// /rss.xml — feed for the migrated dev.to blog (src/content/blog), newest
-// first. Linked from the blog pages (<link rel="alternate">) and the footer.
+// /rss.xml — feed for the migrated dev.to blog (src/content/blog), newest first.
+// English posts only — zh translations live under /zh/blog/; a zh feed is a later
+// add. Linked from the blog pages (<link rel="alternate">) and the footer.
 export async function GET(context: APIContext) {
-  const posts = (await getCollection('blog')).sort(
-    (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
-  );
+  const posts = (await getCollection('blog'))
+    .filter((p) => blogLocaleOf(p.id) === 'en')
+    .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
   return rss({
     title: 'Open Multi-Agent — Blog',
     description:
