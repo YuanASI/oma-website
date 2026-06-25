@@ -87,3 +87,13 @@
   background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
   background-size: var(--grid-size) var(--grid-size);
 }
+
+/* CJK docs tables: with table-layout:auto the browser may break CJK text between
+   any two glyphs, so a short-phrase first column (e.g. the Production Checklist
+   关注点 column) collapses to ~2 chars wide and stacks vertically while a
+   code-heavy column hogs the width. Give the first column a readable floor so the
+   short labels sit on one line. Scoped by html lang to CJK locales — English
+   tables are untouched; add new CJK locales (e.g. ja) to the selector when added. */
+html[lang='zh-CN'] .sl-markdown-content table :is(th, td):first-child {
+  min-width: 8em;
+}
