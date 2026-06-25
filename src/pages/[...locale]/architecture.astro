@@ -1,0 +1,160 @@
+---
+// /architecture — "How OMA works": the formal architecture diagram (Batch 6A)
+// and the runTeam() execution flow (Batch 6B) from the OMA brand spec, rendered
+// as the dedicated page the spec's deployment guide calls for ("/architecture
+// embed architecture.svg"). The diagrams are vendored into public/ from the
+// design system; their hardcoded "v1.2.0 / 9 implementations" labels were
+// corrected against the framework at v1.8.0 (6 built-in tools is unchanged; the
+// provider count is neutralized to "multiple" per the no-hardcoded-numbers rule).
+import '@fontsource-variable/geist';
+import '@fontsource-variable/jetbrains-mono';
+import '../../styles/tokens.css';
+import '../../styles/landing.css';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import { REPO, ghStats } from '../../lib/site';
+import { localeStaticPaths, toLocale, useTranslations, localizePath } from '../../i18n';
+
+export function getStaticPaths() { return localeStaticPaths(); }
+const locale = toLocale(Astro.params.locale);
+const t = useTranslations(locale);
+const ar = t.architecture;
+const L = (p: string) => localizePath(p, locale);
+
+const stats = await ghStats();
+const starsK = (stats.stars / 1000).toFixed(1) + 'k';
+
+const title = ar.seo.title;
+const description = ar.seo.description;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+const STRUCTURE_LEGEND = ar.structureLegend;
+const FLOW_READ = ar.flowRead;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  inLanguage: locale === 'zh' ? 'zh-CN' : 'en',
+  headline: title,
+  description,
+  url: canonical,
+  isPartOf: { '@type': 'WebSite', name: 'Open Multi-Agent', url: 'https://open-multi-agent.com' },
+};
+---
+
+<BaseLayout locale={locale} title={title} description={description} jsonLd={jsonLd} path="/architecture/">
+  <Nav current="architecture" starsK={starsK} locale={locale} path="/architecture/" />
+
+  <main>
+    <!-- ── Page head ── -->
+    <header class="arch-hero">
+      <div class="container">
+        <div class="eyebrow"><span class="idx">//</span> {ar.hero.eyebrow}</div>
+        <h1 class="arch-title">{ar.hero.title}</h1>
+        <p class="arch-lede" set:html={ar.hero.ledeHtml}></p>
+      </div>
+    </header>
+
+    <!-- ── 1. Architecture (Batch 6A) ── -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow"><span class="idx">01</span> {ar.structure.eyebrow}</div>
+          <h2 class="section-title">{ar.structure.title}</h2>
+          <p class="section-sub">{ar.structure.sub}</p>
+        </div>
+        <figure class="diagram">
+          <img
+            src="/architecture.svg"
+            width="1280"
+            height="900"
+            loading="lazy"
+            decoding="async"
+            alt={ar.structure.imgAlt}
+          />
+        </figure>
+        <ul class="legend">
+          {STRUCTURE_LEGEND.map((l) => (
+            <li class="legend-item"><span class="legend-k">{l.k}</span><span class="legend-d">{l.d}</span></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- ── 2. runTeam() flow (Batch 6B) ── -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow"><span class="idx">02</span> {ar.execution.eyebrow}</div>
+          <h2 class="section-title" set:html={ar.execution.titleHtml}></h2>
+          <p class="section-sub">{ar.execution.sub}</p>
+        </div>
+        <figure class="diagram">
+          <img
+            src="/flow-runteam.svg"
+            width="1280"
+            height="720"
+            loading="lazy"
+            decoding="async"
+            alt={ar.execution.imgAlt}
+          />
+        </figure>
+        <ul class="legend">
+          {FLOW_READ.map((l) => (
+            <li class="legend-item"><span class="legend-k">{l.k}</span><span class="legend-d">{l.d}</span></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- ── 3. Next ── -->
+    <section class="section" style="border-top:1px solid var(--border-subtle);">
+      <div class="container cta-final">
+        <div class="eyebrow" style="justify-content:center;"><span class="idx">//</span> {ar.next.eyebrow}</div>
+        <h2>{ar.next.title}</h2>
+        <div class="cta-actions">
+          <a class="text-link" href={L('/getting-started/three-ways-to-run/')}><span>{ar.next.threeWays}</span><span class="arrow">→</span></a>
+          <a class="text-link" href={L('/getting-started/quick-start/')}><span>{ar.next.quickStart}</span><span class="arrow">→</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer locale={locale} />
+</BaseLayout>
+
+<style>
+  .arch-hero { padding: var(--space-16) 0 var(--space-8); border-bottom: 1px solid var(--border-subtle); }
+  .arch-title {
+    font-family: var(--font-sans); font-weight: 600; letter-spacing: -0.035em;
+    font-size: clamp(34px, 5vw, 52px); line-height: 1.05; color: var(--text-strong); margin: 14px 0 0;
+  }
+  .arch-lede { font-size: 17px; line-height: 1.6; color: var(--text-body); margin: 18px 0 0; max-width: 640px; }
+  .arch-lede :global(code) { font-family: var(--font-mono); font-size: 0.9em; color: var(--oma-accent); }
+
+  /* Diagrams are dark-canvas SVGs — frame them as a raised dark card in both
+     themes (the terminal-panel treatment the landing uses), so they read as a
+     deliberate figure rather than a stray dark block on the light canvas. */
+  .diagram {
+    margin: 0; border: 1px solid var(--border-default); border-radius: var(--radius-lg);
+    overflow: hidden; background: #0A0908; box-shadow: var(--shadow-md);
+  }
+  .diagram img { display: block; width: 100%; height: auto; }
+
+  .legend {
+    list-style: none; margin: var(--space-6) 0 0; padding: 0;
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4) var(--space-8);
+  }
+  .legend-item { display: flex; gap: var(--space-3); align-items: baseline; }
+  .legend-k {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--oma-accent); white-space: nowrap; flex: none; min-width: 124px;
+  }
+  .legend-d { font-size: 14px; line-height: 1.55; color: var(--text-body); }
+
+  @media (max-width: 720px) {
+    .legend { grid-template-columns: 1fr; gap: var(--space-3); }
+    .legend-k { min-width: 0; }
+  }
+</style>

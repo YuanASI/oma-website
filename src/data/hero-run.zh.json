@@ -1,0 +1,53 @@
+{
+  "capturedAt": "2026-06-25T08:38:16.515Z",
+  "runId": "5659122e-f979-47a1-852d-87d49ea05ea1",
+  "goal": "为待办事项列表构建一个 REST API。请完成：\n1. 设计数据模型与 API 路由\n2. 实现 CRUD 接口\n3. 为这些接口生成测试套件\n4. 对实现进行安全审查",
+  "provider": "deepseek",
+  "model": "deepseek-v4-flash",
+  "success": true,
+  "wallMs": 84788,
+  "totalTokenUsage": {
+    "input_tokens": 8605,
+    "output_tokens": 10577
+  },
+  "tasks": [
+    {
+      "id": "51404b86-d6de-4a77-ae8a-e06917511497",
+      "title": "设计数据模型与API路由",
+      "assignee": "architect",
+      "status": "completed",
+      "dependsOn": [],
+      "durationMs": 3899
+    },
+    {
+      "id": "9b326aae-36fe-4e1b-9962-c3650fa5a353",
+      "title": "实现CRUD接口",
+      "assignee": "developer",
+      "status": "completed",
+      "dependsOn": [
+        "51404b86-d6de-4a77-ae8a-e06917511497"
+      ],
+      "durationMs": 13008
+    },
+    {
+      "id": "faeee9c4-a99a-4892-ae17-9b0cd6bfe34a",
+      "title": "生成测试套件",
+      "assignee": "developer",
+      "status": "completed",
+      "dependsOn": [
+        "9b326aae-36fe-4e1b-9962-c3650fa5a353"
+      ],
+      "durationMs": 39428
+    },
+    {
+      "id": "158a577a-72e3-48e6-8b9a-79ccfa1e589a",
+      "title": "安全审查",
+      "assignee": "reviewer",
+      "status": "completed",
+      "dependsOn": [
+        "9b326aae-36fe-4e1b-9962-c3650fa5a353"
+      ],
+      "durationMs": 16277
+    }
+  ]
+}

@@ -2,16 +2,25 @@
 // /examples — the example gallery (PRD §4.3). Same self-contained landing-style
 // shell as index.astro (shared Nav/Footer), but the content is built entirely
 // from the repo at build time via getExamples() — no hand-maintained list.
+// Example titles/blurbs are fetched English from the repo README and stay English
+// in every locale (upstream-sourced, like the vendored docs Reference); only the
+// page chrome is translated.
 import '@fontsource-variable/geist';
 import '@fontsource-variable/jetbrains-mono';
-import '../styles/tokens.css';
-import '../styles/landing.css';
-import Card from '../components/ds/Card.astro';
-import Nav from '../components/Nav.astro';
-import ThemeInit from '../components/ThemeInit.astro';
-import Footer from '../components/Footer.astro';
-import { REPO, ghStats } from '../lib/site';
-import { getExamples, FALLBACK_EXAMPLES } from '../lib/examples';
+import '../../styles/tokens.css';
+import '../../styles/landing.css';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Card from '../../components/ds/Card.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import { REPO, ghStats } from '../../lib/site';
+import { getExamples, FALLBACK_EXAMPLES } from '../../lib/examples';
+import { localeStaticPaths, toLocale, useTranslations } from '../../i18n';
+
+export function getStaticPaths() { return localeStaticPaths(); }
+const locale = toLocale(Astro.params.locale);
+const t = useTranslations(locale);
+const ex_t = t.examples;
 
 const stats = await ghStats();
 const starsK = (stats.stars / 1000).toFixed(1) + 'k';
@@ -19,14 +28,14 @@ const ex = await getExamples();
 
 const EXAMPLES_GH = REPO + '/tree/main/packages/core/examples';
 
-const title = 'Examples — Open Multi-Agent';
-const description =
-  'Runnable, end-to-end examples for Open Multi-Agent — cookbook recipes framed by the problem they solve, framework and app integrations, orchestration patterns, and one example per model provider. Straight from the repo.';
+const title = ex_t.seo.title;
+const description = ex_t.seo.description;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
+  inLanguage: locale === 'zh' ? 'zh-CN' : 'en',
   name: title,
   description,
   url: canonical,
@@ -47,47 +56,18 @@ const jsonLd = {
 };
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <ThemeInit />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Open Multi-Agent" />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={new URL('/github-social.png', Astro.site).href} />
-    <meta property="og:image:type" content="image/png" />
-    <meta property="og:image:width" content="1280" />
-    <meta property="og:image:height" content="640" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL('/github-social.png', Astro.site).href} />
-    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
-  </head>
-  <body>
-    <Nav current="examples" starsK={starsK} />
+<BaseLayout locale={locale} title={title} description={description} jsonLd={jsonLd} path="/examples/">
+  <Nav current="examples" starsK={starsK} locale={locale} path="/examples/" />
 
-    <main>
-      <!-- ── Page head ── -->
-      <header class="ex-hero">
-        <div class="container">
-          <div class="eyebrow"><span class="idx">//</span> examples</div>
-          <h1 class="ex-title">What you can build with OMA.</h1>
-          <p class="ex-lede">
-            Runnable recipes straight from the repo — each framed by the problem it solves. Browse by what you want to
-            build, then open the source.
-          </p>
-        </div>
-      </header>
+  <main>
+    <!-- ── Page head ── -->
+    <header class="ex-hero">
+      <div class="container">
+        <div class="eyebrow"><span class="idx">//</span> {ex_t.hero.eyebrow}</div>
+        <h1 class="ex-title">{ex_t.hero.title}</h1>
+        <p class="ex-lede">{ex_t.hero.lede}</p>
+      </div>
+    </header>
 
       {ex ? (
         <Fragment>
@@ -95,12 +75,9 @@ const jsonLd = {
           <section class="section ex-first" id="cookbook">
             <div class="container">
               <div class="section-head">
-                <div class="eyebrow"><span class="idx">01</span> Cookbook</div>
-                <h2 class="section-title">Recipes for real problems.</h2>
-                <p class="section-sub">
-                  End-to-end scripts built around a concrete task, not a single primitive — open the source to see how
-                  the patterns compose on a real workflow.
-                </p>
+                <div class="eyebrow"><span class="idx">01</span> {ex_t.cookbook.eyebrow}</div>
+                <h2 class="section-title">{ex_t.cookbook.title}</h2>
+                <p class="section-sub">{ex_t.cookbook.sub}</p>
               </div>
               <div class="build-grid">
                 {ex.cookbook.map((e) => (
@@ -109,7 +86,7 @@ const jsonLd = {
                       <div class="build-title">{e.title}</div>
                       <p class="build-desc">{e.blurb}</p>
                       <div class="build-foot">
-                        <span class="text-link"><span>see source</span><span class="arrow">→</span></span>
+                        <span class="text-link"><span>{ex_t.seeSource}</span><span class="arrow">→</span></span>
                       </div>
                     </Card>
                   </a>
@@ -122,17 +99,14 @@ const jsonLd = {
           <section class="section" id="integrations">
             <div class="container">
               <div class="section-head">
-                <div class="eyebrow"><span class="idx">02</span> Integrations</div>
-                <h2 class="section-title">Works with your stack.</h2>
-                <p class="section-sub">
-                  A library, not a platform — it composes with the protocols, servers, and frameworks already in your
-                  backend.
-                </p>
+                <div class="eyebrow"><span class="idx">02</span> {ex_t.integrations.eyebrow}</div>
+                <h2 class="section-title">{ex_t.integrations.title}</h2>
+                <p class="section-sub">{ex_t.integrations.sub}</p>
               </div>
 
               {ex.reference.length > 0 && (
                 <div class="ex-group">
-                  <div class="ex-subhead">Reference integrations</div>
+                  <div class="ex-subhead">{ex_t.integrations.reference}</div>
                   <div class="ex-list">
                     {ex.reference.map((e) => (
                       <a class="ex-row mono" href={e.href} target="_blank" rel="noreferrer">
@@ -147,7 +121,7 @@ const jsonLd = {
 
               {ex.apps.length > 0 && (
                 <div class="ex-group">
-                  <div class="ex-subhead">Apps · clone and run</div>
+                  <div class="ex-subhead">{ex_t.integrations.apps}</div>
                   <div class="ex-list">
                     {ex.apps.map((e) => (
                       <a class="ex-row" href={e.href} target="_blank" rel="noreferrer">
@@ -162,7 +136,7 @@ const jsonLd = {
 
               {ex.vendor.length > 0 && (
                 <div class="ex-group">
-                  <div class="ex-subhead">Vendor integrations</div>
+                  <div class="ex-subhead">{ex_t.integrations.vendor}</div>
                   <div class="ex-list">
                     {ex.vendor.map((e) => (
                       <a class="ex-row" href={e.href} target="_blank" rel="noreferrer">
@@ -181,17 +155,14 @@ const jsonLd = {
           <section class="section" id="building-blocks">
             <div class="container">
               <div class="section-head">
-                <div class="eyebrow"><span class="idx">03</span> Building blocks</div>
-                <h2 class="section-title">Primitives, patterns, and providers.</h2>
-                <p class="section-sub">
-                  The lower-level pieces the cookbook composes — start here if you're learning the API or comparing
-                  models.
-                </p>
+                <div class="eyebrow"><span class="idx">03</span> {ex_t.buildingBlocks.eyebrow}</div>
+                <h2 class="section-title">{ex_t.buildingBlocks.title}</h2>
+                <p class="section-sub">{ex_t.buildingBlocks.sub}</p>
               </div>
 
               {ex.basics.length > 0 && (
                 <div class="ex-group">
-                  <div class="ex-subhead">Basics · start here</div>
+                  <div class="ex-subhead">{ex_t.buildingBlocks.basics}</div>
                   <div class="ex-list">
                     {ex.basics.map((e) => (
                       <a class="ex-row mono" href={e.href} target="_blank" rel="noreferrer">
@@ -206,7 +177,7 @@ const jsonLd = {
 
               {ex.patterns.length > 0 && (
                 <div class="ex-group">
-                  <div class="ex-subhead">Patterns</div>
+                  <div class="ex-subhead">{ex_t.buildingBlocks.patterns}</div>
                   <div class="ex-list">
                     {ex.patterns.map((e) => (
                       <a class="ex-row mono" href={e.href} target="_blank" rel="noreferrer">
@@ -221,7 +192,7 @@ const jsonLd = {
 
               {ex.providers.length > 0 && (
                 <div class="ex-group">
-                  <div class="ex-subhead">Providers · one example per model</div>
+                  <div class="ex-subhead">{ex_t.buildingBlocks.providers}</div>
                   <div class="ex-chips">
                     {ex.providers.map((e) => (
                       <a class="ex-chip" href={e.href} target="_blank" rel="noreferrer" title={e.blurb}>{e.name}</a>
@@ -237,19 +208,15 @@ const jsonLd = {
             <div class="container">
               <div class="ex-callout">
                 <div>
-                  <div class="ex-callout-title">Production examples</div>
-                  <p class="ex-callout-desc">
-                    End-to-end, production-grade use cases — a higher bar, with tests and pinned models. See the
-                    contribution criteria to add one.
-                  </p>
+                  <div class="ex-callout-title">{ex_t.production.title}</div>
+                  <p class="ex-callout-desc">{ex_t.production.desc}</p>
                 </div>
                 <a class="text-link" href={ex.productionHref} target="_blank" rel="noreferrer">
-                  <span>production/ on GitHub</span><span class="arrow">→</span>
+                  <span>{ex_t.production.link}</span><span class="arrow">→</span>
                 </a>
               </div>
               <p class="ex-foot">
-                Generated at build time from the repo's <code>packages/core/examples</code> tree, so it always matches
-                the source. <a class="text-link inline" href={ex.browseHref} target="_blank" rel="noreferrer"><span>Browse all on GitHub</span><span class="arrow">→</span></a>
+                {ex_t.footPre}<code>{ex_t.footCode}</code>{ex_t.footPost}<a class="text-link inline" href={ex.browseHref} target="_blank" rel="noreferrer"><span>{ex_t.browseAll}</span><span class="arrow">→</span></a>
               </p>
             </div>
           </section>
@@ -258,12 +225,9 @@ const jsonLd = {
         <section class="section ex-first">
           <div class="container">
             <div class="section-head">
-              <div class="eyebrow"><span class="idx">01</span> Cookbook</div>
-              <h2 class="section-title">Recipes for real problems.</h2>
-              <p class="section-sub">
-                A few end-to-end recipes to start from. The full, always-in-sync suite — integrations, orchestration
-                patterns, and one example per model provider — lives in the repo.
-              </p>
+              <div class="eyebrow"><span class="idx">01</span> {ex_t.cookbook.eyebrow}</div>
+              <h2 class="section-title">{ex_t.cookbook.title}</h2>
+              <p class="section-sub">{ex_t.cookbook.subFallback}</p>
             </div>
             <div class="build-grid">
               {FALLBACK_EXAMPLES.map((e) => (
@@ -272,23 +236,24 @@ const jsonLd = {
                     <div class="build-title">{e.title}</div>
                     <p class="build-desc">{e.blurb}</p>
                     <div class="build-foot">
-                      <span class="text-link"><span>see source</span><span class="arrow">→</span></span>
+                      <span class="text-link"><span>{ex_t.seeSource}</span><span class="arrow">→</span></span>
                     </div>
                   </Card>
                 </a>
               ))}
             </div>
             <p class="ex-foot">
-              <a class="text-link inline" href={EXAMPLES_GH} target="_blank" rel="noreferrer"><span>Browse all on GitHub</span><span class="arrow">→</span></a>
+              <a class="text-link inline" href={EXAMPLES_GH} target="_blank" rel="noreferrer"><span>{ex_t.browseAll}</span><span class="arrow">→</span></a>
             </p>
           </div>
         </section>
       )}
-    </main>
+  </main>
 
-    <Footer />
+  <Footer locale={locale} />
+</BaseLayout>
 
-    <style>
+<style>
       .ex-hero { padding: 72px 0 8px; }
       .ex-title {
         font-size: clamp(34px, 5vw, 52px); font-weight: 600; letter-spacing: -0.03em;
@@ -345,6 +310,4 @@ const jsonLd = {
         .ex-row { flex-direction: column; gap: 4px; }
         .ex-row .name { min-width: 0; }
       }
-    </style>
-  </body>
-</html>
+</style>

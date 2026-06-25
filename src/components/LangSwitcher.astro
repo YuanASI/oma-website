@@ -1,0 +1,45 @@
+---
+// Language switcher for the custom pages (Starlight ships its own, but only
+// inside the docs). Renders one compact link per locale; the current one is
+// highlighted. `path` is this page's default-locale path so each link points at
+// the same page in the other locale — non-localized routes (e.g. /blog/) omit it
+// and fall back to the locale home.
+import { useTranslations, localizePath, localeMeta, locales, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+  path?: string;
+}
+const { locale, path } = Astro.props;
+const t = useTranslations(locale);
+const hrefFor = (l: Locale) => (path !== undefined ? localizePath(path, l) : l === 'en' ? '/' : `/${l}/`);
+---
+
+<div class="lang-switch">
+  {locales.map((l, i) => (
+    <Fragment>
+      {i > 0 && <span class="lang-sep" aria-hidden="true">·</span>}
+      <a
+        class:list={['lang-opt', { 'is-active': l === locale }]}
+        href={hrefFor(l)}
+        hreflang={localeMeta[l].lang}
+        aria-current={l === locale ? 'true' : undefined}
+        aria-label={t.langSwitcher.toAria.replace('{lang}', localeMeta[l].label)}
+      >{localeMeta[l].short}</a>
+    </Fragment>
+  ))}
+</div>
+
+<style>
+  .lang-switch {
+    display: inline-flex; align-items: center; gap: 2px;
+    font-family: var(--font-mono); font-size: 12px; line-height: 1;
+  }
+  .lang-opt {
+    color: var(--oma-fg-2); text-decoration: none; padding: 3px 5px;
+    border-radius: var(--radius-sm); transition: color var(--duration-base) var(--ease-out);
+  }
+  .lang-opt:hover { color: var(--oma-accent); }
+  .lang-opt.is-active { color: var(--oma-fg-0); font-weight: 500; }
+  .lang-sep { color: var(--oma-border-2); }
+</style>

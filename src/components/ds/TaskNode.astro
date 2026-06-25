@@ -3,14 +3,18 @@
 // #NODE id, title, status line with duration, role + state badges, and a
 // status-keyed left-rail.
 import Badge from './Badge.astro';
+import { useTranslations, type Locale } from '../../i18n';
+
+type Status = 'done' | 'running' | 'queued' | 'failed' | 'skipped';
 
 interface Props {
   id?: string;
   title?: string;
-  status?: 'done' | 'running' | 'queued' | 'failed' | 'skipped';
+  status?: Status;
   duration?: string | null;
   role?: string | null;
   selected?: boolean;
+  locale?: Locale;
 }
 const {
   id = '#NODE_001',
@@ -19,16 +23,19 @@ const {
   duration = null,
   role = null,
   selected = false,
+  locale = 'en',
 } = Astro.props;
+const t = useTranslations(locale);
 
-const STATUS: Record<string, { label: string; color: string; rail: string }> = {
-  done:    { label: 'DONE',    color: 'var(--oma-accent)',  rail: 'var(--oma-accent)' },
-  running: { label: 'RUNNING', color: 'var(--oma-warning)', rail: 'var(--oma-warning)' },
-  queued:  { label: 'QUEUED',  color: 'var(--oma-fg-2)',    rail: 'var(--oma-border-2)' },
-  failed:  { label: 'FAILED',  color: 'var(--oma-danger)',  rail: 'var(--oma-danger)' },
-  skipped: { label: 'SKIPPED', color: 'var(--oma-fg-3)',    rail: 'var(--oma-border-1)' },
+const STATUS_STYLE: Record<string, { color: string; rail: string }> = {
+  done:    { color: 'var(--oma-accent)',  rail: 'var(--oma-accent)' },
+  running: { color: 'var(--oma-warning)', rail: 'var(--oma-warning)' },
+  queued:  { color: 'var(--oma-fg-2)',    rail: 'var(--oma-border-2)' },
+  failed:  { color: 'var(--oma-danger)',  rail: 'var(--oma-danger)' },
+  skipped: { color: 'var(--oma-fg-3)',    rail: 'var(--oma-border-1)' },
 };
-const s = STATUS[status] ?? STATUS.done;
+const s = STATUS_STYLE[status] ?? STATUS_STYLE.done;
+const label = t.taskStatus[status as Status] ?? t.taskStatus.done;
 const mark = status === 'done' ? '✓' : status === 'failed' ? '✕' : status === 'running' ? '◓' : '○';
 ---
 
@@ -39,13 +46,13 @@ const mark = status === 'done' ? '✓' : status === 'failed' ? '✕' : status ==
     <span class="ds-tasknode__mark" style={`color:${s.color}`}>{mark}</span>
   </div>
   <div class="ds-tasknode__title">{title}</div>
-  <div class="ds-tasknode__status">STATUS: <span style={`color:${s.color};font-weight:500`}>{s.label}</span>{duration ? ` (${duration})` : ''}</div>
+  <div class="ds-tasknode__status">{t.taskStatus.statusPrefix}<span style={`color:${s.color};font-weight:500`}>{label}</span>{duration ? ` (${duration})` : ''}</div>
   {role && (
     <div class="ds-tasknode__badges">
       <Badge tone="neutral">{role}</Badge>
-      {status === 'done' && <Badge tone="accent">stable</Badge>}
-      {status === 'running' && <Badge tone="warning" dot>live</Badge>}
-      {status === 'failed' && <Badge tone="danger">error</Badge>}
+      {status === 'done' && <Badge tone="accent">{t.taskStatus.badge.stable}</Badge>}
+      {status === 'running' && <Badge tone="warning" dot>{t.taskStatus.badge.live}</Badge>}
+      {status === 'failed' && <Badge tone="danger">{t.taskStatus.badge.error}</Badge>}
     </div>
   )}
 </div>
