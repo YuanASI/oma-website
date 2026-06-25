@@ -1,5 +1,6 @@
 // 简体中文 UI 文案（自定义页）。形状必须与 ./en.ts 完全一致（UiDict = typeof en），
-// 缺键即构建期类型错误（pnpm build CI 闸会抓）。术语与已上线的中文文档站一致
+// 缺键即类型错误（pnpm check CI 闸用 tsc 抓——astro build 走 esbuild 不做类型检查，
+// 单跑 build 抓不到、会把缺键静默渲染成 undefined）。术语与已上线的中文文档站一致
 // （协调器 / 任务 DAG / 目标优先 / 编排 / 智能体 / 模型提供方 …）。
 // 保留不译：代码标识符、API 名、URL、包名；第三方背书引用按原文保留。
 import type { UiDict } from './en';
@@ -197,7 +198,7 @@ export const zh: UiDict = {
     },
     seeSource: '查看源码',
     cookbook: {
-      eyebrow: 'Cookbook',
+      eyebrow: '配方集',
       title: '面向真实问题的配方。',
       sub: '围绕一个具体任务、而非单个原语写成的端到端脚本——打开源码，看这些模式如何在真实工作流里组合。',
       subFallback: '先从几个端到端配方上手。完整且始终保持同步的全集——集成、编排模式、每个模型提供方一个示例——都在仓库里。',

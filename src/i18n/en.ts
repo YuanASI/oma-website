@@ -1,6 +1,8 @@
 // English UI strings for the custom pages. This is the source-of-truth shape:
 // `UiDict = typeof en`, and every other locale (./zh.ts) must match it key-for-key
-// (a missing key is a build-time type error — the `pnpm build` CI gate catches it).
+// (a missing key is a type error caught by the `pnpm check` CI gate, which runs
+// tsc — `astro build` uses esbuild and does NOT type-check, so build alone would
+// ship a missing key as `undefined`).
 //
 // What is NOT here (stays English / invariant on every locale): package names,
 // API identifiers, URLs, and build-time-fetched data (example blurbs from the repo
