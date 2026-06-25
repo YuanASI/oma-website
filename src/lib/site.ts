@@ -27,15 +27,30 @@ export function ghApiHeaders(): Record<string, string> {
   return headers;
 }
 
-export async function ghStats() {
+// Build-time memo. ghStats() is awaited from the <head> of every custom page —
+// index/architecture/showcase/examples/blog index + every blog post — ~24 calls
+// per build. Un-memoized, each re-fetches, firing ~70 api.github.com requests in
+// a burst that trips GitHub's *secondary* rate limit (separate from the token's
+// 5,000/hr primary budget); the heavy git/trees call in getExamples() then 403s
+// and /examples degrades to its fallback. Memoizing collapses it to one fetch.
+let statsPromise: ReturnType<typeof fetchGhStats> | null = null;
+export function ghStats() {
+  return (statsPromise ??= fetchGhStats());
+}
+
+async function fetchGhStats() {
   // latestRelease fallback is the last-known tag — like the counts, the displayed
   // value is refetched on every deploy (red-line §7); the literal here is only the
   // offline floor, never the claim.
   const fallback = { stars: 6400, forks: 2391, contributors: 43, latestRelease: 'v1.8.0' };
+  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
   const headers = ghApiHeaders();
   try {
     const r = await fetch('https://api.github.com/repos/open-multi-agent/open-multi-agent', { headers });
-    if (!r.ok) return fallback;
+    if (!r.ok) {
+      console.warn(`[ghStats] repo fetch ${r.status} (token ${token ? 'present' : 'MISSING'}, x-ratelimit-remaining=${r.headers.get('x-ratelimit-remaining') ?? '?'}) — using fallback`);
+      return fallback;
+    }
     const j = await r.json();
     let contributors = fallback.contributors;
     try {
@@ -57,7 +72,8 @@ export async function ghStats() {
       contributors,
       latestRelease,
     };
-  } catch {
+  } catch (e) {
+    console.warn(`[ghStats] repo fetch threw (token ${token ? 'present' : 'MISSING'}): ${e instanceof Error ? e.message : e} — using fallback`);
     return fallback;
   }
 }
