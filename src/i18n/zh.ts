@@ -189,19 +189,19 @@ export const zh: UiDict = {
   examples: {
     seo: {
       title: '示例 — Open Multi-Agent',
-      description: '可运行的 Open Multi-Agent 端到端示例——按所解决的问题来组织的 cookbook 配方、框架与应用集成、编排模式，以及每个模型提供方一个示例。直接来自仓库。',
+      description: '可运行的 Open Multi-Agent 端到端示例——围绕所解决的问题来组织的 Cookbook 实例、框架与应用集成、编排模式，以及每个模型提供方一个示例。直接来自仓库。',
     },
     hero: {
       eyebrow: '示例',
       title: '用 OMA 能搭出什么。',
-      lede: '直接来自仓库的可运行配方——每一个都以它解决的问题来呈现。按你想搭的东西浏览，然后打开源码。',
+      lede: '直接来自仓库、可直接运行的实例——每一个都围绕它解决的问题来组织。按你想搭的东西浏览，然后打开源码。',
     },
     seeSource: '查看源码',
     cookbook: {
-      eyebrow: '配方集',
-      title: '面向真实问题的配方。',
+      eyebrow: 'Cookbook',
+      title: '面向真实问题的实例。',
       sub: '围绕一个具体任务、而非单个原语写成的端到端脚本——打开源码，看这些模式如何在真实工作流里组合。',
-      subFallback: '先从几个端到端配方上手。完整且始终保持同步的全集——集成、编排模式、每个模型提供方一个示例——都在仓库里。',
+      subFallback: '先从几个端到端实例上手。完整且始终保持同步的全集——集成、编排模式、每个模型提供方一个示例——都在仓库里。',
     },
     integrations: {
       eyebrow: '集成',
@@ -214,7 +214,7 @@ export const zh: UiDict = {
     buildingBlocks: {
       eyebrow: '构建块',
       title: '原语、模式与提供方。',
-      sub: 'cookbook 所组合的那些更底层的零件——如果你在学 API 或在对比模型，从这里开始。',
+      sub: 'Cookbook 所组合的那些更底层的零件——如果你在学 API 或在对比模型，从这里开始。',
       basics: '基础 · 从这里开始',
       patterns: '模式',
       providers: '提供方 · 每个模型一个示例',
