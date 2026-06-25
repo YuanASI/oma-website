@@ -261,7 +261,7 @@ export const zh: UiDict = {
     hero: {
       eyebrow: '工作原理',
       title: 'OMA 的工作原理。',
-      ledeHtml: '两张图，一套系统。<b>架构</b>是结构——OMA <i>是什么</i>。<b>流程</b>是时间——当你调用 <code>runTeam()</code> 时会发生什么。同一套视觉语言，从品牌系统转译而来。',
+      ledeHtml: '两张图，一套系统。一张是<b>架构</b>——OMA 的结构，也就是它<i>是什么</i>；另一张是<b>流程</b>——调用 <code>runTeam()</code> 时，按时间顺序发生了什么。',
     },
     structure: {
       eyebrow: '结构',

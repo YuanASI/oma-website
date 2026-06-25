@@ -262,7 +262,7 @@ export const en = {
       eyebrow: 'how it works',
       title: 'How OMA works.',
       // Inline <b>/<i>/<code> markup — rendered with set:html (trusted dict content).
-      ledeHtml: 'Two diagrams, one system. The <b>architecture</b> is the structure — what OMA <i>is</i>. The <b>flow</b> is time — what happens when you call <code>runTeam()</code>. Same visual language, translated from the brand system.',
+      ledeHtml: 'Two diagrams, one system. The <b>architecture</b> is the structure — what OMA <i>is</i>. The <b>flow</b> is time — what happens when you call <code>runTeam()</code>.',
     },
     structure: {
       eyebrow: 'structure',
