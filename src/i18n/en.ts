@@ -31,7 +31,7 @@ export const en = {
   },
 
   footer: {
-    blurb: 'From a goal to a task DAG, automatically. TypeScript-native multi-agent orchestration.',
+    blurb: 'From a goal to a task DAG, automatically.<br />TypeScript-native multi-agent orchestration.',
     product: { head: 'Product', capabilities: 'Capabilities', useCases: 'Use cases', integrations: 'Integrations', faq: 'FAQ' },
     resources: { head: 'Resources', docs: 'Docs', architecture: 'Architecture', examples: 'Examples', showcase: 'Showcase', blog: 'Blog' },
     project: { head: 'Project', github: 'GitHub', npm: 'npm', mitLicense: 'MIT license', llmsTxt: 'llms.txt', rss: 'RSS' },

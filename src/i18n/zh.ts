@@ -28,7 +28,7 @@ export const zh: UiDict = {
   },
 
   footer: {
-    blurb: '从目标到任务 DAG，自动完成。TypeScript 原生的多智能体编排。',
+    blurb: '从目标到任务 DAG，自动完成。<br />TypeScript 原生的多智能体编排。',
     product: { head: '产品', capabilities: '能力', useCases: '应用场景', integrations: '集成', faq: '常见问题' },
     resources: { head: '资源', docs: '文档', architecture: '架构', examples: '示例', showcase: '案例', blog: '博客' },
     project: { head: '项目', github: 'GitHub', npm: 'npm', mitLicense: 'MIT 许可证', llmsTxt: 'llms.txt', rss: 'RSS' },
