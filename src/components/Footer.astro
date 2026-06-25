@@ -1,6 +1,16 @@
 ---
-// Global footer. Shared by the landing page and /examples.
+// Global footer. Shared by every custom page. `locale` localizes the labels and
+// the in-site links; Blog and external URLs (GitHub/npm/license/llms.txt/RSS)
+// stay as-is — the blog and those resources have a single, English form.
 import { REPO, NPM } from '../lib/site';
+import { useTranslations, localizePath, type Locale } from '../i18n';
+
+interface Props {
+  locale?: Locale;
+}
+const { locale = 'en' } = Astro.props;
+const t = useTranslations(locale);
+const L = (p: string) => localizePath(p, locale);
 ---
 
 <footer class="footer">
@@ -12,43 +22,43 @@ import { REPO, NPM } from '../lib/site';
           <img class="brand-mark brand-mark--light" src="/logo-mark-light.svg" alt="" width="26" height="26" />
           <span class="brand-word">open<span class="dash">-</span>multi<span class="dash">-</span>agent</span>
         </div>
-        <p class="footer-blurb">From a goal to a task DAG, automatically. TypeScript-native multi-agent orchestration.</p>
+        <p class="footer-blurb">{t.footer.blurb}</p>
       </div>
       <div class="footer-cols">
         <div>
-          <div class="footer-col-head">Product</div>
+          <div class="footer-col-head">{t.footer.product.head}</div>
           <div class="footer-col-links">
-            <a class="nav-link" href="/#capabilities" style="font-size:13px;">Capabilities</a>
-            <a class="nav-link" href="/#build" style="font-size:13px;">Use cases</a>
-            <a class="nav-link" href="/#stack" style="font-size:13px;">Integrations</a>
-            <a class="nav-link" href="/#faq" style="font-size:13px;">FAQ</a>
+            <a class="nav-link" href={L('/#capabilities')} style="font-size:13px;">{t.footer.product.capabilities}</a>
+            <a class="nav-link" href={L('/#build')} style="font-size:13px;">{t.footer.product.useCases}</a>
+            <a class="nav-link" href={L('/#stack')} style="font-size:13px;">{t.footer.product.integrations}</a>
+            <a class="nav-link" href={L('/#faq')} style="font-size:13px;">{t.footer.product.faq}</a>
           </div>
         </div>
         <div>
-          <div class="footer-col-head">Resources</div>
+          <div class="footer-col-head">{t.footer.resources.head}</div>
           <div class="footer-col-links">
-            <a class="nav-link" href="/getting-started/introduction/" style="font-size:13px;">Docs</a>
-            <a class="nav-link" href="/architecture/" style="font-size:13px;">Architecture</a>
-            <a class="nav-link" href="/examples/" style="font-size:13px;">Examples</a>
-            <a class="nav-link" href="/showcase/" style="font-size:13px;">Showcase</a>
-            <a class="nav-link" href="/blog/" style="font-size:13px;">Blog</a>
+            <a class="nav-link" href={L('/getting-started/introduction/')} style="font-size:13px;">{t.footer.resources.docs}</a>
+            <a class="nav-link" href={L('/architecture/')} style="font-size:13px;">{t.footer.resources.architecture}</a>
+            <a class="nav-link" href={L('/examples/')} style="font-size:13px;">{t.footer.resources.examples}</a>
+            <a class="nav-link" href={L('/showcase/')} style="font-size:13px;">{t.footer.resources.showcase}</a>
+            <a class="nav-link" href="/blog/" style="font-size:13px;">{t.footer.resources.blog}</a>
           </div>
         </div>
         <div>
-          <div class="footer-col-head">Project</div>
+          <div class="footer-col-head">{t.footer.project.head}</div>
           <div class="footer-col-links">
-            <a class="nav-link" href={REPO} target="_blank" rel="noreferrer" style="font-size:13px;">GitHub</a>
-            <a class="nav-link" href={NPM} target="_blank" rel="noreferrer" style="font-size:13px;">npm</a>
-            <a class="nav-link" href={REPO + '/blob/main/LICENSE'} target="_blank" rel="noreferrer" style="font-size:13px;">MIT license</a>
-            <a class="nav-link" href="/llms.txt" style="font-size:13px;">llms.txt</a>
-            <a class="nav-link" href="/rss.xml" style="font-size:13px;">RSS</a>
+            <a class="nav-link" href={REPO} target="_blank" rel="noreferrer" style="font-size:13px;">{t.footer.project.github}</a>
+            <a class="nav-link" href={NPM} target="_blank" rel="noreferrer" style="font-size:13px;">{t.footer.project.npm}</a>
+            <a class="nav-link" href={REPO + '/blob/main/LICENSE'} target="_blank" rel="noreferrer" style="font-size:13px;">{t.footer.project.mitLicense}</a>
+            <a class="nav-link" href="/llms.txt" style="font-size:13px;">{t.footer.project.llmsTxt}</a>
+            <a class="nav-link" href="/rss.xml" style="font-size:13px;">{t.footer.project.rss}</a>
           </div>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
-      <span class="footer-meta">MIT licensed · @open-multi-agent</span>
-      <span class="footer-meta">Built by <a class="by" href="https://yuanasi.com" target="_blank" rel="noreferrer">元定义科技 (YuanASI)</a></span>
+      <span class="footer-meta">{t.footer.mitLicensed}</span>
+      <span class="footer-meta">{t.footer.builtBy} <a class="by" href="https://yuanasi.com" target="_blank" rel="noreferrer">元定义科技 (YuanASI)</a></span>
     </div>
   </div>
 </footer>
