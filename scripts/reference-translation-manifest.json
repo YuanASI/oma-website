@@ -1,0 +1,3 @@
+{
+  "_comment": "Translation drift anchor for the vendored Reference docs. Maps each `reference/<slug>` to the sha256 of the English BODY (front-matter stripped) its zh translation was made from, plus the date. Written by scripts/update-translation-manifest.mjs; read by scripts/check-reference-drift.mjs to flag stale zh translations in the weekly sync PR. Empty until the first reference page is translated. See TRANSLATING.md."
+}

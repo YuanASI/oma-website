@@ -33,6 +33,17 @@ export default defineConfig({
 			},
 			description:
 				'TypeScript-native multi-agent orchestration. From a goal to a task DAG, automatically — three runtime dependencies, drops into any Node.js backend.',
+			// Multilingual docs: English at the root (/), 简体中文 at /zh/. Adding a
+			// locale later is one line here + a src/content/docs/<key>/ tree — the page
+			// templates never fork. `lang: 'zh-CN'` (not 'zh') is what matches
+			// Starlight's built-in zh-CN UI strings + the "untranslated" fallback
+			// notice; the route key `zh` only sets the URL segment and content dir.
+			defaultLocale: 'root',
+			locales: {
+				root: { label: 'English', lang: 'en' },
+				zh: { label: '简体中文', lang: 'zh-CN' },
+				// ja: { label: '日本語', lang: 'ja' },  // future: this line + docs/ja/
+			},
 			// Override Starlight's default <head>: it emits og:* + twitter:card but
 			// no social-card image and no JSON-LD. StarlightHead adds both for docs.
 			components: { Head: './src/components/StarlightHead.astro' },
@@ -71,35 +82,42 @@ export default defineConfig({
 			],
 			// Phase 1 IA (PRD §4.2). Reference is vendored from the framework repo docs/
 			// (baseline commit ef31479); Getting Started + Guides are maintained here.
+			// Each label carries its zh-CN translation inline (Starlight's
+			// SidebarItem.translations, keyed by `lang`). English labels stay as the
+			// root-locale text; `slug` is locale-agnostic — Starlight resolves it to
+			// docs/zh/<slug> when present, else falls back to the English page.
 			sidebar: [
 				{
 					label: 'Getting Started',
+					translations: { 'zh-CN': '入门指南' },
 					items: [
-						{ label: 'Introduction', slug: 'getting-started/introduction' },
-						{ label: 'Quick Start', slug: 'getting-started/quick-start' },
-						{ label: 'Three Ways to Run', slug: 'getting-started/three-ways-to-run' },
+						{ label: 'Introduction', slug: 'getting-started/introduction', translations: { 'zh-CN': '简介' } },
+						{ label: 'Quick Start', slug: 'getting-started/quick-start', translations: { 'zh-CN': '快速开始' } },
+						{ label: 'Three Ways to Run', slug: 'getting-started/three-ways-to-run', translations: { 'zh-CN': '三种运行方式' } },
 					],
 				},
 				{
 					label: 'Guides',
+					translations: { 'zh-CN': '指南' },
 					items: [
-						{ label: 'Orchestration Controls', slug: 'guides/orchestration-controls' },
-						{ label: 'Production Checklist', slug: 'guides/production-checklist' },
+						{ label: 'Orchestration Controls', slug: 'guides/orchestration-controls', translations: { 'zh-CN': '编排控制' } },
+						{ label: 'Production Checklist', slug: 'guides/production-checklist', translations: { 'zh-CN': '生产清单' } },
 					],
 				},
 				{
 					label: 'Reference',
+					translations: { 'zh-CN': '参考' },
 					items: [
-						{ label: 'Providers', slug: 'reference/providers' },
-						{ label: 'MiniMax setup', slug: 'reference/providers/minimax' },
-						{ label: 'Tool configuration', slug: 'reference/tool-configuration' },
-						{ label: 'Observability', slug: 'reference/observability' },
-						{ label: 'Shared memory', slug: 'reference/shared-memory' },
-						{ label: 'Checkpoint & resume', slug: 'reference/checkpoint' },
-						{ label: 'Context management', slug: 'reference/context-management' },
-						{ label: 'Consensus', slug: 'reference/consensus' },
-						{ label: 'Model routing', slug: 'reference/model-routing' },
-						{ label: 'CLI', slug: 'reference/cli' },
+						{ label: 'Providers', slug: 'reference/providers', translations: { 'zh-CN': '模型提供方' } },
+						{ label: 'MiniMax setup', slug: 'reference/providers/minimax', translations: { 'zh-CN': 'MiniMax 配置' } },
+						{ label: 'Tool configuration', slug: 'reference/tool-configuration', translations: { 'zh-CN': '工具配置' } },
+						{ label: 'Observability', slug: 'reference/observability', translations: { 'zh-CN': '可观测性' } },
+						{ label: 'Shared memory', slug: 'reference/shared-memory', translations: { 'zh-CN': '共享内存' } },
+						{ label: 'Checkpoint & resume', slug: 'reference/checkpoint', translations: { 'zh-CN': '检查点与恢复' } },
+						{ label: 'Context management', slug: 'reference/context-management', translations: { 'zh-CN': '上下文管理' } },
+						{ label: 'Consensus', slug: 'reference/consensus', translations: { 'zh-CN': '共识' } },
+						{ label: 'Model routing', slug: 'reference/model-routing', translations: { 'zh-CN': '模型路由' } },
+						{ label: 'CLI', slug: 'reference/cli', translations: { 'zh-CN': 'CLI' } },
 					],
 				},
 			],

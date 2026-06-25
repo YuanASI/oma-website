@@ -52,7 +52,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Flag any zh/ Reference translations the just-synced English bodies have
+      # outpaced. Read-only; writes reference-drift-report.md; always exits 0.
+      - name: Check translation drift
+        run: node scripts/check-reference-drift.mjs
+
       - name: Open PR if the Reference docs changed
+        id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
           # Org policy blocks the built-in GITHUB_TOKEN from creating PRs, so use
@@ -80,3 +86,20 @@ jobs:
 
             Review the diff before merging. Re-run anytime via **Actions →
             Sync Reference docs → Run workflow**.
+
+      # If the sync opened a PR and drift was found, surface it as a PR comment so
+      # the reviewer knows which zh/ translations to refresh. Posted by SYNC_PAT
+      # (the PR author). No PR (no English change) → the step is skipped.
+      - name: Comment translation drift on the PR
+        if: steps.cpr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.SYNC_PAT }}
+          PR_NUMBER: ${{ steps.cpr.outputs.pull-request-number }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [ -s reference-drift-report.md ]; then
+            gh pr comment "$PR_NUMBER" -R "$REPO" --body-file reference-drift-report.md
+            echo "Posted drift comment to PR #$PR_NUMBER."
+          else
+            echo "No translation drift to report."
+          fi
