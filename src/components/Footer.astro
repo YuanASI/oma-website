@@ -1,7 +1,7 @@
 ---
 // Global footer. Shared by every custom page. `locale` localizes the labels and
-// the in-site links; Blog and external URLs (GitHub/npm/license/llms.txt/RSS)
-// stay as-is — the blog and those resources have a single, English form.
+// the in-site links. External URLs (GitHub/npm/license/llms.txt/RSS) stay as-is —
+// those resources have a single, English form.
 import { REPO, NPM } from '../lib/site';
 import { useTranslations, localizePath, type Locale } from '../i18n';
 
@@ -41,7 +41,7 @@ const L = (p: string) => localizePath(p, locale);
             <a class="nav-link" href={L('/architecture/')} style="font-size:13px;">{t.footer.resources.architecture}</a>
             <a class="nav-link" href={L('/examples/')} style="font-size:13px;">{t.footer.resources.examples}</a>
             <a class="nav-link" href={L('/showcase/')} style="font-size:13px;">{t.footer.resources.showcase}</a>
-            <a class="nav-link" href="/blog/" style="font-size:13px;">{t.footer.resources.blog}</a>
+            <a class="nav-link" href={L('/blog/')} style="font-size:13px;">{t.footer.resources.blog}</a>
           </div>
         </div>
         <div>

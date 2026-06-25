@@ -1,5 +1,5 @@
 /* Blog — list + post (prose) styles. The blog pages are custom landing-style
-   pages (src/pages/blog/), not Starlight docs, so they bring their own prose
+   pages (src/pages/[...locale]/blog/), not Starlight docs, so they bring their own prose
    styling built on the shared design tokens. Code blocks are rendered without
    syntax highlighting (astro.config `markdown.syntaxHighlight: false`) and
    styled monochrome here, which keeps every glyph at a controlled ≥4.5:1

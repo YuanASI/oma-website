@@ -17,8 +17,10 @@ interface Props {
   path: string;
   /** Emit hreflang alternates — true for pages that exist in every locale. */
   localized?: boolean;
+  /** og:type — defaults to 'website'; blog posts pass 'article'. */
+  ogType?: string;
 }
-const { locale, title, description, jsonLd, path, localized = true } = Astro.props;
+const { locale, title, description, jsonLd, path, localized = true, ogType = 'website' } = Astro.props;
 const meta = localeMeta[locale];
 
 // Canonical is the page actually being rendered (already locale-correct, e.g.
@@ -46,7 +48,7 @@ const ogImage = new URL('/github-social.png', Astro.site).href;
         <link rel="alternate" hreflang="x-default" href={enHref} />
       </Fragment>
     )}
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content="Open Multi-Agent" />
     <meta property="og:locale" content={meta.ogLocale} />
     <meta property="og:title" content={title} />
@@ -61,6 +63,7 @@ const ogImage = new URL('/github-social.png', Astro.site).href;
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
     {jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />}
+    <slot name="head" />
   </head>
   <body>
     <slot />
