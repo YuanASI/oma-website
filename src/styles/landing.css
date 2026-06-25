@@ -218,16 +218,20 @@ a { color: inherit; }
 }
 .io-connector .line { width: 1px; height: 16px; background: var(--border-strong); }
 .io-connector span:not(.line) { white-space: nowrap; }
-/* Anchor the DAG to roughly the left column's height so the data-driven node
-   count can't leave a tall gap beside the (fixed-height) hero copy. Overflow
-   fades out; the dag-meta below ("real runTeam() · N tasks") stays visible and
-   reports the full count. Unclamped on single-column (≤920px) — see Responsive. */
+/* Cap the DAG to roughly the left column's height so the data-driven node count
+   can't leave a tall gap beside the hero copy; the rest scrolls so the reader can
+   see every captured node. A thin always-visible scrollbar is the affordance (the
+   default macOS overlay scrollbar would hide that there's more). The dag-meta
+   below ("real runTeam() · N tasks") still reports the full count. Unclamped on
+   single-column (≤920px) — see Responsive. */
 .dag-stack {
   display: flex; flex-direction: column; gap: 0;
-  max-height: var(--hero-dag-max, 300px); overflow: hidden;
-  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 64px), transparent 100%);
-          mask-image: linear-gradient(to bottom, #000 calc(100% - 64px), transparent 100%);
+  max-height: var(--hero-dag-max, 300px); overflow-y: auto;
+  scrollbar-width: thin; scrollbar-color: var(--oma-border-2) transparent;
 }
+.dag-stack::-webkit-scrollbar { width: 6px; }
+.dag-stack::-webkit-scrollbar-thumb { background: var(--oma-border-2); border-radius: 3px; }
+.dag-stack::-webkit-scrollbar-track { background: transparent; }
 .dag-rung { display: flex; flex-direction: column; align-items: stretch; }
 .dag-link { width: 1px; height: 16px; background: var(--border-strong); margin: 0 auto; }
 .dag-parallel {
@@ -456,7 +460,7 @@ a { color: inherit; }
   .hero { padding: 48px 0 64px; }
   .hero-grid { grid-template-columns: 1fr; gap: 40px; }
   /* Single column: no second column to align to — show the whole DAG. */
-  .dag-stack { max-height: none; overflow: visible; -webkit-mask-image: none; mask-image: none; }
+  .dag-stack { max-height: none; overflow: visible; }
   .cap-grid { grid-template-columns: 1fr; gap: 36px; }
   .endorse-grid { grid-template-columns: 1fr; gap: 36px; }
   .cap-code-wrap { position: static; }
