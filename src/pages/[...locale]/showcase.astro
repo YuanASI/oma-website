@@ -1,0 +1,135 @@
+---
+// /showcase (PRD §4.4) — projects built with OMA and tools that integrate with
+// it. Same landing-style shell (shared Nav/Footer) as index/examples; the cards
+// reuse the landing proof DS. Entries come from src/lib/showcase.ts (the same
+// list the landing proof section features a subset of). No per-project star
+// counts — the point is "who uses it", not their popularity.
+import '@fontsource-variable/geist';
+import '@fontsource-variable/jetbrains-mono';
+import '../../styles/tokens.css';
+import '../../styles/landing.css';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Card from '../../components/ds/Card.astro';
+import Badge from '../../components/ds/Badge.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import { REPO, ghStats } from '../../lib/site';
+import { SHOWCASE } from '../../lib/showcase';
+import { localeStaticPaths, toLocale, useTranslations } from '../../i18n';
+
+export function getStaticPaths() { return localeStaticPaths(); }
+const locale = toLocale(Astro.params.locale);
+const t = useTranslations(locale);
+const sc = t.showcase;
+
+const stats = await ghStats();
+const starsK = (stats.stars / 1000).toFixed(1) + 'k';
+
+const builtWith = SHOWCASE.filter((c) => c.kind === 'built-with');
+const integrations = SHOWCASE.filter((c) => c.kind === 'integration');
+const DISCUSS = REPO + '/discussions';
+
+// Per-entry localization keyed by pkg; EN leaves `entries` empty, so it falls
+// back to the entry's own English fields (src/lib/showcase.ts is the source).
+const tr = (c: (typeof SHOWCASE)[number]) => sc.entries[c.pkg] ?? { desc: c.desc, tag: c.tag, status: c.status };
+
+const title = sc.seo.title;
+const description = sc.seo.description;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  inLanguage: locale === 'zh' ? 'zh-CN' : 'en',
+  name: title,
+  description,
+  url: canonical,
+  isPartOf: { '@type': 'WebSite', name: 'Open Multi-Agent', url: 'https://open-multi-agent.com' },
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: SHOWCASE.map((c, i) => ({
+      '@type': 'ListItem', position: i + 1, name: c.pkg, url: c.href,
+    })),
+  },
+};
+---
+
+<BaseLayout locale={locale} title={title} description={description} jsonLd={jsonLd} path="/showcase/">
+  <Nav current="showcase" starsK={starsK} locale={locale} path="/showcase/" />
+  <main>
+    <section class="section sc-hero" id="top">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow"><span class="idx">//</span> {sc.hero.eyebrow}</div>
+          <h1 class="section-title">{sc.hero.title}</h1>
+          <p class="section-sub">
+            {sc.hero.subPre}
+            <a class="text-link" href={DISCUSS} target="_blank" rel="noreferrer"><span>{sc.hero.discuss}</span><span class="arrow">→</span></a>{sc.hero.subPost}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="built-with">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow"><span class="idx">01</span> {sc.builtWith.eyebrow}</div>
+          <h2 class="section-title">{sc.builtWith.title}</h2>
+          <p class="section-sub">{sc.builtWith.sub}</p>
+        </div>
+        <div class="cases-grid">
+          {builtWith.map((c) => (
+            <a class="case-link" href={c.href} target="_blank" rel="noreferrer" style="text-decoration:none;">
+              <Card padding="lg" interactive>
+                <div class="case-pkg">{c.pkg}</div>
+                <div class="case-by">{c.by}</div>
+                <p class="case-desc">{tr(c).desc}</p>
+                <div class="case-foot">
+                  <Badge tone={c.tone}>{tr(c).tag}</Badge>
+                  <span class="case-dep">{tr(c).status}</span>
+                </div>
+              </Card>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="integrations" style="padding-top:0;">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow"><span class="idx">02</span> {sc.integrates.eyebrow}</div>
+          <h2 class="section-title">{sc.integrates.title}</h2>
+          <p class="section-sub">{sc.integrates.sub}</p>
+        </div>
+        <div class="cases-grid">
+          {integrations.map((c) => (
+            <a class="case-link" href={c.href} target="_blank" rel="noreferrer" style="text-decoration:none;">
+              <Card padding="lg" interactive>
+                <div class="case-pkg">{c.pkg}</div>
+                <div class="case-by">{c.by}</div>
+                <p class="case-desc">{tr(c).desc}</p>
+                <div class="case-foot">
+                  <Badge tone={c.tone}>{tr(c).tag}</Badge>
+                  <span class="case-dep">{tr(c).status}</span>
+                </div>
+              </Card>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>
+
+<style>
+  /* Hero mirrors /examples (.ex-hero): the generic .section rhythm leaves a
+     too-large gap below the hero (104px padding + 48px section-head margin)
+     and the .section + .section rule draws a divider here. Tighten the
+     bottom, drop that divider, and give the first section the same 56px top
+     as .ex-first so /showcase and /examples open with identical spacing. */
+  .section.sc-hero { padding: 72px 0 8px; }
+  .sc-hero .section-head { margin-bottom: 0; }
+  .section.sc-hero + .section { border-top: none; padding-top: 56px; }
+</style>

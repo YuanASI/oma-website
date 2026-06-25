@@ -1,0 +1,68 @@
+---
+// Shared document shell for the custom (non-Starlight) pages. Collapses the ~25
+// lines of <head> boilerplate that index/examples/showcase/architecture each used
+// to hand-write, and makes it locale-aware: <html lang>, og:locale, and the
+// hreflang alternates all follow the page's locale instead of being hardcoded to
+// en. Starlight emits its own head for the docs — this only covers src/pages/.
+import ThemeInit from '../components/ThemeInit.astro';
+import { localeMeta, localizePath, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  description: string;
+  /** Structured-data object/graph; stringified into a JSON-LD script. */
+  jsonLd?: unknown;
+  /** This page's path in the default (en/root) locale, e.g. '/' or '/examples/'. */
+  path: string;
+  /** Emit hreflang alternates — true for pages that exist in every locale. */
+  localized?: boolean;
+}
+const { locale, title, description, jsonLd, path, localized = true } = Astro.props;
+const meta = localeMeta[locale];
+
+// Canonical is the page actually being rendered (already locale-correct, e.g.
+// /zh/examples/). The alternates are built from the default-locale `path`.
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const enHref = new URL(path, Astro.site).href;
+const zhHref = new URL(localizePath(path, 'zh'), Astro.site).href;
+const ogImage = new URL('/github-social.png', Astro.site).href;
+---
+
+<!doctype html>
+<html lang={meta.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <ThemeInit />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {localized && (
+      <Fragment>
+        <link rel="alternate" hreflang="en" href={enHref} />
+        <link rel="alternate" hreflang="zh-CN" href={zhHref} />
+        <link rel="alternate" hreflang="x-default" href={enHref} />
+      </Fragment>
+    )}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Open Multi-Agent" />
+    <meta property="og:locale" content={meta.ogLocale} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="640" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    {jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />}
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
