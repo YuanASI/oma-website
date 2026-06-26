@@ -5,6 +5,7 @@
 // hreflang alternates all follow the page's locale instead of being hardcoded to
 // en. Starlight emits its own head for the docs — this only covers src/pages/.
 import ThemeInit from '../components/ThemeInit.astro';
+import LangInit from '../components/LangInit.astro';
 import { localeMeta, localizePath, type Locale } from '../i18n';
 
 interface Props {
@@ -48,6 +49,8 @@ const ogImage = new URL('/github-social.png', Astro.site).href;
         <link rel="alternate" hreflang="x-default" href={enHref} />
       </Fragment>
     )}
+    <LangInit />
+
     <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content="Open Multi-Agent" />
     <meta property="og:locale" content={meta.ogLocale} />

@@ -1,0 +1,49 @@
+---
+// First-touch language auto-routing for both page systems (custom pages via
+// BaseLayout, docs via StarlightHead). On a visitor's FIRST load in this browser
+// it routes them to the locale their browser prefers — zh-* → /zh/, anything
+// else → the English root — then never interferes again, so neither the custom
+// LangSwitcher nor Starlight's built-in selector ever has to fight it.
+//
+// Why "once per browser": after the first run we set `oma-lang-seen` and bail on
+// every later load regardless of outcome. That's what makes a manual switch
+// sticky without us having to capture every switcher's click — the auto-route is
+// a one-time first-touch convenience, not a standing redirect.
+//
+// Why it can't 404: the target URL is read from the page's own
+// `<link rel="alternate" hreflang>` tag, which both systems emit ONLY when a real
+// translated counterpart exists (untranslated blog posts drop the zh alternate).
+// No alternate → no redirect. Must therefore sit AFTER those <link>s in <head>;
+// it still runs before <body> paints, so the redirect is effectively flash-free.
+---
+<script is:inline>
+  (() => {
+    try {
+      // One shot per browser: if we've already evaluated once, never interfere
+      // again — this is what keeps a later manual language switch from bouncing.
+      if (localStorage.getItem('oma-lang-seen')) return;
+      localStorage.setItem('oma-lang-seen', '1');
+
+      const langs = navigator.languages && navigator.languages.length
+        ? navigator.languages
+        : [navigator.language || 'en'];
+      const want = langs.some((l) => /^zh\b/i.test(l)) ? 'zh' : 'en';
+
+      const path = location.pathname;
+      const current = path === '/zh' || path.indexOf('/zh/') === 0 ? 'zh' : 'en';
+      if (current === want) return;
+
+      // Counterpart URL from the hreflang alternate the page already emits; it's
+      // present only when that localized page actually exists, so we never 404.
+      const sel = want === 'zh'
+        ? 'link[rel="alternate"][hreflang="zh-CN"]'
+        : 'link[rel="alternate"][hreflang="en"]';
+      const href = document.querySelector(sel)?.getAttribute('href');
+      if (!href) return;
+
+      const dest = new URL(href, location.origin).pathname;
+      if (dest === path) return;
+      location.replace(dest + location.search + location.hash);
+    } catch { /* storage blocked or no match — stay on the current page */ }
+  })();
+</script>
