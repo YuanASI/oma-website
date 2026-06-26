@@ -12,6 +12,7 @@
 // does NOT carry is JSON-LD, so we add `inLanguage` (from the route's BCP-47
 // `lang`) to the TechArticle below.
 import Default from '@astrojs/starlight/components/Head.astro';
+import LangInit from './LangInit.astro';
 
 const { entry, lang } = Astro.locals.starlightRoute;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
@@ -36,3 +37,4 @@ const jsonLd = {
 <meta property="og:image:alt" content="Open Multi-Agent" />
 <meta name="twitter:image" content={ogImage} />
 <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+<LangInit />
