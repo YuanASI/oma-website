@@ -44,6 +44,15 @@ const POSTS = [
       'https://dev-to-uploads.s3.us-east-2.amazonaws.com/uploads/articles/1g7q3llxmh23bttamsk9.png': '/blog/meeting-summarizer-parallel-agents-run.png',
     },
   },
+  {
+    slug: 'a-100-local-multi-agent-team-in-typescript-ollama-gemma-0-api-cost-4dbj',
+    out: 'local-multi-agent-team-ollama-gemma',
+    images: {
+      'https://dev-to-uploads.s3.us-east-2.amazonaws.com/uploads/articles/fkpmhceia5jm9fxlvwmc.png': '/blog/local-multi-agent-team-ollama-gemma-1.png',
+      'https://dev-to-uploads.s3.us-east-2.amazonaws.com/uploads/articles/gtsdrjbm8htai0f2vbvs.png': '/blog/local-multi-agent-team-ollama-gemma-2.png',
+      'https://dev-to-uploads.s3.us-east-2.amazonaws.com/uploads/articles/kl1rg426uyx9njepgdyi.png': '/blog/local-multi-agent-team-ollama-gemma-3.png',
+    },
+  },
 ];
 
 // dev.to embeds its own `--- … ---` front-matter at the top of body_markdown for
