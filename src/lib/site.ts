@@ -9,6 +9,9 @@
 export const REPO = 'https://github.com/open-multi-agent/open-multi-agent';
 export const FORGE = 'https://github.com/open-multi-agent/oma-forge';
 export const NPM = 'https://www.npmjs.com/package/@open-multi-agent/core';
+// Enterprise / commercial-support site (YuanASI). Separate business entity that
+// offers paid delivery + consulting on OMA; the OSS site stays zero-commercial.
+export const YUANASI = 'https://yuanasi.com';
 
 // Headers for api.github.com calls at build time. Adds Authorization when a
 // token is present (GITHUB_TOKEN / GH_TOKEN), lifting GitHub's 60-req/hr

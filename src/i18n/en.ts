@@ -37,6 +37,7 @@ export const en = {
     product: { head: 'Product', capabilities: 'Capabilities', useCases: 'Use cases', integrations: 'Integrations', faq: 'FAQ' },
     resources: { head: 'Resources', docs: 'Docs', architecture: 'Architecture', examples: 'Examples', showcase: 'Showcase', blog: 'Blog' },
     project: { head: 'Project', github: 'GitHub', npm: 'npm', mitLicense: 'MIT license', llmsTxt: 'llms.txt', rss: 'RSS' },
+    resourcesEnterprise: 'Enterprise support',
     mitLicensed: 'MIT licensed · @open-multi-agent',
     builtBy: 'Built by',
   },
