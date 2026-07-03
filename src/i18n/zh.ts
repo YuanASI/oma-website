@@ -33,6 +33,7 @@ export const zh: UiDict = {
     product: { head: '产品', capabilities: '能力', useCases: '应用场景', integrations: '集成', faq: '常见问题' },
     resources: { head: '资源', docs: '文档', architecture: '架构', examples: '示例', showcase: '案例', blog: '博客' },
     project: { head: '项目', github: 'GitHub', npm: 'npm', mitLicense: 'MIT 许可证', llmsTxt: 'llms.txt', rss: 'RSS' },
+    resourcesEnterprise: '企业服务',
     mitLicensed: 'MIT 许可 · @open-multi-agent',
     builtBy: '出自',
   },
