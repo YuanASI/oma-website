@@ -9,19 +9,19 @@ export const zh: UiDict = {
   nav: {
     brandAria: 'Open Multi-Agent — 首页',
     product: '产品',
-    productMenu: {
+    docs: '文档',
+    community: '社区',
+    code: '源码',
+    codeMenu: {
       framework: { pkg: 'open-multi-agent', desc: '多智能体编排框架。' },
       forge: { pkg: 'oma-forge', desc: 'open-multi-agent 组织下的实验性项目。' },
       npm: { pkg: '@open-multi-agent/core', desc: '发布在 npm 上的包。' },
     },
-    docs: '文档',
     architecture: '架构',
     examples: '示例',
     showcase: '案例',
     blog: '博客',
     compare: '对比',
-    enterprise: '企业服务',
-    resources: '资源',
     menuDesc: {
       architecture: 'OMA 工作原理图解',
       examples: '仓库里可直接运行的实例',
