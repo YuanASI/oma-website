@@ -37,4 +37,9 @@ const jsonLd = {
 <meta property="og:image:alt" content="Open Multi-Agent" />
 <meta name="twitter:image" content={ogImage} />
 <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+{/* Counterscale — first-party, cookieless analytics. Identical tag in
+    BaseLayout.astro (custom pages + blog); this covers the Starlight docs. */}
+<script is:inline id="counterscale-script"
+  src="https://insights.open-multi-agent.com/tracker.js"
+  data-site-id="open-multi-agent.com" defer></script>
 <LangInit />
