@@ -31,6 +31,8 @@ A quick router; the mechanism breakdown follows.
 
 **vs. Vercel AI SDK.** AI SDK provides the LLM-call layer — provider abstraction, streaming, tool calls, and structured outputs. It does not orchestrate goal-driven multi-agent teams. The two are complementary: AI SDK for app surfaces and single-agent calls, OMA when you need a team.
 
+For a dimension-by-dimension breakdown of a single framework — language, orchestration model, dependencies, budget control, and observability — see the dedicated comparison pages: [vs LangGraph](/compare/langgraph/), [vs CrewAI](/compare/crewai/), [vs AutoGen](/compare/autogen/), and [vs the OpenAI Agents SDK](/compare/openai-agents-sdk/).
+
 ## How it works
 
 ```

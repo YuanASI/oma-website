@@ -20,3 +20,7 @@ Before going live, wire up the controls that protect token spend, recover from f
 | Bound filesystem reach | `cwd` / `defaultCwd` (default `.agent-workspace` subdir; widen with `process.cwd()`, disable with `null`) | `AgentConfig` / `OrchestratorConfig` |
 
 The deep dives live in the reference: [Context management](/reference/context-management/) for the strategies and tool-result compression, [Tool configuration](/reference/tool-configuration/) for grants and the filesystem sandbox, and [Checkpoint & resume](/reference/checkpoint/) for snapshot/resume over a MemoryStore.
+
+:::tip[Taking this to production?]
+open-multi-agent is MIT-licensed and free to self-host. If you'd rather have it delivered, integrated, or supported on a timeline, [元定义科技 (YuanASI)](https://yuanasi.com/en) offers commercial delivery and support.
+:::

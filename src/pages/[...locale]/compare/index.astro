@@ -1,0 +1,116 @@
+---
+// /compare and /zh/compare — the comparison hub (§7.2). One card per framework,
+// each with the two-line "pick them / pick us" router and a link to the full
+// comparison. Framework copy comes from src/lib/compare.ts; chrome from the dict.
+import '@fontsource-variable/geist';
+import '@fontsource-variable/jetbrains-mono';
+import '../../../styles/tokens.css';
+import '../../../styles/landing.css';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Nav from '../../../components/Nav.astro';
+import Footer from '../../../components/Footer.astro';
+import EnterpriseCta from '../../../components/EnterpriseCta.astro';
+import { ghStats } from '../../../lib/site';
+import { COMPARISONS, type Loc } from '../../../lib/compare';
+import { localeStaticPaths, toLocale, useTranslations, localizePath } from '../../../i18n';
+
+export function getStaticPaths() { return localeStaticPaths(); }
+const locale = toLocale(Astro.params.locale);
+const t = useTranslations(locale).compare;
+const L = (p: string) => localizePath(p, locale);
+const pick = (o: Loc) => o[locale];
+const withName = (s: string, name: string) => s.replace('{name}', name);
+
+const stats = await ghStats();
+const starsK = (stats.stars / 1000).toFixed(1) + 'k';
+
+const path = '/compare/';
+const title = t.seo.title;
+const description = t.seo.description;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  inLanguage: locale === 'zh' ? 'zh-CN' : 'en',
+  name: title,
+  description,
+  url: canonical,
+  isPartOf: { '@type': 'WebSite', name: 'Open Multi-Agent', url: 'https://open-multi-agent.com' },
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: COMPARISONS.map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: `open-multi-agent vs ${c.name}`,
+      url: new URL(`/compare/${c.slug}/`, Astro.site).href,
+    })),
+  },
+};
+---
+
+<BaseLayout locale={locale} title={title} description={description} jsonLd={jsonLd} path={path}>
+  <Nav current="compare" starsK={starsK} locale={locale} path={path} />
+  <main>
+    <section class="section compare-hub-hero">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow"><span class="idx">//</span> {t.hero.eyebrow}</div>
+          <h1 class="section-title">{t.hero.title}</h1>
+          <p class="section-sub">{t.hero.lede}</p>
+        </div>
+        <div class="compare-hub-grid">
+          {COMPARISONS.map((c) => (
+            <a class="compare-hub-card" href={L(`/compare/${c.slug}/`)}>
+              <div class="compare-hub-name">open-multi-agent <span class="vs">vs</span> {c.name}</div>
+              <div class="compare-hub-rows">
+                <div class="compare-hub-row">
+                  <span class="compare-hub-label">{withName(t.hub.pickThem, c.name)}</span>
+                  <span class="compare-hub-text">{pick(c.chooseThem)}</span>
+                </div>
+                <div class="compare-hub-row compare-hub-row--oma">
+                  <span class="compare-hub-label">{t.hub.pickUs}</span>
+                  <span class="compare-hub-text">{pick(c.chooseUs)}</span>
+                </div>
+              </div>
+              <span class="compare-hub-cta">{t.hub.view} <span class="arrow">→</span></span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <EnterpriseCta locale={locale} />
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>
+
+<style>
+  .compare-hub-hero { padding-top: 72px; }
+  .compare-hub-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 16px; margin-top: 8px;
+  }
+  .compare-hub-card {
+    display: flex; flex-direction: column; gap: 14px;
+    border: 1px solid var(--oma-border-1); border-radius: var(--radius-md);
+    background: var(--oma-bg-1); padding: 20px 22px; text-decoration: none;
+    color: var(--oma-fg-1);
+    transition: border-color var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
+  }
+  .compare-hub-card:hover { border-color: var(--oma-border-2); box-shadow: var(--shadow-md); }
+  .compare-hub-name { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+  .compare-hub-name .vs { color: var(--oma-fg-3); font-weight: 400; margin: 0 2px; }
+  .compare-hub-rows { display: flex; flex-direction: column; gap: 10px; }
+  .compare-hub-row { display: flex; flex-direction: column; gap: 3px; }
+  .compare-hub-label {
+    font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em; color: var(--oma-fg-3);
+  }
+  .compare-hub-row--oma .compare-hub-label { color: var(--oma-accent); }
+  .compare-hub-text { font-size: 13.5px; line-height: 1.55; color: var(--oma-fg-2); }
+  .compare-hub-cta {
+    margin-top: auto; font-family: var(--font-mono); font-size: 12.5px;
+    color: var(--oma-accent); display: inline-flex; align-items: center; gap: 6px;
+  }
+</style>
