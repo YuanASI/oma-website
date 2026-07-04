@@ -150,6 +150,15 @@ skips the remaining tasks instead of running up the bill.
 Both. You can stream tokens and node-state transitions as the DAG fills, or simply await
 runTeam() for a typed, schema-validated result object once the graph resolves.
 
+## How it compares
+
+Honest, sourced comparisons live at https://open-multi-agent.com/compare/. The through-line: OMA is goal-first (you describe the outcome; the coordinator builds the task DAG at runtime), TypeScript-native, three runtime dependencies, and it enforces a hard `maxTokenBudget` that aborts a run — a guardrail none of the four frameworks below offer at the token level (they cap steps, turns, or messages, or only report usage after the fact).
+
+- vs LangGraph — graph-first vs goal-first. LangGraph compiles a declarative state graph you define; OMA decomposes a goal at runtime. LangGraph's TypeScript port is GA and its persistence + time-travel ecosystem is deeper; OMA is leaner (3 deps) and goal-driven. https://open-multi-agent.com/compare/langgraph/
+- vs CrewAI — Python vs TypeScript. CrewAI is a mature, batteries-included framework of role-based crews (~30 dependencies); OMA is a lean TypeScript runtime (3 deps). Comparable orchestration surface; the choice is the language stack. https://open-multi-agent.com/compare/crewai/
+- vs AutoGen — conversation-driven vs goal-driven. AutoGen models work as a group chat over an actor runtime, with native OpenTelemetry; it is now in maintenance mode, superseded by the Microsoft Agent Framework. OMA is actively developed and TypeScript-native. https://open-multi-agent.com/compare/autogen/
+- vs the OpenAI Agents SDK — handoffs vs decomposition. The Agents SDK is lightweight with best-in-class built-in tracing, strongest when you build on OpenAI; OMA is provider-neutral and decomposes a goal into a task DAG. https://open-multi-agent.com/compare/openai-agents-sdk/
+
 ## Documentation
 
 Getting started:
@@ -189,4 +198,5 @@ Reference:
 - GitHub: https://github.com/open-multi-agent/open-multi-agent
 - npm: https://www.npmjs.com/package/@open-multi-agent/core
 - Showcase: https://open-multi-agent.com/showcase/
+- Compare: https://open-multi-agent.com/compare/
 - License: MIT

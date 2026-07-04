@@ -15,12 +15,23 @@ export const en = {
     productMenu: {
       framework: { pkg: 'open-multi-agent', desc: 'The multi-agent orchestration framework.' },
       forge: { pkg: 'oma-forge', desc: 'Experimental project under the open-multi-agent org.' },
+      npm: { pkg: '@open-multi-agent/core', desc: 'The published package on npm.' },
     },
     docs: 'Docs',
     architecture: 'Architecture',
     examples: 'Examples',
     showcase: 'Showcase',
     blog: 'Blog',
+    compare: 'Compare',
+    enterprise: 'Enterprise',
+    resources: 'Resources',
+    menuDesc: {
+      architecture: 'How OMA works, diagrammed',
+      examples: 'Runnable recipes from the repo',
+      compare: 'vs LangGraph, CrewAI, AutoGen & more',
+      showcase: 'Projects built with OMA',
+      blog: 'Notes on multi-agent orchestration',
+    },
     stars: 'stars',
     toggleThemeAria: 'Toggle light/dark theme',
     toggleThemeTitle: 'Toggle theme',
@@ -35,11 +46,22 @@ export const en = {
   footer: {
     blurb: 'From a goal to a task DAG, automatically.<br />TypeScript-native multi-agent orchestration.',
     product: { head: 'Product', capabilities: 'Capabilities', useCases: 'Use cases', integrations: 'Integrations', faq: 'FAQ' },
-    resources: { head: 'Resources', docs: 'Docs', architecture: 'Architecture', examples: 'Examples', showcase: 'Showcase', blog: 'Blog' },
+    resources: { head: 'Resources', docs: 'Docs', architecture: 'Architecture', examples: 'Examples', showcase: 'Showcase', compare: 'Compare', blog: 'Blog' },
     project: { head: 'Project', github: 'GitHub', npm: 'npm', mitLicense: 'MIT license', llmsTxt: 'llms.txt', rss: 'RSS' },
     resourcesEnterprise: 'Enterprise support',
     mitLicensed: 'MIT licensed · @open-multi-agent',
     builtBy: 'Built by',
+  },
+
+  // Enterprise-support CTA (§3.2). Shared by the /compare pages and the examples
+  // cookbook. The OSS site stays zero-commercial; this is one understated pointer
+  // to YuanASI's paid delivery, shown where selection- and production-stage
+  // readers already are — never a hard sell.
+  enterpriseCta: {
+    eyebrow: 'Enterprise',
+    title: 'Taking this to production?',
+    body: 'open-multi-agent is MIT-licensed and free to run yourself. When you need it delivered, integrated, or supported on a deadline, 元定义科技 (YuanASI) offers commercial delivery and support.',
+    button: 'Enterprise support',
   },
 
   taskStatus: {
@@ -320,6 +342,38 @@ export const en = {
     // "translated from" link to the en original instead.
     originallyOn: 'Originally published on',
     translatedFrom: 'Read the English original',
+  },
+
+  // Comparison pages (§7.2). Chrome only — the per-framework copy (matrix cells,
+  // narrative) lives in src/lib/compare.ts. {name} is interpolated with the
+  // competitor's name at render time.
+  compare: {
+    seo: {
+      title: 'open-multi-agent vs LangGraph, CrewAI, AutoGen & the OpenAI Agents SDK',
+      description: 'Honest, sourced comparisons of open-multi-agent against the main multi-agent frameworks — language, orchestration model, dependencies, budget control, and observability, and when to pick each.',
+    },
+    hero: {
+      eyebrow: 'compare',
+      title: 'How open-multi-agent compares.',
+      lede: 'Choosing a multi-agent framework? Here is an honest, side-by-side look at open-multi-agent against the main alternatives — the dimensions that actually decide it, and a fair account of when the other tool is the better call.',
+    },
+    hub: {
+      pickThem: 'Pick {name} if',
+      pickUs: 'Pick open-multi-agent if',
+      view: 'Full comparison',
+    },
+    page: {
+      eyebrow: 'comparison',
+      vsTitle: 'open-multi-agent vs {name}',
+      seoTitle: 'open-multi-agent vs {name} — an honest comparison',
+      matrix: { eyebrow: 'at a glance', title: 'Side by side.', dimension: 'Dimension', oma: 'open-multi-agent' },
+      howDiffer: { eyebrow: 'mechanism', title: 'How they differ.' },
+      whenThemTitle: 'When {name} is the better choice',
+      whenUsTitle: 'Where open-multi-agent fits',
+      repoLink: '{name} on GitHub',
+      seeAlso: 'Compare with another framework',
+      backToHub: 'All comparisons',
+    },
   },
 };
 
