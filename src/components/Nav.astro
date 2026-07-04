@@ -3,7 +3,7 @@
 // place. `current` marks the active in-site link; `starsK` is the build-time star
 // count (e.g. "6.4k"); `locale` localizes the labels and the in-site links; `path`
 // is this page's default-locale path, handed to the language switcher.
-import { REPO, FORGE, NPM, YUANASI } from '../lib/site';
+import { REPO, FORGE, NPM } from '../lib/site';
 import { useTranslations, localizePath, type Locale } from '../i18n';
 import LangSwitcher from './LangSwitcher.astro';
 
@@ -16,8 +16,6 @@ interface Props {
 const { current = 'home', starsK, locale = 'en', path } = Astro.props;
 const t = useTranslations(locale);
 const L = (p: string) => localizePath(p, locale);
-// Enterprise entry → YuanASI, locale-matched (same contract as the footer link).
-const enterpriseHref = locale === 'zh' ? YUANASI : `${YUANASI}/en`;
 ---
 
 <nav class="nav">
@@ -31,24 +29,6 @@ const enterpriseHref = locale === 'zh' ? YUANASI : `${YUANASI}/en`;
       <div class="nav-item">
         <button type="button" class="nav-menu-btn" aria-haspopup="true">{t.nav.product} <span class="nav-menu-caret">▾</span></button>
         <div class="nav-menu">
-          <a class="nav-menu-link" href={REPO} target="_blank" rel="noreferrer">
-            <span class="pkg">{t.nav.productMenu.framework.pkg} <span class="ext">↗</span></span>
-            <span class="desc">{t.nav.productMenu.framework.desc}</span>
-          </a>
-          <a class="nav-menu-link" href={FORGE} target="_blank" rel="noreferrer">
-            <span class="pkg">{t.nav.productMenu.forge.pkg} <span class="ext">↗</span></span>
-            <span class="desc">{t.nav.productMenu.forge.desc}</span>
-          </a>
-          <a class="nav-menu-link" href={NPM} target="_blank" rel="noreferrer">
-            <span class="pkg">{t.nav.productMenu.npm.pkg} <span class="ext">↗</span></span>
-            <span class="desc">{t.nav.productMenu.npm.desc}</span>
-          </a>
-        </div>
-      </div>
-      <a class="nav-link" href={L('/getting-started/introduction/')} aria-current={current === 'docs' ? 'page' : undefined}>{t.nav.docs}</a>
-      <div class="nav-item">
-        <button type="button" class="nav-menu-btn" aria-haspopup="true">{t.nav.resources} <span class="nav-menu-caret">▾</span></button>
-        <div class="nav-menu">
           <a class="nav-menu-link nav-menu-link--page" href={L('/architecture/')} aria-current={current === 'architecture' ? 'page' : undefined}>
             <span class="pkg">{t.nav.architecture}</span>
             <span class="desc">{t.nav.menuDesc.architecture}</span>
@@ -61,6 +41,12 @@ const enterpriseHref = locale === 'zh' ? YUANASI : `${YUANASI}/en`;
             <span class="pkg">{t.nav.compare}</span>
             <span class="desc">{t.nav.menuDesc.compare}</span>
           </a>
+        </div>
+      </div>
+      <a class="nav-link" href={L('/getting-started/introduction/')} aria-current={current === 'docs' ? 'page' : undefined}>{t.nav.docs}</a>
+      <div class="nav-item">
+        <button type="button" class="nav-menu-btn" aria-haspopup="true">{t.nav.community} <span class="nav-menu-caret">▾</span></button>
+        <div class="nav-menu">
           <a class="nav-menu-link nav-menu-link--page" href={L('/showcase/')} aria-current={current === 'showcase' ? 'page' : undefined}>
             <span class="pkg">{t.nav.showcase}</span>
             <span class="desc">{t.nav.menuDesc.showcase}</span>
@@ -71,7 +57,23 @@ const enterpriseHref = locale === 'zh' ? YUANASI : `${YUANASI}/en`;
           </a>
         </div>
       </div>
-      <a class="nav-enterprise" href={enterpriseHref} target="_blank" rel="noreferrer">{t.nav.enterprise} <span aria-hidden="true">↗</span></a>
+      <div class="nav-item">
+        <button type="button" class="nav-menu-btn" aria-haspopup="true">{t.nav.code} <span class="nav-menu-caret">▾</span></button>
+        <div class="nav-menu">
+          <a class="nav-menu-link" href={REPO} target="_blank" rel="noreferrer">
+            <span class="pkg">{t.nav.codeMenu.framework.pkg} <span class="ext">↗</span></span>
+            <span class="desc">{t.nav.codeMenu.framework.desc}</span>
+          </a>
+          <a class="nav-menu-link" href={FORGE} target="_blank" rel="noreferrer">
+            <span class="pkg">{t.nav.codeMenu.forge.pkg} <span class="ext">↗</span></span>
+            <span class="desc">{t.nav.codeMenu.forge.desc}</span>
+          </a>
+          <a class="nav-menu-link" href={NPM} target="_blank" rel="noreferrer">
+            <span class="pkg">{t.nav.codeMenu.npm.pkg} <span class="ext">↗</span></span>
+            <span class="desc">{t.nav.codeMenu.npm.desc}</span>
+          </a>
+        </div>
+      </div>
     </div>
     <div class="nav-ghost">
       <a class="nav-github" href={REPO} target="_blank" rel="noreferrer" aria-label={`GitHub — ${starsK} ${t.nav.stars}`} title="GitHub">
@@ -112,20 +114,6 @@ const enterpriseHref = locale === 'zh' ? YUANASI : `${YUANASI}/en`;
 </script>
 
 <style>
-  /* Enterprise entry — the one commercial door in the OSS nav. Outlined accent
-     pill: reads as an action without a loud filled button, and the external arrow
-     marks the off-site jump to YuanASI. Sits after Blog in .nav-links, so it
-     folds into the mobile menu with the other links. */
-  .nav-enterprise {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: 13px; line-height: 1; white-space: nowrap;
-    color: var(--oma-accent); text-decoration: none;
-    border: 1px solid var(--oma-accent-line); border-radius: var(--radius-sm);
-    padding: 6px 12px;
-    transition: background var(--duration-base) var(--ease-out), border-color var(--duration-base) var(--ease-out);
-  }
-  .nav-enterprise:hover { background: var(--oma-accent-soft); border-color: var(--oma-accent); }
-
   /* Resources-menu items are page links, not packages — keep the label in the
      sans nav font, not the mono .pkg default (which is meant for package names). */
   .nav-menu-link--page .pkg { font-family: var(--font-sans); font-weight: 500; }

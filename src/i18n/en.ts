@@ -11,20 +11,23 @@
 export const en = {
   nav: {
     brandAria: 'Open Multi-Agent — home',
+    // Top-level dropdown labels. `product` fronts the evaluate-the-framework pages
+    // (architecture/examples/compare); `community` fronts showcase/blog; `code`
+    // fronts the off-site source links (repo/forge/npm), whose entries are codeMenu.
     product: 'Product',
-    productMenu: {
+    docs: 'Docs',
+    community: 'Community',
+    code: 'Code',
+    codeMenu: {
       framework: { pkg: 'open-multi-agent', desc: 'The multi-agent orchestration framework.' },
       forge: { pkg: 'oma-forge', desc: 'Experimental project under the open-multi-agent org.' },
       npm: { pkg: '@open-multi-agent/core', desc: 'The published package on npm.' },
     },
-    docs: 'Docs',
     architecture: 'Architecture',
     examples: 'Examples',
     showcase: 'Showcase',
     blog: 'Blog',
     compare: 'Compare',
-    enterprise: 'Enterprise',
-    resources: 'Resources',
     menuDesc: {
       architecture: 'How OMA works, diagrammed',
       examples: 'Runnable recipes from the repo',
