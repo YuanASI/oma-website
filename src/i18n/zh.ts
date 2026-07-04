@@ -12,12 +12,23 @@ export const zh: UiDict = {
     productMenu: {
       framework: { pkg: 'open-multi-agent', desc: '多智能体编排框架。' },
       forge: { pkg: 'oma-forge', desc: 'open-multi-agent 组织下的实验性项目。' },
+      npm: { pkg: '@open-multi-agent/core', desc: '发布在 npm 上的包。' },
     },
     docs: '文档',
     architecture: '架构',
     examples: '示例',
     showcase: '案例',
     blog: '博客',
+    compare: '对比',
+    enterprise: '企业服务',
+    resources: '资源',
+    menuDesc: {
+      architecture: 'OMA 工作原理图解',
+      examples: '仓库里可直接运行的实例',
+      compare: '对比 LangGraph、CrewAI、AutoGen 等',
+      showcase: '用 OMA 构建的项目',
+      blog: '多智能体编排笔记',
+    },
     stars: 'Star',
     toggleThemeAria: '切换浅色/深色主题',
     toggleThemeTitle: '切换主题',
@@ -31,11 +42,18 @@ export const zh: UiDict = {
   footer: {
     blurb: '从目标到任务 DAG，自动完成。<br />TypeScript 原生的多智能体编排。',
     product: { head: '产品', capabilities: '能力', useCases: '应用场景', integrations: '集成', faq: '常见问题' },
-    resources: { head: '资源', docs: '文档', architecture: '架构', examples: '示例', showcase: '案例', blog: '博客' },
+    resources: { head: '资源', docs: '文档', architecture: '架构', examples: '示例', showcase: '案例', compare: '对比', blog: '博客' },
     project: { head: '项目', github: 'GitHub', npm: 'npm', mitLicense: 'MIT 许可证', llmsTxt: 'llms.txt', rss: 'RSS' },
     resourcesEnterprise: '企业服务',
     mitLicensed: 'MIT 许可 · @open-multi-agent',
     builtBy: '出自',
+  },
+
+  enterpriseCta: {
+    eyebrow: '企业服务',
+    title: '要把它用到生产环境？',
+    body: 'open-multi-agent 采用 MIT 许可、可自行免费运行。当你需要在期限内交付、集成，或获得支持时，元定义科技（YuanASI）提供商业交付与支持。',
+    button: '企业服务',
   },
 
   taskStatus: {
@@ -312,5 +330,34 @@ export const zh: UiDict = {
     allPosts: '← 所有文章',
     originallyOn: '最初发表于',
     translatedFrom: '阅读英文原文',
+  },
+
+  compare: {
+    seo: {
+      title: 'open-multi-agent 对比 LangGraph、CrewAI、AutoGen 与 OpenAI Agents SDK',
+      description: '把 open-multi-agent 与主流多智能体框架做诚实、可溯源的对比——语言、编排范式、依赖、预算控制与可观测性，以及各自何时更合适。',
+    },
+    hero: {
+      eyebrow: '对比',
+      title: 'open-multi-agent 怎么比。',
+      lede: '在选多智能体框架？这里把 open-multi-agent 与主要备选方案并排、诚实地摆一摆——用真正决定选择的维度，以及一份「对方何时更合适」的坦诚说明。',
+    },
+    hub: {
+      pickThem: '选 {name}，如果',
+      pickUs: '选 open-multi-agent，如果',
+      view: '完整对比',
+    },
+    page: {
+      eyebrow: '对比',
+      vsTitle: 'open-multi-agent 对比 {name}',
+      seoTitle: 'open-multi-agent 对比 {name} —— 一份诚实的评测',
+      matrix: { eyebrow: '速览', title: '并排来看。', dimension: '维度', oma: 'open-multi-agent' },
+      howDiffer: { eyebrow: '机制', title: '它们差在哪。' },
+      whenThemTitle: '什么情况下 {name} 更合适',
+      whenUsTitle: 'open-multi-agent 适合什么',
+      repoLink: '{name} 的 GitHub',
+      seeAlso: '对比另一个框架',
+      backToHub: '全部对比',
+    },
   },
 };

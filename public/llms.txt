@@ -50,6 +50,15 @@ Open Multi-Agent (OMA) is a goal-driven agent runtime for TypeScript backends. I
 - [How to Run a Mixed-Model AI Agent Team in TypeScript?](https://open-multi-agent.com/blog/mixed-model-agent-team/): a walkthrough from a single-model baseline to a mixed-provider agent team.
 - [Adding Multi-Agent Orchestration to a Vercel AI SDK App](https://open-multi-agent.com/blog/multi-agent-vercel-ai-sdk/): layering OMA orchestration onto an existing Vercel AI SDK app.
 
+## Compare
+
+Honest, sourced comparisons against the main multi-agent frameworks — language, orchestration model, runtime dependencies, token-budget control, and observability, with a fair account of when the other tool is the better choice. Hub: [Compare](https://open-multi-agent.com/compare/).
+
+- [open-multi-agent vs LangGraph](https://open-multi-agent.com/compare/langgraph/): goal-first task-DAG decomposition vs a declarative state graph; TypeScript-native with 3 dependencies and a hard token-budget cap vs LangGraph's deeper persistence and time-travel ecosystem.
+- [open-multi-agent vs CrewAI](https://open-multi-agent.com/compare/crewai/): a lean 3-dependency TypeScript runtime vs a batteries-included Python framework of role-based crews; comparable orchestration surface, the choice is the language stack.
+- [open-multi-agent vs AutoGen](https://open-multi-agent.com/compare/autogen/): goal-driven TypeScript orchestration vs conversation-driven Python agents (AutoGen is now in maintenance mode, superseded by the Microsoft Agent Framework).
+- [open-multi-agent vs the OpenAI Agents SDK](https://open-multi-agent.com/compare/openai-agents-sdk/): provider-neutral, goal-driven orchestration with a hard token budget vs a lightweight, handoffs-based SDK with best-in-class built-in tracing.
+
 ## Project
 
 - [GitHub repository](https://github.com/open-multi-agent/open-multi-agent): source, examples, and issues.

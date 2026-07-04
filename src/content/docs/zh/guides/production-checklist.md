@@ -20,3 +20,7 @@ description: "上线前要接好的那些控制项——token 预算、超时、
 | 限定文件系统触达范围 | `cwd` / `defaultCwd`（默认 `.agent-workspace` 子目录；用 `process.cwd()` 放宽，用 `null` 禁用） | `AgentConfig` / `OrchestratorConfig` |
 
 深入讲解在参考文档里：[上下文管理](/zh/reference/context-management/)讲各种策略与工具结果压缩，[工具配置](/zh/reference/tool-configuration/)讲授权与文件系统沙箱，[检查点与恢复](/zh/reference/checkpoint/)讲在 MemoryStore 上做快照/恢复。
+
+:::tip[要把它用到生产环境？]
+open-multi-agent 采用 MIT 许可、可自行免费部署。如果你更希望在期限内交付、集成或获得支持，[元定义科技（YuanASI）](https://yuanasi.com)提供商业交付与支持。
+:::
