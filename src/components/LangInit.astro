@@ -19,6 +19,14 @@
 <script is:inline>
   (() => {
     try {
+      // Never auto-route search crawlers. They render with an en-locale UA and a
+      // fresh (empty) localStorage on every fetch, so the "once per browser" gate
+      // below can't hold them: they'd be bounced off every /zh/ page and Google
+      // would log it as "Page with redirect" and drop the Chinese page from its
+      // index. Declining the redirect for bots is not cloaking — crawler and human
+      // get the identical page; we only skip *redirecting* the crawler.
+      if (/bot|crawl|spider|slurp|mediapartners/i.test(navigator.userAgent)) return;
+
       // One shot per browser: if we've already evaluated once, never interfere
       // again — this is what keeps a later manual language switch from bouncing.
       if (localStorage.getItem('oma-lang-seen')) return;
