@@ -109,7 +109,6 @@ export default defineConfig({
 					translations: { 'zh-CN': '参考' },
 					items: [
 						{ label: 'Providers', slug: 'reference/providers', translations: { 'zh-CN': '模型提供方' } },
-						{ label: 'MiniMax setup', slug: 'reference/providers/minimax', translations: { 'zh-CN': 'MiniMax 配置' } },
 						{ label: 'Tool configuration', slug: 'reference/tool-configuration', translations: { 'zh-CN': '工具配置' } },
 						{ label: 'Observability', slug: 'reference/observability', translations: { 'zh-CN': '可观测性' } },
 						{ label: 'Shared memory', slug: 'reference/shared-memory', translations: { 'zh-CN': '共享内存' } },
