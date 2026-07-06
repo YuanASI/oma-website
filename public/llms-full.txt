@@ -173,7 +173,6 @@ Guides:
 
 Reference:
 - Providers: https://open-multi-agent.com/reference/providers/
-- MiniMax setup: https://open-multi-agent.com/reference/providers/minimax/
 - Tool configuration: https://open-multi-agent.com/reference/tool-configuration/
 - Observability: https://open-multi-agent.com/reference/observability/
 - Shared memory: https://open-multi-agent.com/reference/shared-memory/
