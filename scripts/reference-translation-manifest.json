@@ -28,10 +28,6 @@
     "enBodySha256": "5ad7bb4d2e0230aadbd7db8f6c5fc6498a0fbeed4992537c1782ce8d01ce3c06",
     "translatedAt": "2026-06-25"
   },
-  "reference/providers/minimax": {
-    "enBodySha256": "e4c21b0b39fbe20628b74ae6cf0cd5bff542b2b8b918de35b2c2ca769a523937",
-    "translatedAt": "2026-06-25"
-  },
   "reference/shared-memory": {
     "enBodySha256": "26660f1a1dc3e19b37052ca5b4e79346a44572ca1871bd52e6218e30ff9d9e5e",
     "translatedAt": "2026-06-25"

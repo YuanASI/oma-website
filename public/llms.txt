@@ -30,7 +30,6 @@ Open Multi-Agent (OMA) is a goal-driven agent runtime for TypeScript backends. I
 ## Reference
 
 - [Providers](https://open-multi-agent.com/reference/providers/): configure hosted, cloud, and local model providers — built-in shortcuts, OpenAI-compatible endpoints, env vars, and local tool-calling.
-- [MiniMax setup](https://open-multi-agent.com/reference/providers/minimax/): use MiniMax models in OMA via the built-in minimax provider.
 - [Tool configuration](https://open-multi-agent.com/reference/tool-configuration/): grant built-in tools (default-deny), presets and allowlists, the filesystem sandbox, custom tools, and MCP.
 - [Observability](https://open-multi-agent.com/reference/observability/): onProgress events, onTrace spans, and the static post-run dashboard.
 - [Shared memory](https://open-multi-agent.com/reference/shared-memory/): a namespaced key-value store shared across a team, in-process or via a custom MemoryStore backend.
