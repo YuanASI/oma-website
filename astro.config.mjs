@@ -3,6 +3,90 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import sitemap from '@astrojs/sitemap';
 import { omaDark, omaLight } from './src/styles/code-theme.mjs';
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+
+// ── Sitemap per-type tuning (PRD §4.6 GEO) ──────────────────────────────────
+// @astrojs/sitemap lists every route at a flat default priority. serializeSitemap
+// below assigns priority + changefreq per page type and stamps <lastmod> on blog
+// posts. Blog dates are read from frontmatter here at config time (astro:content
+// isn't available inside the config); this mirrors the approach used in the
+// open-design landing astro.config. See docs/growth/seo-benchmark.md.
+const BLOG_DIR = join(import.meta.dirname, 'src/content/blog');
+
+/** @type {Map<string, string>} pathname (trailing slash) → YYYY-MM-DD */
+const blogLastmod = new Map();
+
+/**
+ * Read pubDate/updatedDate from each blog post's frontmatter into blogLastmod,
+ * keyed by the post's final URL path. en posts live flat in BLOG_DIR (/blog/…);
+ * zh translations mirror them under blog/zh/ (/zh/blog/…).
+ * @param {string} dir
+ * @param {string} urlPrefix
+ */
+function collectBlogDates(dir, urlPrefix) {
+	for (const entry of readdirSync(dir, { withFileTypes: true })) {
+		if (entry.isDirectory()) {
+			// Only en (flat) + zh (blog/zh) today; add a branch to localize more.
+			if (entry.name === 'zh') collectBlogDates(join(dir, 'zh'), '/zh/blog/');
+			continue;
+		}
+		if (!entry.name.endsWith('.md') || entry.name.startsWith('_')) continue;
+		const fm = readFileSync(join(dir, entry.name), 'utf-8').match(/^---\r?\n([\s\S]*?)\r?\n---/);
+		if (!fm) continue;
+		// updatedDate wins over pubDate (matches the BlogPosting dateModified).
+		const date =
+			fm[1].match(/^updatedDate:\s*['"]?(\d{4}-\d{2}-\d{2})/m)?.[1] ??
+			fm[1].match(/^pubDate:\s*['"]?(\d{4}-\d{2}-\d{2})/m)?.[1];
+		if (date) blogLastmod.set(`${urlPrefix}${entry.name.replace(/\.md$/, '')}/`, date);
+	}
+}
+collectBlogDates(BLOG_DIR, '/blog/');
+
+/**
+ * Per-type priority/changefreq + blog <lastmod>. zh pages inherit their English
+ * counterpart's weight (locale prefix stripped before matching); lastmod is
+ * looked up by the full locale-carrying path.
+ * @param {import('@astrojs/sitemap').SitemapItem} item
+ */
+function serializeSitemap(item) {
+	let path = new URL(item.url).pathname;
+	if (!path.endsWith('/')) path += '/';
+	const p = path.replace(/^\/zh\//, '/'); // de-localized path for matching
+
+	let priority = 0.5;
+	/** @type {import('@astrojs/sitemap').SitemapItem['changefreq']} */
+	let changefreq = 'monthly';
+
+	if (p === '/') {
+		priority = 1.0;
+		changefreq = 'daily';
+	} else if (p === '/blog/') {
+		priority = 0.9;
+		changefreq = 'daily';
+	} else if (/^\/blog\/[^/]+\/$/.test(p)) {
+		priority = 0.8;
+		changefreq = 'weekly';
+		const lastmod = blogLastmod.get(path);
+		if (lastmod) item.lastmod = lastmod;
+	} else if (/^\/(compare|solutions|integrations)\/$/.test(p)) {
+		priority = 0.8;
+		changefreq = 'weekly';
+	} else if (/^\/(compare|solutions|integrations)\/[^/]+\/$/.test(p)) {
+		priority = 0.7;
+		changefreq = 'weekly';
+	} else if (/^\/(examples|showcase|architecture)\/$/.test(p)) {
+		priority = 0.6;
+		changefreq = 'monthly';
+	} else if (/^\/(getting-started|guides|reference)\//.test(p)) {
+		priority = 0.6;
+		changefreq = 'monthly';
+	}
+
+	item.priority = priority;
+	item.changefreq = changefreq;
+	return item;
+}
 
 // https://astro.build/config
 export default defineConfig({
@@ -124,6 +208,6 @@ export default defineConfig({
 		// Emits sitemap-index.xml + sitemap-0.xml at the site root (PRD §4.6 GEO).
 		// robots.txt already points crawlers at /sitemap-index.xml; this integration
 		// is what generates it. Needs `site` (set above) to build absolute URLs.
-		sitemap(),
+		sitemap({ serialize: serializeSitemap }),
 	],
 });
