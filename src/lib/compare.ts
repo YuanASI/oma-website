@@ -261,6 +261,174 @@ export const COMPARISONS: Comparison[] = [
       zh: 'open-multi-agent 适合你想保持提供方中立——在同一个团队里混用 Anthropic、Gemini、OpenAI、本地模型，或任何兼容 OpenAI 的端点——并且更愿意拆解目标、而非接线 handoff。它 TypeScript 原生、三个依赖，其 <code>maxTokenBudget</code> 给出一道 Agents SDK 所没有的硬性花费上限。',
     },
   },
+  {
+    slug: 'mastra',
+    name: 'Mastra',
+    repo: 'https://github.com/mastra-ai/mastra',
+    keywords: ['mastra alternative', 'mastra vs open multi agent', 'mastra typescript agent framework', 'lean mastra alternative'],
+    seoDescription: {
+      en: 'open-multi-agent vs Mastra: a lean 3-dependency goal-driven runtime versus a batteries-included TypeScript framework with workflows, memory, RAG, and evals. An honest, sourced comparison — and when each is the right call.',
+      zh: 'open-multi-agent 对比 Mastra：精简到 3 个依赖、目标驱动的运行时，对上开箱即全、带 workflow / 记忆 / RAG / evals 的 TypeScript 框架。一份诚实、可溯源的对比——以及各自何时更合适。',
+    },
+    lede: {
+      en: 'Both are TypeScript-native and actively developed — the real difference is surface area. Mastra is a batteries-included framework; open-multi-agent is a lean, goal-driven core.',
+      zh: '两者都是 TypeScript 原生、都在积极开发——真正的差别在覆盖面。Mastra 是开箱即全的框架，open-multi-agent 是一个精简、目标驱动的内核。',
+    },
+    chooseThem: {
+      en: 'You want an all-in-one TypeScript framework — graph-based workflows, built-in memory and RAG, evals, a dev playground — in one package.',
+      zh: '你想要一个 all-in-one 的 TypeScript 框架——图式 workflow、内置记忆与 RAG、evals、一个开发调试台——一站备齐。',
+    },
+    chooseUs: {
+      en: 'You want a small core (three dependencies), goal-driven decomposition instead of hand-built workflow graphs, and a hard token-budget cap.',
+      zh: '你想要一个小内核（三个依赖）、用目标驱动的拆解代替手搭 workflow 图，以及一道硬性 token 预算上限。',
+    },
+    them: {
+      language: { en: 'TypeScript-native; runs on Node.js', zh: 'TypeScript 原生；运行于 Node.js' },
+      paradigm: { en: 'Agents plus graph-based workflows (.then / .branch / suspend), with built-in memory, RAG, and evals', zh: '智能体，加上图式 workflow（.then / .branch / suspend），内置记忆、RAG 与 evals' },
+      deps: { en: '~32 direct in @mastra/core; built on the Vercel AI SDK provider layer', zh: '@mastra/core 约 32 个直接依赖；构建于 Vercel AI SDK 的提供方层之上' },
+      mixedModel: { en: 'Yes — per-agent model via the AI SDK model interface', zh: '支持——通过 AI SDK 的模型接口按智能体设模型' },
+      budget: { en: 'No hard token cap — maxSteps limits agent steps', zh: '无硬性 token 上限——maxSteps 限制智能体步数' },
+      observability: { en: 'OpenTelemetry tracing, plus a local dev playground for inspecting runs', zh: 'OpenTelemetry 链路追踪，外加一个本地开发调试台用于查看运行' },
+    },
+    howDiffer: {
+      en: 'Mastra bundles the whole design surface — <em>agents</em>, graph-based <em>workflows</em> you compose with <code>.then()</code>/<code>.branch()</code>, plus memory, RAG, and evals — into one framework. open-multi-agent keeps the core small and hands a coordinator a goal, which it decomposes into a task DAG <em>at runtime</em> and auto-parallelizes. Mastra is built on the Vercel AI SDK provider layer and carries ~32 direct dependencies in its core; OMA carries three, with extra providers and MCP loaded only when you opt in.',
+      zh: 'Mastra 把整个设计面——<em>智能体</em>、用 <code>.then()</code>/<code>.branch()</code> 组合的图式 <em>workflow</em>，加上记忆、RAG 与 evals——都打包进一个框架。open-multi-agent 则把内核做小，把目标交给协调器，由它<em>在运行时</em>拆解成任务 DAG 并自动并行。Mastra 构建于 Vercel AI SDK 提供方层之上，内核约 32 个直接依赖；OMA 是三个，额外提供方与 MCP 仅在按需时加载。',
+    },
+    whenThem: {
+      en: 'Choose Mastra when you want a batteries-included TypeScript framework and would rather adopt one opinionated stack than assemble your own: graph-based workflows with suspend/resume and human-in-the-loop, built-in memory and RAG, and an evals harness. If you think in explicit workflow steps and want the pieces in the box, Mastra gives you a lot up front.',
+      zh: '当你想要一个开箱即全的 TypeScript 框架、且宁愿采纳一套有主见的技术栈而非自己拼装时，选 Mastra：带 suspend/resume 与 human-in-the-loop 的图式 workflow、内置记忆与 RAG，以及一套 evals 框架。如果你习惯用显式的 workflow 步骤来思考、想要开箱即得的组件，Mastra 一开始就给你很多。',
+    },
+    whenUs: {
+      en: 'open-multi-agent fits when you want to stay lean and let the plan be built for you. The coordinator decomposes a goal into a task DAG at runtime, so you describe the outcome instead of wiring a workflow graph; the core is three dependencies; and <code>maxTokenBudget</code> gives a hard spend ceiling that aborts the run — a guardrail Mastra doesn’t offer at the token level.',
+      zh: 'open-multi-agent 适合你想保持精简、并让计划替你生成的场景。协调器在运行时把目标拆解成任务 DAG，于是你描述结果、而非接线 workflow 图；内核只有三个依赖；<code>maxTokenBudget</code> 给出一道会中止运行的硬性花费上限——这是 Mastra 在 token 层面没有提供的护栏。',
+    },
+  },
+  {
+    slug: 'vercel-ai-sdk',
+    name: 'Vercel AI SDK',
+    repo: 'https://github.com/vercel/ai',
+    keywords: ['vercel ai sdk alternative', 'vercel ai sdk multi-agent', 'ai sdk vs open multi agent', 'multi-agent on top of vercel ai sdk'],
+    seoDescription: {
+      en: 'open-multi-agent vs the Vercel AI SDK: goal-driven multi-agent orchestration versus a lower-level provider-neutral toolkit. They sit at different layers — and open-multi-agent can run on top of the AI SDK. An honest, sourced comparison.',
+      zh: 'open-multi-agent 对比 Vercel AI SDK：目标驱动的多智能体编排，对上更底层、提供方中立的工具包。两者处在不同层——open-multi-agent 甚至可以跑在 AI SDK 之上。一份诚实、可溯源的对比。',
+    },
+    lede: {
+      en: 'These sit at different layers. The Vercel AI SDK is a lightweight toolkit for talking to models — one agent, tools, streaming. open-multi-agent is the orchestration layer above it: describe a goal, get a multi-agent task DAG. You can even run OMA on top of the AI SDK.',
+      zh: '这两者处在不同的层。Vercel AI SDK 是一个轻量工具包，用来和模型对话——单个智能体、工具、流式。open-multi-agent 是它之上的编排层：描述一个目标，得到一张多智能体的任务 DAG。你甚至可以把 OMA 跑在 AI SDK 之上。',
+    },
+    chooseThem: {
+      en: 'You want a lightweight, provider-neutral toolkit for a single agent — model calls, tool use, streaming — and you’ll handle any orchestration yourself.',
+      zh: '你想要一个轻量、提供方中立的工具包，服务单个智能体——模型调用、工具使用、流式——编排部分你自己来。',
+    },
+    chooseUs: {
+      en: 'You want multi-agent orchestration on top: a coordinator that decomposes a goal into a parallel task DAG, mixed-model teams, and a hard token budget — without hand-building the plumbing.',
+      zh: '你想要在其之上的多智能体编排：一个把目标拆成并行任务 DAG 的协调器、混编模型的团队，以及一道硬性 token 预算——而不必手搭这些管道。',
+    },
+    them: {
+      language: { en: 'TypeScript-native; the leanest of the group', zh: 'TypeScript 原生；本组里最精简' },
+      paradigm: { en: 'A single-agent tool-calling loop (generateText / streamText / Agent, stopWhen); multi-agent is manual composition you build', zh: '单智能体的工具调用循环（generateText / streamText / Agent，stopWhen）；多智能体是你自己搭的手工组合' },
+      deps: { en: '3 direct (@ai-sdk/gateway, provider, provider-utils)', zh: '3 个直接依赖（@ai-sdk/gateway、provider、provider-utils）' },
+      mixedModel: { en: 'Yes — provider-neutral by design, one model per agent loop', zh: '支持——设计上提供方中立，每个智能体循环一个模型' },
+      budget: { en: 'No hard token cap — stopWhen / stepCountIs are step conditions', zh: '无硬性 token 上限——stopWhen / stepCountIs 是步数条件' },
+      observability: { en: 'experimental_telemetry emits OpenTelemetry spans', zh: 'experimental_telemetry 发出 OpenTelemetry span' },
+    },
+    howDiffer: {
+      en: 'The Vercel AI SDK is <em>primitives</em>: a provider-neutral interface for model calls, tool use, and streaming, plus an <code>Agent</code> abstraction that runs a single tool-calling loop until <code>stopWhen</code>. Multi-agent coordination is something you compose yourself on top. open-multi-agent is that coordination layer — a coordinator decomposes a goal into a task DAG at runtime, runs independent tasks in parallel, and hands you a typed result. They’re complementary as much as competing: OMA ships an AI SDK bridge, so the SDK can be the model layer under an OMA team.',
+      zh: 'Vercel AI SDK 是<em>原语</em>：一套提供方中立的接口，负责模型调用、工具使用与流式，外加一个 <code>Agent</code> 抽象，跑单个工具调用循环直到 <code>stopWhen</code>。多智能体协作是你自己在其上组合出来的。open-multi-agent 就是那一层协作——协调器在运行时把目标拆解成任务 DAG，并行运行相互独立的任务，交给你一个带类型的结果。二者与其说竞争，不如说互补：OMA 自带一个 AI SDK bridge，于是 SDK 可以作为 OMA 团队之下的模型层。',
+    },
+    whenThem: {
+      en: 'Reach for the Vercel AI SDK when you want a minimal, provider-neutral foundation and intend to own the control flow — a single well-instrumented agent, or your own orchestration built exactly how you want it. It’s the leanest option here (three dependencies), it’s widely adopted, and its streaming and tool ergonomics are excellent.',
+      zh: '当你想要一个极简、提供方中立的地基、并打算自己掌控控制流时，选 Vercel AI SDK——一个埋点良好的单智能体，或一套完全按你意愿搭建的自有编排。它是这里最精简的选择（三个依赖），采用广泛，其流式与工具人体工学都很出色。',
+    },
+    whenUs: {
+      en: 'open-multi-agent fits when you want the orchestration handed to you rather than hand-built: a coordinator that plans the task DAG from a goal, mixed-model teams in one run, and a hard <code>maxTokenBudget</code> ceiling. And you don’t have to choose — run OMA over the AI SDK and keep the SDK’s provider layer underneath.',
+      zh: 'open-multi-agent 适合你想要现成的编排、而非手工搭建：一个从目标出发规划任务 DAG 的协调器、一次运行里混编模型的团队，以及一道硬性 <code>maxTokenBudget</code> 上限。而且你不必二选一——把 OMA 跑在 AI SDK 之上，底下继续用 SDK 的提供方层。',
+    },
+  },
+  {
+    slug: 'voltagent',
+    name: 'VoltAgent',
+    repo: 'https://github.com/VoltAgent/voltagent',
+    keywords: ['voltagent alternative', 'voltagent vs open multi agent', 'typescript agent observability framework', 'voltagent alternative nodejs'],
+    seoDescription: {
+      en: 'open-multi-agent vs VoltAgent: a lean 3-dependency goal-driven core versus an observability-first TypeScript framework with a bundled OpenTelemetry stack and supervisor/sub-agent networks. An honest, sourced comparison.',
+      zh: 'open-multi-agent 对比 VoltAgent：精简到 3 个依赖、目标驱动的内核，对上一个可观测性优先、内置整套 OpenTelemetry、带 supervisor/子智能体网络的 TypeScript 框架。一份诚实、可溯源的对比。',
+    },
+    lede: {
+      en: 'Both are TypeScript-native agent frameworks. VoltAgent leads with built-in observability and a supervisor/sub-agent structure; open-multi-agent leads with a lean core and goal-driven decomposition.',
+      zh: '两者都是 TypeScript 原生的智能体框架。VoltAgent 以内置可观测性与 supervisor/子智能体结构为先；open-multi-agent 以精简内核与目标驱动的拆解为先。',
+    },
+    chooseThem: {
+      en: 'You want tracing that works out of the box — a bundled OpenTelemetry stack — and a supervisor coordinating sub-agents, with workflows, memory, and RAG included.',
+      zh: '你想要开箱即用的追踪——内置的整套 OpenTelemetry——以及一个协调子智能体的 supervisor，附带 workflow、记忆与 RAG。',
+    },
+    chooseUs: {
+      en: 'You want a much smaller footprint (three dependencies vs ~44), goal-driven decomposition, a hard token budget, and to forward your own spans rather than adopt a bundled OTel stack.',
+      zh: '你想要小得多的足迹（三个依赖 vs 约 44 个）、目标驱动的拆解、一道硬性 token 预算，并且更愿意转发自己的 span、而非采纳一整套内置 OTel。',
+    },
+    them: {
+      language: { en: 'TypeScript-native; runs on Node.js', zh: 'TypeScript 原生；运行于 Node.js' },
+      paradigm: { en: 'Agents plus supervisor / sub-agent networks and workflows, with memory and RAG', zh: '智能体，加上 supervisor / 子智能体网络与 workflow，带记忆与 RAG' },
+      deps: { en: '~44 direct in @voltagent/core — bundles the @ai-sdk provider set and a full OpenTelemetry stack', zh: '@voltagent/core 约 44 个直接依赖——内置整套 @ai-sdk 提供方与完整的 OpenTelemetry 栈' },
+      mixedModel: { en: 'Yes — per-agent model via the AI SDK providers', zh: '支持——通过 AI SDK 提供方按智能体设模型' },
+      budget: { en: 'No hard token cap — maxSteps limits agent steps', zh: '无硬性 token 上限——maxSteps 限制智能体步数' },
+      observability: { en: 'Native OpenTelemetry — the core bundles the OTel SDK and auto-instruments agents', zh: '原生 OpenTelemetry——内核内置 OTel SDK 并自动为智能体埋点' },
+    },
+    howDiffer: {
+      en: 'VoltAgent puts <em>observability first</em>: its core bundles a full OpenTelemetry stack and auto-instruments agents, and it structures work as a <em>supervisor</em> coordinating sub-agents, with memory, RAG, and workflows included. open-multi-agent keeps the core to three dependencies and forwards <code>onTrace</code> spans to whichever backend you choose, and instead of a supervisor topology it hands a coordinator a goal to decompose into a task DAG at runtime. The trade-off is footprint versus batteries: ~44 core dependencies against three.',
+      zh: 'VoltAgent 把<em>可观测性放在第一位</em>：内核内置整套 OpenTelemetry 栈、自动为智能体埋点，并把工作组织成一个 <em>supervisor</em> 协调子智能体，附带记忆、RAG 与 workflow。open-multi-agent 把内核控制在三个依赖，并把 <code>onTrace</code> span 转发到你选定的任意后端；它不用 supervisor 拓扑，而是把目标交给协调器、在运行时拆解成任务 DAG。取舍就是足迹 vs 开箱即全：约 44 个内核依赖，对上三个。',
+    },
+    whenThem: {
+      en: 'Choose VoltAgent when first-class observability out of the box is a deciding factor — you want OpenTelemetry tracing without wiring it yourself — and a supervisor/sub-agent model fits how you think about coordination. It’s a batteries-included framework with memory, RAG, and workflows, at the cost of a heavier dependency footprint.',
+      zh: '当开箱即用的一流可观测性是决定性因素时，选 VoltAgent——你想要 OpenTelemetry 追踪、又不必自己接线——并且 supervisor/子智能体模型贴合你对协作的思考方式。它是一个开箱即全的框架，带记忆、RAG 与 workflow，代价是更重的依赖足迹。',
+    },
+    whenUs: {
+      en: 'open-multi-agent fits when you want a lean core and goal-driven orchestration: three dependencies instead of ~44, a coordinator that plans the task DAG from a goal, a hard <code>maxTokenBudget</code> cap, and tracing you forward to your own OTel / Datadog / Langfuse backend plus a self-contained post-run HTML dashboard.',
+      zh: 'open-multi-agent 适合你想要精简内核与目标驱动编排的场景：三个依赖而非约 44 个、一个从目标规划任务 DAG 的协调器、一道硬性 <code>maxTokenBudget</code> 上限，以及由你转发到自有 OTel / Datadog / Langfuse 后端的追踪，另有一个自包含的运行后 HTML 仪表盘。',
+    },
+  },
+  {
+    slug: 'inngest-agentkit',
+    name: 'Inngest AgentKit',
+    repo: 'https://github.com/inngest/agent-kit',
+    keywords: ['inngest agentkit alternative', 'agentkit vs open multi agent', 'deterministic agent routing typescript', 'inngest agentkit alternative nodejs'],
+    seoDescription: {
+      en: 'open-multi-agent vs Inngest AgentKit: runtime goal decomposition versus deterministic, state-based routing over agent networks running on Inngest. An honest, sourced comparison — and when each is the right call.',
+      zh: 'open-multi-agent 对比 Inngest AgentKit：运行时的目标拆解，对上跑在 Inngest 之上、对智能体网络做确定性状态路由。一份诚实、可溯源的对比——以及各自何时更合适。',
+    },
+    lede: {
+      en: 'Both build multi-agent systems in TypeScript. AgentKit routes a network of agents with deterministic, state-based logic on top of Inngest; open-multi-agent decomposes a goal into a task DAG at runtime.',
+      zh: '两者都用 TypeScript 搭建多智能体系统。AgentKit 在 Inngest 之上，用确定性的状态路由来调度一张智能体网络；open-multi-agent 则在运行时把目标拆解成任务 DAG。',
+    },
+    chooseThem: {
+      en: 'You want deterministic, inspectable routing you control, and durable, replayable execution — and you’re happy to run on Inngest.',
+      zh: '你想要能自己掌控、确定且可审视的路由，以及可持久、可重放的执行——并且乐意跑在 Inngest 上。',
+    },
+    chooseUs: {
+      en: 'You want the plan built at runtime instead of hand-authored routing, no Inngest dependency, and a hard token budget.',
+      zh: '你想要计划在运行时自动生成、而非手写路由，不想引入 Inngest 依赖，还要一道硬性 token 预算。',
+    },
+    them: {
+      language: { en: 'TypeScript-native; pre-1.0 (0.13)', zh: 'TypeScript 原生；pre-1.0（0.13）' },
+      paradigm: { en: 'Multi-agent networks with deterministic, state-based routing — a router (code or model) picks the next agent', zh: '带确定性状态路由的多智能体网络——由一个路由器（代码或模型）挑选下一个智能体' },
+      deps: { en: '6 direct; runs on Inngest for durable, replayable execution', zh: '6 个直接依赖；跑在 Inngest 上以获得可持久、可重放的执行' },
+      mixedModel: { en: 'Yes — per-agent model via @inngest/ai adapters', zh: '支持——通过 @inngest/ai 适配器按智能体设模型' },
+      budget: { en: 'No hard token cap — maxIter caps router iterations', zh: '无硬性 token 上限——maxIter 限制路由迭代次数' },
+      observability: { en: 'Run traces via the Inngest platform it runs on', zh: '通过其运行所依托的 Inngest 平台获取运行链路' },
+    },
+    howDiffer: {
+      en: 'AgentKit models work as a <em>network</em> of agents sharing state, with a <em>router</em> — code you write or a model you delegate to — deciding which agent runs next, capped by <code>maxIter</code>. It runs on Inngest, so execution is durable and replayable. open-multi-agent doesn’t ask you to author the routing: a coordinator decomposes the goal into a task DAG <em>at runtime</em> and parallelizes the independent nodes. AgentKit gives you explicit, deterministic control flow (and Inngest’s durability); OMA gives you a plan generated per goal and no orchestration service to run.',
+      zh: 'AgentKit 把工作建模为一张共享状态的智能体<em>网络</em>，由一个<em>路由器</em>——你写的代码，或你委派的一个模型——决定下一个跑哪个智能体，并以 <code>maxIter</code> 封顶。它跑在 Inngest 上，所以执行可持久、可重放。open-multi-agent 不要求你编写路由：协调器<em>在运行时</em>把目标拆解成任务 DAG，并把相互独立的节点并行化。AgentKit 给你显式、确定的控制流（以及 Inngest 的持久性）；OMA 给你一份按目标生成的计划，且无需运行一个编排服务。',
+    },
+    whenThem: {
+      en: 'Choose AgentKit when you want deterministic, inspectable routing you author yourself and Inngest’s durable, replayable execution underneath — valuable when a run must survive restarts and every routing decision should be explicit and reproducible. It’s pre-1.0, so expect some churn, and it assumes Inngest in your stack.',
+      zh: '当你想要自己编写的、确定且可审视的路由，以及底下 Inngest 那种可持久、可重放的执行时，选 AgentKit——当一次运行必须扛过重启、且每个路由决策都要显式可复现时，这很有价值。它还在 pre-1.0，要预期一些变动，并且默认你的技术栈里有 Inngest。',
+    },
+    whenUs: {
+      en: 'open-multi-agent fits when you’d rather describe the goal than author the routing, and you want to stay dependency-light: the coordinator plans the task DAG at runtime, there’s no orchestration service to stand up, and <code>maxTokenBudget</code> gives a hard spend ceiling. Checkpoint/resume covers crash recovery at task granularity over any MemoryStore, without a separate durable-execution backend.',
+      zh: 'open-multi-agent 适合你更愿意描述目标、而非编写路由，并且想保持依赖轻量：协调器在运行时规划任务 DAG，无需另立一个编排服务，<code>maxTokenBudget</code> 给出一道硬性花费上限。检查点/恢复在任意 MemoryStore 上以任务粒度覆盖崩溃恢复，无需一个单独的持久化执行后端。',
+    },
+  },
 ];
 
 export const COMPARE_SLUGS: readonly string[] = COMPARISONS.map((c) => c.slug);
