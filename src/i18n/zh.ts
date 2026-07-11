@@ -23,6 +23,7 @@ export const zh: UiDict = {
     blog: '博客',
     compare: '对比',
     solutions: '用例',
+    integrations: '集成',
     menuDesc: {
       architecture: 'OMA 工作原理图解',
       examples: '仓库里可直接运行的实例',
@@ -30,6 +31,7 @@ export const zh: UiDict = {
       showcase: '用 OMA 构建的项目',
       blog: '多智能体编排笔记',
       solutions: 'TypeScript 多智能体用例',
+      integrations: 'Anthropic、OpenAI、Gemini、Ollama 等',
     },
     stars: 'Star',
     toggleThemeAria: '切换浅色/深色主题',
@@ -388,6 +390,31 @@ export const zh: UiDict = {
       walkthroughCta: '读完整走查，含可运行代码',
       relatedCompare: '相关对比',
       seeAlso: '更多场景',
+    },
+  },
+
+  // 提供方集成页。仅 chrome——每个提供方的文案与代码在 src/lib/integrations.ts。
+  integrations: {
+    seo: {
+      title: '集成 —— 让 open-multi-agent 跑在任意模型提供方上',
+      description: 'open-multi-agent 支持 Anthropic、OpenAI、Gemini、DeepSeek、AWS Bedrock、Azure OpenAI、Ollama，以及任意兼容 OpenAI 的端点——换提供方、保留团队。',
+    },
+    hero: {
+      eyebrow: '集成',
+      title: '跑在任意提供方上。',
+      lede: '智能体的配置形状在各提供方之间保持一致——换提供方、模型与凭据，团队其余部分原样不动。还能在一个团队里自由混用。',
+    },
+    hub: { view: '去配置' },
+    page: {
+      eyebrow: '集成',
+      backToHub: '全部提供方',
+      setupEyebrow: '配置',
+      setupTitle: '一个最小团队。',
+      howEyebrow: '怎么契合',
+      howTitle: '它怎么契合。',
+      mixCta: '在一个团队里混用提供方',
+      allProviders: '全部提供方与环境变量',
+      seeAlso: '其它提供方',
     },
   },
 };
