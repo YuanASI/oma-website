@@ -17,6 +17,10 @@ import { localeStaticPaths, toLocale, useTranslations, localizePath } from '../.
 export function getStaticPaths() { return localeStaticPaths(); }
 const locale = toLocale(Astro.params.locale);
 const t = useTranslations(locale).compare;
+// Kept out of COMPARISONS on purpose: Claude dynamic workflows is a feature of
+// Claude Code, not a framework alternative. It gets its own "in context" band
+// below the competitor grid, linking to /compare/claude-dynamic-workflows/.
+const dw = useTranslations(locale).dynamicWorkflows.hubCard;
 const L = (p: string) => localizePath(p, locale);
 const pick = (o: Loc) => o[locale];
 const withName = (s: string, name: string) => s.replace('{name}', name);
@@ -80,6 +84,19 @@ const jsonLd = {
       </div>
     </section>
 
+    <!-- In context: Claude dynamic workflows. Same bet (the model plans the work),
+         different form factor — described, not pitched as an "alternative". -->
+    <section class="section compare-context">
+      <div class="container">
+        <a class="compare-context-card" href={L('/compare/claude-dynamic-workflows/')}>
+          <div class="compare-context-label">{dw.label}</div>
+          <div class="compare-context-name">{dw.name}</div>
+          <p class="compare-context-blurb">{dw.blurb}</p>
+          <span class="compare-context-cta">{dw.cta} <span class="arrow">→</span></span>
+        </a>
+      </div>
+    </section>
+
     <EnterpriseCta locale={locale} />
   </main>
   <Footer locale={locale} />
@@ -112,5 +129,27 @@ const jsonLd = {
   .compare-hub-cta {
     margin-top: auto; font-family: var(--font-mono); font-size: 12.5px;
     color: var(--oma-accent); display: inline-flex; align-items: center; gap: 6px;
+  }
+
+  /* "In context" band — one understated card, visually distinct from the grid. */
+  .compare-context { padding-top: 8px; }
+  .compare-context-card {
+    display: block; max-width: 720px;
+    border: 1px solid var(--oma-border-1); border-radius: var(--radius-md);
+    background: var(--oma-bg-1); padding: 22px 24px; text-decoration: none;
+    color: var(--oma-fg-1);
+    transition: border-color var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
+  }
+  .compare-context-card:hover { border-color: var(--oma-border-2); box-shadow: var(--shadow-md); }
+  .compare-context-label {
+    font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em; color: var(--oma-fg-3);
+    margin-bottom: 8px;
+  }
+  .compare-context-name { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .compare-context-blurb { font-size: 13.5px; line-height: 1.6; color: var(--oma-fg-2); margin: 0 0 14px; }
+  .compare-context-cta {
+    font-family: var(--font-mono); font-size: 12.5px; color: var(--oma-accent);
+    display: inline-flex; align-items: center; gap: 6px;
   }
 </style>
