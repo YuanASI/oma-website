@@ -429,6 +429,220 @@ export const COMPARISONS: Comparison[] = [
       zh: 'open-multi-agent 适合你更愿意描述目标、而非编写路由，并且想保持依赖轻量：协调器在运行时规划任务 DAG，无需另立一个编排服务，<code>maxTokenBudget</code> 给出一道硬性花费上限。检查点/恢复在任意 MemoryStore 上以任务粒度覆盖崩溃恢复，无需一个单独的持久化执行后端。',
     },
   },
+  {
+    slug: 'langchain',
+    name: 'LangChain',
+    repo: 'https://github.com/langchain-ai/langchain',
+    keywords: ['langchain alternative', 'langchain typescript alternative', 'langchain vs open multi agent', 'lightweight langchain alternative'],
+    seoDescription: {
+      en: 'open-multi-agent vs LangChain: a lean, goal-driven TypeScript runtime versus the broad LangChain framework and ecosystem (chains, agents, integrations; multi-agent orchestration lives in LangGraph). An honest, sourced comparison.',
+      zh: 'open-multi-agent 对比 LangChain：精简、目标驱动的 TypeScript 运行时，对上庞大的 LangChain 框架与生态（链、智能体、集成；多智能体编排在 LangGraph 里）。一份诚实、可溯源的对比。',
+    },
+    lede: {
+      en: 'LangChain is the broad framework and integration ecosystem; its multi-agent orchestration lives in LangGraph (compared separately). open-multi-agent is a focused, goal-driven, TypeScript-native runtime.',
+      zh: 'LangChain 是那个庞大的框架与集成生态；它的多智能体编排在 LangGraph 里（我们单独对比）。open-multi-agent 则是一个专注、目标驱动、TypeScript 原生的运行时。',
+    },
+    chooseThem: {
+      en: 'You want the largest ecosystem — chains, hundreds of integrations, LangSmith tracing — and you’re building in Python (or LangChain.js).',
+      zh: '你想要最大的生态——链、数百个集成、LangSmith 追踪——并且在 Python（或 LangChain.js）上构建。',
+    },
+    chooseUs: {
+      en: 'You want a small, focused multi-agent runtime in TypeScript: goal-driven decomposition, three dependencies, and a hard token budget — without adopting a large framework.',
+      zh: '你想要一个小而专注的多智能体运行时（TypeScript）：目标驱动的拆解、三个依赖、一道硬性 token 预算——而不必采纳一个庞大的框架。',
+    },
+    them: {
+      language: { en: 'Python-first; a JavaScript/TypeScript port (LangChain.js) also exists', zh: 'Python 优先；也有 JavaScript/TypeScript 移植（LangChain.js）' },
+      paradigm: { en: 'Chains + tool-calling agents (the classic AgentExecutor now lives in langchain_classic); the modern orchestration path is LangGraph', zh: '链 + 工具调用智能体（经典的 AgentExecutor 现已移入 langchain_classic）；现代的编排路径是 LangGraph' },
+      deps: { en: '~8 direct in the langchain package (atop langchain-core); the wider integration ecosystem is very large', zh: 'langchain 包约 8 个直接依赖（在 langchain-core 之上）；更外围的集成生态非常庞大' },
+      mixedModel: { en: 'Yes — per-agent / per-chain model', zh: '支持——按智能体 / 按链设模型' },
+      budget: { en: 'No hard token cap — AgentExecutor max_iterations counts steps', zh: '无硬性 token 上限——AgentExecutor 的 max_iterations 计的是步数' },
+      observability: { en: 'First-party LangSmith tracing', zh: '一方 LangSmith 链路追踪' },
+    },
+    howDiffer: {
+      en: 'LangChain is a <em>framework and ecosystem</em>: chains, a huge library of integrations, and tool-calling agents (the classic <code>AgentExecutor</code> now sits under <code>langchain_classic</code>). Its answer to multi-agent orchestration is <em>LangGraph</em>, which we compare separately. open-multi-agent isn’t a broad framework — it’s a focused runtime that decomposes a goal into a task DAG at runtime and parallelizes it, in TypeScript, with three dependencies. If you’re weighing the orchestration model specifically, the LangGraph comparison is the closer one.',
+      zh: 'LangChain 是一个<em>框架与生态</em>：链、庞大的集成库，以及工具调用智能体（经典的 <code>AgentExecutor</code> 现已归入 <code>langchain_classic</code>）。它对多智能体编排的答案是 <em>LangGraph</em>，我们另作对比。open-multi-agent 不是一个庞大的框架——它是一个专注的运行时，在运行时把目标拆解成任务 DAG 并并行化，用 TypeScript、三个依赖。如果你专门在掂量编排范式，LangGraph 那篇对比更贴近。',
+    },
+    whenThem: {
+      en: 'Choose LangChain when you want the breadth: the largest integration ecosystem in the space, chains and prompt tooling, first-party LangSmith tracing, and a huge community — in Python or, with some feature lag, LangChain.js. If you’ll lean on that ecosystem, the gravity is real.',
+      zh: '当你想要广度时选 LangChain：这个领域里最大的集成生态、链与提示工具、一方 LangSmith 追踪，以及庞大的社区——在 Python 里，或（功能略滞后地）在 LangChain.js 里。如果你会倚重那套生态，它的惯性是真实的。',
+    },
+    whenUs: {
+      en: 'open-multi-agent fits when you don’t want a broad framework — just a lean, goal-driven multi-agent runtime that plans the task DAG for you, stays TypeScript-native with three dependencies, and enforces a hard <code>maxTokenBudget</code>. For the orchestration-model question specifically, compare against LangGraph.',
+      zh: 'open-multi-agent 适合你不想要一个庞大框架、只想要一个精简、目标驱动的多智能体运行时的场景——它替你规划任务 DAG，保持 TypeScript 原生、三个依赖，并强制一道硬性 <code>maxTokenBudget</code>。若专门就编排范式发问，请对比 LangGraph。',
+    },
+  },
+  {
+    slug: 'llamaindex',
+    name: 'LlamaIndex',
+    repo: 'https://github.com/run-llama/llama_index',
+    keywords: ['llamaindex alternative', 'llamaindex vs open multi agent', 'llamaindex agent workflow alternative', 'rag agent framework'],
+    seoDescription: {
+      en: 'open-multi-agent vs LlamaIndex: an orchestration-first TypeScript runtime versus a RAG/data-first Python framework that grew agent workflows. An honest, sourced comparison — and when each is the right call.',
+      zh: 'open-multi-agent 对比 LlamaIndex：编排优先的 TypeScript 运行时，对上一个 RAG / 数据优先、后来长出智能体 workflow 的 Python 框架。一份诚实、可溯源的对比——以及各自何时更合适。',
+    },
+    lede: {
+      en: 'LlamaIndex started as a data/RAG framework and grew agent workflows on top; open-multi-agent starts from orchestration. If your problem is retrieval over your data, they lead from opposite ends.',
+      zh: 'LlamaIndex 起步于数据 / RAG 框架，后来在其上长出智能体 workflow；open-multi-agent 则从编排出发。如果你的问题是「在自己的数据上做检索」，两者从相反的一端切入。',
+    },
+    chooseThem: {
+      en: 'Your core problem is RAG over your own data — indexing, retrieval, query engines — and you want agents that build on that, in Python.',
+      zh: '你的核心问题是在自己的数据上做 RAG——索引、检索、查询引擎——并且想要在其之上构建的智能体，用 Python。',
+    },
+    chooseUs: {
+      en: 'Your core problem is orchestration — coordinating multiple agents toward a goal — in TypeScript, with a lean core and a hard token budget. You bring your own retrieval.',
+      zh: '你的核心问题是编排——协调多个智能体奔向一个目标——用 TypeScript、精简内核、硬性 token 预算。检索你自己带。',
+    },
+    them: {
+      language: { en: 'Python; a TypeScript port (LlamaIndex.TS) also exists', zh: 'Python；也有 TypeScript 移植（LlamaIndex.TS）' },
+      paradigm: { en: 'Data / RAG-first (indexing, retrieval, query engines) plus agent workflows (AgentWorkflow, FunctionAgent)', zh: '数据 / RAG 优先（索引、检索、查询引擎），加上智能体 workflow（AgentWorkflow、FunctionAgent）' },
+      deps: { en: '~29 direct in llama-index-core (RAG-oriented: numpy, nltk, tiktoken, networkx, …)', zh: 'llama-index-core 约 29 个直接依赖（面向 RAG：numpy、nltk、tiktoken、networkx…）' },
+      mixedModel: { en: 'Yes — per-agent model', zh: '支持——按智能体设模型' },
+      budget: { en: 'No hard token cap', zh: '无硬性 token 上限' },
+      observability: { en: 'An instrumentation module plus integrations (Arize, Langfuse, and others)', zh: '一个 instrumentation 模块，加上集成（Arize、Langfuse 等）' },
+    },
+    howDiffer: {
+      en: 'LlamaIndex is <em>retrieval-first</em>: its center of gravity is indexing your data and querying it, with agent workflows layered on top. open-multi-agent is <em>orchestration-first</em>: it decomposes a goal into a task DAG and coordinates agents, and leaves retrieval to you. They overlap only at the edges — a RAG-heavy application leans toward LlamaIndex; a multi-agent coordination problem leans toward OMA. LlamaIndex carries ~29 core dependencies for all that data tooling; OMA carries three.',
+      zh: 'LlamaIndex 是<em>检索优先</em>的：它的重心在于把你的数据建索引并查询，智能体 workflow 叠在上面。open-multi-agent 是<em>编排优先</em>的：它把目标拆解成任务 DAG 并协调智能体，检索交给你。两者只在边缘重叠——RAG 重的应用偏向 LlamaIndex；多智能体协调问题偏向 OMA。LlamaIndex 为那套数据工具带着约 29 个内核依赖；OMA 是三个。',
+    },
+    whenThem: {
+      en: 'Choose LlamaIndex when retrieval over your own data is the heart of the problem: it has the richest set of loaders, indexes, retrievers, and query engines, and its agent workflows plug straight into them. If you’re building a RAG application first and an agent system second, that head start is worth a lot.',
+      zh: '当「在自己的数据上做检索」是问题核心时选 LlamaIndex：它有最丰富的一套加载器、索引、检索器与查询引擎，其智能体 workflow 能直接接上。如果你先建的是 RAG 应用、其次才是智能体系统，那份先发优势很值钱。',
+    },
+    whenUs: {
+      en: 'open-multi-agent fits when orchestration is the heart of the problem: a coordinator that decomposes a goal into a parallel task DAG, TypeScript-native, three dependencies, and a hard <code>maxTokenBudget</code>. It doesn’t ship retrieval — you bring whatever RAG or tools you like — which keeps the core small and the orchestration general.',
+      zh: 'open-multi-agent 适合编排是问题核心的场景：一个把目标拆成并行任务 DAG 的协调器、TypeScript 原生、三个依赖、一道硬性 <code>maxTokenBudget</code>。它不自带检索——RAG 或工具你随意带——这让内核保持小、编排保持通用。',
+    },
+  },
+  {
+    slug: 'pydantic-ai',
+    name: 'Pydantic AI',
+    repo: 'https://github.com/pydantic/pydantic-ai',
+    keywords: ['pydantic ai alternative', 'pydantic ai typescript alternative', 'pydantic ai vs open multi agent', 'type-safe agent framework'],
+    seoDescription: {
+      en: 'open-multi-agent vs Pydantic AI: goal-driven TypeScript orchestration versus a type-safe, Python-native agent framework with first-class OpenTelemetry and usage limits. An honest, sourced comparison — and when each is the right call.',
+      zh: 'open-multi-agent 对比 Pydantic AI：目标驱动的 TypeScript 编排，对上一个类型安全、Python 原生、自带一流 OpenTelemetry 与用量上限的智能体框架。一份诚实、可溯源的对比——以及各自何时更合适。',
+    },
+    lede: {
+      en: 'Pydantic AI brings Pydantic’s type-safety discipline to agents, with excellent OpenTelemetry via Logfire; open-multi-agent is goal-driven and TypeScript-native. Both are lean and provider-agnostic — they differ most in language and orchestration model.',
+      zh: 'Pydantic AI 把 Pydantic 的类型安全纪律带进智能体，并借 Logfire 提供出色的 OpenTelemetry；open-multi-agent 则目标驱动、TypeScript 原生。两者都精简、提供方无关——最大的差别在语言与编排范式。',
+    },
+    chooseThem: {
+      en: 'You’re in Python, you value type-safe, validated agent I/O, and you want first-class OpenTelemetry (Logfire) and built-in usage limits.',
+      zh: '你在 Python 里，看重类型安全、经校验的智能体输入输出，并且想要一流的 OpenTelemetry（Logfire）与内置用量上限。',
+    },
+    chooseUs: {
+      en: 'You want TypeScript-native, goal-driven multi-agent orchestration — a coordinator that builds the task DAG from a goal — with a hard, run-aborting token budget.',
+      zh: '你想要 TypeScript 原生、目标驱动的多智能体编排——一个从目标构建任务 DAG 的协调器——外加一道会中止运行的硬性 token 预算。',
+    },
+    them: {
+      language: { en: 'Python-native (built on Pydantic); no TypeScript port', zh: 'Python 原生（构建于 Pydantic 之上）；无 TypeScript 移植' },
+      paradigm: { en: 'Type-safe, model-agnostic agents with tool calling and dependency injection; multi-agent via delegation and pydantic-graph', zh: '类型安全、提供方无关的智能体，带工具调用与依赖注入；多智能体通过委派与 pydantic-graph 实现' },
+      deps: { en: 'A slim core (pydantic-ai-slim); model provider SDKs are optional extras', zh: '一个精简内核（pydantic-ai-slim）；模型提供方 SDK 是可选 extras' },
+      mixedModel: { en: 'Yes — model-agnostic, per-agent model', zh: '支持——提供方无关，按智能体设模型' },
+      budget: { en: 'Yes — UsageLimits includes total_tokens_limit, which raises before you overspend (one of the few here with a real token limit)', zh: '支持——UsageLimits 含 total_tokens_limit，超支前即抛错（这里少数带真正 token 上限的之一）' },
+      observability: { en: 'Native OpenTelemetry via Pydantic Logfire (instrumentation built in)', zh: '经 Pydantic Logfire 的原生 OpenTelemetry（内置埋点）' },
+    },
+    howDiffer: {
+      en: 'Pydantic AI applies <em>type-safety</em> end to end — validated inputs and outputs, dependency injection, model-agnostic agents — and ships genuinely strong observability through Logfire (native OpenTelemetry). Notably, it’s one of the few frameworks here with a real token limit: <code>UsageLimits(total_tokens_limit=…)</code> raises before you overspend. open-multi-agent differs mainly in language and shape: it’s TypeScript-native and goal-driven, a coordinator decomposing a goal into a parallel task DAG rather than a single agent that delegates. OMA’s <code>maxTokenBudget</code> caps the whole run’s DAG; Pydantic AI’s limit is per agent run — both real, just scoped differently.',
+      zh: 'Pydantic AI 把<em>类型安全</em>贯穿始终——经校验的输入输出、依赖注入、提供方无关的智能体——并借 Logfire 提供确实强的可观测性（原生 OpenTelemetry）。值得一提的是，它是这里少数带真正 token 上限的框架：<code>UsageLimits(total_tokens_limit=…)</code> 会在你超支前抛错。open-multi-agent 的差别主要在语言与形态：它 TypeScript 原生、目标驱动，是一个把目标拆成并行任务 DAG 的协调器，而非一个做委派的单智能体。OMA 的 <code>maxTokenBudget</code> 封顶的是整个运行的 DAG；Pydantic AI 的上限作用于单次 agent run——都真实，只是作用域不同。',
+    },
+    whenThem: {
+      en: 'Pydantic AI is a strong fit if you’re in Python and want the Pydantic discipline: validated, type-safe agent I/O, clean dependency injection, best-in-class tracing through Logfire, and built-in usage limits. For a single well-typed agent or a delegation-based design, it’s excellent and lean.',
+      zh: '如果你在 Python 里、想要 Pydantic 那套纪律，Pydantic AI 很合适：经校验、类型安全的智能体输入输出、干净的依赖注入、经 Logfire 的一流追踪，以及内置用量上限。对于一个类型良好的单智能体、或基于委派的设计，它出色且精简。',
+    },
+    whenUs: {
+      en: 'open-multi-agent fits when you want TypeScript-native, goal-driven multi-agent orchestration: the coordinator plans a parallel task DAG from the goal rather than you wiring delegation, and <code>maxTokenBudget</code> aborts the entire run at a hard ceiling. If you’re in Node rather than Python, OMA keeps you there.',
+      zh: 'open-multi-agent 适合你想要 TypeScript 原生、目标驱动的多智能体编排：协调器从目标规划一张并行任务 DAG，而非你去接线委派，<code>maxTokenBudget</code> 在硬上限处中止整个运行。若你在 Node 而非 Python，OMA 让你留在这里。',
+    },
+  },
+  {
+    slug: 'google-adk',
+    name: 'Google ADK',
+    repo: 'https://github.com/google/adk-python',
+    keywords: ['google adk alternative', 'agent development kit alternative', 'google adk vs open multi agent', 'google adk typescript alternative'],
+    seoDescription: {
+      en: 'open-multi-agent vs the Google Agent Development Kit (ADK): a lean, provider-neutral TypeScript runtime versus a code-first Python toolkit with explicit workflow agents and a Google Cloud deploy story. An honest, sourced comparison.',
+      zh: 'open-multi-agent 对比谷歌 Agent Development Kit（ADK）：精简、提供方中立的 TypeScript 运行时，对上一个 code-first、带显式 workflow 智能体与 Google Cloud 部署路径的 Python 工具包。一份诚实、可溯源的对比。',
+    },
+    lede: {
+      en: 'Google’s ADK is a code-first Python toolkit with explicit workflow agents and a path to Vertex AI deployment; open-multi-agent is a TypeScript-native, provider-neutral runtime that plans the workflow from a goal.',
+      zh: '谷歌的 ADK 是一个 code-first 的 Python 工具包，带显式的 workflow 智能体与通往 Vertex AI 部署的路径；open-multi-agent 则是一个 TypeScript 原生、提供方中立、从目标规划工作流的运行时。',
+    },
+    chooseThem: {
+      en: 'You’re on Google Cloud / Gemini, want explicit workflow agents (sequential, parallel, loop) you compose, and a managed deploy target (Vertex Agent Engine).',
+      zh: '你在 Google Cloud / Gemini 上，想要你自己组合的显式 workflow 智能体（顺序、并行、循环），以及一个托管的部署目标（Vertex Agent Engine）。',
+    },
+    chooseUs: {
+      en: 'You want a TypeScript-native, provider-neutral runtime that decomposes a goal at runtime — no web-server or cloud stack pulled in — with a lean core and a hard token budget.',
+      zh: '你想要一个 TypeScript 原生、提供方中立、在运行时拆解目标的运行时——不拉进 web 服务器或云栈——内核精简、带硬性 token 预算。',
+    },
+    them: {
+      language: { en: 'Python-first (a Java port exists); no TypeScript', zh: 'Python 优先（有 Java 移植）；无 TypeScript' },
+      paradigm: { en: 'Code-first agents: an LlmAgent plus explicit workflow agents (SequentialAgent, ParallelAgent, LoopAgent) and multi-agent hierarchies', zh: 'code-first 智能体：一个 LlmAgent，加上显式的 workflow 智能体（SequentialAgent、ParallelAgent、LoopAgent）与多智能体层级' },
+      deps: { en: '~24 direct — includes a FastAPI/Uvicorn web stack, google-genai, google-auth, and OpenTelemetry', zh: '约 24 个直接依赖——含 FastAPI/Uvicorn web 栈、google-genai、google-auth 与 OpenTelemetry' },
+      mixedModel: { en: 'Yes — Gemini-first, other providers via LiteLLM', zh: '支持——Gemini 优先，其它提供方经 LiteLLM' },
+      budget: { en: 'No hard token cap — LoopAgent bounds iterations, not tokens', zh: '无硬性 token 上限——LoopAgent 限制的是迭代次数，不是 token' },
+      observability: { en: 'OpenTelemetry, with Google Cloud Trace integration', zh: 'OpenTelemetry，带 Google Cloud Trace 集成' },
+    },
+    howDiffer: {
+      en: 'ADK is <em>code-first and explicit</em>: you compose an <code>LlmAgent</code> with workflow agents — <code>SequentialAgent</code>, <code>ParallelAgent</code>, <code>LoopAgent</code> — into a hierarchy, and it carries a FastAPI-based serving and Google Cloud deploy story. open-multi-agent doesn’t ask you to lay out the workflow: a coordinator decomposes the goal into a task DAG at runtime and parallelizes it. ADK is Gemini-first (other models via LiteLLM) and pulls a web-server stack into its ~24 dependencies; OMA is provider-neutral, three dependencies, and ships no server.',
+      zh: 'ADK 是<em>code-first 且显式</em>的：你把一个 <code>LlmAgent</code> 和 workflow 智能体——<code>SequentialAgent</code>、<code>ParallelAgent</code>、<code>LoopAgent</code>——组合成一个层级，并带着一套基于 FastAPI 的服务与 Google Cloud 部署路径。open-multi-agent 不要求你铺开工作流：协调器在运行时把目标拆解成任务 DAG 并并行化。ADK 是 Gemini 优先（其它模型经 LiteLLM），并把一套 web 服务器栈拉进它约 24 个依赖里；OMA 提供方中立、三个依赖，且不带服务器。',
+    },
+    whenThem: {
+      en: 'Choose ADK when you’re in Google’s ecosystem and want explicit control of the agent workflow — sequential, parallel, and loop agents you assemble yourself — plus a first-party path to deploying on Vertex AI. Its evaluation tooling and Gemini integration are strong, and the code-first model is clear.',
+      zh: '当你在谷歌生态里、想要对智能体工作流的显式控制时选 ADK——你自己拼装的顺序、并行、循环智能体——外加一条部署到 Vertex AI 的一方路径。它的评估工具与 Gemini 集成很强，code-first 模型也清晰。',
+    },
+    whenUs: {
+      en: 'open-multi-agent fits when you’d rather describe the goal than assemble workflow agents, want to stay provider-neutral and TypeScript-native, and don’t want a web-server or cloud stack in your dependencies. The coordinator plans the task DAG at runtime, the core is three dependencies, and <code>maxTokenBudget</code> gives a hard spend ceiling.',
+      zh: 'open-multi-agent 适合你更愿意描述目标、而非拼装 workflow 智能体，想保持提供方中立与 TypeScript 原生，且不想让依赖里出现 web 服务器或云栈。协调器在运行时规划任务 DAG，内核三个依赖，<code>maxTokenBudget</code> 给出一道硬性花费上限。',
+    },
+  },
+  {
+    slug: 'semantic-kernel',
+    name: 'Semantic Kernel',
+    repo: 'https://github.com/microsoft/semantic-kernel',
+    keywords: ['semantic kernel alternative', 'microsoft agent framework alternative', 'semantic kernel vs open multi agent', 'semantic kernel typescript alternative'],
+    seoDescription: {
+      en: 'open-multi-agent vs Microsoft Semantic Kernel: a lean, TypeScript-native goal-driven runtime versus Microsoft’s enterprise LLM SDK (C#-first), now converging into the Microsoft Agent Framework. An honest, sourced comparison.',
+      zh: 'open-multi-agent 对比微软 Semantic Kernel：精简、TypeScript 原生、目标驱动的运行时，对上微软的企业级 LLM SDK（C# 优先）——它正并入 Microsoft Agent Framework。一份诚实、可溯源的对比。',
+    },
+    lede: {
+      en: 'Semantic Kernel is Microsoft’s enterprise LLM SDK, strongest in the .NET world; open-multi-agent is a lean, TypeScript-native, goal-driven runtime. Microsoft is now converging its agent work into the Microsoft Agent Framework.',
+      zh: 'Semantic Kernel 是微软的企业级 LLM SDK，在 .NET 世界里最强；open-multi-agent 则是一个精简、TypeScript 原生、目标驱动的运行时。微软正把其智能体工作并入 Microsoft Agent Framework。',
+    },
+    chooseThem: {
+      en: 'You’re in the Microsoft / .NET / Azure ecosystem and want a first-party SDK — plugins, functions, agents — with a supported path forward via the Microsoft Agent Framework.',
+      zh: '你在微软 / .NET / Azure 生态里，想要一个一方 SDK——插件、函数、智能体——并有一条经 Microsoft Agent Framework 的受支持前进路径。',
+    },
+    chooseUs: {
+      en: 'You’re in Node/TypeScript and want a lean, provider-neutral, goal-driven runtime with three dependencies and a hard token budget — no .NET, no Azure assumption.',
+      zh: '你在 Node/TypeScript 里，想要一个精简、提供方中立、目标驱动的运行时，三个依赖、一道硬性 token 预算——不带 .NET、不假设 Azure。',
+    },
+    them: {
+      language: { en: '.NET / C#-first; first-party Python and Java; no TypeScript', zh: '.NET / C# 优先；一方支持 Python 与 Java；无 TypeScript' },
+      paradigm: { en: 'Plugins / functions plus agents; multi-agent orchestration is moving to the Microsoft Agent Framework', zh: '插件 / 函数，加上智能体；多智能体编排正迁往 Microsoft Agent Framework' },
+      deps: { en: '~22 direct in the Python package; the newer Agent Framework core is much leaner (~4)', zh: 'Python 包约 22 个直接依赖；更新的 Agent Framework 内核精简得多（约 4 个）' },
+      mixedModel: { en: 'Yes — per-agent model / service', zh: '支持——按智能体设模型 / 服务' },
+      budget: { en: 'No hard token cap', zh: '无硬性 token 上限' },
+      observability: { en: 'Native OpenTelemetry', zh: '原生 OpenTelemetry' },
+    },
+    note: {
+      en: 'Heads-up: in 2026 Microsoft began converging <strong>Semantic Kernel</strong> and <strong>AutoGen</strong> into the new <strong>Microsoft Agent Framework</strong> (Python + .NET) as the go-forward multi-agent stack. Semantic Kernel remains supported, but if you’re choosing for a new, long-lived project, weigh building on the Agent Framework directly.',
+      zh: '提醒：2026 年微软开始把 <strong>Semantic Kernel</strong> 与 <strong>AutoGen</strong> 并入新的 <strong>Microsoft Agent Framework</strong>（Python + .NET），作为其前进方向的多智能体栈。Semantic Kernel 仍受支持，但若你在为一个全新、长期的项目做选择，值得掂量是否直接构建在 Agent Framework 上。',
+    },
+    howDiffer: {
+      en: 'Semantic Kernel is an <em>enterprise SDK</em> — plugins, functions, planners, and agents — built C#-first with first-party Python and Java, and it’s deeply at home in the Microsoft/Azure stack. Its multi-agent future is the <em>Microsoft Agent Framework</em>, which unifies SK and AutoGen. open-multi-agent is a lean, TypeScript-native runtime that decomposes a goal into a task DAG at runtime; it assumes no particular cloud and carries three dependencies. The choice is largely ecosystem: .NET/Azure versus Node/TypeScript.',
+      zh: 'Semantic Kernel 是一个<em>企业级 SDK</em>——插件、函数、planner 与智能体——以 C# 优先构建，一方支持 Python 与 Java，在微软/Azure 栈里如鱼得水。它的多智能体未来是 <em>Microsoft Agent Framework</em>，它统一了 SK 与 AutoGen。open-multi-agent 则是一个精简、TypeScript 原生的运行时，在运行时把目标拆解成任务 DAG；它不假设特定云，带三个依赖。选择很大程度上是生态之别：.NET/Azure 对上 Node/TypeScript。',
+    },
+    whenThem: {
+      en: 'Choose Semantic Kernel (or its successor, the Microsoft Agent Framework) when you’re invested in .NET/Azure and want a first-party, enterprise-supported SDK with strong Microsoft integration and native OpenTelemetry. In that ecosystem, the first-party support and roadmap are the deciding factors.',
+      zh: '当你深耕 .NET/Azure、想要一个一方、企业级受支持、与微软深度集成并带原生 OpenTelemetry 的 SDK 时，选 Semantic Kernel（或其继任者 Microsoft Agent Framework）。在那套生态里，一方支持与路线图是决定性因素。',
+    },
+    whenUs: {
+      en: 'open-multi-agent fits when your stack is Node/TypeScript and you want to stay there: a lean, provider-neutral, goal-driven runtime with three dependencies and a hard <code>maxTokenBudget</code>, with no .NET runtime or Azure assumption. The coordinator plans the task DAG from a goal instead of you assembling plugins and planners.',
+      zh: 'open-multi-agent 适合你的技术栈是 Node/TypeScript、且想留在这里的场景：一个精简、提供方中立、目标驱动的运行时，三个依赖、一道硬性 <code>maxTokenBudget</code>，不带 .NET 运行时、不假设 Azure。协调器从目标规划任务 DAG，而非你去拼装插件与 planner。',
+    },
+  },
 ];
 
 export const COMPARE_SLUGS: readonly string[] = COMPARISONS.map((c) => c.slug);

@@ -61,6 +61,11 @@ Honest, sourced comparisons against the main multi-agent frameworks — language
 - [open-multi-agent vs the Vercel AI SDK](https://open-multi-agent.com/compare/vercel-ai-sdk/): different layers — the AI SDK is a lean single-agent toolkit (3 deps); OMA is goal-driven multi-agent orchestration on top, and can run over the AI SDK.
 - [open-multi-agent vs VoltAgent](https://open-multi-agent.com/compare/voltagent/): a lean 3-dependency core vs an observability-first framework with a bundled OpenTelemetry stack and supervisor/sub-agent networks (~44 core deps).
 - [open-multi-agent vs Inngest AgentKit](https://open-multi-agent.com/compare/inngest-agentkit/): runtime goal decomposition vs deterministic, state-based routing over agent networks running on Inngest.
+- [open-multi-agent vs LangChain](https://open-multi-agent.com/compare/langchain/): a lean, goal-driven TypeScript runtime vs the broad LangChain framework and ecosystem (its multi-agent orchestration lives in LangGraph).
+- [open-multi-agent vs LlamaIndex](https://open-multi-agent.com/compare/llamaindex/): orchestration-first TypeScript vs a RAG/data-first Python framework that grew agent workflows.
+- [open-multi-agent vs Pydantic AI](https://open-multi-agent.com/compare/pydantic-ai/): goal-driven TypeScript orchestration vs a type-safe Python agent framework with first-class OpenTelemetry (Logfire) and a token-usage limit.
+- [open-multi-agent vs Google ADK](https://open-multi-agent.com/compare/google-adk/): a lean, provider-neutral TypeScript runtime vs a code-first Python toolkit with explicit workflow agents and a Vertex AI deploy path.
+- [open-multi-agent vs Semantic Kernel](https://open-multi-agent.com/compare/semantic-kernel/): TypeScript-native goal-driven orchestration vs Microsoft's C#-first enterprise SDK, now converging into the Microsoft Agent Framework.
 
 ## Project
 
