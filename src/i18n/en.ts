@@ -356,7 +356,7 @@ export const en = {
   // competitor's name at render time.
   compare: {
     seo: {
-      title: 'open-multi-agent vs LangGraph, CrewAI, AutoGen & the OpenAI Agents SDK',
+      title: 'open-multi-agent vs LangGraph, CrewAI, Mastra, LangChain, Pydantic AI & more',
       description: 'Honest, sourced comparisons of open-multi-agent against the main multi-agent frameworks — language, orchestration model, dependencies, budget control, and observability, and when to pick each.',
     },
     hero: {

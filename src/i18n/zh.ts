@@ -338,7 +338,7 @@ export const zh: UiDict = {
 
   compare: {
     seo: {
-      title: 'open-multi-agent 对比 LangGraph、CrewAI、AutoGen 与 OpenAI Agents SDK',
+      title: 'open-multi-agent 对比 LangGraph、CrewAI、Mastra、LangChain、Pydantic AI 等',
       description: '把 open-multi-agent 与主流多智能体框架做诚实、可溯源的对比——语言、编排范式、依赖、预算控制与可观测性，以及各自何时更合适。',
     },
     hero: {

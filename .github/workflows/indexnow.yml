@@ -1,0 +1,40 @@
+# IndexNow — submit canonical URLs to Bing / Yandex / partners. OFF BY DEFAULT.
+#
+# This workflow runs ONLY when triggered by hand (workflow_dispatch), and even
+# then it is a dry run unless you set `confirm_submit` to true. Nothing is sent to
+# any search engine automatically. The IndexNow key lives at public/<key>.txt
+# (public by design — it verifies ownership, it is not a secret).
+#
+# To auto-submit after each production deploy, uncomment the `push` trigger below
+# and switch the run step to always pass --submit — that is an explicit opt-in to
+# an outward-facing action, so leave it off until you mean it.
+name: IndexNow
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_submit:
+        description: 'Actually POST to IndexNow (leave false for a dry run)'
+        type: boolean
+        default: false
+  # push:
+  #   branches: [main]
+
+jobs:
+  indexnow:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Submit to IndexNow (dry run unless confirmed)
+        env:
+          # Pass the input through env rather than interpolating into the shell.
+          CONFIRM_SUBMIT: ${{ github.event.inputs.confirm_submit }}
+        run: |
+          if [ "$CONFIRM_SUBMIT" = "true" ]; then
+            node scripts/submit-indexnow.mjs --submit
+          else
+            node scripts/submit-indexnow.mjs
+          fi
