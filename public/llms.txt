@@ -57,6 +57,10 @@ Honest, sourced comparisons against the main multi-agent frameworks — language
 - [open-multi-agent vs CrewAI](https://open-multi-agent.com/compare/crewai/): a lean 3-dependency TypeScript runtime vs a batteries-included Python framework of role-based crews; comparable orchestration surface, the choice is the language stack.
 - [open-multi-agent vs AutoGen](https://open-multi-agent.com/compare/autogen/): goal-driven TypeScript orchestration vs conversation-driven Python agents (AutoGen is now in maintenance mode, superseded by the Microsoft Agent Framework).
 - [open-multi-agent vs the OpenAI Agents SDK](https://open-multi-agent.com/compare/openai-agents-sdk/): provider-neutral, goal-driven orchestration with a hard token budget vs a lightweight, handoffs-based SDK with best-in-class built-in tracing.
+- [open-multi-agent vs Mastra](https://open-multi-agent.com/compare/mastra/): a lean 3-dependency goal-driven runtime vs a batteries-included TypeScript framework (workflows, memory, RAG, evals; ~32 core deps built on the Vercel AI SDK).
+- [open-multi-agent vs the Vercel AI SDK](https://open-multi-agent.com/compare/vercel-ai-sdk/): different layers — the AI SDK is a lean single-agent toolkit (3 deps); OMA is goal-driven multi-agent orchestration on top, and can run over the AI SDK.
+- [open-multi-agent vs VoltAgent](https://open-multi-agent.com/compare/voltagent/): a lean 3-dependency core vs an observability-first framework with a bundled OpenTelemetry stack and supervisor/sub-agent networks (~44 core deps).
+- [open-multi-agent vs Inngest AgentKit](https://open-multi-agent.com/compare/inngest-agentkit/): runtime goal decomposition vs deterministic, state-based routing over agent networks running on Inngest.
 
 ## Project
 
