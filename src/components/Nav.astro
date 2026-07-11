@@ -8,7 +8,7 @@ import { useTranslations, localizePath, type Locale } from '../i18n';
 import LangSwitcher from './LangSwitcher.astro';
 
 interface Props {
-  current?: 'home' | 'docs' | 'architecture' | 'examples' | 'showcase' | 'blog' | 'compare';
+  current?: 'home' | 'docs' | 'architecture' | 'examples' | 'showcase' | 'blog' | 'compare' | 'solutions';
   starsK: string;
   locale?: Locale;
   path?: string;
@@ -40,6 +40,10 @@ const L = (p: string) => localizePath(p, locale);
           <a class="nav-menu-link nav-menu-link--page" href={L('/compare/')} aria-current={current === 'compare' ? 'page' : undefined}>
             <span class="pkg">{t.nav.compare}</span>
             <span class="desc">{t.nav.menuDesc.compare}</span>
+          </a>
+          <a class="nav-menu-link nav-menu-link--page" href={L('/solutions/')} aria-current={current === 'solutions' ? 'page' : undefined}>
+            <span class="pkg">{t.nav.solutions}</span>
+            <span class="desc">{t.nav.menuDesc.solutions}</span>
           </a>
         </div>
       </div>
