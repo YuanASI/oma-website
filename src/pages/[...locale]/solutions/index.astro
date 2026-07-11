@@ -1,0 +1,99 @@
+---
+// /solutions and /zh/solutions — the use-case hub. One card per use case, each
+// linking to the full page. Use-case copy comes from src/lib/solutions.ts; chrome
+// from the dict. Mirrors compare/index.astro.
+import '@fontsource-variable/geist';
+import '@fontsource-variable/jetbrains-mono';
+import '../../../styles/tokens.css';
+import '../../../styles/landing.css';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Nav from '../../../components/Nav.astro';
+import Footer from '../../../components/Footer.astro';
+import EnterpriseCta from '../../../components/EnterpriseCta.astro';
+import { ghStats } from '../../../lib/site';
+import { SOLUTIONS } from '../../../lib/solutions';
+import { type Loc } from '../../../lib/compare';
+import { localeStaticPaths, toLocale, useTranslations, localizePath } from '../../../i18n';
+
+export function getStaticPaths() { return localeStaticPaths(); }
+const locale = toLocale(Astro.params.locale);
+const t = useTranslations(locale).solutions;
+const L = (p: string) => localizePath(p, locale);
+const pick = (o: Loc) => o[locale];
+
+const stats = await ghStats();
+const starsK = (stats.stars / 1000).toFixed(1) + 'k';
+
+const path = '/solutions/';
+const title = t.seo.title;
+const description = t.seo.description;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  inLanguage: locale === 'zh' ? 'zh-CN' : 'en',
+  name: title,
+  description,
+  url: canonical,
+  isPartOf: { '@type': 'WebSite', name: 'Open Multi-Agent', url: 'https://open-multi-agent.com' },
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: SOLUTIONS.map((s, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: s.title.en,
+      url: new URL(`/solutions/${s.slug}/`, Astro.site).href,
+    })),
+  },
+};
+---
+
+<BaseLayout locale={locale} title={title} description={description} jsonLd={jsonLd} path={path}>
+  <Nav current="solutions" starsK={starsK} locale={locale} path={path} />
+  <main>
+    <section class="section sol-hub-hero">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow"><span class="idx">//</span> {t.hero.eyebrow}</div>
+          <h1 class="section-title">{t.hero.title}</h1>
+          <p class="section-sub">{t.hero.lede}</p>
+        </div>
+        <div class="sol-hub-grid">
+          {SOLUTIONS.map((s) => (
+            <a class="sol-hub-card" href={L(`/solutions/${s.slug}/`)}>
+              <div class="sol-hub-title">{pick(s.title)}</div>
+              <p class="sol-hub-lede">{pick(s.lede)}</p>
+              <span class="sol-hub-cta">{t.hub.view} <span class="arrow">→</span></span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <EnterpriseCta locale={locale} />
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>
+
+<style>
+  .sol-hub-hero { padding-top: 72px; }
+  .sol-hub-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px; margin-top: 8px;
+  }
+  .sol-hub-card {
+    display: flex; flex-direction: column; gap: 10px;
+    border: 1px solid var(--oma-border-1); border-radius: var(--radius-md);
+    background: var(--oma-bg-1); padding: 20px 22px; text-decoration: none;
+    color: var(--oma-fg-1);
+    transition: border-color var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
+  }
+  .sol-hub-card:hover { border-color: var(--oma-border-2); box-shadow: var(--shadow-md); }
+  .sol-hub-title { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.35; }
+  .sol-hub-lede { font-size: 13.5px; line-height: 1.6; color: var(--oma-fg-2); margin: 0; }
+  .sol-hub-cta {
+    margin-top: auto; font-family: var(--font-mono); font-size: 12.5px;
+    color: var(--oma-accent); display: inline-flex; align-items: center; gap: 6px;
+  }
+</style>
