@@ -1,0 +1,99 @@
+---
+// /integrations and /zh/integrations — the provider hub. One card per provider.
+// Provider copy comes from src/lib/integrations.ts; chrome from the dict. Mirrors
+// compare/index.astro and solutions/index.astro.
+import '@fontsource-variable/geist';
+import '@fontsource-variable/jetbrains-mono';
+import '../../../styles/tokens.css';
+import '../../../styles/landing.css';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Nav from '../../../components/Nav.astro';
+import Footer from '../../../components/Footer.astro';
+import EnterpriseCta from '../../../components/EnterpriseCta.astro';
+import { ghStats } from '../../../lib/site';
+import { INTEGRATIONS } from '../../../lib/integrations';
+import { type Loc } from '../../../lib/compare';
+import { localeStaticPaths, toLocale, useTranslations, localizePath } from '../../../i18n';
+
+export function getStaticPaths() { return localeStaticPaths(); }
+const locale = toLocale(Astro.params.locale);
+const t = useTranslations(locale).integrations;
+const L = (p: string) => localizePath(p, locale);
+const pick = (o: Loc) => o[locale];
+
+const stats = await ghStats();
+const starsK = (stats.stars / 1000).toFixed(1) + 'k';
+
+const path = '/integrations/';
+const title = t.seo.title;
+const description = t.seo.description;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  inLanguage: locale === 'zh' ? 'zh-CN' : 'en',
+  name: title,
+  description,
+  url: canonical,
+  isPartOf: { '@type': 'WebSite', name: 'Open Multi-Agent', url: 'https://open-multi-agent.com' },
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: INTEGRATIONS.map((it, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: it.name,
+      url: new URL(`/integrations/${it.slug}/`, Astro.site).href,
+    })),
+  },
+};
+---
+
+<BaseLayout locale={locale} title={title} description={description} jsonLd={jsonLd} path={path}>
+  <Nav current="integrations" starsK={starsK} locale={locale} path={path} />
+  <main>
+    <section class="section int-hub-hero">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow"><span class="idx">//</span> {t.hero.eyebrow}</div>
+          <h1 class="section-title">{t.hero.title}</h1>
+          <p class="section-sub">{t.hero.lede}</p>
+        </div>
+        <div class="int-hub-grid">
+          {INTEGRATIONS.map((it) => (
+            <a class="int-hub-card" href={L(`/integrations/${it.slug}/`)}>
+              <div class="int-hub-name">{it.name}</div>
+              <p class="int-hub-lede">{pick(it.lede)}</p>
+              <span class="int-hub-cta">{t.hub.view} <span class="arrow">→</span></span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <EnterpriseCta locale={locale} />
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>
+
+<style>
+  .int-hub-hero { padding-top: 72px; }
+  .int-hub-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px; margin-top: 8px;
+  }
+  .int-hub-card {
+    display: flex; flex-direction: column; gap: 10px;
+    border: 1px solid var(--oma-border-1); border-radius: var(--radius-md);
+    background: var(--oma-bg-1); padding: 20px 22px; text-decoration: none;
+    color: var(--oma-fg-1);
+    transition: border-color var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
+  }
+  .int-hub-card:hover { border-color: var(--oma-border-2); box-shadow: var(--shadow-md); }
+  .int-hub-name { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+  .int-hub-lede { font-size: 13.5px; line-height: 1.6; color: var(--oma-fg-2); margin: 0; }
+  .int-hub-cta {
+    margin-top: auto; font-family: var(--font-mono); font-size: 12.5px;
+    color: var(--oma-accent); display: inline-flex; align-items: center; gap: 6px;
+  }
+</style>

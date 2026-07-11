@@ -1,0 +1,157 @@
+---
+// /integrations/<slug> and /zh/integrations/<slug> — one provider integration, one
+// template for both locales. getStaticPaths emits the locale × integration cross
+// product. Provider copy + the real code snippet come from src/lib/integrations.ts
+// (snippets grounded in the vendored reference docs); page chrome from the dict.
+import '@fontsource-variable/geist';
+import '@fontsource-variable/jetbrains-mono';
+import '../../../styles/tokens.css';
+import '../../../styles/landing.css';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Nav from '../../../components/Nav.astro';
+import Footer from '../../../components/Footer.astro';
+import EnterpriseCta from '../../../components/EnterpriseCta.astro';
+import { ghStats } from '../../../lib/site';
+import { INTEGRATIONS, type Integration } from '../../../lib/integrations';
+import { type Loc } from '../../../lib/compare';
+import { locales, defaultLocale, toLocale, useTranslations, localizePath, type Locale } from '../../../i18n';
+
+export function getStaticPaths() {
+  return locales.flatMap((loc: Locale) =>
+    INTEGRATIONS.map((it) => ({
+      params: { locale: loc === defaultLocale ? undefined : loc, slug: it.slug },
+      props: { itg: it },
+    })),
+  );
+}
+
+const { itg } = Astro.props as { itg: Integration };
+const locale = toLocale(Astro.params.locale);
+const t = useTranslations(locale).integrations;
+const L = (p: string) => localizePath(p, locale);
+const pick = (o: Loc) => o[locale];
+
+const stats = await ghStats();
+const starsK = (stats.stars / 1000).toFixed(1) + 'k';
+
+const path = `/integrations/${itg.slug}/`;
+const heading = pick(itg.title);
+const title = `${heading} — open-multi-agent`;
+const description = pick(itg.seoDescription);
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const others = INTEGRATIONS.filter((i) => i.slug !== itg.slug);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  inLanguage: locale === 'zh' ? 'zh-CN' : 'en',
+  headline: title,
+  description,
+  url: canonical,
+  keywords: itg.keywords.join(', '),
+  isPartOf: { '@type': 'WebSite', name: 'Open Multi-Agent', url: 'https://open-multi-agent.com' },
+};
+---
+
+<BaseLayout locale={locale} title={title} description={description} jsonLd={jsonLd} path={path}>
+  <Nav current="integrations" starsK={starsK} locale={locale} path={path} />
+  <main>
+    <!-- Hero -->
+    <section class="section int-hero">
+      <div class="container">
+        <a class="int-back" href={L('/integrations/')}>← {t.page.backToHub}</a>
+        <div class="section-head int-head">
+          <div class="eyebrow"><span class="idx">//</span> {t.page.eyebrow}</div>
+          <h1 class="section-title">{heading}</h1>
+          <p class="section-sub">{pick(itg.lede)}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Setup: the real minimal team config -->
+    <section class="section int-code-section">
+      <div class="container container--narrow">
+        <div class="section-head">
+          <div class="eyebrow"><span class="idx">01</span> {t.page.setupEyebrow}</div>
+          <h2 class="section-title">{t.page.setupTitle}</h2>
+        </div>
+        <pre class="int-code"><code>{itg.code}</code></pre>
+      </div>
+    </section>
+
+    <!-- How it fits -->
+    <section class="section int-prose-section">
+      <div class="container container--narrow">
+        <div class="section-head">
+          <div class="eyebrow"><span class="idx">02</span> {t.page.howEyebrow}</div>
+          <h2 class="section-title">{t.page.howTitle}</h2>
+        </div>
+        <p class="int-prose" set:html={pick(itg.body)} />
+        <div class="int-links">
+          <a class="text-link" href={L('/solutions/mixed-model-teams/')}><span>{t.page.mixCta}</span><span class="arrow">→</span></a>
+          <a class="text-link" href={L('/reference/providers/')}><span>{t.page.allProviders}</span><span class="arrow">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Enterprise support (§3.2) -->
+    <EnterpriseCta locale={locale} />
+
+    <!-- See also: other providers -->
+    <section class="section int-more-section">
+      <div class="container">
+        <div class="eyebrow"><span class="idx">//</span> {t.page.seeAlso}</div>
+        <div class="int-more">
+          {others.map((i) => (
+            <a class="int-more-link" href={L(`/integrations/${i.slug}/`)}>
+              <span class="int-more-name">{i.name}</span>
+              <span class="arrow">→</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>
+
+<style>
+  .int-hero { padding-top: 64px; padding-bottom: 8px; }
+  .int-hero .int-head { margin-bottom: 8px; }
+  .int-back {
+    display: inline-block; margin-bottom: 18px; font-family: var(--font-mono);
+    font-size: 12px; color: var(--oma-fg-3); text-decoration: none;
+  }
+  .int-back:hover { color: var(--oma-accent); }
+
+  .int-code-section { padding-top: 32px; }
+  .int-code {
+    margin: 8px 0 0; overflow-x: auto; border: 1px solid var(--oma-border-1);
+    border-radius: var(--radius-md); background: var(--oma-bg-3);
+    padding: 18px 20px; font-family: var(--font-mono); font-size: 13px;
+    line-height: 1.7; color: var(--oma-fg-1); white-space: pre;
+  }
+  .int-code code { font-family: inherit; }
+
+  .int-prose-section { padding-top: 32px; }
+  .int-prose { font-size: 15px; line-height: 1.8; color: var(--oma-fg-2); margin: 0; }
+  .int-prose :global(code) {
+    font-family: var(--font-mono); font-size: 0.88em;
+    background: var(--oma-bg-3); padding: 1px 5px; border-radius: var(--radius-xs);
+    color: var(--oma-fg-1);
+  }
+  .int-prose :global(a) { color: var(--oma-accent); text-decoration: none; }
+  .int-prose :global(a):hover { text-decoration: underline; }
+  .int-links { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 18px; }
+
+  .int-more-section { padding-top: 8px; }
+  .int-more { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 14px; }
+  .int-more-link {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    border: 1px solid var(--oma-border-1); border-radius: var(--radius-md);
+    padding: 14px 16px; text-decoration: none; color: var(--oma-fg-1);
+    font-size: 14px; transition: border-color var(--duration-base) var(--ease-out);
+  }
+  .int-more-link:hover { border-color: var(--oma-accent-line); }
+  .int-more-link .arrow { color: var(--oma-accent); }
+</style>
