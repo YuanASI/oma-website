@@ -177,8 +177,11 @@ const jsonLd = {
 </BaseLayout>
 
 <style>
-  .dw-hero { padding-top: 64px; padding-bottom: 8px; }
+  .dw-hero { padding-top: 64px; padding-bottom: 40px; }
   .dw-hero .dw-head { margin-bottom: 24px; }
+  /* Let the lede fill the head width so it shares the h1's right edge, instead of
+     sitting in a narrower 620px column that reads as pinched to the left. */
+  .dw-hero .section-sub { max-width: 720px; }
   .dw-back {
     display: inline-block; margin-bottom: 18px; font-family: var(--font-mono);
     font-size: 12px; color: var(--oma-fg-3); text-decoration: none;
@@ -202,8 +205,11 @@ const jsonLd = {
   .dw-card p { margin: 0 0 12px; font-size: 14px; line-height: 1.65; color: var(--oma-fg-2); }
   .dw-card .text-link { margin-top: auto; }
 
-  /* Narrow column for the prose sections. */
-  .dw-narrow { max-width: 768px; }
+  /* Prose sections keep a readable measure (768px) but stay LEFT-aligned to the
+     page's content edge — the same edge as the wide hero/matrix sections — so
+     every section's eyebrow ("01", "03", "04") lines up under "// in context"
+     instead of the reading column drifting to the middle of the page. */
+  .dw-narrow > * { max-width: 768px; }
 
   .dw-prose-section { padding-top: 48px; }
   .dw-prose { font-size: 15px; line-height: 1.8; color: var(--oma-fg-2); margin: 0; }
