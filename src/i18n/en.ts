@@ -29,6 +29,7 @@ export const en = {
     blog: 'Blog',
     compare: 'Compare',
     solutions: 'Solutions',
+    integrations: 'Integrations',
     menuDesc: {
       architecture: 'How OMA works, diagrammed',
       examples: 'Runnable recipes from the repo',
@@ -36,6 +37,7 @@ export const en = {
       showcase: 'Projects built with OMA',
       blog: 'Notes on multi-agent orchestration',
       solutions: 'Multi-agent use cases in TypeScript',
+      integrations: 'Anthropic, OpenAI, Gemini, Ollama & more',
     },
     stars: 'stars',
     toggleThemeAria: 'Toggle light/dark theme',
@@ -407,6 +409,32 @@ export const en = {
       walkthroughCta: 'Read the full walkthrough, with runnable code',
       relatedCompare: 'Related comparisons',
       seeAlso: 'More use cases',
+    },
+  },
+
+  // Provider-integration pages. Chrome only — the per-provider copy + code lives
+  // in src/lib/integrations.ts.
+  integrations: {
+    seo: {
+      title: 'Integrations — run open-multi-agent on any model provider',
+      description: 'open-multi-agent works with Anthropic, OpenAI, Gemini, DeepSeek, AWS Bedrock, Azure OpenAI, Ollama, and any OpenAI-compatible endpoint — change the provider, keep the team.',
+    },
+    hero: {
+      eyebrow: 'integrations',
+      title: 'Run on any provider.',
+      lede: 'The agent config shape stays the same across providers — change the provider, model, and credential, and the rest of your team stays put. Mix them freely in one team.',
+    },
+    hub: { view: 'Set it up' },
+    page: {
+      eyebrow: 'integration',
+      backToHub: 'All providers',
+      setupEyebrow: 'setup',
+      setupTitle: 'A minimal team.',
+      howEyebrow: 'how it fits',
+      howTitle: 'How it fits.',
+      mixCta: 'Mix providers in one team',
+      allProviders: 'All providers & env vars',
+      seeAlso: 'Other providers',
     },
   },
 };
