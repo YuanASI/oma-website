@@ -1,24 +1,22 @@
-# IndexNow — submit canonical URLs to Bing / Yandex / partners. OFF BY DEFAULT.
+# IndexNow — submit canonical URLs to Bing / Yandex / partners (and, via Bing's
+# index, ChatGPT search / Copilot). ENABLED: auto-submits the sitemap on every
+# push to main. Also runnable by hand (workflow_dispatch); a manual run is a dry
+# run unless confirm_submit=true.
 #
-# This workflow runs ONLY when triggered by hand (workflow_dispatch), and even
-# then it is a dry run unless you set `confirm_submit` to true. Nothing is sent to
-# any search engine automatically. The IndexNow key lives at public/<key>.txt
-# (public by design — it verifies ownership, it is not a secret).
-#
-# To auto-submit after each production deploy, uncomment the `push` trigger below
-# and switch the run step to always pass --submit — that is an explicit opt-in to
-# an outward-facing action, so leave it off until you mean it.
+# The IndexNow key lives at public/<key>.txt (public by design — it verifies
+# ownership, it is not a secret); no auth/secret is needed. To pause it again,
+# remove the `push` trigger below and it reverts to manual-only.
 name: IndexNow
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       confirm_submit:
         description: 'Actually POST to IndexNow (leave false for a dry run)'
         type: boolean
         default: false
-  # push:
-  #   branches: [main]
 
 jobs:
   indexnow:
@@ -28,12 +26,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Submit to IndexNow (dry run unless confirmed)
+      - name: Submit to IndexNow
         env:
-          # Pass the input through env rather than interpolating into the shell.
-          CONFIRM_SUBMIT: ${{ github.event.inputs.confirm_submit }}
+          # Auto-submit on push to main; on a manual run, honor confirm_submit.
+          # Passed via env (not interpolated into the shell) per injection safety.
+          SUBMIT: ${{ github.event_name == 'push' || github.event.inputs.confirm_submit == 'true' }}
         run: |
-          if [ "$CONFIRM_SUBMIT" = "true" ]; then
+          if [ "$SUBMIT" = "true" ]; then
             node scripts/submit-indexnow.mjs --submit
           else
             node scripts/submit-indexnow.mjs
