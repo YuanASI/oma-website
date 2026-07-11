@@ -28,12 +28,14 @@ export const en = {
     showcase: 'Showcase',
     blog: 'Blog',
     compare: 'Compare',
+    solutions: 'Solutions',
     menuDesc: {
       architecture: 'How OMA works, diagrammed',
       examples: 'Runnable recipes from the repo',
       compare: 'vs LangGraph, CrewAI, AutoGen & more',
       showcase: 'Projects built with OMA',
       blog: 'Notes on multi-agent orchestration',
+      solutions: 'Multi-agent use cases in TypeScript',
     },
     stars: 'stars',
     toggleThemeAria: 'Toggle light/dark theme',
@@ -376,6 +378,35 @@ export const en = {
       repoLink: '{name} on GitHub',
       seeAlso: 'Compare with another framework',
       backToHub: 'All comparisons',
+    },
+  },
+
+  // Use-case ("solutions") pages. Chrome only — the per-use-case copy lives in
+  // src/lib/solutions.ts.
+  solutions: {
+    seo: {
+      title: 'Use cases — multi-agent orchestration in TypeScript',
+      description: 'What you can build with open-multi-agent: parallel LLM calls, goal-driven task DAGs, mixed-model teams, local agents, long-term memory, and orchestration on top of the Vercel AI SDK.',
+    },
+    hero: {
+      eyebrow: 'use cases',
+      title: 'What you can build.',
+      lede: 'Common shapes of multi-agent work in TypeScript — each with the mechanism, when it fits, and a full walkthrough with runnable code.',
+    },
+    hub: { view: 'See how' },
+    page: {
+      eyebrow: 'use case',
+      backToHub: 'All use cases',
+      problemEyebrow: 'the problem',
+      problemTitle: 'The problem.',
+      approachEyebrow: 'the approach',
+      approachTitle: 'How open-multi-agent does it.',
+      whenEyebrow: 'fit',
+      whenTitle: 'When this fits.',
+      walkthroughEyebrow: 'walkthrough',
+      walkthroughCta: 'Read the full walkthrough, with runnable code',
+      relatedCompare: 'Related comparisons',
+      seeAlso: 'More use cases',
     },
   },
 };

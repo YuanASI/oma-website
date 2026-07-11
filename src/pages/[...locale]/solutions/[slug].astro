@@ -1,0 +1,210 @@
+---
+// /solutions/<slug> and /zh/solutions/<slug> — one use-case page, one template for
+// both locales. getStaticPaths emits the locale × solution cross product (same shape
+// as compare/[competitor].astro). Use-case copy comes from src/lib/solutions.ts
+// (bilingual, prose so it can't drift from the API); page chrome comes from the dict.
+// Each page anchors to a published walkthrough (blogSlug) that carries the real code.
+import '@fontsource-variable/geist';
+import '@fontsource-variable/jetbrains-mono';
+import '../../../styles/tokens.css';
+import '../../../styles/landing.css';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Nav from '../../../components/Nav.astro';
+import Footer from '../../../components/Footer.astro';
+import EnterpriseCta from '../../../components/EnterpriseCta.astro';
+import { ghStats } from '../../../lib/site';
+import { SOLUTIONS, type Solution } from '../../../lib/solutions';
+import { getComparison, type Loc } from '../../../lib/compare';
+import { locales, defaultLocale, toLocale, useTranslations, localizePath, type Locale } from '../../../i18n';
+
+export function getStaticPaths() {
+  return locales.flatMap((loc: Locale) =>
+    SOLUTIONS.map((s) => ({
+      params: { locale: loc === defaultLocale ? undefined : loc, slug: s.slug },
+      props: { sol: s },
+    })),
+  );
+}
+
+const { sol } = Astro.props as { sol: Solution };
+const locale = toLocale(Astro.params.locale);
+const t = useTranslations(locale).solutions;
+const L = (p: string) => localizePath(p, locale);
+const pick = (o: Loc) => o[locale];
+
+const stats = await ghStats();
+const starsK = (stats.stars / 1000).toFixed(1) + 'k';
+
+const path = `/solutions/${sol.slug}/`;
+const heading = pick(sol.title);
+const title = `${heading} — open-multi-agent`;
+const description = pick(sol.seoDescription);
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const others = SOLUTIONS.filter((s) => s.slug !== sol.slug);
+const related = sol.related.map(getComparison).filter((c): c is NonNullable<typeof c> => Boolean(c));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  inLanguage: locale === 'zh' ? 'zh-CN' : 'en',
+  headline: title,
+  description,
+  url: canonical,
+  keywords: sol.keywords.join(', '),
+  isPartOf: { '@type': 'WebSite', name: 'Open Multi-Agent', url: 'https://open-multi-agent.com' },
+};
+---
+
+<BaseLayout locale={locale} title={title} description={description} jsonLd={jsonLd} path={path}>
+  <Nav current="solutions" starsK={starsK} locale={locale} path={path} />
+  <main>
+    <!-- Hero -->
+    <section class="section sol-hero">
+      <div class="container">
+        <a class="sol-back" href={L('/solutions/')}>← {t.page.backToHub}</a>
+        <div class="section-head sol-head">
+          <div class="eyebrow"><span class="idx">//</span> {t.page.eyebrow}</div>
+          <h1 class="section-title">{heading}</h1>
+          <p class="section-sub">{pick(sol.lede)}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- The problem -->
+    <section class="section sol-prose-section">
+      <div class="container container--narrow">
+        <div class="section-head">
+          <div class="eyebrow"><span class="idx">01</span> {t.page.problemEyebrow}</div>
+          <h2 class="section-title">{t.page.problemTitle}</h2>
+        </div>
+        <p class="sol-prose" set:html={pick(sol.problem)} />
+      </div>
+    </section>
+
+    <!-- How open-multi-agent does it -->
+    <section class="section sol-prose-section sol-approach">
+      <div class="container container--narrow">
+        <div class="section-head">
+          <div class="eyebrow"><span class="idx">02</span> {t.page.approachEyebrow}</div>
+          <h2 class="section-title">{t.page.approachTitle}</h2>
+        </div>
+        <p class="sol-prose" set:html={pick(sol.approach)} />
+      </div>
+    </section>
+
+    <!-- When it fits -->
+    <section class="section sol-prose-section">
+      <div class="container container--narrow">
+        <div class="section-head">
+          <div class="eyebrow"><span class="idx">03</span> {t.page.whenEyebrow}</div>
+          <h2 class="section-title">{t.page.whenTitle}</h2>
+        </div>
+        <p class="sol-prose" set:html={pick(sol.whenFits)} />
+      </div>
+    </section>
+
+    <!-- Walkthrough CTA: the anchor blog with the runnable code -->
+    <section class="section sol-cta-section">
+      <div class="container container--narrow">
+        <a class="sol-cta" href={L(`/blog/${sol.blogSlug}/`)}>
+          <div class="sol-cta-body">
+            <div class="sol-cta-eyebrow">{t.page.walkthroughEyebrow}</div>
+            <div class="sol-cta-title">{t.page.walkthroughCta}</div>
+          </div>
+          <span class="arrow">→</span>
+        </a>
+        <div class="sol-quicklinks">
+          <a class="text-link" href={L('/getting-started/quick-start/')}><span>Quick Start</span><span class="arrow">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Enterprise support (§3.2) -->
+    <EnterpriseCta locale={locale} />
+
+    <!-- See also: related comparisons + other use cases -->
+    {related.length > 0 && (
+      <section class="section sol-more-section">
+        <div class="container">
+          <div class="eyebrow"><span class="idx">//</span> {t.page.relatedCompare}</div>
+          <div class="sol-more">
+            {related.map((c) => (
+              <a class="sol-more-link" href={L(`/compare/${c.slug}/`)}>
+                <span class="sol-more-name">open-multi-agent vs {c.name}</span>
+                <span class="arrow">→</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <section class="section sol-more-section">
+      <div class="container">
+        <div class="eyebrow"><span class="idx">//</span> {t.page.seeAlso}</div>
+        <div class="sol-more">
+          {others.map((s) => (
+            <a class="sol-more-link" href={L(`/solutions/${s.slug}/`)}>
+              <span class="sol-more-name">{pick(s.title)}</span>
+              <span class="arrow">→</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>
+
+<style>
+  .sol-hero { padding-top: 64px; padding-bottom: 8px; }
+  .sol-hero .sol-head { margin-bottom: 8px; }
+  .sol-back {
+    display: inline-block; margin-bottom: 18px; font-family: var(--font-mono);
+    font-size: 12px; color: var(--oma-fg-3); text-decoration: none;
+  }
+  .sol-back:hover { color: var(--oma-accent); }
+
+  .sol-prose-section { padding-top: 32px; }
+  .sol-approach { background: var(--oma-bg-1); }
+  .sol-prose {
+    font-size: 15px; line-height: 1.8; color: var(--oma-fg-2); margin: 0;
+  }
+  .sol-prose :global(code) {
+    font-family: var(--font-mono); font-size: 0.88em;
+    background: var(--oma-bg-3); padding: 1px 5px; border-radius: var(--radius-xs);
+    color: var(--oma-fg-1);
+  }
+  .sol-prose :global(em) { color: var(--oma-fg-1); font-style: italic; }
+
+  /* Walkthrough CTA — the anchor blog with the real code. */
+  .sol-cta-section { padding-top: 24px; }
+  .sol-cta {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    border: 1px solid var(--oma-accent-line); border-radius: var(--radius-md);
+    background: var(--oma-accent-soft); padding: 20px 24px; text-decoration: none;
+    color: var(--oma-fg-1);
+    transition: box-shadow var(--duration-base) var(--ease-out);
+  }
+  .sol-cta:hover { box-shadow: var(--shadow-md); }
+  .sol-cta-eyebrow {
+    font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--oma-accent);
+    margin-bottom: 4px;
+  }
+  .sol-cta-title { font-size: 16px; font-weight: 600; }
+  .sol-cta .arrow { color: var(--oma-accent); font-size: 18px; }
+  .sol-quicklinks { margin-top: 16px; }
+
+  /* See also. */
+  .sol-more-section { padding-top: 8px; }
+  .sol-more { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; margin-top: 14px; }
+  .sol-more-link {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    border: 1px solid var(--oma-border-1); border-radius: var(--radius-md);
+    padding: 14px 16px; text-decoration: none; color: var(--oma-fg-1);
+    font-size: 14px; transition: border-color var(--duration-base) var(--ease-out);
+  }
+  .sol-more-link:hover { border-color: var(--oma-accent-line); }
+  .sol-more-link .arrow { color: var(--oma-accent); }
+</style>

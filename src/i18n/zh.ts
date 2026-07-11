@@ -22,12 +22,14 @@ export const zh: UiDict = {
     showcase: '案例',
     blog: '博客',
     compare: '对比',
+    solutions: '用例',
     menuDesc: {
       architecture: 'OMA 工作原理图解',
       examples: '仓库里可直接运行的实例',
       compare: '对比 LangGraph、CrewAI、AutoGen 等',
       showcase: '用 OMA 构建的项目',
       blog: '多智能体编排笔记',
+      solutions: 'TypeScript 多智能体用例',
     },
     stars: 'Star',
     toggleThemeAria: '切换浅色/深色主题',
@@ -358,6 +360,34 @@ export const zh: UiDict = {
       repoLink: '{name} 的 GitHub',
       seeAlso: '对比另一个框架',
       backToHub: '全部对比',
+    },
+  },
+
+  // 用例（solutions）页。仅 chrome——每个用例的文案在 src/lib/solutions.ts。
+  solutions: {
+    seo: {
+      title: '应用场景 —— TypeScript 多智能体编排',
+      description: '用 open-multi-agent 能构建什么：并行 LLM 调用、目标驱动的任务 DAG、混编模型团队、本地智能体、长期记忆，以及在 Vercel AI SDK 之上做编排。',
+    },
+    hero: {
+      eyebrow: '应用场景',
+      title: '你能构建什么。',
+      lede: 'TypeScript 里多智能体工作的几种常见形态——每种都讲清机制、何时合适，并配一篇带可运行代码的完整走查。',
+    },
+    hub: { view: '看怎么做' },
+    page: {
+      eyebrow: '应用场景',
+      backToHub: '全部场景',
+      problemEyebrow: '问题',
+      problemTitle: '问题在哪。',
+      approachEyebrow: '做法',
+      approachTitle: 'open-multi-agent 怎么做。',
+      whenEyebrow: '适用',
+      whenTitle: '何时合适。',
+      walkthroughEyebrow: '走查',
+      walkthroughCta: '读完整走查，含可运行代码',
+      relatedCompare: '相关对比',
+      seeAlso: '更多场景',
     },
   },
 };
