@@ -194,6 +194,7 @@ export const zh: UiDict = {
       { q: '怎样防止一次多智能体运行失控？', a: '分层控制，全部可选开启。onPlanReady 把拆解出的计划交给你，在任何智能体运行前审视；onApproval 为每一轮把关；返回 false，剩余任务就被跳过。runConsensus 加一道提议者→评审检查，必须由第二个智能体认可；循环检测则会在某个智能体不断重复同一次工具调用或输出时将其叫停。' },
       { q: '怎样给一次运行的成本设上限？', a: '两个杠杆。modelRouting 把规划和综合交给旗舰模型，叶子任务跑在更便宜的模型上，于是只在关键处付前沿模型的价。maxTokenBudget 是累计 token 的硬上限：一旦越界，编排器就停止发起调用、跳过剩余任务，而不是把账单越垒越高。' },
       { q: '它是流式的，还是只在最后返回？', a: '都支持。你可以在 DAG 逐步填充时流式输出 token 和节点状态变化，也可以直接 await runTeam()，在图解析完成后拿到一个带类型、经 schema 校验的结果对象。' },
+      { q: 'open-multi-agent 和 Claude Code 的动态工作流是什么关系？', a: '两者押的是同一个赌注——让模型在运行时规划工作，而不是你去接一张固定的图。Claude 的动态工作流跑在 Claude Code 内部，Claude 自己写编排脚本，在一次会话里扇出并行的子智能体。open-multi-agent 把同样的目标到任务 DAG 的思路嵌进你自己的 Node.js 后端，作为一个 MIT 库运行在任意提供方上，并把计划保留为可检视、可重放的数据。两者也能组合：通过 ACP，一个 open-multi-agent 团队甚至可以把 Claude Code 本身当作它的一个智能体来运行。' },
     ],
     endorse: {
       eyebrow: '被提及',
@@ -362,6 +363,78 @@ export const zh: UiDict = {
       repoLink: '{name} 的 GitHub',
       seeAlso: '对比另一个框架',
       backToHub: '全部对比',
+    },
+  },
+
+  // /compare/claude-dynamic-workflows —— 独立页（不是 COMPARISONS 条目），承接
+  // "claude dynamic workflows" 搜索意图并引导到 OMA。框架同上游 README 的
+  // "vs. Claude Code's dynamic workflows" 段落：同一个赌注（模型在运行时规划
+  // 工作），不同形态。护栏：不把 OMA 说成动态工作流的"替代品"（那个词留给
+  // LangGraph/Mastra，见 seeAlso）；不争"谁更 dynamic"（两者都是模型驱动）；
+  // 不断言动态工作流"缺"什么——每个"Claude 动态工作流"格子只陈述官方帖子说它
+  // 做什么。
+  dynamicWorkflows: {
+    seo: {
+      title: 'Claude 动态工作流，自托管 —— open-multi-agent',
+      description:
+        'Claude 动态工作流与 open-multi-agent 押的是同一个赌注：让模型在运行时规划工作。区别在形态——动态工作流跑在 Claude Code 内部；open-multi-agent 是一个开源（MIT）TypeScript 库，把同样的目标到任务 DAG 的思路跑在你自己的后端、任意模型上。',
+    },
+    hero: {
+      eyebrow: '背景',
+      backToHub: '全部对比',
+      h1: 'Claude 动态工作流，与 open-multi-agent',
+      lede: 'Anthropic 于 2026 年 5 月在 Claude Code 中推出了动态工作流（dynamic workflows）：Claude 自己写编排脚本，在一次会话里扇出并行的子智能体。open-multi-agent 押的是同一个赌注，只是形态不同——一个你在自己后端里运行的开源库，任意模型提供方，并把计划保留为可检视、可重放的数据。',
+    },
+    cards: {
+      dwLabel: 'Claude 动态工作流',
+      dwBody:
+        'Claude Code 内部的模型驱动编排。Claude 自己写编排脚本，在一次会话里扇出数十到数百个并行子智能体，并在结果交到你手上之前自行检查。',
+      dwLink: '阅读官方公告',
+      omaLabel: 'open-multi-agent',
+      omaBody:
+        '一个 MIT 许可的 TypeScript 库。协调器在运行时把你的目标拆成任务 DAG，并在你自己的后端、任意模型提供方上运行——计划以可检视、可重放的数据形式暴露出来。',
+      omaLink: '快速开始',
+    },
+    bet: {
+      eyebrow: '共同的赌注',
+      title: '同一个赌注：让模型来规划工作。',
+      body: '两者都是模型驱动的。你不必事先接好一张固定的图——你交出一个目标，模型在运行时规划工作，把它拆成可并行的步骤再把结果汇拢。Claude 的动态工作流在 Claude Code 内部这么做；open-multi-agent 的协调器在你的后端这么做。思路相同——所以这一页不会去争谁<em>更 dynamic</em>。真正有用的问题是：编排在哪里运行，以及你能拿这份计划做什么。',
+    },
+    form: {
+      eyebrow: '差别',
+      title: '差别在于形态。',
+      intro: '它们不是同一类东西。Claude 动态工作流是 Claude Code 内部的一项能力，编排的是 Claude 子智能体。open-multi-agent 是一个你装进 TypeScript 后端、指向任意模型提供方的库。下面把两者并排来看。',
+      th: { dimension: '维度', dw: 'Claude 动态工作流', oma: 'open-multi-agent' },
+      rows: [
+        { k: '在哪里运行', dw: 'Claude Code 内部——CLI、桌面端与 IDE', oma: '你自己的 Node.js 后端——用 npm 安装，无需迁移到托管服务' },
+        { k: '它是什么', dw: 'Claude Code 的一项能力', oma: '一个你嵌入的开源（MIT）库' },
+        { k: '模型', dw: 'Claude 子智能体', oma: '任意提供方——OpenAI、Anthropic、Gemini、Bedrock，或任意本地 / OpenAI 兼容模型' },
+        { k: '语言 / 载体', dw: '从 Claude Code 使用', oma: 'TypeScript，可用于任意 Node.js 18+ 后端' },
+        { k: '计划', dw: 'Claude 在会话里写下并运行的编排脚本，返回前自行检查', oma: '一张可作为数据检视与重放的任务 DAG——planOnly、createPlanArtifact、runFromPlan' },
+      ],
+    },
+    compose: {
+      eyebrow: '可组合',
+      title: '可组合，不只是并行。',
+      body: '两者并不互斥。open-multi-agent 讲 Agent Client Protocol（ACP），所以一个 OMA 团队可以把外部编码智能体——包括 Claude Code 本身——当作团队里的一个智能体来驱动。你在 Claude Code 里得到的模型规划式编排，可以成为一次更大的、由你端到端掌控、且中立于提供方的运行中的一个节点。',
+    },
+    fit: {
+      eyebrow: 'OMA 适合什么',
+      title: 'open-multi-agent 适合什么。',
+      body: '当编排需要活在你自己的产品内部时，选 open-multi-agent：一个你 <code>npm install</code> 进 Node.js 后端的开源（MIT）库，运行在任意提供方上——OpenAI、Anthropic、Gemini、Bedrock，或一个本地的 OpenAI 兼容模型。协调器在运行时规划任务 DAG，而这份计划是你可以检视、重放、把关的数据——<code>planOnly</code> 在任何东西运行前审阅，<code>createPlanArtifact</code> 把它存下来，<code>runFromPlan</code> 执行一份你已经审过的计划。',
+      cta: '快速开始',
+    },
+    seeAlso: {
+      eyebrow: '在对比框架？',
+      title: '想找一个框架替代品？',
+      body: '把各个编排库互相掂量是另一个问题。看看 open-multi-agent 与 LangGraph、Mastra 以及其他框架的对比。',
+      cta: '全部框架对比',
+    },
+    hubCard: {
+      label: '背景',
+      name: 'open-multi-agent 与 Claude 动态工作流',
+      blurb: '同一个赌注——让模型规划工作——只是形态不同。OMA 与 Anthropic 在 Claude Code 里的动态工作流是什么关系。',
+      cta: '阅读',
     },
   },
 

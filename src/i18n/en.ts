@@ -205,6 +205,7 @@ export const en = {
       { q: 'How do I keep a multi-agent run from going off the rails?', a: 'Layered controls, all opt-in. onPlanReady hands you the decomposed plan to inspect before any agent runs, and onApproval gates each round; return false and the remaining tasks are skipped. runConsensus adds a proposer→judge check that a second agent must accept, and loop detection halts an agent that keeps repeating the same tool call or output.' },
       { q: 'How do I cap what a run costs?', a: 'Two levers. modelRouting sends planning and synthesis to a flagship model while leaf tasks run on a cheaper one, so you pay frontier rates only where they matter. maxTokenBudget is a hard ceiling on cumulative tokens: cross it and the orchestrator stops issuing calls and skips the remaining tasks instead of running up the bill.' },
       { q: 'Does it stream, or only return at the end?', a: 'Both. You can stream tokens and node-state transitions as the DAG fills, or simply await runTeam() for a typed, schema-validated result object once the graph resolves.' },
+      { q: "How does open-multi-agent relate to Claude Code's dynamic workflows?", a: "They make the same bet — the model plans the work at runtime instead of you wiring a fixed graph. Claude's dynamic workflows run inside Claude Code, where Claude writes its own orchestration scripts and fans out parallel subagents in a session. open-multi-agent embeds that same goal-to-DAG idea in your own Node.js backend as an MIT library, on any provider, with the plan kept as inspectable, replayable data. The two also compose: over ACP an open-multi-agent team can run Claude Code itself as one of its agents." },
     ],
     endorse: {
       eyebrow: 'mentioned',
@@ -380,6 +381,83 @@ export const en = {
       repoLink: '{name} on GitHub',
       seeAlso: 'Compare with another framework',
       backToHub: 'All comparisons',
+    },
+  },
+
+  // /compare/claude-dynamic-workflows — a standalone page (NOT a COMPARISONS
+  // entry) that captures "claude dynamic workflows" search intent and routes it
+  // to OMA. Framing per the repo README's "vs. Claude Code's dynamic workflows"
+  // entry: same bet (the model plans the work at runtime), different form factor.
+  // GUARDRAILS baked into the copy: never call OMA an "alternative to" dynamic
+  // workflows (that word is reserved for LangGraph/Mastra, see seeAlso); never
+  // argue who is "more dynamic" (both are model-driven); never assert what
+  // dynamic workflows lacks — every "Claude dynamic workflows" cell states only
+  // what the official post says it does. Facts verified against
+  // claude.com/blog/introducing-dynamic-workflows-in-claude-code (May 2026).
+  dynamicWorkflows: {
+    seo: {
+      title: 'Claude dynamic workflows, self-hosted — open-multi-agent',
+      description:
+        'Claude dynamic workflows and open-multi-agent make the same bet: the model plans the work at runtime. The difference is form factor — dynamic workflows run inside Claude Code; open-multi-agent is an open-source (MIT) TypeScript library that runs the same goal-to-DAG idea in your own backend, on any model.',
+    },
+    hero: {
+      eyebrow: 'in context',
+      backToHub: 'All comparisons',
+      h1: 'Claude dynamic workflows, and open-multi-agent',
+      lede: 'Anthropic shipped dynamic workflows in Claude Code in May 2026: Claude writes its own orchestration scripts and fans out parallel subagents in a single session. open-multi-agent makes the same bet in a different form factor — an open-source library you run in your own backend, on any provider, with the plan kept as inspectable, replayable data.',
+    },
+    cards: {
+      dwLabel: 'Claude dynamic workflows',
+      dwBody:
+        'Model-driven orchestration inside Claude Code. Claude writes its own orchestration scripts and fans out tens to hundreds of parallel subagents in a single session, checking its work before anything reaches you.',
+      dwLink: 'Read the announcement',
+      omaLabel: 'open-multi-agent',
+      omaBody:
+        'An MIT-licensed TypeScript library. A coordinator turns your goal into a task DAG at runtime and runs it in your own backend, on any provider — with the plan exposed as data you can inspect and replay.',
+      omaLink: 'Quick Start',
+    },
+    bet: {
+      eyebrow: 'the shared bet',
+      title: 'The same bet: the model plans the work.',
+      body: "Both are model-driven. You don't wire a fixed graph up front — you hand over a goal and the model plans the work at runtime, decomposing it into steps that run in parallel and pulling the results back together. Claude's dynamic workflows do this inside Claude Code; open-multi-agent's coordinator does it in your backend. Same idea — so this page won't argue over which is <em>more dynamic</em>. The useful question is where the orchestration runs, and what you can do with the plan.",
+    },
+    form: {
+      eyebrow: 'the difference',
+      title: 'The difference is form factor.',
+      intro: "They aren't the same kind of thing. Claude dynamic workflows are a capability inside Claude Code, orchestrating Claude subagents. open-multi-agent is a library you install into a TypeScript backend and point at any provider. Here is how the two line up.",
+      th: { dimension: 'Dimension', dw: 'Claude dynamic workflows', oma: 'open-multi-agent' },
+      rows: [
+        { k: 'Where it runs', dw: 'Inside Claude Code — CLI, desktop, and IDE', oma: 'Your own Node.js backend — installed with npm, no hosted service to adopt' },
+        { k: 'What it is', dw: 'A capability of Claude Code', oma: 'An open-source (MIT) library you embed' },
+        { k: 'Models', dw: 'Claude subagents', oma: 'Any provider — OpenAI, Anthropic, Gemini, Bedrock, or any local / OpenAI-compatible model' },
+        { k: 'Language / surface', dw: 'Used from Claude Code', oma: 'TypeScript, in any Node.js 18+ backend' },
+        { k: 'The plan', dw: 'Orchestration scripts Claude writes and runs in the session, checking its work before returning', oma: 'A task DAG you can inspect and replay as data — planOnly, createPlanArtifact, runFromPlan' },
+      ],
+    },
+    compose: {
+      eyebrow: 'composable',
+      title: 'Composable, not just parallel.',
+      body: "These aren't mutually exclusive. open-multi-agent speaks the Agent Client Protocol (ACP), so an OMA team can drive external coding agents — including Claude Code itself — as one agent inside the team. The model-planned orchestration you get in Claude Code can become a single node in a larger, provider-neutral run that you own end to end.",
+    },
+    fit: {
+      eyebrow: 'where oma fits',
+      title: 'Where open-multi-agent fits.',
+      body: 'Reach for open-multi-agent when the orchestration needs to live inside your own product: an open-source (MIT) library you <code>npm install</code> into a Node.js backend, running on any provider — OpenAI, Anthropic, Gemini, Bedrock, or a local, OpenAI-compatible model. The coordinator plans the task DAG at runtime, and the plan is data you can inspect, replay, and gate — <code>planOnly</code> to review it before anything runs, <code>createPlanArtifact</code> to store it, <code>runFromPlan</code> to execute a plan you have already vetted.',
+      cta: 'Quick Start',
+    },
+    seeAlso: {
+      eyebrow: 'comparing frameworks?',
+      title: 'Looking for a framework alternative?',
+      body: 'Weighing orchestration libraries against each other is a different question. See how open-multi-agent compares with LangGraph, Mastra, and the other frameworks.',
+      cta: 'All framework comparisons',
+    },
+    // Rendered on the /compare hub in a separate band, deliberately kept out of
+    // the competitor grid so it never reads as "OMA vs a Claude feature".
+    hubCard: {
+      label: 'in context',
+      name: 'open-multi-agent and Claude dynamic workflows',
+      blurb: 'Same bet — the model plans the work — in a different form factor. How OMA relates to Anthropic’s dynamic workflows in Claude Code.',
+      cta: 'Read',
     },
   },
 
