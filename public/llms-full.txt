@@ -152,7 +152,7 @@ runTeam() for a typed, schema-validated result object once the graph resolves.
 
 ## How it compares
 
-Honest, sourced comparisons live at https://open-multi-agent.com/compare/. The through-line: OMA is goal-first (you describe the outcome; the coordinator builds the task DAG at runtime), TypeScript-native, three runtime dependencies, and it enforces a hard `maxTokenBudget` that aborts a run — a guardrail none of the eight frameworks below offer at the token level (they cap steps, turns, or messages, or only report usage after the fact).
+Honest, sourced comparisons live at https://open-multi-agent.com/compare/. The through-line: OMA is goal-first (you describe the outcome; the coordinator builds the task DAG at runtime), TypeScript-native, three runtime dependencies, and it enforces a hard `maxTokenBudget` that aborts a run before it overspends. Most of the thirteen frameworks below cap steps or turns rather than tokens; Pydantic AI's `UsageLimits` is the notable exception, with a token-usage limit of its own.
 
 - vs LangGraph — graph-first vs goal-first. LangGraph compiles a declarative state graph you define; OMA decomposes a goal at runtime. LangGraph's TypeScript port is GA and its persistence + time-travel ecosystem is deeper; OMA is leaner (3 deps) and goal-driven. https://open-multi-agent.com/compare/langgraph/
 - vs CrewAI — Python vs TypeScript. CrewAI is a mature, batteries-included framework of role-based crews (~30 dependencies); OMA is a lean TypeScript runtime (3 deps). Comparable orchestration surface; the choice is the language stack. https://open-multi-agent.com/compare/crewai/
@@ -162,6 +162,11 @@ Honest, sourced comparisons live at https://open-multi-agent.com/compare/. The t
 - vs the Vercel AI SDK — different layers. The AI SDK is a lean, provider-neutral single-agent toolkit (3 deps, stopWhen); OMA is the multi-agent orchestration layer above it and can run on top of the AI SDK. https://open-multi-agent.com/compare/vercel-ai-sdk/
 - vs VoltAgent — observability-first vs lean. VoltAgent bundles a full OpenTelemetry stack and supervisor/sub-agent networks (~44 core deps); OMA is 3 deps and forwards its own onTrace spans. https://open-multi-agent.com/compare/voltagent/
 - vs Inngest AgentKit — deterministic routing vs runtime decomposition. AgentKit routes an agent network with state-based logic on Inngest (durable, replayable); OMA decomposes a goal into a task DAG at runtime with no orchestration service. https://open-multi-agent.com/compare/inngest-agentkit/
+- vs LangChain — focused runtime vs broad ecosystem. LangChain is the framework + integration ecosystem (chains, AgentExecutor); its multi-agent orchestration is LangGraph. OMA is a lean, goal-driven, 3-dep TypeScript runtime. https://open-multi-agent.com/compare/langchain/
+- vs LlamaIndex — orchestration-first vs retrieval-first. LlamaIndex centers on RAG over your data (~29 core deps) with agent workflows on top; OMA centers on orchestration and leaves retrieval to you. https://open-multi-agent.com/compare/llamaindex/
+- vs Pydantic AI — different language + shape. Pydantic AI is type-safe, Python-native, with strong Logfire/OpenTelemetry and a token-usage limit (UsageLimits); OMA is TypeScript-native goal-driven orchestration whose maxTokenBudget aborts the whole DAG run. https://open-multi-agent.com/compare/pydantic-ai/
+- vs Google ADK — code-first workflow agents vs runtime decomposition. ADK composes Sequential/Parallel/Loop agents (Gemini-first, ~24 deps incl. a web stack); OMA decomposes a goal at runtime, provider-neutral, 3 deps. https://open-multi-agent.com/compare/google-adk/
+- vs Semantic Kernel — .NET/Azure vs Node/TypeScript. SK is Microsoft's C#-first enterprise SDK (converging with AutoGen into the Microsoft Agent Framework); OMA is a lean TypeScript-native goal-driven runtime. https://open-multi-agent.com/compare/semantic-kernel/
 
 ## Documentation
 
