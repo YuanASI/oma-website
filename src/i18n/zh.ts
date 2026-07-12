@@ -44,7 +44,7 @@ export const zh: UiDict = {
   },
 
   footer: {
-    blurb: '从目标到任务 DAG，自动完成。<br />TypeScript 原生的多智能体编排。',
+    blurb: '从目标到任务 DAG，自动完成。<br />TypeScript 原生的多智能体框架。',
     product: { head: '产品', capabilities: '能力', useCases: '应用场景', integrations: '集成', faq: '常见问题' },
     resources: { head: '资源', docs: '文档', architecture: '架构', examples: '示例', showcase: '案例', compare: '对比', blog: '博客' },
     project: { head: '项目', github: 'GitHub', npm: 'npm', mitLicense: 'MIT 许可证', llmsTxt: 'llms.txt', rss: 'RSS' },
@@ -72,11 +72,11 @@ export const zh: UiDict = {
 
   landing: {
     seo: {
-      title: 'Open Multi-Agent — 从目标到任务 DAG，自动完成',
-      description: 'TypeScript 原生的多智能体编排。协调器把目标转成任务 DAG、并行执行，并综合出带类型的结果——可嵌入任意 Node.js 后端。',
+      title: 'Open Multi-Agent — TypeScript 多智能体框架',
+      description: 'TypeScript 原生的多智能体框架。协调器把目标转成任务 DAG、并行执行，并综合出带类型的结果——可嵌入任意 Node.js 后端。',
     },
     hero: {
-      eyebrow: 'TypeScript 多智能体编排',
+      eyebrow: 'TypeScript 多智能体框架',
       h1: '从目标到任务 DAG，',
       h1Accent: '自动完成。',
       meta: ['3 个运行时依赖', '任意模型', '随处运行'],

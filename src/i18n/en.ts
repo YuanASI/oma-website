@@ -51,7 +51,7 @@ export const en = {
   },
 
   footer: {
-    blurb: 'From a goal to a task DAG, automatically.<br />TypeScript-native multi-agent orchestration.',
+    blurb: 'From a goal to a task DAG, automatically.<br />TypeScript-native multi-agent framework.',
     product: { head: 'Product', capabilities: 'Capabilities', useCases: 'Use cases', integrations: 'Integrations', faq: 'FAQ' },
     resources: { head: 'Resources', docs: 'Docs', architecture: 'Architecture', examples: 'Examples', showcase: 'Showcase', compare: 'Compare', blog: 'Blog' },
     project: { head: 'Project', github: 'GitHub', npm: 'npm', mitLicense: 'MIT license', llmsTxt: 'llms.txt', rss: 'RSS' },
@@ -83,11 +83,11 @@ export const en = {
 
   landing: {
     seo: {
-      title: 'Open Multi-Agent — From a goal to a task DAG, automatically',
-      description: 'TypeScript-native multi-agent orchestration. A coordinator turns a goal into a task DAG, parallelizes it, and synthesizes a typed result — drops into any Node.js backend.',
+      title: 'Open Multi-Agent — TypeScript multi-agent framework',
+      description: 'TypeScript-native multi-agent framework. A coordinator turns a goal into a task DAG, parallelizes it, and synthesizes a typed result — drops into any Node.js backend.',
     },
     hero: {
-      eyebrow: 'TypeScript multi-agent orchestration',
+      eyebrow: 'TypeScript multi-agent framework',
       h1: 'From a goal to a task DAG, ',
       h1Accent: 'automatically.',
       meta: ['3 runtime deps', 'any model', 'runs anywhere'],
