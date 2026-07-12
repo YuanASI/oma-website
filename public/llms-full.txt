@@ -1,6 +1,6 @@
 # Open Multi-Agent — full text for LLMs
 
-> TypeScript-native multi-agent orchestration. Describe a goal and a coordinator agent turns it into a task DAG, parallelizes the independent nodes, and synthesizes a typed result. Drops into any Node.js backend.
+> TypeScript-native AI Agent framework for multi-agent orchestration. Describe a goal and a coordinator agent turns it into a task DAG, parallelizes the independent nodes, and synthesizes a typed, schema-validated result. Drops into any Node.js backend.
 
 This document assembles the substantive copy from open-multi-agent.com into a single
 plain-text file for LLM ingestion. Source of truth for the API is the GitHub repository
@@ -9,7 +9,7 @@ and the docs at https://open-multi-agent.com.
 - Install: `npm create oma-app@latest`
 - Package: `@open-multi-agent/core` (npm)
 - License: MIT
-- Runtime: Node.js 18+, three runtime dependencies
+- Runtime: Node.js 18+, three runtime dependencies (Anthropic SDK, OpenAI SDK, Zod)
 - Repository: https://github.com/open-multi-agent/open-multi-agent
 
 ## What it is
@@ -61,7 +61,7 @@ fills, or await a typed, schema-validated object when the run completes.
 `thinkingConfig`, and OpenAI `reasoning_effort`. Reasoning streams as events, and can be
 preserved across a provider switch when you opt in.
 
-## Built for production
+## You hold the controls
 
 Handing real work to autonomous agents raises three fair questions — do they run off the
 rails, burn the budget, or fail where you can't see it? Each one has an answer in the API.
@@ -111,6 +111,22 @@ in your backend.
 - **Express** — mount runTeam() behind a route handler (drop-in).
 - **Any Node.js** — no daemon, no sidecar; three runtime deps (Node 18+).
 
+Per-provider setup guides live at https://open-multi-agent.com/integrations/ (Anthropic,
+OpenAI, Gemini, DeepSeek, AWS Bedrock, Azure OpenAI, Ollama, and any OpenAI-compatible
+endpoint).
+
+## Common use cases
+
+The shapes teams build most often with OMA, each a use-case guide with runnable TypeScript
+at https://open-multi-agent.com/solutions/.
+
+- **Run LLM calls in parallel** — several specialist agents work at once, return typed output, and an aggregator merges them; the coordinator handles the fan-out. https://open-multi-agent.com/solutions/parallel-llm-calls/
+- **Goal-driven orchestration** — describe the goal instead of wiring the graph; the coordinator decomposes it into a task DAG at runtime and parallelizes it. https://open-multi-agent.com/solutions/goal-driven-orchestration/
+- **Mixed-model agent teams** — each agent names its own provider (Claude, GPT, Gemini, or a local model), cooperating in one run with cost and latency you can watch. https://open-multi-agent.com/solutions/mixed-model-teams/
+- **Local agents with Ollama** — run a team fully on your own machine, even the coordinator on a local model at $0 API cost, or a hybrid that keeps sensitive work local and bursts to the cloud. https://open-multi-agent.com/solutions/local-agents-ollama/
+- **Agent long-term memory** — the MemoryStore interface persists state across runs, so a team can recall what an earlier run learned. https://open-multi-agent.com/solutions/agent-memory/
+- **Vercel AI SDK orchestration** — add multi-agent orchestration to an existing AI SDK app; the SDK talks to models while runTeam() decomposes the goal. https://open-multi-agent.com/solutions/vercel-ai-sdk-orchestration/
+
 ## FAQ
 
 **How does the coordinator turn a goal into a DAG?**
@@ -150,6 +166,14 @@ skips the remaining tasks instead of running up the bill.
 Both. You can stream tokens and node-state transitions as the DAG fills, or simply await
 runTeam() for a typed, schema-validated result object once the graph resolves.
 
+**How does open-multi-agent relate to Claude Code's dynamic workflows?**
+They make the same bet — the model plans the work at runtime instead of you wiring a fixed
+graph. Claude's dynamic workflows run inside Claude Code, where Claude writes its own
+orchestration scripts and fans out parallel subagents in a session. open-multi-agent embeds
+that same goal-to-DAG idea in your own Node.js backend as an MIT library, on any provider,
+with the plan kept as inspectable, replayable data. The two also compose: over ACP an
+open-multi-agent team can run Claude Code itself as one of its agents.
+
 ## How it compares
 
 Honest, sourced comparisons live at https://open-multi-agent.com/compare/. The through-line: OMA is goal-first (you describe the outcome; the coordinator builds the task DAG at runtime), TypeScript-native, three runtime dependencies, and it enforces a hard `maxTokenBudget` that aborts a run before it overspends. Most of the thirteen frameworks below cap steps or turns rather than tokens; Pydantic AI's `UsageLimits` is the notable exception, with a token-usage limit of its own.
@@ -167,6 +191,8 @@ Honest, sourced comparisons live at https://open-multi-agent.com/compare/. The t
 - vs Pydantic AI — different language + shape. Pydantic AI is type-safe, Python-native, with strong Logfire/OpenTelemetry and a token-usage limit (UsageLimits); OMA is TypeScript-native goal-driven orchestration whose maxTokenBudget aborts the whole DAG run. https://open-multi-agent.com/compare/pydantic-ai/
 - vs Google ADK — code-first workflow agents vs runtime decomposition. ADK composes Sequential/Parallel/Loop agents (Gemini-first, ~24 deps incl. a web stack); OMA decomposes a goal at runtime, provider-neutral, 3 deps. https://open-multi-agent.com/compare/google-adk/
 - vs Semantic Kernel — .NET/Azure vs Node/TypeScript. SK is Microsoft's C#-first enterprise SDK (converging with AutoGen into the Microsoft Agent Framework); OMA is a lean TypeScript-native goal-driven runtime. https://open-multi-agent.com/compare/semantic-kernel/
+
+And, in context rather than head-to-head: Claude Code's dynamic workflows make the same runtime-planning bet in a different form factor — they run inside Claude Code, while OMA runs the goal-to-DAG idea in your own backend as an MIT library on any model. https://open-multi-agent.com/compare/claude-dynamic-workflows/
 
 ## Documentation
 
@@ -193,6 +219,7 @@ Reference:
 
 ## Blog
 
+- A 100% Local Multi-Agent Team in TypeScript (Ollama + Gemma, $0 API Cost): https://open-multi-agent.com/blog/local-multi-agent-team-ollama-gemma/
 - From Transcript to Typed Action Items: Three Parallel Agents in TypeScript: https://open-multi-agent.com/blog/meeting-summarizer-parallel-agents/
 - Goal In, DAG Out: How Open-Multi-Agent Turns a Goal into a Task DAG: https://open-multi-agent.com/blog/goal-to-task-dag-coordinator/
 - Give Your TypeScript AI Agents Long-Term Memory with TencentDB-Agent-Memory: https://open-multi-agent.com/blog/agent-long-term-memory-tencentdb/
@@ -205,6 +232,9 @@ Reference:
 
 - GitHub: https://github.com/open-multi-agent/open-multi-agent
 - npm: https://www.npmjs.com/package/@open-multi-agent/core
+- Examples (cookbook): https://open-multi-agent.com/examples/
+- Solutions: https://open-multi-agent.com/solutions/
+- Integrations: https://open-multi-agent.com/integrations/
 - Showcase: https://open-multi-agent.com/showcase/
 - Compare: https://open-multi-agent.com/compare/
 - License: MIT
