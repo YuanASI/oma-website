@@ -7,16 +7,16 @@
 // page chrome is translated.
 import '@fontsource-variable/geist';
 import '@fontsource-variable/jetbrains-mono';
-import '../../styles/tokens.css';
-import '../../styles/landing.css';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Card from '../../components/ds/Card.astro';
-import Nav from '../../components/Nav.astro';
-import Footer from '../../components/Footer.astro';
-import EnterpriseCta from '../../components/EnterpriseCta.astro';
-import { REPO, ghStats } from '../../lib/site';
-import { getExamples, FALLBACK_EXAMPLES } from '../../lib/examples';
-import { localeStaticPaths, toLocale, useTranslations } from '../../i18n';
+import '../../../styles/tokens.css';
+import '../../../styles/landing.css';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Card from '../../../components/ds/Card.astro';
+import Nav from '../../../components/Nav.astro';
+import Footer from '../../../components/Footer.astro';
+import EnterpriseCta from '../../../components/EnterpriseCta.astro';
+import { REPO, ghStats } from '../../../lib/site';
+import { getExamples, FALLBACK_EXAMPLES, detailSlugs } from '../../../lib/examples';
+import { localeStaticPaths, localizePath, toLocale, useTranslations } from '../../../i18n';
 
 export function getStaticPaths() { return localeStaticPaths(); }
 const locale = toLocale(Astro.params.locale);
@@ -26,6 +26,23 @@ const ex_t = t.examples;
 const stats = await ghStats();
 const starsK = (stats.stars / 1000).toFixed(1) + 'k';
 const ex = await getExamples();
+
+const L = (p: string) => localizePath(p, locale);
+// Entries that have a detail page (/examples/<slug>/) link in-site; the rest keep
+// linking out to GitHub. detailSlugs() is empty when the source snapshot is
+// missing, so this degrades gracefully to the old all-external behavior.
+const dset = detailSlugs();
+const hrefFor = (e: { name: string; href: string }) =>
+  dset.has(e.name) ? L(`/examples/${e.name}/`) : e.href;
+const isExternal = (e: { name: string }) => !dset.has(e.name);
+const detailUrl = (e: { name: string; href: string }) =>
+  dset.has(e.name) ? new URL(L(`/examples/${e.name}/`), Astro.site).href : e.href;
+
+// zh index overrides (short title + blurb), keyed by slug; en's map is empty so
+// each entry falls back to the English title/blurb parsed from the repo.
+const ent = t.examples.entries;
+const entTitle = (e: { name: string; title: string }) => ent[e.name]?.title ?? e.title;
+const entBlurb = (e: { name: string; blurb: string }) => ent[e.name]?.blurb ?? e.blurb;
 
 const EXAMPLES_GH = REPO + '/tree/main/packages/core/examples';
 
@@ -48,8 +65,8 @@ const jsonLd = {
           itemListElement: ex.cookbook.map((e, i) => ({
             '@type': 'ListItem',
             position: i + 1,
-            name: e.title,
-            url: e.href,
+            name: entTitle(e),
+            url: detailUrl(e),
           })),
         },
       }
@@ -82,10 +99,10 @@ const jsonLd = {
               </div>
               <div class="build-grid">
                 {ex.cookbook.map((e) => (
-                  <a class="case-link" href={e.href} target="_blank" rel="noreferrer" style="text-decoration:none;">
+                  <a class="case-link" href={hrefFor(e)} target={isExternal(e) ? '_blank' : undefined} rel={isExternal(e) ? 'noreferrer' : undefined} style="text-decoration:none;">
                     <Card padding="lg" interactive>
-                      <div class="build-title">{e.title}</div>
-                      <p class="build-desc">{e.blurb}</p>
+                      <div class="build-title">{entTitle(e)}</div>
+                      <p class="build-desc">{entBlurb(e)}</p>
                       <div class="build-foot">
                         <span class="text-link"><span>{ex_t.seeSource}</span><span class="arrow">→</span></span>
                       </div>
@@ -112,7 +129,7 @@ const jsonLd = {
                     {ex.reference.map((e) => (
                       <a class="ex-row mono" href={e.href} target="_blank" rel="noreferrer">
                         <span class="name">{e.name}</span>
-                        <span class="desc">{e.blurb}</span>
+                        <span class="desc">{entBlurb(e)}</span>
                         <span class="arr">→</span>
                       </a>
                     ))}
@@ -126,8 +143,8 @@ const jsonLd = {
                   <div class="ex-list">
                     {ex.apps.map((e) => (
                       <a class="ex-row" href={e.href} target="_blank" rel="noreferrer">
-                        <span class="name">{e.title}</span>
-                        <span class="desc">{e.blurb}</span>
+                        <span class="name">{entTitle(e)}</span>
+                        <span class="desc">{entBlurb(e)}</span>
                         <span class="arr">→</span>
                       </a>
                     ))}
@@ -141,8 +158,8 @@ const jsonLd = {
                   <div class="ex-list">
                     {ex.vendor.map((e) => (
                       <a class="ex-row" href={e.href} target="_blank" rel="noreferrer">
-                        <span class="name">{e.title}</span>
-                        <span class="desc">{e.blurb}</span>
+                        <span class="name">{entTitle(e)}</span>
+                        <span class="desc">{entBlurb(e)}</span>
                         <span class="arr">→</span>
                       </a>
                     ))}
@@ -166,9 +183,9 @@ const jsonLd = {
                   <div class="ex-subhead">{ex_t.buildingBlocks.basics}</div>
                   <div class="ex-list">
                     {ex.basics.map((e) => (
-                      <a class="ex-row mono" href={e.href} target="_blank" rel="noreferrer">
+                      <a class="ex-row mono" href={hrefFor(e)} target={isExternal(e) ? '_blank' : undefined} rel={isExternal(e) ? 'noreferrer' : undefined}>
                         <span class="name">{e.name}</span>
-                        <span class="desc">{e.blurb}</span>
+                        <span class="desc">{entBlurb(e)}</span>
                         <span class="arr">→</span>
                       </a>
                     ))}
@@ -181,9 +198,9 @@ const jsonLd = {
                   <div class="ex-subhead">{ex_t.buildingBlocks.patterns}</div>
                   <div class="ex-list">
                     {ex.patterns.map((e) => (
-                      <a class="ex-row mono" href={e.href} target="_blank" rel="noreferrer">
+                      <a class="ex-row mono" href={hrefFor(e)} target={isExternal(e) ? '_blank' : undefined} rel={isExternal(e) ? 'noreferrer' : undefined}>
                         <span class="name">{e.name}</span>
-                        <span class="desc">{e.blurb}</span>
+                        <span class="desc">{entBlurb(e)}</span>
                         <span class="arr">→</span>
                       </a>
                     ))}
