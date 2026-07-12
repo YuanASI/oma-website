@@ -11,13 +11,13 @@
 export const en = {
   nav: {
     brandAria: 'Open Multi-Agent — home',
-    // Top-level dropdown labels. `product` fronts the evaluate-the-framework pages
-    // (architecture/compare/solutions/integrations); `useCases` fronts the 9
-    // cookbook recipes (their own top-level tab); `community` fronts showcase/blog.
+    // Top-level nav labels. `product` fronts the evaluate-the-framework pages
+    // (architecture/compare/solutions/integrations) plus Showcase (third-party
+    // adoption proof) at its foot; `useCases` fronts the 9 cookbook recipes;
+    // `docs` and `blog` are their own top-level tabs.
     product: 'Product',
     docs: 'Docs',
     useCases: 'Use Cases',
-    community: 'Community',
     architecture: 'Architecture',
     examples: 'Examples',
     showcase: 'Showcase',
