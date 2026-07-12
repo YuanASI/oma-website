@@ -1,7 +1,10 @@
 ---
-// /compare and /zh/compare — the comparison hub (§7.2). One card per framework,
-// each with the two-line "pick them / pick us" router and a link to the full
-// comparison. Framework copy comes from src/lib/compare.ts; chrome from the dict.
+// /compare and /zh/compare — the comparison hub (§7.2), in two tiers. The
+// featured tier keeps the full "pick them / pick us" router cards for the
+// head-to-head multi-agent frameworks (tier: 'primary' in src/lib/compare.ts);
+// everything else gets a compact link row — the full comparison pages are
+// identical, only the hub weighting differs. Framework copy comes from
+// src/lib/compare.ts; chrome from the dict.
 import '@fontsource-variable/geist';
 import '@fontsource-variable/jetbrains-mono';
 import '../../../styles/tokens.css';
@@ -19,11 +22,15 @@ const locale = toLocale(Astro.params.locale);
 const t = useTranslations(locale).compare;
 // Kept out of COMPARISONS on purpose: Claude dynamic workflows is a feature of
 // Claude Code, not a framework alternative. It gets its own "in context" band
-// below the competitor grid, linking to /compare/claude-dynamic-workflows/.
+// at the top of the hub — first thing under the hero, above the competitor
+// tiers — linking to /compare/claude-dynamic-workflows/.
 const dw = useTranslations(locale).dynamicWorkflows.hubCard;
 const L = (p: string) => localizePath(p, locale);
 const pick = (o: Loc) => o[locale];
 const withName = (s: string, name: string) => s.replace('{name}', name);
+
+const primary = COMPARISONS.filter((c) => c.tier === 'primary');
+const more = COMPARISONS.filter((c) => c.tier !== 'primary');
 
 const stats = await ghStats();
 const starsK = (stats.stars / 1000).toFixed(1) + 'k';
@@ -63,8 +70,22 @@ const jsonLd = {
           <h1 class="section-title">{t.hero.title}</h1>
           <p class="section-sub">{t.hero.lede}</p>
         </div>
+
+        <!-- In context: Claude dynamic workflows. Same bet (the model plans the
+             work), different form factor — described, not pitched as an
+             "alternative", so it leads the hub without joining either comparison
+             tier. The dashed band marks it as a different kind of thing. -->
+        <a class="compare-context-band" href={L('/compare/claude-dynamic-workflows/')}>
+          <div class="compare-context-head">
+            <div class="compare-context-label">{dw.label}</div>
+            <div class="compare-context-name">{dw.name}</div>
+          </div>
+          <p class="compare-context-blurb">{dw.blurb}</p>
+          <span class="compare-context-cta">{dw.cta} <span class="arrow">→</span></span>
+        </a>
+
         <div class="compare-hub-grid">
-          {COMPARISONS.map((c) => (
+          {primary.map((c) => (
             <a class="compare-hub-card" href={L(`/compare/${c.slug}/`)}>
               <div class="compare-hub-name">open-multi-agent <span class="vs">vs</span> {c.name}</div>
               <div class="compare-hub-rows">
@@ -81,19 +102,21 @@ const jsonLd = {
             </a>
           ))}
         </div>
-      </div>
-    </section>
 
-    <!-- In context: Claude dynamic workflows. Same bet (the model plans the work),
-         different form factor — described, not pitched as an "alternative". -->
-    <section class="section compare-context">
-      <div class="container">
-        <a class="compare-context-card" href={L('/compare/claude-dynamic-workflows/')}>
-          <div class="compare-context-label">{dw.label}</div>
-          <div class="compare-context-name">{dw.name}</div>
-          <p class="compare-context-blurb">{dw.blurb}</p>
-          <span class="compare-context-cta">{dw.cta} <span class="arrow">→</span></span>
-        </a>
+        <!-- Demoted tier: full comparison pages exist for all of these — the
+             hub just weights them below the head-to-head frameworks. -->
+        <div class="compare-hub-more">
+          <h2 class="compare-more-title">{t.hub.moreTitle}</h2>
+          <p class="compare-more-lede">{t.hub.moreLede}</p>
+          <div class="compare-mini-grid">
+            {more.map((c) => (
+              <a class="compare-mini-card" href={L(`/compare/${c.slug}/`)}>
+                <span class="compare-mini-name">open-multi-agent <span class="vs">vs</span> <strong>{c.name}</strong></span>
+                <span class="arrow">→</span>
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
 
@@ -104,14 +127,16 @@ const jsonLd = {
 
 <style>
   .compare-hub-hero { padding-top: 72px; }
+
+  /* Featured tier — the head-to-head frameworks, two generous cards per row. */
   .compare-hub-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px; margin-top: 8px;
   }
   .compare-hub-card {
     display: flex; flex-direction: column; gap: 14px;
     border: 1px solid var(--oma-border-1); border-radius: var(--radius-md);
-    background: var(--oma-bg-1); padding: 20px 22px; text-decoration: none;
+    background: var(--oma-bg-1); padding: 22px 24px; text-decoration: none;
     color: var(--oma-fg-1);
     transition: border-color var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
   }
@@ -130,26 +155,59 @@ const jsonLd = {
     margin-top: auto; font-family: var(--font-mono); font-size: 12.5px;
     color: var(--oma-accent); display: inline-flex; align-items: center; gap: 6px;
   }
-
-  /* "In context" band — one understated card, visually distinct from the grid. */
-  .compare-context { padding-top: 8px; }
-  .compare-context-card {
-    display: block; max-width: 720px;
-    border: 1px solid var(--oma-border-1); border-radius: var(--radius-md);
-    background: var(--oma-bg-1); padding: 22px 24px; text-decoration: none;
-    color: var(--oma-fg-1);
-    transition: border-color var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
+  @media (max-width: 800px) {
+    .compare-hub-grid { grid-template-columns: 1fr; }
   }
-  .compare-context-card:hover { border-color: var(--oma-border-2); box-shadow: var(--shadow-md); }
+
+  /* Demoted tier — compact link rows under a quiet mono heading. */
+  .compare-hub-more { margin-top: 72px; padding-top: 32px; border-top: 1px solid var(--oma-border-1); }
+  .compare-more-title {
+    font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em; color: var(--oma-fg-3);
+    margin: 0;
+  }
+  .compare-more-lede { font-size: 13.5px; line-height: 1.55; color: var(--oma-fg-3); margin: 6px 0 18px; max-width: 640px; }
+  .compare-mini-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 10px;
+  }
+  .compare-mini-card {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    border: 1px solid var(--oma-border-1); border-radius: var(--radius-md);
+    padding: 13px 16px; text-decoration: none;
+    font-size: 13.5px; line-height: 1.4; color: var(--oma-fg-2);
+    transition: border-color var(--duration-base) var(--ease-out), color var(--duration-base) var(--ease-out);
+  }
+  .compare-mini-card:hover { border-color: var(--oma-border-2); color: var(--oma-fg-1); }
+  .compare-mini-name .vs { color: var(--oma-fg-3); margin: 0 2px; }
+  .compare-mini-name strong { font-weight: 650; color: var(--oma-fg-1); }
+  .compare-mini-card .arrow { font-family: var(--font-mono); font-size: 12.5px; color: var(--oma-fg-3); flex-shrink: 0; }
+  .compare-mini-card:hover .arrow { color: var(--oma-accent); }
+
+  /* "In context" band — leads the hub as a full-width dashed row, deliberately
+     unlike the comparison cards: this is related reading, not a ranked competitor. */
+  .compare-context-band {
+    display: flex; align-items: center; gap: 28px;
+    border: 1px dashed var(--oma-border-2); border-radius: var(--radius-md);
+    padding: 20px 24px; text-decoration: none; color: var(--oma-fg-1);
+    margin: -8px 0 40px;
+    transition: background var(--duration-base) var(--ease-out), border-color var(--duration-base) var(--ease-out);
+  }
+  .compare-context-band:hover { background: var(--oma-bg-1); }
+  .compare-context-head { flex-shrink: 0; max-width: 340px; }
   .compare-context-label {
     font-family: var(--font-mono); font-size: 10px; font-weight: 600;
     text-transform: uppercase; letter-spacing: 0.05em; color: var(--oma-fg-3);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
-  .compare-context-name { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 6px; }
-  .compare-context-blurb { font-size: 13.5px; line-height: 1.6; color: var(--oma-fg-2); margin: 0 0 14px; }
+  .compare-context-name { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+  .compare-context-blurb { flex: 1; font-size: 13.5px; line-height: 1.6; color: var(--oma-fg-2); margin: 0; }
   .compare-context-cta {
     font-family: var(--font-mono); font-size: 12.5px; color: var(--oma-accent);
-    display: inline-flex; align-items: center; gap: 6px;
+    display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
+  }
+  @media (max-width: 860px) {
+    .compare-context-band { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .compare-context-head { max-width: none; }
   }
 </style>

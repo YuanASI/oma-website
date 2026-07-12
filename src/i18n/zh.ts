@@ -351,6 +351,8 @@ export const zh: UiDict = {
       pickThem: '选 {name}，如果',
       pickUs: '选 open-multi-agent，如果',
       view: '完整对比',
+      moreTitle: '更多对比',
+      moreLede: '同样规格的完整对比，覆盖其余框架与相邻工具——单智能体工具包、RAG 栈、云厂商 SDK。',
     },
     page: {
       eyebrow: '对比',
