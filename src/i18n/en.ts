@@ -117,13 +117,13 @@ export const en = {
     oneCall: { title: 'One call', body: 'runTeam() returns when the whole DAG resolves — no manual node wiring, no scheduler to maintain.' },
     capsLinks: { threeWays: 'runAgent · runTeam · runTasks — three ways to run', archFlow: 'See the architecture and runTeam() flow' },
     sectionReliability: {
-      eyebrow: 'Reliability',
-      title: 'Built to run in production.',
-      sub: "Handing real work to autonomous agents raises three fair questions: do they run off the rails, burn the budget, or fail where you can't see it? Each one has an answer in the API.",
+      eyebrow: 'Control',
+      title: 'You hold the controls.',
+      sub: 'Three levers, all in the API — stay in the loop while agents run, cap what a run can spend, and inspect or replay every call after.',
     },
     reliability: [
       {
-        tag: "won't run away",
+        tag: 'in the loop',
         t: 'You stay in the loop',
         ref: '/guides/orchestration-controls/',
         refLabel: 'orchestration controls',
@@ -135,7 +135,7 @@ export const en = {
         ],
       },
       {
-        tag: "won't burn the budget",
+        tag: 'on budget',
         t: 'Spend where it counts',
         ref: '/reference/model-routing/',
         refLabel: 'model routing',
@@ -146,7 +146,7 @@ export const en = {
         ],
       },
       {
-        tag: 'debug any run',
+        tag: 'observable',
         t: 'Inspect, replay, resume',
         ref: '/reference/observability/',
         refLabel: 'observability',
@@ -187,15 +187,15 @@ export const en = {
     ],
     sectionProof: {
       eyebrow: 'Adoption',
-      title: 'Already running in the wild.',
-      sub: 'Open source and MIT-licensed, with a growing ecosystem of projects and integrations. Star, fork, and contributor counts read straight from the repo at build time.',
+      title: 'Open source, live from the repo.',
+      sub: 'MIT-licensed, with a growing ecosystem of projects and integrations. Star, fork, and contributor counts read straight from the repo at build time.',
       liveTag: 'live · synced from registry',
       stats: { stars: 'stars', forks: 'forks', contributors: 'contributors', latestRelease: 'latest release', license: 'license' },
     },
     sectionFaq: {
       eyebrow: 'FAQ',
-      title: 'Mechanism, not marketing.',
-      sub: 'How the runtime actually behaves. The full reference lives in the docs.',
+      title: 'How the runtime behaves.',
+      sub: 'Straight answers to the questions that come up most — the full reference lives in the docs.',
       viewAll: 'view all questions',
     },
     faqs: [
