@@ -3,7 +3,7 @@
 // place. `current` marks the active in-site link; `starsK` is the build-time star
 // count (e.g. "6.4k"); `locale` localizes the labels and the in-site links; `path`
 // is this page's default-locale path, handed to the language switcher.
-import { REPO, FORGE, NPM } from '../lib/site';
+import { REPO, FORGE, NPM, yuanasiHref } from '../lib/site';
 import { useTranslations, localizePath, type Locale } from '../i18n';
 import LangSwitcher from './LangSwitcher.astro';
 
@@ -82,6 +82,7 @@ const L = (p: string) => localizePath(p, locale);
           </a>
         </div>
       </div>
+      <a class="nav-link nav-link--ext" href={yuanasiHref(locale)} target="_blank" rel="noreferrer">{t.nav.forCompanies} <span class="ext" aria-hidden="true">↗</span></a>
     </div>
     <div class="nav-ghost">
       <a class="nav-github" href={REPO} target="_blank" rel="noreferrer" aria-label={`GitHub — ${starsK} ${t.nav.stars}`} title="GitHub">
@@ -125,4 +126,9 @@ const L = (p: string) => localizePath(p, locale);
   /* Resources-menu items are page links, not packages — keep the label in the
      sans nav font, not the mono .pkg default (which is meant for package names). */
   .nav-menu-link--page .pkg { font-family: var(--font-sans); font-weight: 500; }
+
+  /* For Companies is a top-level external link; its ↗ marker isn't inside a
+     .nav-menu .pkg, so it needs its own muted styling (the .ext rule in
+     landing.css is scoped to the dropdown). */
+  .nav-link--ext .ext { color: var(--oma-fg-3); font-size: 11px; margin-left: 1px; }
 </style>
