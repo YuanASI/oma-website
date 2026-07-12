@@ -43,7 +43,36 @@ function tokenize(line: string, lng: string): Tok[] {
   }
   return out;
 }
-const lines = String(code).replace(/\n$/, '').split('\n').map((l) => (l ? tokenize(l, lang) : null));
+// Multi-line-string aware: a template literal (backtick) can span lines — the
+// hero goal does — so we thread "inside a template" state across lines and color
+// the whole span as a string, instead of per-line tokenizing that would miscolor
+// its interior (leading list numbers, bare CJK) and lose the string tint.
+const rawLines = String(code).replace(/\n$/, '').split('\n');
+const lines: (Tok[] | null)[] = [];
+let inTpl = false;
+for (const raw of rawLines) {
+  if (inTpl) {
+    const close = raw.indexOf('`');
+    if (close < 0) { lines.push([{ t: raw === '' ? ' ' : raw, c: 'str' }]); continue; }
+    const toks: Tok[] = [{ t: raw.slice(0, close + 1), c: 'str' }];
+    for (const tok of tokenize(raw.slice(close + 1), lang)) toks.push(tok);
+    lines.push(toks);
+    inTpl = false;
+    continue;
+  }
+  if (raw === '') { lines.push(null); continue; }
+  // An odd count of backticks means the last one opens a template that continues
+  // on the next line; color from it to EOL and carry the open state forward.
+  if ((raw.match(/`/g) ?? []).length % 2 === 1) {
+    const open = raw.lastIndexOf('`');
+    const toks = tokenize(raw.slice(0, open), lang);
+    toks.push({ t: raw.slice(open), c: 'str' });
+    lines.push(toks);
+    inTpl = true;
+    continue;
+  }
+  lines.push(tokenize(raw, lang));
+}
 ---
 
 <div class={`ds-codeblock ${cls}`}>
