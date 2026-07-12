@@ -383,7 +383,7 @@ export const zh: UiDict = {
       eyebrow: '背景',
       backToHub: '全部对比',
       h1: 'Claude 动态工作流，与 open-multi-agent',
-      lede: 'Anthropic 于 2026 年 5 月在 Claude Code 中推出了动态工作流（dynamic workflows）：Claude 自己写编排脚本，在一次会话里扇出并行的子智能体。open-multi-agent 押的是同一个赌注，只是形态不同——一个你在自己后端里运行的开源库，任意模型提供方，并把计划保留为可检视、可重放的数据。',
+      lede: '2026 年 5 月，Anthropic 在 Claude Code 里推出了动态工作流（dynamic workflows）：由模型在运行时自己规划、编排工作。open-multi-agent 押的是同一个赌注，只是形态不同。',
     },
     cards: {
       dwLabel: 'Claude 动态工作流',

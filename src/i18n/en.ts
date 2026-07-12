@@ -404,7 +404,7 @@ export const en = {
       eyebrow: 'in context',
       backToHub: 'All comparisons',
       h1: 'Claude dynamic workflows, and open-multi-agent',
-      lede: 'Anthropic shipped dynamic workflows in Claude Code in May 2026: Claude writes its own orchestration scripts and fans out parallel subagents in a single session. open-multi-agent makes the same bet in a different form factor — an open-source library you run in your own backend, on any provider, with the plan kept as inspectable, replayable data.',
+      lede: 'In May 2026, Anthropic shipped dynamic workflows in Claude Code: the model plans and orchestrates the work at runtime. open-multi-agent makes the same bet in a different form factor.',
     },
     cards: {
       dwLabel: 'Claude dynamic workflows',
