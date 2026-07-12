@@ -1,7 +1,6 @@
 ---
 // TaskNode — the signature DAG task node. Mirrors the post-run dashboard:
-// #NODE id, title, status line with duration, role + state badges, and a
-// status-keyed left-rail.
+// #NODE id, title, status line with duration, and role + state badges.
 import Badge from './Badge.astro';
 import { useTranslations, type Locale } from '../../i18n';
 
@@ -27,12 +26,12 @@ const {
 } = Astro.props;
 const t = useTranslations(locale);
 
-const STATUS_STYLE: Record<string, { color: string; rail: string }> = {
-  done:    { color: 'var(--oma-accent)',  rail: 'var(--oma-accent)' },
-  running: { color: 'var(--oma-warning)', rail: 'var(--oma-warning)' },
-  queued:  { color: 'var(--oma-fg-2)',    rail: 'var(--oma-border-2)' },
-  failed:  { color: 'var(--oma-danger)',  rail: 'var(--oma-danger)' },
-  skipped: { color: 'var(--oma-fg-3)',    rail: 'var(--oma-border-1)' },
+const STATUS_STYLE: Record<string, { color: string }> = {
+  done:    { color: 'var(--oma-accent)' },
+  running: { color: 'var(--oma-warning)' },
+  queued:  { color: 'var(--oma-fg-2)' },
+  failed:  { color: 'var(--oma-danger)' },
+  skipped: { color: 'var(--oma-fg-3)' },
 };
 const s = STATUS_STYLE[status] ?? STATUS_STYLE.done;
 const label = t.taskStatus[status as Status] ?? t.taskStatus.done;
@@ -40,7 +39,6 @@ const mark = status === 'done' ? '✓' : status === 'failed' ? '✕' : status ==
 ---
 
 <div class={`ds-tasknode${selected ? ' is-selected' : ''}`}>
-  <span class="ds-tasknode__rail" style={`background:${s.rail}`}></span>
   <div class="ds-tasknode__top">
     <span class="ds-tasknode__id">{id}</span>
     <span class="ds-tasknode__mark" style={`color:${s.color}`}>{mark}</span>
@@ -59,15 +57,14 @@ const mark = status === 'done' ? '✓' : status === 'failed' ? '✕' : status ==
 
 <style>
   .ds-tasknode {
-    position: relative; width: 100%; min-width: 0;
+    width: 100%; min-width: 0;
     background: var(--oma-bg-1); border: 1px solid var(--oma-border-1);
-    border-radius: var(--radius-md); padding: 14px 16px 14px 18px;
+    border-radius: var(--radius-md); padding: 14px 16px;
     font-family: var(--font-sans); box-shadow: none;
     transition: border-color var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
   }
   .ds-tasknode:hover { border-color: var(--oma-border-2); box-shadow: var(--shadow-md); }
   .ds-tasknode.is-selected { border-color: var(--oma-accent); box-shadow: var(--shadow-accent-glow); }
-  .ds-tasknode__rail { position: absolute; left: 0; top: 14px; bottom: 14px; width: 2px; border-radius: 2px; }
   .ds-tasknode__top { display: flex; align-items: center; justify-content: space-between; }
   .ds-tasknode__id { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--oma-fg-2); }
   .ds-tasknode__mark { font-size: 13px; line-height: 1; }

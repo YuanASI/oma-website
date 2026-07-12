@@ -277,7 +277,7 @@ const jsonLd = {
           </div>
           <div class="rel-grid">
             {RELIABILITY.map((c) => (
-              <Card padding="lg" accent class="rel-card">
+              <Card padding="lg" class="rel-card">
                 <div class="rel-tag">{c.tag}</div>
                 <div class="rel-title">{c.t}</div>
                 <p class="rel-desc">{c.parts.map((p) => (typeof p === 'string' ? p : <code>{p.c}</code>))}</p>
@@ -358,7 +358,7 @@ const jsonLd = {
           </div>
           {proofSpotlight && (
             <a class="case-link case-spotlight" href={proofSpotlight.href} target="_blank" rel="noreferrer" style="text-decoration:none;">
-              <Card accent padding="lg" interactive>
+              <Card padding="lg" interactive>
                 <div class="spotlight-kicker">{t.showcase.spotlight.eyebrow}</div>
                 <div class="case-pkg">{proofSpotlight.pkg}<span class="case-by-inline">{proofSpotlight.by}</span></div>
                 <p class="case-desc">{caseTr(proofSpotlight).desc}</p>
