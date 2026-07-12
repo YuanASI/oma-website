@@ -3,9 +3,14 @@
 // the framework README "## Ecosystem" section; each entry was checked with
 // `gh api` (repo exists + actually uses OMA) per the §5 honesty discipline.
 //
-// Not listed: apollo-mg (no public-display authorization — decision D4),
-// ChetanSai / ParisMolver (PRD §4.4: debunked / signal not triggered), and the
-// MiniMax provider offer (a promo, not a user).
+// The `practitioner` kind (Mark Galyan / apollo-mg) is not a project but a named
+// deployment + core contributor; it renders as a dedicated spotlight OUTSIDE the
+// two project grids — on both the landing proof section and /showcase. Public
+// display is authorized by the person (this was decision D4 "no authorization",
+// now cleared), so `pkg`/`by` here name a person, not a package.
+//
+// Not listed: ChetanSai / ParisMolver (PRD §4.4: debunked / signal not
+// triggered), and the MiniMax provider offer (a promo, not a user).
 export type ShowcaseEntry = {
   pkg: string;
   by: string;
@@ -14,12 +19,19 @@ export type ShowcaseEntry = {
   tone: 'accent' | 'info' | 'neutral';
   tag: string;
   status: string;
-  kind: 'built-with' | 'integration';
+  kind: 'built-with' | 'integration' | 'practitioner';
   /** Shown in the landing proof section (a curated subset); /showcase shows all. */
   featured?: boolean;
 };
 
 export const SHOWCASE: ShowcaseEntry[] = [
+  {
+    pkg: 'Mark Galyan', by: '@apollo-mg', href: 'https://github.com/apollo-mg',
+    desc: 'Runs OMA fully offline on local quantized models — no cloud, no API key. The Coordinator and context compaction keep autonomous agent loops alive under tight VRAM limits.',
+    tone: 'accent', tag: 'offline · local models',
+    status: "Contributor since the framework's first month — across compaction, sampling, and tool-call parsing.",
+    kind: 'practitioner', featured: true,
+  },
   {
     pkg: 'temodar-agent', by: 'by xeloxa', href: 'https://github.com/xeloxa/temodar-agent',
     desc: 'WordPress security analysis platform. Runs OMA built-in tools (bash, file ops, grep) inside a Docker runtime.',

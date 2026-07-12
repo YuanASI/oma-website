@@ -425,7 +425,13 @@ export const zh: UiDict = {
     },
     builtWith: { eyebrow: '用 OMA 构建', title: 'OMA 作为内核。', sub: '在 Open Multi-Agent 上运行智能体团队的应用。' },
     integrates: { eyebrow: '与 OMA 集成', title: '为运行中的团队扩展能力。', sub: '即插即用的工具，为 Open Multi-Agent 增添新能力。' },
+    spotlight: { eyebrow: '聚焦', heading: '完全离线，跑在生产环境。', cta: '查看主页' },
     entries: {
+      'Mark Galyan': {
+        desc: '完全离线运行 OMA——纯本地量化模型，不联网、无需 API key。靠协调器和上下文压缩，在紧张显存下维持自主智能体循环不中断。',
+        tag: '离线 · 本地模型',
+        status: '框架第一个月起的贡献者——涉及上下文压缩、采样、工具调用解析。',
+      },
       'temodar-agent': { desc: 'WordPress 安全分析平台。在 Docker 运行时里调用 OMA 内置工具（bash、文件操作、grep）。', tag: '安全', status: '已上架 Docker Hub' },
       'PR-Copilot': { desc: 'AI 拉取请求审查助手。运行一个 OMA 审查团队——一个协调器加若干限定范围的审查智能体——配自定义工具和按 token 感知的 diff 压缩。', tag: '代码审查', status: '基于 OMA 构建' },
       'StuFlow': { desc: '终端 AI 编码助手。用自定义的 RunTeamOptions 协调器，通过 runAgent / runTasks / runTeam 驱动一个 OMA 团队，搭配 DeepSeek。', tag: '编码智能体', status: '基于 OMA 构建' },
