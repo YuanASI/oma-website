@@ -13,6 +13,8 @@ import '../../styles/landing.css';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
+import EnterpriseCta from '../../components/EnterpriseCta.astro';
+import EnterpriseHeadCta from '../../components/EnterpriseHeadCta.astro';
 import { REPO, ghStats } from '../../lib/site';
 import { localeStaticPaths, toLocale, useTranslations, localizePath } from '../../i18n';
 
@@ -50,9 +52,14 @@ const jsonLd = {
     <!-- ── Page head ── -->
     <header class="arch-hero">
       <div class="container">
-        <div class="eyebrow"><span class="idx">//</span> {ar.hero.eyebrow}</div>
-        <h1 class="arch-title">{ar.hero.title}</h1>
-        <p class="arch-lede" set:html={ar.hero.ledeHtml}></p>
+        <div class="hero-head-row">
+          <div class="hero-head-text">
+            <div class="eyebrow"><span class="idx">//</span> {ar.hero.eyebrow}</div>
+            <h1 class="arch-title">{ar.hero.title}</h1>
+            <p class="arch-lede" set:html={ar.hero.ledeHtml}></p>
+          </div>
+          <EnterpriseHeadCta locale={locale} />
+        </div>
       </div>
     </header>
 
@@ -119,6 +126,8 @@ const jsonLd = {
         </div>
       </div>
     </section>
+
+    <EnterpriseCta locale={locale} />
   </main>
 
   <Footer locale={locale} />
@@ -126,6 +135,7 @@ const jsonLd = {
 
 <style>
   .arch-hero { padding: var(--space-16) 0 var(--space-8); border-bottom: 1px solid var(--border-subtle); }
+  .arch-hero .hero-head-row { margin-bottom: 0; }
   .arch-title {
     font-family: var(--font-sans); font-weight: 600; letter-spacing: -0.035em;
     font-size: clamp(34px, 5vw, 52px); line-height: 1.05; color: var(--text-strong); margin: 14px 0 0;

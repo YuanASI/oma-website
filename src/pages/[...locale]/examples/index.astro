@@ -14,6 +14,7 @@ import Card from '../../../components/ds/Card.astro';
 import Nav from '../../../components/Nav.astro';
 import Footer from '../../../components/Footer.astro';
 import EnterpriseCta from '../../../components/EnterpriseCta.astro';
+import EnterpriseHeadCta from '../../../components/EnterpriseHeadCta.astro';
 import { REPO, ghStats } from '../../../lib/site';
 import { getExamples, FALLBACK_EXAMPLES, detailSlugs } from '../../../lib/examples';
 import { localeStaticPaths, localizePath, toLocale, useTranslations } from '../../../i18n';
@@ -81,9 +82,14 @@ const jsonLd = {
     <!-- ── Page head ── -->
     <header class="ex-hero">
       <div class="container">
-        <div class="eyebrow"><span class="idx">//</span> {ex_t.hero.eyebrow}</div>
-        <h1 class="ex-title">{ex_t.hero.title}</h1>
-        <p class="ex-lede">{ex_t.hero.lede}</p>
+        <div class="hero-head-row">
+          <div class="hero-head-text">
+            <div class="eyebrow"><span class="idx">//</span> {ex_t.hero.eyebrow}</div>
+            <h1 class="ex-title">{ex_t.hero.title}</h1>
+            <p class="ex-lede">{ex_t.hero.lede}</p>
+          </div>
+          <EnterpriseHeadCta locale={locale} />
+        </div>
       </div>
     </header>
 
@@ -275,6 +281,7 @@ const jsonLd = {
 
 <style>
       .ex-hero { padding: 72px 0 8px; }
+      .ex-hero .hero-head-row { margin-bottom: 0; }
       .ex-title {
         font-size: clamp(34px, 5vw, 52px); font-weight: 600; letter-spacing: -0.03em;
         line-height: 1.05; color: var(--oma-fg-0); margin: 16px 0 0;
