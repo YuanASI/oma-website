@@ -373,23 +373,26 @@ const jsonLd = {
       <!-- ── 7. FAQ ── -->
       <section class="section" id="faq">
         <div class="container">
-          <div class="section-head">
-            <div class="eyebrow"><span class="idx">06</span> {l.sectionFaq.eyebrow}</div>
-            <h2 class="section-title">{l.sectionFaq.title}</h2>
-            <p class="section-sub">{l.sectionFaq.sub}</p>
-          </div>
-          <div class="faq-list">
-            {FAQS.map((f, i) => (
-              <div class={`faq-item${i === 0 ? ' open' : ''}`}>
-                <button type="button" class="faq-q" aria-expanded={i === 0 ? 'true' : 'false'}>
-                  <span>{f.q}</span><span class="faq-icon">+</span>
-                </button>
-                <div class="faq-a"><div class="faq-a-inner">{f.a}</div></div>
+          <div class="faq-grid">
+            <div class="section-head faq-head">
+              <div class="eyebrow"><span class="idx">06</span> {l.sectionFaq.eyebrow}</div>
+              <h2 class="section-title">{l.sectionFaq.title}</h2>
+              <p class="section-sub">{l.sectionFaq.sub}</p>
+              <div class="faq-head-foot">
+                <a class="text-link" href={REPO + '#how-is-this-different-from-x'} target="_blank" rel="noreferrer"><span>{l.sectionFaq.viewAll}</span><span class="arrow">→</span></a>
+                <a class="btn-primary" href={yuanasiHref(locale)} target="_blank" rel="noreferrer"><span>{t.enterpriseCta.button}</span><span class="arrow" aria-hidden="true">→</span></a>
               </div>
-            ))}
-          </div>
-          <div style="margin-top:28px;">
-            <a class="text-link" href={REPO + '#how-is-this-different-from-x'} target="_blank" rel="noreferrer"><span>{l.sectionFaq.viewAll}</span><span class="arrow">→</span></a>
+            </div>
+            <div class="faq-list">
+              {FAQS.map((f, i) => (
+                <div class={`faq-item${i === 0 ? ' open' : ''}`}>
+                  <button type="button" class="faq-q" aria-expanded={i === 0 ? 'true' : 'false'}>
+                    <span>{f.q}</span><span class="faq-icon">+</span>
+                  </button>
+                  <div class="faq-a"><div class="faq-a-inner">{f.a}</div></div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
