@@ -30,6 +30,9 @@ export const en = {
     compare: 'Compare',
     solutions: 'Solutions',
     integrations: 'Integrations',
+    // Top-level link (not a dropdown) to YuanASI's paid delivery — the enterprise
+    // pathway lifted out of the footer. External, so it renders with an ↗ marker.
+    forCompanies: 'For Companies',
     menuDesc: {
       architecture: 'How OMA works, diagrammed',
       examples: 'Runnable recipes from the repo',
@@ -98,6 +101,9 @@ export const en = {
       parallel: 'parallel',
       runReal: 'real',
       runTasks: 'tasks',
+      // Understated routing line under the primary CTA — self-identifies the
+      // enterprise reader without competing with the developer install path.
+      enterprise: { pre: 'Evaluating OMA for your company?', link: 'Enterprise delivery & support' },
     },
     copy: 'copy',
     copied: '✓ copied',
