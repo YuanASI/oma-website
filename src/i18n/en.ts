@@ -369,6 +369,8 @@ export const en = {
       pickThem: 'Pick {name} if',
       pickUs: 'Pick open-multi-agent if',
       view: 'Full comparison',
+      moreTitle: 'More comparisons',
+      moreLede: 'The same full side-by-side treatment, for frameworks and adjacent tools — single-agent toolkits, RAG stacks, cloud-vendor SDKs.',
     },
     page: {
       eyebrow: 'comparison',
