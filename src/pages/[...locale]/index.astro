@@ -105,7 +105,11 @@ const result = await oma.runTeam(team, 'Create a REST API for a todo list')`;
 // ── Production-proof cases — the `featured` subset of the shared ecosystem
 //    list (src/lib/showcase.ts), rendered in full on /showcase. zh desc/tag/
 //    status reuse the showcase dict (same entries), keyed by pkg. ──
-const CASES = SHOWCASE.filter((c) => c.featured);
+// Featured projects render as the uniform 3-up grid; the `practitioner` entry
+// (a named offline deployment + core contributor) is pulled out and rendered as
+// an elevated spotlight above the grid — see src/lib/showcase.ts.
+const CASES = SHOWCASE.filter((c) => c.featured && c.kind !== 'practitioner');
+const proofSpotlight = SHOWCASE.find((c) => c.kind === 'practitioner');
 const scEntries = t.showcase.entries;
 const caseTr = (c: (typeof SHOWCASE)[number]) => scEntries[c.pkg] ?? { desc: c.desc, tag: c.tag, status: c.status };
 
@@ -352,6 +356,16 @@ const jsonLd = {
             <div class="stat"><a href={REPO + '/releases'} target="_blank" rel="noreferrer" style="color:inherit;text-decoration:none;"><div class="stat-val">{stats.latestRelease}</div><div class="stat-key">{l.sectionProof.stats.latestRelease}</div></a></div>
             <div class="stat"><div class="stat-val">MIT</div><div class="stat-key">{l.sectionProof.stats.license}</div></div>
           </div>
+          {proofSpotlight && (
+            <a class="case-link case-spotlight" href={proofSpotlight.href} target="_blank" rel="noreferrer" style="text-decoration:none;">
+              <Card accent padding="lg" interactive>
+                <div class="spotlight-kicker">{t.showcase.spotlight.eyebrow}</div>
+                <div class="case-pkg">{proofSpotlight.pkg}<span class="case-by-inline">{proofSpotlight.by}</span></div>
+                <p class="case-desc">{caseTr(proofSpotlight).desc}</p>
+                <p class="spotlight-contrib">{caseTr(proofSpotlight).status}</p>
+              </Card>
+            </a>
+          )}
           <div class="cases-grid">
             {CASES.map((c) => (
               <a class="case-link" href={c.href} target="_blank" rel="noreferrer" style="text-decoration:none;">

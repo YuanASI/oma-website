@@ -351,6 +351,25 @@ a { color: inherit; }
 .case-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; gap: 10px; }
 .case-dep { font-family: var(--font-mono); font-size: 12px; color: var(--oma-fg-2); }
 
+/* Practitioner spotlight — the `practitioner` ecosystem entry (a named offline
+   deployment + core contributor) pulled OUT of the project grid and rendered as
+   an elevated full-width block on both the landing proof section and /showcase.
+   Heavier than a grid card: Card's accent rail (the `accent` prop) plus a soft
+   accent glow ring. */
+.case-spotlight { display: block; margin-bottom: 16px; }
+.case-spotlight > .ds-card { box-shadow: var(--shadow-accent-glow); }
+.case-spotlight:hover > .ds-card { box-shadow: var(--shadow-accent-glow), var(--shadow-md); }
+.case-spotlight .case-foot { margin-top: 18px; }
+.spotlight-kicker {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--oma-accent); margin: 0 0 12px;
+}
+.case-by-inline { font-family: var(--font-mono); font-size: 12px; color: var(--oma-fg-2); font-weight: 400; margin-left: 10px; }
+.spotlight-contrib {
+  font-size: 13px; line-height: 1.55; color: var(--oma-fg-2);
+  margin: 14px 0 0; padding-top: 14px; border-top: 1px solid var(--oma-border-0);
+}
+
 /* ── Capabilities ── */
 .cap-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 56px; align-items: start; }
 .cap-list { display: flex; flex-direction: column; gap: 4px; }

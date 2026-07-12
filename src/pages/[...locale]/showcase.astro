@@ -27,6 +27,7 @@ const sc = t.showcase;
 const stats = await ghStats();
 const starsK = (stats.stars / 1000).toFixed(1) + 'k';
 
+const spotlight = SHOWCASE.find((c) => c.kind === 'practitioner');
 const builtWith = SHOWCASE.filter((c) => c.kind === 'built-with');
 const integrations = SHOWCASE.filter((c) => c.kind === 'integration');
 const DISCUSS = REPO + '/discussions';
@@ -75,10 +76,32 @@ const jsonLd = {
       </div>
     </section>
 
+    {spotlight && (
+      <section class="section" id="spotlight">
+        <div class="container">
+          <div class="section-head">
+            <div class="eyebrow"><span class="idx">01</span> {sc.spotlight.eyebrow}</div>
+            <h2 class="section-title">{sc.spotlight.heading}</h2>
+          </div>
+          <a class="case-link case-spotlight" href={spotlight.href} target="_blank" rel="noreferrer" style="text-decoration:none;">
+            <Card accent padding="lg" interactive>
+              <div class="case-pkg">{spotlight.pkg}<span class="case-by-inline">{spotlight.by}</span></div>
+              <p class="case-desc">{tr(spotlight).desc}</p>
+              <p class="spotlight-contrib">{tr(spotlight).status}</p>
+              <div class="case-foot">
+                <Badge tone={spotlight.tone}>{tr(spotlight).tag}</Badge>
+                <span class="text-link"><span>{sc.spotlight.cta}</span><span class="arrow">→</span></span>
+              </div>
+            </Card>
+          </a>
+        </div>
+      </section>
+    )}
+
     <section class="section" id="built-with">
       <div class="container">
         <div class="section-head">
-          <div class="eyebrow"><span class="idx">01</span> {sc.builtWith.eyebrow}</div>
+          <div class="eyebrow"><span class="idx">02</span> {sc.builtWith.eyebrow}</div>
           <h2 class="section-title">{sc.builtWith.title}</h2>
           <p class="section-sub">{sc.builtWith.sub}</p>
         </div>
@@ -103,7 +126,7 @@ const jsonLd = {
     <section class="section" id="integrations" style="padding-top:0;">
       <div class="container">
         <div class="section-head">
-          <div class="eyebrow"><span class="idx">02</span> {sc.integrates.eyebrow}</div>
+          <div class="eyebrow"><span class="idx">03</span> {sc.integrates.eyebrow}</div>
           <h2 class="section-title">{sc.integrates.title}</h2>
           <p class="section-sub">{sc.integrates.sub}</p>
         </div>
