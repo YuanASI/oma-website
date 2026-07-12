@@ -318,6 +318,11 @@ export const en = {
     },
     builtWith: { eyebrow: 'Built with OMA', title: 'OMA at the core.', sub: 'Applications that run their agent teams on Open Multi-Agent.' },
     integrates: { eyebrow: 'Integrates with OMA', title: 'Extend a running team.', sub: 'Drop-in tools that add new capabilities to Open Multi-Agent.' },
+    // Practitioner spotlight (the `practitioner` entry in src/lib/showcase.ts) —
+    // rendered on both the landing proof section and /showcase. The person's
+    // name/handle/body/badge/status come from the entry (+ zh `entries` override);
+    // only the framing below is section-level copy.
+    spotlight: { eyebrow: 'Spotlight', heading: 'Fully offline, in production.', cta: 'View profile' },
     // Per-entry overrides keyed by `pkg` (src/lib/showcase.ts is the English source,
     // so EN leaves this empty and the page falls back to the entry's own fields).
     entries: {} as Record<string, { desc: string; tag: string; status: string }>,
