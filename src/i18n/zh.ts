@@ -254,6 +254,167 @@ export const zh: UiDict = {
     footCode: 'packages/core/examples',
     footPost: ' 目录生成，所以它始终与源码一致。',
     browseAll: '在 GitHub 上浏览全部',
+    // 单个实例详情页（/zh/examples/<slug>/）。仅壳文案——实例标题、描述、源码、
+    // 运行命令在所有语言下都保持英文（从上游文件解析，和索引 blurb 一致）。
+    detail: {
+      backToIndex: '← 全部示例',
+      categories: { cookbook: 'Cookbook', basics: '基础', patterns: '模式' },
+      apisUsed: 'OMA API',
+      linesLabel: '行',
+      runTitle: '运行',
+      runNote: '在仓库的克隆里运行这个文件：',
+      prereqsTitle: '前置条件',
+      providerNote: 'OMA 与 provider 无关——这个示例按上面的 key 编写，但你也可以用 OpenAI、Gemini、Groq 等任意 provider 运行。',
+      providerLink: '全部 provider',
+      sourceTitle: '完整源码',
+      sourceNote: '完整示例，从仓库 main 分支同步刷新。',
+      viewOnGithub: '在 GitHub 查看 / 编辑',
+      relatedTitle: '相关示例',
+      relatedNote: '同类目下的更多实例。',
+      learnTitle: '学习相关概念',
+      learnQuickStart: '快速开始',
+      learnDocs: '文档',
+      browseAll: '全部示例',
+      seoTitleSuffix: ' — Open Multi-Agent 示例',
+      // 按 slug 的中文覆盖：标题 + 描述。代码、API 名、运行命令、源码保持英文；
+      // 未列出的例子回退到英文（en 源）。忠实翻译上游描述，不曲解例子行为。
+      recipes: {
+        'contract-review-dag': {
+          title: '合同审查 DAG（步骤级重试）',
+          intent: '用 runTasks() 演示 DAG 任务编排 + 步骤级重试。场景：由 4 个任务组成 DAG 的合同审查流水线。',
+        },
+        'competitive-monitoring': {
+          title: '竞品监控（多源聚合 + 矛盾检测）',
+          intent: '三个并行的来源智能体从本地 JSON fixtures 抽取数据、各自处理带 { claim, date, source_url, confidence } 的论断；聚合器跨来源交叉核对、识别重复、标记矛盾，输出结构化 Markdown 报告；并计时校验并行执行须低于串行总和的 70%。',
+        },
+        'meeting-summarizer': {
+          title: '会议纪要生成器（并行后处理）',
+          intent: '三个专职智能体对同一份会议转录做 fan-out；用 Zod schema 产出结构化的待办项与情绪；计时对比并行墙钟时间 vs 各智能体耗时之和；聚合器合并成单份 Markdown 报告。',
+        },
+        'incident-postmortem-dag': {
+          title: '事故复盘 DAG（并行 fan-out）',
+          intent: '演示 DAG 任务编排：三个独立的根任务从 t=0 起并行 fan-out，最后汇总成一份事故复盘文档。',
+        },
+        'structured-output': {
+          title: '结构化输出',
+          intent: '演示 AgentConfig 上的 outputSchema：智能体的回复会被自动解析为 JSON 并按 Zod schema 校验；校验失败时框架带着错误反馈重试一次。',
+        },
+        'personalized-interview-simulator': {
+          title: '个性化面试模拟器（面试官 + 观察者）',
+          intent: '有状态的面试官智能体用 Agent.prompt() 跨轮对话；无状态的观察者智能体在每轮之间读取完整转录上下文；在 runTeam() / runTasks() 之外手动注入 SharedMemory 与 prompt；用 readline 在应用层处理人工输入；面试循环结束时用 Zod 产出结构化复盘。',
+        },
+        'multi-model-team': {
+          title: '多模型团队（自定义工具）',
+          intent: '在同一个团队里混用 Anthropic 与 OpenAI 模型；用 defineTool() + Zod schema 定义自定义工具；用自定义 ToolRegistry 构建能使用这些工具的智能体；运行一个用到这些工具的团队目标。',
+        },
+        'fan-out-aggregate': {
+          title: 'Fan-Out / 聚合（MapReduce）模式',
+          intent: 'fan-out：把同一个问题并行发给 N 个「分析师」智能体；聚合：一个「综合者」智能体读取所有分析结果、产出平衡的最终报告；用 AgentPool + runParallel() 做并发 fan-out；无需工具——纯 LLM 推理以聚焦模式本身。',
+        },
+        'narrative-puzzle-hint-arbitration': {
+          title: '叙事解谜提示仲裁（多源冲突消解 + 安全否决）',
+          intent: '多源提示仲裁，配一个位于生成循环之外的外部安全否决。',
+        },
+        'research-aggregation': {
+          title: '多源研究聚合',
+          intent: '用 runTasks() 演示显式依赖链：三个分析师智能体并行、各自独立研究同一主题；通过 dependsOn 建立依赖链，综合者等所有分析师完成；自动共享记忆——智能体输出经框架流向下游智能体。',
+        },
+        'translation-backtranslation': {
+          title: '翻译 + 回译质量校验（跨模型）',
+          intent: '智能体 A 用 Claude 把英文译成目标语言；智能体 B 用另一家 provider 回译成英文；智能体 C 比对原文与回译、标记语义漂移；用 Zod schema 产出结构化结果。',
+        },
+        'paper-replication-triage': {
+          title: '论文复现分诊（多源证据调和）',
+          intent: '各来源专属智能体审查不同的证据快照、而非同一份 PDF；runTasks() DAG：并行来源审查 → 依赖它们的复现规划器；共享记忆 / 依赖上下文把上游 JSON 带进规划器；预置的冲突迫使规划器调和论文论断与产物；mock 的来源快照会被标记，SOURCE_MODE=live 则走 Asta + GitHub。',
+        },
+        'cost-tiered-pipeline': {
+          title: '成本分层流水线',
+          intent: '把同一条四阶段 runTasks() 流水线跑两次；在一条流水线内给每个智能体分配不同模型；通过 onTrace 采集各模型的 token 用量；按各 provider 的模型定价估算美元成本。',
+        },
+        'plan-replay': {
+          title: '固定并回放协调器计划',
+          intent: '演示 planOnly + createPlanArtifact + runFromPlan：让协调器把目标分解一次、序列化成可 diff 的 JSON 产物，之后无需再调用协调器就能回放完全相同的任务图。任务 id、依赖、指派、描述与执行配置（memoryScope、重试设置）都被保留，所以回放的图与评审过的一致，而不是被 LLM 重新分解。',
+        },
+        'multi-perspective-code-review': {
+          title: '多视角代码评审',
+          intent: '依赖链：生成器产出代码，三个评审者依赖它；并行执行：安全、性能、风格三个评审者并发运行；结构化输出：综合者返回经 Zod 校验的问题清单；共享记忆：每个智能体的输出由框架自动存储并注入下游智能体的 prompt。',
+        },
+        'agent-handoff': {
+          title: '通过 delegate_to_agent 的同步智能体交接',
+          intent: '在 runTeam / runTasks 期间，池中的智能体注册内置的 delegate_to_agent 工具，让一个专家智能体能在同一轮对话里对另一个在册智能体跑子 prompt 并读取答复。',
+        },
+        'single-agent': {
+          title: '单智能体',
+          intent: '最简单的用法：一个带 bash 与文件工具的智能体执行编码任务；随后演示直接用 Agent 类做流式输出。',
+        },
+        'task-retry': {
+          title: '任务重试（指数退避）',
+          intent: '演示任务配置上的 maxRetries、retryDelayMs 与 retryBackoff：任务失败时框架按指数退避自动重试；onProgress 回调会收到 task_retry 事件，便于实时记录重试。',
+        },
+        'team-collaboration': {
+          title: '多智能体团队协作',
+          intent: '三个专职智能体（架构师、开发、评审）围绕一个共同目标协作。OpenMultiAgent 编排器把目标拆成任务、分派给合适的智能体，并收集结果。',
+        },
+        'consensus': {
+          title: '提议者 / 评判者共识模式',
+          intent: '演示 runConsensus()：提议者智能体起草答案，一组评判者智能体尝试反驳；若足够多的评判者接受（达到法定数），答案即被判为通过；若异议超出预算，提议者修订、循环最多重复 maxRounds 轮。',
+        },
+        'task-pipeline': {
+          title: '带依赖的显式任务流水线',
+          intent: '演示如何用显式依赖链定义任务。',
+        },
+        'rare-disease-information-triage': {
+          title: '罕见病信息分诊（来源隔离的证据审查 + 安全仲裁）',
+          intent: '五个来源隔离的智能体分别读取不同的 MOCK fixtures，对患者自述症状、公益科普、官方指南 / 专家共识类内容、基因-表型证据、以及网络 / 论坛 / 商业论断做来源隔离的证据审查；下游仲裁者只接收结构化的审查输出；运行时检测各来源证据之间的冲突；安全策略禁止诊断、治疗、剂量或商业推荐；用 Zod 校验结构化输出并做简单的运行时断言。',
+        },
+        'cross-provider-reasoning': {
+          title: '通过 preserveReasoningAsText 跨 provider 保留推理',
+          intent: '通过 preserveReasoningAsText 跨 provider 保留推理模型的思维流。',
+        },
+      } as Record<string, { title: string; intent: string }>,
+    },
+    // /examples 索引卡片/行的中文覆盖（短标题 + blurb）。代码标识符、产品专名
+    // （Engram、Vercel AI SDK 等）保留英文；未列出的条目回退英文。
+    entries: {
+      // cookbook
+      'competitive-monitoring': { title: '竞品监控', blurb: '并行监控多个来源（Twitter/Reddit/News）、检测矛盾，并聚合成情报报告。' },
+      'contract-review-dag': { title: '合同审查 DAG', blurb: '4 个任务的 DAG（extract → compliance-check + summary → notify）+ 步骤级重试。正常运行，或用 FORCE_FAIL=task2 触发重试。' },
+      'incident-postmortem-dag': { title: '事故复盘 DAG', blurb: '5 个任务的 DAG：三个并行的根任务（日志模式 + 部署关联 + 影响范围）汇入根因假设与最终复盘综合。' },
+      'meeting-summarizer': { title: '会议纪要生成器', blurb: '对转录做 fan-out 后处理，产出摘要、结构化待办项与情绪。' },
+      'narrative-puzzle-hint-arbitration': { title: '叙事解谜提示仲裁', blurb: '多源提示仲裁，配一个位于生成循环之外的外部安全否决。' },
+      'paper-replication-triage': { title: '论文复现分诊', blurb: '多源论文复现分诊，含产物发现、预置冲突，以及结构化的 go/no-go 计划。' },
+      'personalized-interview-simulator': { title: '个性化面试模拟器', blurb: '交互式面试官循环，带观察者标记、共享记忆与结构化复盘。' },
+      'rare-disease-information-triage': { title: '罕见病信息分诊', blurb: '来源隔离的罕见病信息分诊，含 mock fixtures、预置的错误信息 / 冲突检测，以及安全边界仲裁。' },
+      'translation-backtranslation': { title: '翻译回译', blurb: '翻译 → 用另一家 provider 回译 → 标记语义漂移（跨模型）。' },
+      // reference（name 是 slug，保留；只译 blurb）
+      'external-agent-acp': { blurb: '通过 ACP（Agent Client Protocol）接入外部编码智能体。' },
+      'mcp-bilig-workpaper': { blurb: 'Bilig WorkPaper 的 MCP 工具：公式回读、重算，以及持久化的 workbook JSON。' },
+      'mcp-github': { blurb: '通过 connectMCPTools() 把一个 MCP 服务器的工具暴露给智能体。' },
+      'mcp-open-design': { blurb: '对一个 MCP 服务器的异步任务做批量 fan-out：通过 runTasks() 并行生成 N 次 Open Design run，每次用代码驱动编排轮询 get_run 至完成。' },
+      'trace-observability': { blurb: '对 LLM 调用、工具与任务的 onTrace span。' },
+      // apps
+      'express-customer-support': { title: 'Express 客服', blurb: 'Express REST API：POST /tickets 背后跑 runTasks()、每个智能体独立 Zod schema、可切换的 provider 环境变量、HTTP 错误映射（400/502/504）。' },
+      'with-vercel-ai-sdk': { blurb: 'Next.js：OMA runTeam() 搭配 AI SDK useChat 流式输出。' },
+      // vendor（产品专名保留，只译 blurb）
+      'with-engram': { blurb: 'Engram 记忆后端。' },
+      'with-tencentdb-memory': { blurb: '通过 Hermes Gateway sidecar 接入 TencentDB-Agent-Memory 长期记忆（L0→L3 流水线）。' },
+      // basics（name 是 slug，保留；只译 blurb）
+      'multi-model-team': { blurb: '一个团队里每个智能体用不同的模型。' },
+      'single-agent': { blurb: '一个带 bash + 文件工具的智能体，随后用 Agent 类做流式输出。' },
+      'task-pipeline': { blurb: '带显式任务 DAG 与依赖的 runTasks()。' },
+      'team-collaboration': { blurb: 'runTeam() 协调器模式——目标进，结果出。' },
+      // patterns（name 是 slug，保留；只译 blurb）
+      'agent-handoff': { blurb: '通过 delegate_to_agent 的同步子智能体委派。' },
+      'consensus': { blurb: '通过 runConsensus() 的提议者→评判者反驳循环：默认评判 prompt 与每个评判者的 judgePrompt 函数。' },
+      'cost-tiered-pipeline': { blurb: '把同一条四阶段流水线跑两次，对比旗舰模型 vs 分层模型的成本。' },
+      'cross-provider-reasoning': { blurb: '通过 preserveReasoningAsText 跨 provider 保留推理模型的思维流。' },
+      'fan-out-aggregate': { blurb: '通过 AgentPool.runParallel() 的 MapReduce 式 fan-out。' },
+      'multi-perspective-code-review': { blurb: '多个评审智能体并行，然后综合。' },
+      'plan-replay': { blurb: '用 createPlanArtifact 固定协调器计划，再用 runFromPlan 回放，不重跑协调器。' },
+      'research-aggregation': { blurb: '多源研究，由一个综合智能体汇整。' },
+      'structured-output': { blurb: '智能体产出经 Zod 校验的 JSON。' },
+      'task-retry': { blurb: '每个任务的指数退避重试。' },
+    } as Record<string, { title?: string; blurb: string }>,
   },
 
   showcase: {

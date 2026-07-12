@@ -8,6 +8,7 @@
 // GitHub blip at deploy can't degrade the page. See the note in ./site.
 
 import examplesSnapshot from '../data/examples.json';
+import sourceSnapshot from '../data/examples-source.json';
 
 const SLUG = 'open-multi-agent/open-multi-agent';
 const BRANCH = 'main';
@@ -34,6 +35,24 @@ export const FALLBACK_EXAMPLES: Example[] = [
   { name: 'meeting-summarizer', title: 'Meeting Summarizer', blurb: 'Fan a transcript out into a summary, structured action items, and sentiment.', href: BLOB(`${ROOT}/cookbook/meeting-summarizer.ts`) },
   { name: 'paper-replication-triage', title: 'Paper Replication Triage', blurb: 'Multi-source paper-replication triage with artifact discovery and a structured go/no-go plan.', href: BLOB(`${ROOT}/cookbook/paper-replication-triage.ts`) },
 ];
+
+// A single code example's detail record — full source + structure parsed from the
+// real file by scripts/refresh-gh-data.mjs (JSDoc header + imports; nothing hand-
+// written), powering the /examples/<slug>/ pages. Only the three "ours" categories
+// (cookbook/basics/patterns) get detail records; providers/integrations link out.
+export type ExampleCategory = 'cookbook' | 'basics' | 'patterns';
+export interface ExampleDetail {
+  name: string; // == slug, e.g. "contract-review-dag"
+  category: ExampleCategory;
+  title: string; // authored title from the file's JSDoc, e.g. "Contract Review DAG with Step-Level Retry"
+  intent: string; // maintainer's own description (plain text) — used for the lede + meta
+  apis: string[]; // OMA symbols the file imports from the framework entrypoint
+  run: string[]; // exact run command(s) from the JSDoc "Run:" block
+  prereqs: string[]; // "Prerequisites:" lines (e.g. required env vars)
+  loc: number; // source line count
+  blob: string; // canonical GitHub source URL
+  source: string; // full file text (rendered syntax-highlighted)
+}
 
 export interface ExamplesData {
   cookbook: Example[];
@@ -68,4 +87,32 @@ export function getExamples(): ExamplesData | null {
     return null;
   }
   return d as ExamplesData;
+}
+
+interface ExamplesSource {
+  repo: string;
+  details: Record<string, ExampleDetail>;
+}
+
+// All example detail records, in the JSON's insertion order. Returns [] if the
+// snapshot is missing/malformed — getStaticPaths then simply emits no detail
+// pages (the index still renders and links out), rather than failing the build.
+export function getAllExampleDetails(): ExampleDetail[] {
+  const d = sourceSnapshot as Partial<ExamplesSource>;
+  if (!d || typeof d.details !== 'object' || d.details === null) return [];
+  return Object.values(d.details as Record<string, ExampleDetail>);
+}
+
+// One detail record by slug (== Example.name), or null when absent — lets the
+// index link out to GitHub for entries without a captured source.
+export function getExampleDetail(slug: string): ExampleDetail | null {
+  const d = sourceSnapshot as Partial<ExamplesSource>;
+  const detail = d?.details?.[slug];
+  return detail ?? null;
+}
+
+// Slugs that have a detail page — used by the index to decide internal-link vs
+// external-link per entry.
+export function detailSlugs(): Set<string> {
+  return new Set(getAllExampleDetails().map((d) => d.name));
 }
