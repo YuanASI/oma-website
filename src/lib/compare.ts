@@ -64,6 +64,12 @@ export type Comparison = {
   slug: string;
   /** Display name, kept verbatim in every locale. */
   name: string;
+  /**
+   * Hub placement. 'primary' pins the comparison in the featured tier on
+   * /compare (the head-to-head multi-agent frameworks); absent = the compact
+   * "more comparisons" tier. Full comparison pages are identical either way.
+   */
+  tier?: 'primary';
   /** Official repository, linked from the page. */
   repo: string;
   /** Per-page meta description (title is templated from the name in the dict). */
@@ -92,6 +98,7 @@ export const COMPARISONS: Comparison[] = [
   {
     slug: 'langgraph',
     name: 'LangGraph',
+    tier: 'primary',
     repo: 'https://github.com/langchain-ai/langgraph',
     keywords: ['open-multi-agent vs langgraph', 'langgraph alternative typescript', 'langgraph vs open multi agent', 'goal-driven vs graph agents'],
     seoDescription: {
@@ -134,6 +141,7 @@ export const COMPARISONS: Comparison[] = [
   {
     slug: 'crewai',
     name: 'CrewAI',
+    tier: 'primary',
     repo: 'https://github.com/crewAIInc/crewAI',
     keywords: ['crewai alternative', 'crewai vs open multi agent', 'crewai typescript alternative', 'crewai alternative nodejs'],
     seoDescription: {
@@ -176,6 +184,7 @@ export const COMPARISONS: Comparison[] = [
   {
     slug: 'autogen',
     name: 'AutoGen',
+    tier: 'primary',
     repo: 'https://github.com/microsoft/autogen',
     keywords: ['autogen alternative', 'autogen typescript alternative', 'autogen vs open multi agent', 'conversation-driven vs goal-driven agents'],
     seoDescription: {
@@ -222,6 +231,7 @@ export const COMPARISONS: Comparison[] = [
   {
     slug: 'openai-agents-sdk',
     name: 'OpenAI Agents SDK',
+    tier: 'primary',
     repo: 'https://github.com/openai/openai-agents-python',
     keywords: ['openai agents sdk alternative', 'openai agents sdk typescript', 'multi provider agent framework', 'openai agents sdk vs open multi agent'],
     seoDescription: {
