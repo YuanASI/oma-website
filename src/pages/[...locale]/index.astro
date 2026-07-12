@@ -48,12 +48,20 @@ const starsK = (stats.stars / 1000).toFixed(1) + 'k';
 //    rendered from src/data/hero-run.json, produced by a real DeepSeek run
 //    (scripts/capture-hero-dag.mjs) — no hand-built mockup (PRD §4.1 ①). The
 //    snippet's goal is the exact goal that produced the DAG shown. ──
+// Render the real captured goal as a real JS literal. A single-line goal (en)
+// stays a double-quoted string; a multi-line goal (zh — its numbered list is
+// load-bearing, the only language-agnostic decomposition signal the orchestrator
+// has, see scripts/capture-hero-dag.mjs) renders as a template literal with real
+// line breaks so the terminal never shows literal "\n".
+const heroGoalLiteral = heroRun.goal.includes('\n')
+  ? '`' + heroRun.goal + '`'
+  : JSON.stringify(heroRun.goal);
 const HERO_SNIPPET = `const team = oma.createTeam('api-team', { agents })
 
 // one call: goal → task DAG → result
 const result = await oma.runTeam(
   team,
-  ${JSON.stringify(heroRun.goal)},
+  ${heroGoalLiteral},
 )`;
 
 // Group the captured tasks into dependency levels (depth = longest path from a
