@@ -11,7 +11,6 @@ export const zh: UiDict = {
     product: '产品',
     docs: '文档',
     useCases: '应用场景',
-    community: '社区',
     architecture: '架构',
     examples: '示例',
     showcase: '案例',
