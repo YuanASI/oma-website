@@ -431,8 +431,11 @@ a { color: inherit; }
 .stack-note { font-size: 12px; line-height: 1.45; color: var(--oma-fg-2); }
 .stack-count { font-family: var(--font-mono); font-size: 11px; color: var(--oma-accent); letter-spacing: 0.04em; }
 
-/* ── FAQ ── */
-.faq-list { border-top: 1px solid var(--border-subtle); max-width: 860px; }
+/* ── FAQ (two-column: sticky head left, questions right — like .cap-grid) ── */
+.faq-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 56px; align-items: start; }
+.faq-head { margin-bottom: 0; position: sticky; top: 88px; }
+.faq-head-foot { margin-top: 28px; display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
+.faq-list { border-top: 1px solid var(--border-subtle); }
 .faq-item { border-bottom: 1px solid var(--border-subtle); }
 .faq-q {
   width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 20px;
@@ -523,7 +526,8 @@ a { color: inherit; }
   .dag-stack { max-height: none; overflow: visible; }
   .cap-grid { grid-template-columns: 1fr; gap: 36px; }
   .endorse-grid { grid-template-columns: 1fr; gap: 36px; }
-  .cap-code-wrap { position: static; }
+  .faq-grid { grid-template-columns: 1fr; gap: 36px; }
+  .cap-code-wrap, .faq-head { position: static; }
   .stats-row { grid-template-columns: repeat(2, 1fr); }
   .stat:nth-child(2) { border-right: none; }
   .stat { border-bottom: 1px solid var(--border-subtle); }

@@ -102,13 +102,13 @@ export const zh: UiDict = {
     oneCall: { title: '一次调用', body: '整个 DAG 解析完成时 runTeam() 才返回——无需手工接线节点，也没有调度器要维护。' },
     capsLinks: { threeWays: 'runAgent · runTeam · runTasks —— 三种运行方式', archFlow: '查看架构与 runTeam() 流程' },
     sectionReliability: {
-      eyebrow: '可靠性',
-      title: '为生产环境而生。',
-      sub: '把真实工作交给自主智能体，会引出三个合理的问题：它们会不会失控、烧光预算、或在你看不见的地方失败？每一个问题，API 里都有答案。',
+      eyebrow: '掌控',
+      title: '控制权在你手里。',
+      sub: '三个杠杆，全在 API 里——智能体运行时你留在回路内、给每次运行的花费封顶、事后检查或回放每一次调用。',
     },
     reliability: [
       {
-        tag: '不会失控',
+        tag: '留在回路内',
         t: '你始终在掌控之中',
         ref: '/guides/orchestration-controls/',
         refLabel: '编排控制',
@@ -120,7 +120,7 @@ export const zh: UiDict = {
         ],
       },
       {
-        tag: '不会烧光预算',
+        tag: '花费封顶',
         t: '把钱花在刀刃上',
         ref: '/reference/model-routing/',
         refLabel: '模型路由',
@@ -131,7 +131,7 @@ export const zh: UiDict = {
         ],
       },
       {
-        tag: '调试任意一次运行',
+        tag: '可观测',
         t: '检查、回放、恢复',
         ref: '/reference/observability/',
         refLabel: '可观测性',
@@ -172,15 +172,15 @@ export const zh: UiDict = {
     ],
     sectionProof: {
       eyebrow: '采用情况',
-      title: '已经在真实世界里运行。',
-      sub: '开源、MIT 许可，项目与集成的生态在持续生长。Star、fork 和贡献者数量在构建时直接读自仓库。',
+      title: '开源，数字实时来自仓库。',
+      sub: 'MIT 许可，项目与集成的生态在持续生长。Star、fork 和贡献者数量在构建时直接读自仓库。',
       liveTag: '实时 · 同步自 registry',
       stats: { stars: 'Star', forks: 'Fork', contributors: '贡献者', latestRelease: '最新版本', license: '许可证' },
     },
     sectionFaq: {
       eyebrow: '常见问题',
-      title: '讲机制，不讲营销。',
-      sub: '运行时究竟如何表现。完整参考在文档里。',
+      title: '运行时如何表现。',
+      sub: '最常被问到的问题，直接回答——完整参考在文档里。',
       viewAll: '查看全部问题',
     },
     faqs: [
