@@ -26,6 +26,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Nav from '../../../components/Nav.astro';
 import Footer from '../../../components/Footer.astro';
 import EnterpriseCta from '../../../components/EnterpriseCta.astro';
+import EnterpriseHeadCta from '../../../components/EnterpriseHeadCta.astro';
 import { ghStats } from '../../../lib/site';
 import { localeStaticPaths, toLocale, useTranslations, localizePath } from '../../../i18n';
 
@@ -63,10 +64,13 @@ const jsonLd = {
     <section class="section dw-hero">
       <div class="container">
         <a class="dw-back" href={L('/compare/')}>← {t.hero.backToHub}</a>
-        <div class="section-head dw-head">
-          <div class="eyebrow"><span class="idx">//</span> {t.hero.eyebrow}</div>
-          <h1 class="section-title">{t.hero.h1}</h1>
-          <p class="section-sub">{t.hero.lede}</p>
+        <div class="hero-head-row">
+          <div class="section-head dw-head">
+            <div class="eyebrow"><span class="idx">//</span> {t.hero.eyebrow}</div>
+            <h1 class="section-title">{t.hero.h1}</h1>
+            <p class="section-sub">{t.hero.lede}</p>
+          </div>
+          <EnterpriseHeadCta locale={locale} />
         </div>
         <div class="dw-cards">
           <div class="dw-card">
@@ -178,7 +182,7 @@ const jsonLd = {
 
 <style>
   .dw-hero { padding-top: 64px; padding-bottom: 40px; }
-  .dw-hero .dw-head { margin-bottom: 24px; }
+  .dw-hero .hero-head-row { margin-bottom: 24px; }
   /* Let the lede fill the head width so it shares the h1's right edge, instead of
      sitting in a narrower 620px column that reads as pinched to the left. */
   .dw-hero .section-sub { max-width: 720px; }
