@@ -271,6 +271,42 @@ export const en = {
     footCode: 'packages/core/examples',
     footPost: ' tree, so it always matches the source. ',
     browseAll: 'Browse all on GitHub',
+    // Per-recipe detail page (/examples/<slug>/). Chrome only — the recipe title,
+    // description, source, and run commands are English on every locale (parsed
+    // from the upstream file, like the index blurbs).
+    detail: {
+      backToIndex: '← All examples',
+      categories: { cookbook: 'Cookbook', basics: 'Basics', patterns: 'Pattern' },
+      apisUsed: 'OMA APIs',
+      linesLabel: 'lines',
+      runTitle: 'Run it',
+      runNote: 'From a clone of the repo — this exact file:',
+      prereqsTitle: 'Prerequisites',
+      providerNote: 'OMA is provider-agnostic — this example is written for the key above, but you can run it on OpenAI, Gemini, Groq and others.',
+      providerLink: 'All providers',
+      sourceTitle: 'Full source',
+      sourceNote: "The complete example, refreshed from the repo's main branch.",
+      viewOnGithub: 'View & edit on GitHub',
+      relatedTitle: 'Related examples',
+      relatedNote: 'More recipes in the same category.',
+      learnTitle: 'Learn the concepts',
+      learnQuickStart: 'Quick Start',
+      learnDocs: 'Documentation',
+      browseAll: 'All examples',
+      seoTitleSuffix: ' — Open Multi-Agent example',
+      // Per-recipe zh overrides for the human-readable title + description, keyed
+      // by slug. EN is the source (parsed from the upstream file by
+      // refresh-gh-data.mjs), so it stays empty and each page falls back to
+      // detail.title / detail.intent; zh.ts populates this. Code, API names, run
+      // commands, and source stay English on every locale. Unlisted slugs (e.g. a
+      // newly-added upstream example) fall back to English until translated.
+      recipes: {} as Record<string, { title: string; intent: string }>,
+    },
+    // Per-entry zh overrides for the /examples INDEX cards/rows (short title +
+    // blurb — distinct from detail.recipes' long title + intent). en stays empty
+    // so each entry falls back to the English parsed from the repo; providers are
+    // slugs and are never listed here.
+    entries: {} as Record<string, { title?: string; blurb: string }>,
   },
 
   showcase: {

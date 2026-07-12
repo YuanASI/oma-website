@@ -29,6 +29,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, '..', 'src', 'data');
 const STATS_FILE = join(DATA_DIR, 'gh-stats.json');
 const EXAMPLES_FILE = join(DATA_DIR, 'examples.json');
+const SOURCE_FILE = join(DATA_DIR, 'examples-source.json');
 
 const SLUG = 'open-multi-agent/open-multi-agent';
 const BRANCH = 'main';
@@ -185,6 +186,109 @@ function firstDocLine(src) {
   return '';
 }
 
+// ───────────── example detail (source + structure for /examples/<slug>) ─────────────
+// Everything below is EXTRACTED from the real file — the maintainer's own JSDoc
+// header and the file's imports — never generated. So the detail pages stay
+// honest (red-line §7) and re-sync with upstream on every refresh. Only the three
+// "ours" categories get detail pages; providers/integrations still link out.
+const DETAIL_CATEGORIES = ['cookbook', 'basics', 'patterns'];
+
+// Section labels that end the intro prose / delimit doc sections. "Scenario" is
+// deliberately NOT here — its line is useful intent (the diagram after it stops us).
+const SECTION_RE = /^(Run|Prerequisites?|Key features?|Notes?|Usage|Environment|Env vars?|Output|Steps?)\s*:/i;
+// ASCII box-drawing / flow lines (task diagrams) — never real prose.
+const DIAGRAM_RE = /[│├└┌┐┘┤┬┴┼─→←↑↓]|─{2,}|\+--|\|__/;
+
+// Strip a file's first JSDoc block to bare text lines (leading ` * ` removed).
+// Drops the empty leading element between `/**` and the first newline so lines[0]
+// is the title line.
+function docLines(src) {
+  const m = src.match(/\/\*\*([\s\S]*?)\*\//);
+  if (!m) return [];
+  const lines = m[1].split('\n').map((l) => l.replace(/^\s*\*?\s?/, '').replace(/\s+$/, ''));
+  while (lines.length && !lines[0].trim()) lines.shift();
+  return lines;
+}
+
+// Intent = the descriptive prose right after the title line, up to the first
+// section header or diagram line, joined into one paragraph.
+function parseIntent(lines) {
+  const out = [];
+  for (let i = 1; i < lines.length; i++) {
+    const t = lines[i].trim();
+    if (!t) { if (out.length) break; continue; }
+    if (SECTION_RE.test(t) || DIAGRAM_RE.test(t)) break;
+    out.push(t);
+  }
+  // cleanMd normalizes whitespace and strips markdown markers (backticks, links,
+  // bold) so the intent is clean plain text for the lede + meta description.
+  return cleanMd(out.join(' ')).replace(/[:\s]+$/, '');
+}
+
+// Collect the lines under a "Label:" section, until a blank line or the next
+// section header. Used for the verbatim "Run:" commands and "Prerequisites:".
+function parseSection(lines, labelRe) {
+  const out = [];
+  let inSec = false;
+  for (const raw of lines) {
+    const t = raw.trim();
+    if (!inSec) {
+      if (labelRe.test(t)) {
+        inSec = true;
+        const after = t.replace(labelRe, '').trim();
+        if (after) out.push(after);
+      }
+      continue;
+    }
+    if (!t) { if (out.length) break; continue; }
+    if (SECTION_RE.test(t)) break;
+    out.push(t);
+  }
+  return out;
+}
+
+// The OMA API surface a recipe actually uses = the value symbols it imports from
+// the framework's src/index.js entrypoint. Purely factual (it's the import line).
+function parseApis(src) {
+  const symbols = new Set();
+  const re = /import\s+(?:type\s+)?\{([^}]*)\}\s+from\s+['"][^'"]*src\/index\.js['"]/g;
+  let m;
+  while ((m = re.exec(src))) {
+    for (const part of m[1].split(',')) {
+      const name = part.replace(/\btype\s+/, '').trim();
+      if (name && /^[A-Za-z]/.test(name)) symbols.add(name);
+    }
+  }
+  return [...symbols];
+}
+
+function buildDetail(category, ex, src) {
+  const lines = docLines(src);
+  const title = (lines[0] || '').trim();
+  const run = parseSection(lines, /^Run\s*:/i);
+  // Prefer the maintainer's JSDoc summary; fall back to the README blurb when the
+  // parsed intent is empty, a bare "Demonstrates" lead, or a sentence the parser
+  // cut mid-clause (ends on a dangling connective like "either" / "via").
+  let intent = parseIntent(lines);
+  if (!intent || intent.length < 25 || /\b(?:either|or|and|the|an?|with|via|to|of|for|that|into|when|which|then)$/i.test(intent)) {
+    intent = ex.blurb || intent;
+  }
+  return {
+    name: ex.name,
+    category,
+    title: title || ex.title,
+    intent,
+    apis: parseApis(src),
+    // Fall back to the canonical repo-relative run path (matches the doc's own
+    // "Run:" convention) when a file omits an explicit Run block.
+    run: run.length ? run : [`npx tsx ${ROOT}/${category}/${ex.name}.ts`],
+    prereqs: parseSection(lines, /^Prerequisites?\s*:/i),
+    loc: src.replace(/\s+$/, '').split('\n').length,
+    blob: ex.href,
+    source: src,
+  };
+}
+
 async function fetchExamples() {
   const headers = ghApiHeaders();
 
@@ -271,7 +375,7 @@ async function fetchExamples() {
     }),
   );
 
-  return {
+  const inventory = {
     cookbook,
     apps,
     reference,
@@ -282,6 +386,22 @@ async function fetchExamples() {
     productionHref: TREE(`${ROOT}/production`),
     browseHref: TREE(ROOT),
   };
+
+  // Detail records (full source + parsed structure) for the "ours" categories,
+  // keyed by slug (== name; names are unique across these three categories). Raw
+  // CDN fetches aren't rate-limited; a rare miss just omits that page this cycle.
+  const detailTargets = DETAIL_CATEGORIES.flatMap((category) =>
+    (inventory[category] ?? []).map((ex) => ({ category, ex })),
+  );
+  const details = {};
+  await Promise.all(
+    detailTargets.map(async ({ category, ex }) => {
+      const src = await fetchText(RAW(`${ROOT}/${category}/${ex.name}.ts`));
+      if (src) details[ex.name] = buildDetail(category, ex, src);
+    }),
+  );
+
+  return { inventory, details, detailExpected: detailTargets.length };
 }
 
 // ───────────────────────── main ─────────────────────────
@@ -292,11 +412,15 @@ async function main() {
   // Fetch both before writing anything, so a partial failure leaves the snapshot
   // untouched (all-or-nothing).
   const stats = await fetchStats(prevStats);
-  const examples = await fetchExamples();
+  const { inventory: examples, details, detailExpected } = await fetchExamples();
 
   await mkdir(DATA_DIR, { recursive: true });
   await writeFile(STATS_FILE, JSON.stringify(stats, null, 2) + '\n');
   await writeFile(EXAMPLES_FILE, JSON.stringify(examples, null, 2) + '\n');
+  await writeFile(
+    SOURCE_FILE,
+    JSON.stringify({ repo: `${SLUG}@${BRANCH}`, details }, null, 2) + '\n',
+  );
 
   const total =
     examples.cookbook.length + examples.apps.length + examples.reference.length +
@@ -312,6 +436,11 @@ async function main() {
       `reference=${examples.reference.length} vendor=${examples.vendor.length} ` +
       `basics=${examples.basics.length} patterns=${examples.patterns.length} ` +
       `providers=${examples.providers.length})`,
+  );
+  const detailCount = Object.keys(details).length;
+  console.log(
+    `[refresh] example details: ${detailCount}/${detailExpected} sources captured` +
+      (detailCount < detailExpected ? ' — WARNING: some sources missed this cycle' : ''),
   );
 }
 
