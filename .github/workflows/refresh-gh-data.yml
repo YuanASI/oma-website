@@ -1,0 +1,79 @@
+name: Refresh GitHub snapshot
+
+# Refreshes the committed GitHub snapshot the site builds against —
+# src/data/gh-stats.json (stars/forks/contributors/release) and
+# src/data/examples.json (the /examples inventory). See scripts/refresh-gh-data.mjs.
+#
+# WHY: those numbers + the example list used to be fetched from the GitHub API at
+# *build time*. On Cloudflare Pages' shared build IP a transient rate-limit/blip
+# degraded the whole deploy to placeholder values, forcing repeated redeploys.
+# Fetching here instead — on Actions' reliable token + IP — and committing the
+# result decouples freshness from deploy: every build just reads the file.
+#
+# It pushes the refreshed snapshot straight to main (data-only paths). The commit
+# carries [skip ci] so it doesn't re-trigger CI / IndexNow (nothing to re-check on
+# a numbers-only change); Cloudflare Pages still rebuilds via its own GitHub App
+# webhook, so the fresh numbers reach the live site within a deploy.
+
+on:
+  schedule:
+    # Every 6 hours, off-the-hour to dodge GitHub's scheduling congestion.
+    - cron: '23 */6 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-gh-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: Refresh snapshot from GitHub
+    runs-on: ubuntu-latest
+    steps:
+      # Check out with SYNC_PAT (a real user) so the push below reaches main and
+      # fires the Cloudflare Pages deploy webhook.
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.SYNC_PAT }}
+
+      # pnpm version is pinned by package.json "packageManager" (Corepack-style).
+      # Do NOT add a `version:` input — action-setup errors if both are set.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # The only step that talks to the GitHub API. GITHUB_TOKEN authenticates the
+      # fetch (5,000/hr) so a shared-runner IP doesn't hit the 60/hr limit. On any
+      # hard failure the script exits non-zero and writes nothing — the last-good
+      # snapshot stays committed.
+      - name: Refresh snapshot
+        run: node scripts/refresh-gh-data.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Validate the build against the fresh snapshot before pushing, so a bad
+      # refresh never reaches main. No token here on purpose: the build no longer
+      # fetches GitHub, so it must pass fully offline.
+      - name: Validate build
+        run: pnpm build
+
+      - name: Commit + push if the snapshot changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- src/data; then
+            echo "Snapshot unchanged — nothing to push."
+          else
+            git add src/data/gh-stats.json src/data/examples.json
+            git commit -m "chore(data): refresh GitHub snapshot [skip ci]"
+            git push
+            echo "Pushed refreshed snapshot to main."
+          fi
