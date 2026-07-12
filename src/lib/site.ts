@@ -41,3 +41,11 @@ export function ghStats(): GhStats {
     latestRelease: typeof s.latestRelease === 'string' ? s.latestRelease : STATS_FLOOR.latestRelease,
   };
 }
+
+// Locale-matched enterprise landing on YUANASI. zh → the Chinese root; every other
+// locale → /en. One helper so the footer's Enterprise-support link, the
+// EnterpriseCta block, and the nav's For Companies entry all resolve the same
+// target — the URL contract lives here, not copied at each call site.
+export function yuanasiHref(locale: string): string {
+  return locale === 'zh' ? YUANASI : `${YUANASI}/en`;
+}

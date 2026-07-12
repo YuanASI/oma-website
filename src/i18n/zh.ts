@@ -24,6 +24,7 @@ export const zh: UiDict = {
     compare: '对比',
     solutions: '用例',
     integrations: '集成',
+    forCompanies: '企业服务',
     menuDesc: {
       architecture: 'OMA 工作原理图解',
       examples: '仓库里可直接运行的实例',
@@ -87,6 +88,7 @@ export const zh: UiDict = {
       parallel: '并行',
       runReal: '真实',
       runTasks: '个任务',
+      enterprise: { pre: '在为公司做选型？', link: '企业交付与支持' },
     },
     copy: '复制',
     copied: '✓ 已复制',

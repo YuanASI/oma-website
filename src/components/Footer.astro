@@ -2,7 +2,7 @@
 // Global footer. Shared by every custom page. `locale` localizes the labels and
 // the in-site links. External URLs (GitHub/npm/license/llms.txt/RSS) stay as-is —
 // those resources have a single, English form.
-import { REPO, NPM, YUANASI } from '../lib/site';
+import { REPO, NPM, yuanasiHref } from '../lib/site';
 import { useTranslations, localizePath, type Locale } from '../i18n';
 
 interface Props {
@@ -11,8 +11,6 @@ interface Props {
 const { locale = 'en' } = Astro.props;
 const t = useTranslations(locale);
 const L = (p: string) => localizePath(p, locale);
-// Enterprise-support link points at YuanASI's locale-matched landing.
-const yuanasiHref = locale === 'zh' ? YUANASI : `${YUANASI}/en`;
 ---
 
 <footer class="footer">
@@ -45,7 +43,7 @@ const yuanasiHref = locale === 'zh' ? YUANASI : `${YUANASI}/en`;
             <a class="nav-link" href={L('/showcase/')} style="font-size:13px;">{t.footer.resources.showcase}</a>
             <a class="nav-link" href={L('/compare/')} style="font-size:13px;">{t.footer.resources.compare}</a>
             <a class="nav-link" href={L('/blog/')} style="font-size:13px;">{t.footer.resources.blog}</a>
-            <a class="nav-link" href={yuanasiHref} target="_blank" rel="noreferrer" style="font-size:13px;">{t.footer.resourcesEnterprise}</a>
+            <a class="nav-link" href={yuanasiHref(locale)} target="_blank" rel="noreferrer" style="font-size:13px;">{t.footer.resourcesEnterprise}</a>
           </div>
         </div>
         <div>
