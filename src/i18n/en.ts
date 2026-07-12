@@ -33,8 +33,8 @@ export const en = {
       examples: 'Runnable recipes from the repo',
       compare: 'vs LangGraph, CrewAI, AutoGen & more',
       showcase: 'Projects built with OMA',
-      blog: 'Notes on multi-agent orchestration',
-      solutions: 'Multi-agent use cases in TypeScript',
+      blog: 'Notes on AI Agent orchestration',
+      solutions: 'AI Agent use cases in TypeScript',
       integrations: 'Anthropic, OpenAI, Gemini, Ollama & more',
     },
     stars: 'stars',
@@ -49,7 +49,7 @@ export const en = {
   },
 
   footer: {
-    blurb: 'From a goal to a task DAG, automatically.<br />TypeScript-native multi-agent framework.',
+    blurb: 'From a goal to a task DAG, automatically.<br />TypeScript-native AI Agent framework.',
     product: { head: 'Product', capabilities: 'Capabilities', useCases: 'Use cases', integrations: 'Integrations', faq: 'FAQ' },
     resources: { head: 'Resources', docs: 'Docs', architecture: 'Architecture', examples: 'Examples', showcase: 'Showcase', compare: 'Compare', blog: 'Blog' },
     project: { head: 'Project', github: 'GitHub', npm: 'npm', mitLicense: 'MIT license', llmsTxt: 'llms.txt', rss: 'RSS' },
@@ -81,11 +81,11 @@ export const en = {
 
   landing: {
     seo: {
-      title: 'Open Multi-Agent — TypeScript multi-agent framework',
-      description: 'TypeScript-native multi-agent framework. A coordinator turns a goal into a task DAG, parallelizes it, and synthesizes a typed result — drops into any Node.js backend.',
+      title: 'Open Multi-Agent — TypeScript AI Agent framework',
+      description: 'TypeScript-native AI Agent framework. A coordinator turns a goal into a task DAG, parallelizes it, and synthesizes a typed result — drops into any Node.js backend.',
     },
     hero: {
-      eyebrow: 'TypeScript multi-agent framework',
+      eyebrow: 'TypeScript AI Agent framework',
       h1: 'From a goal to a task DAG, ',
       h1Accent: 'automatically.',
       meta: ['3 runtime deps', 'any model', 'runs anywhere'],
@@ -370,10 +370,10 @@ export const en = {
     seo: {
       title: 'Blog — Open Multi-Agent',
       description:
-        'Writing on TypeScript multi-agent orchestration: goal-driven task DAGs, mixed-model teams, long-term memory, and lessons from the agent-framework ecosystem.',
+        'Writing on TypeScript AI Agent orchestration: goal-driven task DAGs, mixed-model teams, long-term memory, and lessons from the agent-framework ecosystem.',
     },
     eyebrow: 'Blog',
-    title: 'Notes on multi-agent orchestration.',
+    title: 'Notes on AI Agent orchestration.',
     // Index lede. The inline link renders only when `ledeLink` is set: the en
     // index points at dev.to ("Cross-posted from dev.to"); the zh index drops it
     // (translations aren't cross-posted) by leaving ledeLink/ledePost empty.
@@ -395,12 +395,12 @@ export const en = {
   compare: {
     seo: {
       title: 'open-multi-agent vs LangGraph, CrewAI, Mastra, LangChain, Pydantic AI & more',
-      description: 'Honest, sourced comparisons of open-multi-agent against the main multi-agent frameworks — language, orchestration model, dependencies, budget control, and observability, and when to pick each.',
+      description: 'Honest, sourced comparisons of open-multi-agent against the main AI Agent frameworks — language, orchestration model, dependencies, budget control, and observability, and when to pick each.',
     },
     hero: {
       eyebrow: 'compare',
       title: 'How open-multi-agent compares.',
-      lede: 'Choosing a multi-agent framework? Here is an honest, side-by-side look at open-multi-agent against the main alternatives — the dimensions that actually decide it, and a fair account of when the other tool is the better call.',
+      lede: 'Choosing an AI Agent framework? Here is an honest, side-by-side look at open-multi-agent against the main alternatives — the dimensions that actually decide it, and a fair account of when the other tool is the better call.',
     },
     hub: {
       pickThem: 'Pick {name} if',
@@ -504,13 +504,13 @@ export const en = {
   // src/lib/solutions.ts.
   solutions: {
     seo: {
-      title: 'Use cases — multi-agent orchestration in TypeScript',
+      title: 'Use cases — AI Agent orchestration in TypeScript',
       description: 'What you can build with open-multi-agent: parallel LLM calls, goal-driven task DAGs, mixed-model teams, local agents, long-term memory, and orchestration on top of the Vercel AI SDK.',
     },
     hero: {
       eyebrow: 'use cases',
       title: 'What you can build.',
-      lede: 'Common shapes of multi-agent work in TypeScript — each with the mechanism, when it fits, and a full walkthrough with runnable code.',
+      lede: 'Common shapes of AI Agent work in TypeScript — each with the mechanism, when it fits, and a full walkthrough with runnable code.',
     },
     hub: { view: 'See how' },
     page: {
