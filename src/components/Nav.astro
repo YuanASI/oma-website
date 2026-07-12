@@ -3,7 +3,8 @@
 // place. `current` marks the active in-site link; `starsK` is the build-time star
 // count (e.g. "6.4k"); `locale` localizes the labels and the in-site links; `path`
 // is this page's default-locale path, handed to the language switcher.
-import { REPO, FORGE, NPM, yuanasiHref } from '../lib/site';
+import { REPO, yuanasiHref } from '../lib/site';
+import { getExamples, FALLBACK_EXAMPLES } from '../lib/examples';
 import { useTranslations, localizePath, type Locale } from '../i18n';
 import LangSwitcher from './LangSwitcher.astro';
 
@@ -16,6 +17,13 @@ interface Props {
 const { current = 'home', starsK, locale = 'en', path } = Astro.props;
 const t = useTranslations(locale);
 const L = (p: string) => localizePath(p, locale);
+
+// The 9 cookbook recipes surfaced in the Use Cases dropdown — real-world
+// scenarios, each linking to its /examples/<slug>/ detail page. Falls back to the
+// curated FALLBACK_EXAMPLES if the committed snapshot is ever missing. zh titles
+// come from the same per-slug override the /examples index uses.
+const useCases = getExamples()?.cookbook ?? FALLBACK_EXAMPLES;
+const ucTitle = (e: { name: string; title: string }) => t.examples.entries[e.name]?.title ?? e.title;
 ---
 
 <nav class="nav">
@@ -33,10 +41,6 @@ const L = (p: string) => localizePath(p, locale);
             <span class="pkg">{t.nav.architecture}</span>
             <span class="desc">{t.nav.menuDesc.architecture}</span>
           </a>
-          <a class="nav-menu-link nav-menu-link--page" href={L('/examples/')} aria-current={current === 'examples' ? 'page' : undefined}>
-            <span class="pkg">{t.nav.examples}</span>
-            <span class="desc">{t.nav.menuDesc.examples}</span>
-          </a>
           <a class="nav-menu-link nav-menu-link--page" href={L('/compare/')} aria-current={current === 'compare' ? 'page' : undefined}>
             <span class="pkg">{t.nav.compare}</span>
             <span class="desc">{t.nav.menuDesc.compare}</span>
@@ -51,6 +55,19 @@ const L = (p: string) => localizePath(p, locale);
           </a>
         </div>
       </div>
+      <div class="nav-item">
+        <button type="button" class={`nav-menu-btn${current === 'examples' ? ' is-current' : ''}`} aria-haspopup="true">{t.nav.useCases} <span class="nav-menu-caret">▾</span></button>
+        <div class="nav-menu nav-menu--use-cases">
+          {useCases.map((e) => (
+            <a class="nav-menu-link nav-menu-link--page nav-menu-link--compact" href={L(`/examples/${e.name}/`)}>
+              <span class="pkg">{ucTitle(e)}</span>
+            </a>
+          ))}
+          <a class="nav-menu-link nav-menu-link--page nav-menu-link--all" href={L('/examples/')}>
+            <span class="pkg">{t.examples.detail.browseAll} →</span>
+          </a>
+        </div>
+      </div>
       <a class="nav-link" href={L('/getting-started/introduction/')} aria-current={current === 'docs' ? 'page' : undefined}>{t.nav.docs}</a>
       <div class="nav-item">
         <button type="button" class="nav-menu-btn" aria-haspopup="true">{t.nav.community} <span class="nav-menu-caret">▾</span></button>
@@ -62,23 +79,6 @@ const L = (p: string) => localizePath(p, locale);
           <a class="nav-menu-link nav-menu-link--page" href={L('/blog/')} aria-current={current === 'blog' ? 'page' : undefined}>
             <span class="pkg">{t.nav.blog}</span>
             <span class="desc">{t.nav.menuDesc.blog}</span>
-          </a>
-        </div>
-      </div>
-      <div class="nav-item">
-        <button type="button" class="nav-menu-btn" aria-haspopup="true">{t.nav.code} <span class="nav-menu-caret">▾</span></button>
-        <div class="nav-menu">
-          <a class="nav-menu-link" href={REPO} target="_blank" rel="noreferrer">
-            <span class="pkg">{t.nav.codeMenu.framework.pkg} <span class="ext">↗</span></span>
-            <span class="desc">{t.nav.codeMenu.framework.desc}</span>
-          </a>
-          <a class="nav-menu-link" href={FORGE} target="_blank" rel="noreferrer">
-            <span class="pkg">{t.nav.codeMenu.forge.pkg} <span class="ext">↗</span></span>
-            <span class="desc">{t.nav.codeMenu.forge.desc}</span>
-          </a>
-          <a class="nav-menu-link" href={NPM} target="_blank" rel="noreferrer">
-            <span class="pkg">{t.nav.codeMenu.npm.pkg} <span class="ext">↗</span></span>
-            <span class="desc">{t.nav.codeMenu.npm.desc}</span>
           </a>
         </div>
       </div>
@@ -131,4 +131,13 @@ const L = (p: string) => localizePath(p, locale);
      .nav-menu .pkg, so it needs its own muted styling (the .ext rule in
      landing.css is scoped to the dropdown). */
   .nav-link--ext .ext { color: var(--oma-fg-3); font-size: 11px; margin-left: 1px; }
+
+  /* Use Cases dropdown: the button reads active on any /examples page; the 9
+     recipe rows are compact (title only, no desc) so the list stays short, with
+     the "all examples" link separated at the foot. */
+  .nav-menu-btn.is-current { color: var(--oma-fg-0); }
+  .nav-menu--use-cases { min-width: 264px; }
+  .nav-menu-link--compact { padding-top: 7px; padding-bottom: 7px; }
+  .nav-menu-link--all { margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--border-subtle); }
+  .nav-menu-link--all .pkg { color: var(--oma-accent); }
 </style>

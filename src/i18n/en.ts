@@ -12,17 +12,12 @@ export const en = {
   nav: {
     brandAria: 'Open Multi-Agent — home',
     // Top-level dropdown labels. `product` fronts the evaluate-the-framework pages
-    // (architecture/examples/compare); `community` fronts showcase/blog; `code`
-    // fronts the off-site source links (repo/forge/npm), whose entries are codeMenu.
+    // (architecture/compare/solutions/integrations); `useCases` fronts the 9
+    // cookbook recipes (their own top-level tab); `community` fronts showcase/blog.
     product: 'Product',
     docs: 'Docs',
+    useCases: 'Use Cases',
     community: 'Community',
-    code: 'Code',
-    codeMenu: {
-      framework: { pkg: 'open-multi-agent', desc: 'The multi-agent orchestration framework.' },
-      forge: { pkg: 'oma-forge', desc: 'Experimental project under the open-multi-agent org.' },
-      npm: { pkg: '@open-multi-agent/core', desc: 'The published package on npm.' },
-    },
     architecture: 'Architecture',
     examples: 'Examples',
     showcase: 'Showcase',
