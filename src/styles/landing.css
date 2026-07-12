@@ -225,6 +225,41 @@ a { color: inherit; }
 .case-link:hover .text-link { color: var(--oma-fg-0); }
 .case-link:hover .text-link .arrow { transform: translateX(3px); color: var(--oma-accent); }
 
+/* ── Primary button (filled accent) ──
+   The site's only solid button: an accent fill reserved for the enterprise CTA,
+   which is deliberately lifted above the understated text-links. Used in the
+   page-hero header row (right) and the closing EnterpriseCta band. */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0;
+  background: var(--oma-accent); color: var(--oma-accent-fg);
+  font-family: var(--font-mono); font-size: 13px; font-weight: 600;
+  letter-spacing: 0.01em; white-space: nowrap;
+  border-radius: var(--radius-sm); padding: 11px 18px; text-decoration: none;
+  transition: background var(--duration-base) var(--ease-out),
+              box-shadow var(--duration-base) var(--ease-out);
+}
+.btn-primary:hover { background: var(--oma-accent-deep); box-shadow: var(--shadow-md); }
+.btn-primary .arrow { color: currentColor; transition: transform var(--duration-base) var(--ease-out); }
+.btn-primary:hover .arrow { transform: translateX(3px); }
+
+/* ── Hero header row ──
+   Pairs a page's H1 block (left) with the enterprise primary button (right),
+   filling the empty space beside the title. The button is vertically centred on
+   the title block. For that centring to be clean, the row (not the head block)
+   owns the gap below: the head's own margin-bottom is zeroed here, and the row
+   carries it instead — 48px by default, with per-page hero styles overriding
+   `.<hero> .hero-head-row` to their tuned value. Mobile stacks to a column. */
+.hero-head-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 32px;
+  margin-bottom: 48px;
+}
+.hero-head-row > .section-head,
+.hero-head-row > .hero-head-text { margin-bottom: 0; min-width: 0; }
+@media (max-width: 768px) {
+  .hero-head-row { flex-direction: column; align-items: flex-start; }
+  .hero-head-row > .hero-head-cta { margin-top: 20px; }
+}
+
 /* ── Hero right visual ── */
 .io-panel {
   background: var(--oma-bg-1); border: 1px solid var(--border-default);
