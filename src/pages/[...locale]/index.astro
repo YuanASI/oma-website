@@ -21,7 +21,7 @@ import TaskNode from '../../components/ds/TaskNode.astro';
 import heroRunEn from '../../data/hero-run.json';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
-import { REPO, NPM, ghStats } from '../../lib/site';
+import { REPO, NPM, ghStats, yuanasiHref } from '../../lib/site';
 import { SHOWCASE } from '../../lib/showcase';
 import { localeStaticPaths, toLocale, useTranslations, localizePath } from '../../i18n';
 
@@ -191,6 +191,7 @@ const jsonLd = {
               </button>
               <a class="text-link" href={L('/getting-started/quick-start/')}><span>{l.hero.quickStart}</span><span class="arrow">→</span></a>
             </div>
+            <p class="hero-enterprise">{l.hero.enterprise.pre} <a href={yuanasiHref(locale)} target="_blank" rel="noreferrer">{l.hero.enterprise.link} <span class="arrow" aria-hidden="true">→</span></a></p>
           </div>
           <div>
             <div class="io-panel">
