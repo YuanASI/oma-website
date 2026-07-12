@@ -14,6 +14,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Nav from '../../../components/Nav.astro';
 import Footer from '../../../components/Footer.astro';
 import EnterpriseCta from '../../../components/EnterpriseCta.astro';
+import EnterpriseHeadCta from '../../../components/EnterpriseHeadCta.astro';
 import CodeBlock from '../../../components/ds/CodeBlock.astro';
 import Badge from '../../../components/ds/Badge.astro';
 import { REPO, ghStats } from '../../../lib/site';
@@ -94,10 +95,13 @@ const jsonLd = {
     <section class="section exd-hero">
       <div class="container">
         <a class="exd-back" href={L('/examples/')}>{dt.backToIndex}</a>
-        <div class="section-head exd-head">
-          <div class="eyebrow"><span class="idx">//</span> {categoryLabel}</div>
-          <h1 class="section-title">{displayTitle}</h1>
-          <p class="section-sub">{displayIntent}</p>
+        <div class="hero-head-row">
+          <div class="section-head exd-head">
+            <div class="eyebrow"><span class="idx">//</span> {categoryLabel}</div>
+            <h1 class="section-title">{displayTitle}</h1>
+            <p class="section-sub">{displayIntent}</p>
+          </div>
+          <EnterpriseHeadCta locale={locale} />
         </div>
 
         <!-- At a glance: category · APIs used · size -->
@@ -215,7 +219,7 @@ const jsonLd = {
   /* Extra bottom room so the at-a-glance box isn't cramped against the section
      divider below it. */
   .exd-hero { padding-top: 64px; padding-bottom: 40px; }
-  .exd-hero .exd-head { margin-bottom: 20px; }
+  .exd-hero .hero-head-row { margin-bottom: 20px; }
   .exd-back {
     display: inline-block; margin-bottom: 18px; font-family: var(--font-mono);
     font-size: 12px; color: var(--oma-fg-3); text-decoration: none;

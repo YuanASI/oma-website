@@ -13,6 +13,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Nav from '../../../components/Nav.astro';
 import Footer from '../../../components/Footer.astro';
 import EnterpriseCta from '../../../components/EnterpriseCta.astro';
+import EnterpriseHeadCta from '../../../components/EnterpriseHeadCta.astro';
 import { ghStats } from '../../../lib/site';
 import { COMPARISONS, type Loc } from '../../../lib/compare';
 import { localeStaticPaths, toLocale, useTranslations, localizePath } from '../../../i18n';
@@ -65,10 +66,13 @@ const jsonLd = {
   <main>
     <section class="section compare-hub-hero">
       <div class="container">
-        <div class="section-head">
-          <div class="eyebrow"><span class="idx">//</span> {t.hero.eyebrow}</div>
-          <h1 class="section-title">{t.hero.title}</h1>
-          <p class="section-sub">{t.hero.lede}</p>
+        <div class="hero-head-row">
+          <div class="section-head">
+            <div class="eyebrow"><span class="idx">//</span> {t.hero.eyebrow}</div>
+            <h1 class="section-title">{t.hero.title}</h1>
+            <p class="section-sub">{t.hero.lede}</p>
+          </div>
+          <EnterpriseHeadCta locale={locale} />
         </div>
 
         <!-- In context: Claude dynamic workflows. Same bet (the model plans the

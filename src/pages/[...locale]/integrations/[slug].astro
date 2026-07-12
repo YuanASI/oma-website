@@ -11,6 +11,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Nav from '../../../components/Nav.astro';
 import Footer from '../../../components/Footer.astro';
 import EnterpriseCta from '../../../components/EnterpriseCta.astro';
+import EnterpriseHeadCta from '../../../components/EnterpriseHeadCta.astro';
 import { ghStats } from '../../../lib/site';
 import { INTEGRATIONS, type Integration } from '../../../lib/integrations';
 import { type Loc } from '../../../lib/compare';
@@ -60,10 +61,13 @@ const jsonLd = {
     <section class="section int-hero">
       <div class="container">
         <a class="int-back" href={L('/integrations/')}>← {t.page.backToHub}</a>
-        <div class="section-head int-head">
-          <div class="eyebrow"><span class="idx">//</span> {t.page.eyebrow}</div>
-          <h1 class="section-title">{heading}</h1>
-          <p class="section-sub">{pick(itg.lede)}</p>
+        <div class="hero-head-row">
+          <div class="section-head int-head">
+            <div class="eyebrow"><span class="idx">//</span> {t.page.eyebrow}</div>
+            <h1 class="section-title">{heading}</h1>
+            <p class="section-sub">{pick(itg.lede)}</p>
+          </div>
+          <EnterpriseHeadCta locale={locale} />
         </div>
       </div>
     </section>
@@ -117,7 +121,7 @@ const jsonLd = {
 
 <style>
   .int-hero { padding-top: 64px; padding-bottom: 8px; }
-  .int-hero .int-head { margin-bottom: 8px; }
+  .int-hero .hero-head-row { margin-bottom: 8px; }
   .int-back {
     display: inline-block; margin-bottom: 18px; font-family: var(--font-mono);
     font-size: 12px; color: var(--oma-fg-3); text-decoration: none;
