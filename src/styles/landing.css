@@ -572,6 +572,10 @@ a { color: inherit; }
   .nav-links.open .nav-item { flex-direction: column; align-items: flex-start; }
   .nav-links.open .nav-menu { position: static; display: flex; box-shadow: none; border: none; padding: 8px 0 0; min-width: 0; }
   .nav-links.open .nav-menu::before { content: none; } /* no gap to bridge in the stacked mobile menu */
+  /* Two-column Use Cases dropdown collapses to a single stacked column on mobile. */
+  .nav-links.open .nav-menu--cols { flex-direction: column; gap: 2px; }
+  .nav-links.open .nav-col { min-width: 0; }
+  .nav-links.open .nav-col + .nav-col { border-left: none; padding-left: 0; margin-top: 10px; }
   .nav-mobile-toggle {
     display: inline-flex; align-items: center; justify-content: center;
     width: 38px; height: 38px; background: var(--oma-bg-2);
