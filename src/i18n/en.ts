@@ -37,6 +37,10 @@ export const en = {
       solutions: 'AI Agent use cases in TypeScript',
       integrations: 'Anthropic, OpenAI, Gemini, Ollama & more',
     },
+    // Use Cases dropdown column headers + the left column's "view all" link
+    // (the right column reuses examples.detail.browseAll).
+    useCasesCols: { solutions: 'Solutions', examples: 'Examples' },
+    viewAllSolutions: 'All solutions',
     stars: 'stars',
     toggleThemeAria: 'Toggle light/dark theme',
     toggleThemeTitle: 'Toggle theme',

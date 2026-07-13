@@ -5,7 +5,9 @@
 // is this page's default-locale path, handed to the language switcher.
 import { REPO, yuanasiHref } from '../lib/site';
 import { getExamples, FALLBACK_EXAMPLES } from '../lib/examples';
+import { SOLUTIONS } from '../lib/solutions';
 import { useTranslations, localizePath, type Locale } from '../i18n';
+import type { Loc } from '../lib/compare';
 import LangSwitcher from './LangSwitcher.astro';
 
 interface Props {
@@ -24,6 +26,7 @@ const L = (p: string) => localizePath(p, locale);
 // come from the same per-slug override the /examples index uses.
 const useCases = getExamples()?.cookbook ?? FALLBACK_EXAMPLES;
 const ucTitle = (e: { name: string; title: string }) => t.examples.entries[e.name]?.title ?? e.title;
+const pick = (o: Loc) => o[locale];
 ---
 
 <nav class="nav">
@@ -45,10 +48,6 @@ const ucTitle = (e: { name: string; title: string }) => t.examples.entries[e.nam
             <span class="pkg">{t.nav.compare}</span>
             <span class="desc">{t.nav.menuDesc.compare}</span>
           </a>
-          <a class="nav-menu-link nav-menu-link--page" href={L('/solutions/')} aria-current={current === 'solutions' ? 'page' : undefined}>
-            <span class="pkg">{t.nav.solutions}</span>
-            <span class="desc">{t.nav.menuDesc.solutions}</span>
-          </a>
           <a class="nav-menu-link nav-menu-link--page" href={L('/integrations/')} aria-current={current === 'integrations' ? 'page' : undefined}>
             <span class="pkg">{t.nav.integrations}</span>
             <span class="desc">{t.nav.menuDesc.integrations}</span>
@@ -60,16 +59,30 @@ const ucTitle = (e: { name: string; title: string }) => t.examples.entries[e.nam
         </div>
       </div>
       <div class="nav-item">
-        <button type="button" class={`nav-menu-btn${current === 'examples' ? ' is-current' : ''}`} aria-haspopup="true">{t.nav.useCases} <span class="nav-menu-caret">▾</span></button>
-        <div class="nav-menu nav-menu--use-cases">
-          {useCases.map((e) => (
-            <a class="nav-menu-link nav-menu-link--page nav-menu-link--compact" href={L(`/examples/${e.name}/`)}>
-              <span class="pkg">{ucTitle(e)}</span>
+        <button type="button" class={`nav-menu-btn${current === 'examples' || current === 'solutions' ? ' is-current' : ''}`} aria-haspopup="true">{t.nav.useCases} <span class="nav-menu-caret">▾</span></button>
+        <div class="nav-menu nav-menu--cols">
+          <div class="nav-col">
+            <div class="nav-col-head">{t.nav.useCasesCols.solutions}</div>
+            {SOLUTIONS.map((s) => (
+              <a class="nav-menu-link nav-menu-link--page nav-menu-link--compact" href={L(`/solutions/${s.slug}/`)}>
+                <span class="pkg">{pick(s.navLabel)}</span>
+              </a>
+            ))}
+            <a class="nav-menu-link nav-menu-link--page nav-menu-link--all" href={L('/solutions/')}>
+              <span class="pkg">{t.nav.viewAllSolutions} →</span>
             </a>
-          ))}
-          <a class="nav-menu-link nav-menu-link--page nav-menu-link--all" href={L('/examples/')}>
-            <span class="pkg">{t.examples.detail.browseAll} →</span>
-          </a>
+          </div>
+          <div class="nav-col">
+            <div class="nav-col-head">{t.nav.useCasesCols.examples}</div>
+            {useCases.map((e) => (
+              <a class="nav-menu-link nav-menu-link--page nav-menu-link--compact" href={L(`/examples/${e.name}/`)}>
+                <span class="pkg">{ucTitle(e)}</span>
+              </a>
+            ))}
+            <a class="nav-menu-link nav-menu-link--page nav-menu-link--all" href={L('/examples/')}>
+              <span class="pkg">{t.examples.detail.browseAll} →</span>
+            </a>
+          </div>
         </div>
       </div>
       <a class="nav-link" href={L('/getting-started/introduction/')} aria-current={current === 'docs' ? 'page' : undefined}>{t.nav.docs}</a>
@@ -124,11 +137,19 @@ const ucTitle = (e: { name: string; title: string }) => t.examples.entries[e.nam
      landing.css is scoped to the dropdown). */
   .nav-link--ext .ext { color: var(--oma-fg-3); font-size: 11px; margin-left: 1px; }
 
-  /* Use Cases dropdown: the button reads active on any /examples page; the 9
-     recipe rows are compact (title only, no desc) so the list stays short, with
-     the "all examples" link separated at the foot. */
+  /* Use Cases dropdown: the button reads active on any /examples or /solutions
+     page. Two columns — Solutions (capability shapes → /solutions/*) and Examples
+     (cookbook recipes → /examples/*) — each a list of compact rows (label only)
+     with a "view all" link separated at its foot. */
   .nav-menu-btn.is-current { color: var(--oma-fg-0); }
-  .nav-menu--use-cases { min-width: 264px; }
+  .nav-menu--cols { flex-direction: row; gap: 8px; }
+  .nav-col { display: flex; flex-direction: column; gap: 2px; min-width: 210px; }
+  .nav-col + .nav-col { border-left: 1px solid var(--border-subtle); padding-left: 8px; }
+  .nav-col-head {
+    font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--oma-fg-3);
+    padding: 4px 12px 6px;
+  }
   .nav-menu-link--compact { padding-top: 7px; padding-bottom: 7px; }
   .nav-menu-link--all { margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--border-subtle); }
   .nav-menu-link--all .pkg { color: var(--oma-accent); }
