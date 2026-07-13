@@ -23,6 +23,8 @@ export type Solution = {
   keywords: string[];
   /** Per-page meta description. */
   seoDescription: Loc;
+  /** Short label for the Use Cases nav dropdown (the `title` is a full sentence). */
+  navLabel: Loc;
   /** Hero H1 — the use case. */
   title: Loc;
   /** Hero sub-line. */
@@ -47,6 +49,7 @@ export const SOLUTIONS: Solution[] = [
       en: 'Run LLM calls in parallel in TypeScript: several specialist agents work at once, return typed output, and an aggregator merges them — with open-multi-agent’s coordinator handling the fan-out.',
       zh: '在 TypeScript 里并行跑 LLM 调用：多个专职智能体同时工作、返回带类型的结果，再由聚合器合并——由 open-multi-agent 的协调器处理这轮 fan-out。',
     },
+    navLabel: { en: 'Parallel LLM calls', zh: '并行 LLM 调用' },
     title: {
       en: 'Run LLM calls in parallel — with typed output',
       zh: '并行跑 LLM 调用——还带类型化结果',
@@ -77,6 +80,7 @@ export const SOLUTIONS: Solution[] = [
       en: 'Describe the goal instead of wiring the graph: open-multi-agent’s coordinator decomposes a goal into a task DAG at runtime and parallelizes it — no hand-built orchestration.',
       zh: '描述目标，而非接线图：open-multi-agent 的协调器在运行时把目标拆解成任务 DAG 并并行化——无需手搭编排。',
     },
+    navLabel: { en: 'Goal-driven orchestration', zh: '目标驱动编排' },
     title: {
       en: 'Turn a goal into a task DAG — at runtime',
       zh: '把目标变成任务 DAG——在运行时',
@@ -107,6 +111,7 @@ export const SOLUTIONS: Solution[] = [
       en: 'Mix models in one agent team: each open-multi-agent agent names its own provider — Claude, GPT, Gemini, or a local model — and they cooperate in a single run, with cost and latency you can watch.',
       zh: '在一个智能体团队里混编模型：每个 open-multi-agent 智能体各自指定提供方——Claude、GPT、Gemini 或本地模型——它们在一次运行里协作，成本与延迟你都看得见。',
     },
+    navLabel: { en: 'Mixed-model teams', zh: '混编模型团队' },
     title: {
       en: 'Mix any model in one agent team',
       zh: '在一个团队里混用任意模型',
@@ -137,6 +142,7 @@ export const SOLUTIONS: Solution[] = [
       en: 'Run a multi-agent team fully on your own machine in TypeScript — even the coordinator on a local Ollama model, at $0 API cost — or a hybrid that keeps sensitive work local and bursts to the cloud.',
       zh: '在自己的机器上用 TypeScript 跑一个完整的多智能体团队——连协调器都跑在本地 Ollama 模型上，$0 API 成本——或用混合模式，把敏感工作留在本地、需要时再上云。',
     },
+    navLabel: { en: 'Local & private agents', zh: '本地私有智能体' },
     title: {
       en: 'Run a local, private multi-agent team',
       zh: '跑一个本地、私有的多智能体团队',
@@ -167,6 +173,7 @@ export const SOLUTIONS: Solution[] = [
       en: 'Give your TypeScript agents long-term memory: open-multi-agent’s MemoryStore interface persists state across runs, so a team can recall what an earlier run learned.',
       zh: '给你的 TypeScript 智能体长期记忆：open-multi-agent 的 MemoryStore 接口跨运行持久化状态，让团队能回忆起上一次运行学到的东西。',
     },
+    navLabel: { en: 'Long-term memory', zh: '长期记忆' },
     title: {
       en: 'Give agents long-term memory',
       zh: '给智能体长期记忆',
@@ -197,6 +204,7 @@ export const SOLUTIONS: Solution[] = [
       en: 'Add multi-agent orchestration to an existing Vercel AI SDK app: the AI SDK streams tokens and talks to models while open-multi-agent’s runTeam() decomposes the goal and coordinates the agents — sharing one API route.',
       zh: '给现有的 Vercel AI SDK 应用加上多智能体编排：AI SDK 负责流式与对接模型，open-multi-agent 的 runTeam() 负责拆解目标、协调智能体——共用一条 API 路由。',
     },
+    navLabel: { en: 'Vercel AI SDK', zh: 'Vercel AI SDK 编排' },
     title: {
       en: 'Add multi-agent orchestration to a Vercel AI SDK app',
       zh: '给 Vercel AI SDK 应用加多智能体编排',
