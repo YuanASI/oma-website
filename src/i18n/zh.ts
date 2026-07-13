@@ -28,6 +28,8 @@ export const zh: UiDict = {
       solutions: 'TypeScript 多智能体用例',
       integrations: 'Anthropic、OpenAI、Gemini、Ollama 等',
     },
+    useCasesCols: { solutions: '解决方案', examples: '示例' },
+    viewAllSolutions: '全部解决方案',
     stars: 'Star',
     toggleThemeAria: '切换浅色/深色主题',
     toggleThemeTitle: '切换主题',
