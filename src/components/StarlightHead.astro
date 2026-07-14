@@ -13,6 +13,10 @@
 // `lang`) to the TechArticle below.
 import Default from '@astrojs/starlight/components/Head.astro';
 import LangInit from './LangInit.astro';
+// Same font preloads as BaseLayout.astro (see the comment there) — docs pages
+// render the same two latin faces above the fold.
+import geistWoff2 from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
+import jbmWoff2 from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
 
 const { entry, lang } = Astro.locals.starlightRoute;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
@@ -30,6 +34,11 @@ const jsonLd = {
 ---
 
 <Default><slot /></Default>
+{/* Analytics preconnect + latin font preloads — same rationale as
+    BaseLayout.astro (LCP headroom / no font-swap layout shift). */}
+<link rel="preconnect" href="https://insights.open-multi-agent.com" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href={geistWoff2} />
+<link rel="preload" as="font" type="font/woff2" crossorigin href={jbmWoff2} />
 {/* Raster favicons for Google Search + legacy clients. The Default head already
     emits the SVG icon, so we only add the ICO/PNG set (scripts/generate-favicons.mjs). */}
 <link rel="icon" href="/favicon.ico" sizes="32x32" />
@@ -49,14 +58,18 @@ const jsonLd = {
   src="https://insights.open-multi-agent.com/tracker.js"
   data-site-id="open-multi-agent.com" defer></script>
 {/* Baidu 百度统计 — Chinese-market analytics + Baidu site verification.
-    Identical tag in BaseLayout.astro (custom pages + blog); this covers docs. */}
+    Identical tag in BaseLayout.astro (custom pages + blog); this covers docs.
+    Injected after window load — see the rationale in BaseLayout.astro. */}
 <script is:inline>
   var _hmt = _hmt || [];
   (function () {
-    var hm = document.createElement('script');
-    hm.src = 'https://hm.baidu.com/hm.js?2e6b1d4a79147dca8349670cc68f0b68';
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(hm, s);
+    var inject = function () {
+      var hm = document.createElement('script');
+      hm.src = 'https://hm.baidu.com/hm.js?2e6b1d4a79147dca8349670cc68f0b68';
+      document.head.appendChild(hm);
+    };
+    if (document.readyState === 'complete') inject();
+    else window.addEventListener('load', inject, { once: true });
   })();
 </script>
 <LangInit />
