@@ -199,13 +199,15 @@ a { color: inherit; }
 .cmd .prompt { color: var(--oma-accent); font-size: 15px; }
 .cmd .text { color: var(--oma-fg-0); font-size: 15px; letter-spacing: 0.01em; white-space: nowrap; }
 .cmd .copy {
-  font-size: 11px; color: var(--oma-fg-2); border: 1px solid var(--border-default);
-  border-radius: var(--radius-xs); padding: 4px 8px; background: var(--oma-bg-2);
-  white-space: nowrap;
-  /* reserve the widest state ("✓ copied") so toggling copy→copied never resizes .cmd */
-  min-width: 78px; text-align: center;
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  color: var(--oma-fg-2); border: 1px solid var(--border-default);
+  border-radius: var(--radius-xs); padding: 5px; background: var(--oma-bg-2); line-height: 0;
 }
+.cmd .copy svg { width: 16px; height: 16px; }
+.cmd .copy .check-i { display: none; }
 .cmd.copied .copy { color: var(--oma-accent); border-color: var(--oma-accent-line); }
+.cmd.copied .copy .copy-i { display: none; }
+.cmd.copied .copy .check-i { display: block; }
 /* bg-3 is dark-first (a raised well on near-black); in light mode it inverts to the
    darkest warm surface and reads as a muddy tan for a standalone CTA — drop to bg-1. */
 :root[data-theme='light'] .cmd { background: var(--oma-bg-1); }
