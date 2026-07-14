@@ -398,7 +398,8 @@ a { color: inherit; }
 
 /* ── Post-run dashboard shot (in the production section) ── */
 .dashboard-shot { margin: 40px 0 0; }
-.dashboard-shot img {
+.dashboard-shot img,
+.dashboard-shot video {
   display: block; width: 100%; height: auto; aspect-ratio: 1600 / 760;
   border: 1px solid var(--border-default); border-radius: var(--radius-lg);
   background: var(--oma-bg-1); box-shadow: var(--shadow-md);
