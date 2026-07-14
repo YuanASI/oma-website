@@ -99,6 +99,14 @@ export default defineConfig({
 	redirects: {
 		'/github': 'https://github.com/open-multi-agent/open-multi-agent',
 	},
+	// Inline every page's CSS into its <html> instead of emitting <link
+	// rel="stylesheet"> chunks. The default ('auto') left two ~5KB-gz
+	// render-blocking CSS requests on the landing page — PageSpeed measured them
+	// at 90ms (desktop) to 950ms (mobile) of FCP/LCP delay. Cost: repeat
+	// visitors re-download each page's CSS inside the HTML (~5-12KB gz) instead
+	// of hitting the browser cache — the right trade for a mostly-first-visit
+	// marketing + docs site.
+	build: { inlineStylesheets: 'always' },
 	// Blog posts (src/content/blog) render monochrome code blocks styled in
 	// blog.css — disabling Astro's Shiki here keeps every code glyph at a
 	// controlled >=4.5:1 contrast. Starlight docs use Expressive Code (configured

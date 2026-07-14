@@ -286,7 +286,15 @@ const jsonLd = {
             ))}
           </div>
           <figure class="dashboard-shot">
-            <img src="/demo-dashboard.gif" width="1600" height="760" loading="lazy" decoding="async" alt={l.dashboard.imgAlt} />
+            {/* MP4 (245KB) replaces the old 851KB GIF — same frames, transcoded by
+                ffmpeg from public/demo-dashboard.gif. Sources carry data-src and the
+                lazy-video script below swaps them in near the viewport, so the video
+                never competes with above-the-fold loading. <noscript> keeps the GIF
+                for no-JS visitors. */}
+            <video width="1600" height="760" autoplay muted loop playsinline preload="none" aria-label={l.dashboard.imgAlt} data-lazy-video>
+              <source data-src="/demo-dashboard.mp4" type="video/mp4" />
+            </video>
+            <noscript><img src="/demo-dashboard.gif" width="1600" height="760" loading="lazy" decoding="async" alt={l.dashboard.imgAlt} /></noscript>
             <figcaption>{l.dashboard.caption} <a class="text-link" href={L('/reference/observability/')}><span>{l.dashboard.obsLink}</span><span class="arrow">→</span></a></figcaption>
           </figure>
         </div>
@@ -456,23 +464,37 @@ const jsonLd = {
       // 的差异。无 JS / 抓取失败的访客看到的就是构建期值(合理 fallback)。
       const fmt = (n: number) => Math.round(n).toLocaleString('en-US');
 
-      type LiveCounts = { stars: number; forks: number };
-      const live: Promise<LiveCounts | null> = fetch(
-        'https://api.github.com/repos/open-multi-agent/open-multi-agent',
-        { headers: { Accept: 'application/vnd.github+json' } },
-      )
-        .then((r) => (r.ok ? r.json() : null))
-        .then((j: any) =>
-          j && typeof j.stargazers_count === 'number'
-            ? { stars: j.stargazers_count, forks: j.forks_count }
-            : null,
-        )
-        .catch(() => null);
+      // fetch 推迟到 window load 之后才发起:模块顶层立即 fetch 会把 api.github.com
+      // 拉进 Lighthouse 的关键请求链(实测占 0.9–1.3s 的 max critical path)。stats
+      // 区域在首屏之下,用户滚到那里远晚于 load,所以推迟不改变动画体验。
+      const afterLoad = (fn: () => void) => {
+        if (document.readyState === 'complete') fn();
+        else addEventListener('load', () => fn(), { once: true });
+      };
 
-      // 滚到该区域时实时值还没回来,最多等 800ms 就用构建期值,避免动画卡住。
+      type LiveCounts = { stars: number; forks: number };
+      let resolveLive: (v: LiveCounts | null) => void;
+      const live: Promise<LiveCounts | null> = new Promise((res) => (resolveLive = res));
+      afterLoad(() =>
+        fetch('https://api.github.com/repos/open-multi-agent/open-multi-agent', {
+          headers: { Accept: 'application/vnd.github+json' },
+        })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((j: any) =>
+            resolveLive(
+              j && typeof j.stargazers_count === 'number'
+                ? { stars: j.stargazers_count, forks: j.forks_count }
+                : null,
+            ),
+          )
+          .catch(() => resolveLive(null)),
+      );
+
+      // 滚到该区域时实时值还没回来,最多等 800ms(自 fetch 发起时刻起算)就用
+      // 构建期值,避免动画卡住。
       const liveOrTimeout: Promise<LiveCounts | null> = Promise.race([
         live,
-        new Promise<null>((res) => setTimeout(() => res(null), 800)),
+        new Promise<null>((res) => afterLoad(() => setTimeout(() => res(null), 800))),
       ]);
 
       document.querySelectorAll<HTMLElement>('[data-count]').forEach((el) => {
@@ -540,6 +562,25 @@ const jsonLd = {
           btn.textContent = btn.dataset.copied || '✓ copied';
           setTimeout(() => { btn.classList.remove('copied'); btn.textContent = orig; }, 1400);
         });
+      });
+
+      // ── Lazy video (dashboard demo) ──
+      // Sources ship with data-src only; swap in + load when the video nears the
+      // viewport (400px margin ≈ in-flight before it scrolls into view). play() is
+      // a belt-and-braces nudge — autoplay+muted already covers the normal path.
+      document.querySelectorAll<HTMLVideoElement>('video[data-lazy-video]').forEach((v) => {
+        const io = new IntersectionObserver((entries, obs) => {
+          entries.forEach((e) => {
+            if (!e.isIntersecting) return;
+            obs.disconnect();
+            v.querySelectorAll<HTMLSourceElement>('source[data-src]').forEach((s) => {
+              s.src = s.dataset.src || '';
+            });
+            v.load();
+            v.play().catch(() => {});
+          });
+        }, { rootMargin: '400px' });
+        io.observe(v);
       });
     </script>
 </BaseLayout>
