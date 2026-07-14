@@ -198,16 +198,34 @@ a { color: inherit; }
 .cmd:hover { border-color: var(--oma-accent-line); box-shadow: var(--shadow-accent-glow); }
 .cmd .prompt { color: var(--oma-accent); font-size: 15px; }
 .cmd .text { color: var(--oma-fg-0); font-size: 15px; letter-spacing: 0.01em; white-space: nowrap; }
+/* Chromeless ghost icon — .cmd is already a bordered, glowing button, so the copy
+   affordance carries no box of its own. The 28px cell matches the old chip's
+   footprint exactly: block height and the mobile space-between layout don't shift. */
 .cmd .copy {
-  display: inline-flex; align-items: center; justify-content: center; flex: none;
-  color: var(--oma-fg-2); border: 1px solid var(--border-default);
-  border-radius: var(--radius-xs); padding: 5px; background: var(--oma-bg-2); line-height: 0;
+  display: inline-grid; place-items: center; flex: none;
+  width: 28px; height: 28px; color: var(--oma-fg-2);
+  transition: color var(--duration-fast) var(--ease-out);
 }
-.cmd .copy svg { width: 16px; height: 16px; }
-.cmd .copy .check-i { display: none; }
-.cmd.copied .copy { color: var(--oma-accent); border-color: var(--oma-accent-line); }
-.cmd.copied .copy .copy-i { display: none; }
-.cmd.copied .copy .check-i { display: block; }
+.cmd:hover .copy { color: var(--oma-fg-0); }
+.cmd .copy svg { grid-area: 1 / 1; width: 16px; height: 16px; }
+.cmd .copy .copy-i {
+  transition: opacity var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out);
+}
+.cmd .copy .check-i {
+  opacity: 0; color: var(--oma-accent);
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+/* dasharray 24 ≳ the polyline's ~23px path length, so the check draws in fully */
+.cmd .copy .check-i polyline {
+  stroke-dasharray: 24; stroke-dashoffset: 24;
+  transition: stroke-dashoffset var(--duration-slow) var(--ease-out) 60ms;
+}
+.cmd.copied .copy .copy-i { opacity: 0; transform: scale(0.6); }
+.cmd.copied .copy .check-i { opacity: 1; }
+.cmd.copied .copy .check-i polyline { stroke-dashoffset: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .cmd .copy svg, .cmd .copy .check-i polyline { transition: none; }
+}
 /* bg-3 is dark-first (a raised well on near-black); in light mode it inverts to the
    darkest warm surface and reads as a muddy tan for a standalone CTA — drop to bg-1. */
 :root[data-theme='light'] .cmd { background: var(--oma-bg-1); }
