@@ -66,8 +66,9 @@ export type Comparison = {
   name: string;
   /**
    * Hub placement. 'primary' pins the comparison in the featured tier on
-   * /compare (the head-to-head multi-agent frameworks); absent = the compact
-   * "more comparisons" tier. Full comparison pages are identical either way.
+   * /compare (the frameworks people most often weigh us against); absent = the
+   * compact "more comparisons" tier. Full comparison pages are identical either
+   * way.
    */
   tier?: 'primary';
   /** Official repository, linked from the page. */
@@ -141,7 +142,6 @@ export const COMPARISONS: Comparison[] = [
   {
     slug: 'crewai',
     name: 'CrewAI',
-    tier: 'primary',
     repo: 'https://github.com/crewAIInc/crewAI',
     keywords: ['crewai alternative', 'crewai vs open multi agent', 'crewai typescript alternative', 'crewai alternative nodejs'],
     seoDescription: {
@@ -184,7 +184,6 @@ export const COMPARISONS: Comparison[] = [
   {
     slug: 'autogen',
     name: 'AutoGen',
-    tier: 'primary',
     repo: 'https://github.com/microsoft/autogen',
     keywords: ['autogen alternative', 'autogen typescript alternative', 'autogen vs open multi agent', 'conversation-driven vs goal-driven agents'],
     seoDescription: {
@@ -231,7 +230,6 @@ export const COMPARISONS: Comparison[] = [
   {
     slug: 'openai-agents-sdk',
     name: 'OpenAI Agents SDK',
-    tier: 'primary',
     repo: 'https://github.com/openai/openai-agents-python',
     keywords: ['openai agents sdk alternative', 'openai agents sdk typescript', 'multi provider agent framework', 'openai agents sdk vs open multi agent'],
     seoDescription: {
@@ -316,6 +314,7 @@ export const COMPARISONS: Comparison[] = [
   {
     slug: 'vercel-ai-sdk',
     name: 'Vercel AI SDK',
+    tier: 'primary',
     repo: 'https://github.com/vercel/ai',
     keywords: ['vercel ai sdk alternative', 'vercel ai sdk multi-agent', 'ai sdk vs open multi agent', 'multi-agent on top of vercel ai sdk'],
     seoDescription: {
@@ -442,6 +441,7 @@ export const COMPARISONS: Comparison[] = [
   {
     slug: 'langchain',
     name: 'LangChain',
+    tier: 'primary',
     repo: 'https://github.com/langchain-ai/langchain',
     keywords: ['langchain alternative', 'langchain typescript alternative', 'langchain vs open multi agent', 'lightweight langchain alternative'],
     seoDescription: {
@@ -484,6 +484,7 @@ export const COMPARISONS: Comparison[] = [
   {
     slug: 'llamaindex',
     name: 'LlamaIndex',
+    tier: 'primary',
     repo: 'https://github.com/run-llama/llama_index',
     keywords: ['llamaindex alternative', 'llamaindex vs open multi agent', 'llamaindex agent workflow alternative', 'rag agent framework'],
     seoDescription: {
