@@ -172,7 +172,7 @@ a { color: inherit; }
 .home-section > .container > .section-head { margin-bottom: 40px; }
 
 /* ── Hero ── */
-.hero { padding: 36px 0 56px; }
+.hero { padding: 52px 0 56px; }
 .hero-grid {
   display: grid; grid-template-columns: 0.92fr 1.08fr; gap: 52px; align-items: center;
 }
