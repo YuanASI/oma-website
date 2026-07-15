@@ -17,9 +17,11 @@ import EnterpriseCta from '../../../components/EnterpriseCta.astro';
 import EnterpriseHeadCta from '../../../components/EnterpriseHeadCta.astro';
 import CodeBlock from '../../../components/ds/CodeBlock.astro';
 import Badge from '../../../components/ds/Badge.astro';
+import Callout from '../../../components/ds/Callout.astro';
 import { REPO, ghStats } from '../../../lib/site';
 import { getAllExampleDetails, type ExampleDetail } from '../../../lib/examples';
 import { locales, defaultLocale, toLocale, useTranslations, localizePath, type Locale } from '../../../i18n';
+import { getExampleStory, getExampleStoryUi } from '../../../i18n/example-stories';
 
 export function getStaticPaths() {
   const details = getAllExampleDetails();
@@ -36,6 +38,8 @@ const locale = toLocale(Astro.params.locale);
 const t = useTranslations(locale);
 const dt = t.examples.detail;
 const L = (p: string) => localizePath(p, locale);
+const story = getExampleStory(locale, detail.name);
+const storyUi = getExampleStoryUi(locale);
 
 // Recipe title/intent: zh overrides (dt.recipes keyed by slug) win; en's map is
 // empty so it falls back to the English parsed from the upstream file. Code, API
@@ -51,12 +55,19 @@ const starsK = (stats.stars / 1000).toFixed(1) + 'k';
 const path = `/examples/${detail.name}/`;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const title = displayTitle + dt.seoTitleSuffix;
+const heroLede = story?.outcome ?? displayIntent;
 const description =
-  displayIntent.length > 175 ? displayIntent.slice(0, 172).trimEnd() + '…' : displayIntent;
+  heroLede.length > 175 ? heroLede.slice(0, 172).trimEnd() + '…' : heroLede;
 
-const related = getAllExampleDetails()
-  .filter((d) => d.category === detail.category && d.name !== detail.name)
-  .slice(0, 4);
+const allDetails = getAllExampleDetails();
+const related = story
+  ? story.related
+      .map((slug) => allDetails.find((d) => d.name === slug))
+      .filter((d): d is ExampleDetail => Boolean(d))
+      .slice(0, 4)
+  : allDetails
+      .filter((d) => d.category === detail.category && d.name !== detail.name)
+      .slice(0, 4);
 
 const runCode = detail.run.join('\n');
 const sourceFile = `${detail.category}/${detail.name}.ts`;
@@ -99,15 +110,117 @@ const jsonLd = {
           <div class="section-head exd-head">
             <div class="eyebrow"><span class="idx">//</span> {categoryLabel}</div>
             <h1 class="section-title">{displayTitle}</h1>
-            <p class="section-sub">{displayIntent}</p>
+            <p class="section-sub exd-outcome">{heroLede}</p>
+            {story && (
+              <p class="exd-audience"><span>{storyUi.audience}</span>{story.audience}</p>
+            )}
           </div>
           <EnterpriseHeadCta locale={locale} />
         </div>
+      </div>
+    </section>
 
-        <!-- At a glance: category · APIs used · size -->
+    <!-- The non-technical story layer is curated for the nine Cookbook recipes.
+         Technical facts below remain synchronized from the upstream source. -->
+    {story && (
+      <>
+        <section class="section exd-scenario-section" aria-labelledby="scenario-title">
+          <div class="container">
+            <div class="eyebrow"><span class="idx">01</span> {storyUi.scenarioEyebrow}</div>
+            <div class="exd-story-grid">
+              <article class="exd-story-block exd-problem">
+                <h2 class="exd-story-label" id="scenario-title">{storyUi.problem}</h2>
+                <p>{story.problem}</p>
+              </article>
+              <article class="exd-story-block exd-input">
+                <div class="exd-story-label">{storyUi.input}</div>
+                <h2>{story.input.title}</h2>
+                <p>{story.input.detail}</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="section exd-workflow-section" aria-labelledby="workflow-title">
+          <div class="container">
+            <div class="section-head exd-workflow-head">
+              <div class="eyebrow"><span class="idx">02</span> {storyUi.workflowEyebrow}</div>
+              <h2 class="section-title" id="workflow-title">{storyUi.workflowTitle}</h2>
+              <p class="section-sub">{storyUi.workflowLede}</p>
+            </div>
+            <ol class="exd-flow">
+              {story.stages.map((stage, stageIndex) => (
+                <li class="exd-flow-stage">
+                  <div class="exd-stage-index" aria-hidden="true">{String(stageIndex + 1).padStart(2, '0')}</div>
+                  <div class="exd-stage-body">
+                    <div class="exd-stage-head">
+                      <div>
+                        <h3>{stage.title}</h3>
+                        <p>{stage.summary}</p>
+                      </div>
+                      {stage.parallel && <span class="exd-parallel">{storyUi.parallel}</span>}
+                    </div>
+                    <div class={`exd-agents${stage.agents.length > 1 ? ' is-multi' : ''}`}>
+                      {stage.agents.map((agent) => (
+                        <article class="exd-agent">
+                          <div class="exd-agent-name">{agent.name}</div>
+                          <p>{agent.task}</p>
+                        </article>
+                      ))}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        <section class="section exd-result-section" aria-labelledby="result-title">
+          <div class="container">
+            <div class="eyebrow"><span class="idx">03</span> {storyUi.outputEyebrow}</div>
+            <div class="exd-result-grid">
+              <article class="exd-deliverable">
+                <div class="exd-story-label">{storyUi.outputShape}</div>
+                <h2 id="result-title">{story.deliverable.title}</h2>
+                <p>{story.deliverable.summary}</p>
+                <ol>
+                  {story.deliverable.items.map((item, index) => (
+                    <li><span>{String(index + 1).padStart(2, '0')}</span>{item}</li>
+                  ))}
+                </ol>
+              </article>
+              <article class="exd-why">
+                <h2 class="exd-story-label">{storyUi.why}</h2>
+                <ul>
+                  {story.why.map((reason) => <li>{reason}</li>)}
+                </ul>
+              </article>
+            </div>
+            <Callout tone="info" title={storyUi.boundary} class="exd-boundary">
+              {story.boundary}
+            </Callout>
+          </div>
+        </section>
+      </>
+    )}
+
+    <!-- Builder layer: synchronized facts, runnable command, and full source. -->
+    <section class="section exd-run-section" aria-labelledby={story ? 'builder-title' : undefined}>
+      <div class="container container--narrow">
+        <div class="section-head">
+          <div class="eyebrow"><span class="idx">{story ? '04' : '01'}</span> {story ? storyUi.builderEyebrow : dt.runTitle}</div>
+          {story && (
+            <>
+              <h2 class="section-title" id="builder-title">{storyUi.builderTitle}</h2>
+              <p class="section-sub">{storyUi.builderLede}</p>
+            </>
+          )}
+        </div>
+
+        <!-- At a glance: factual metadata parsed from the upstream source. -->
         <div class="exd-glance">
           <div class="exd-glance-row">
-            <span class="exd-glance-label">{dt.apisUsed}</span>
+            <span class="exd-glance-label">{story ? storyUi.implementationFacts : dt.apisUsed}</span>
             <span class="exd-apis">
               {detail.apis.map((a) => <code class="exd-api">{a}</code>)}
             </span>
@@ -117,15 +230,8 @@ const jsonLd = {
             <span class="exd-loc">{detail.loc} {dt.linesLabel}</span>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- Run it -->
-    <section class="section exd-run-section">
-      <div class="container container--narrow">
-        <div class="section-head">
-          <div class="eyebrow"><span class="idx">01</span> {dt.runTitle}</div>
-        </div>
+        {story && <h3 class="exd-builder-subhead">{dt.runTitle}</h3>}
         <p class="exd-note">{dt.runNote}</p>
         <CodeBlock
           lang="bash"
@@ -148,42 +254,40 @@ const jsonLd = {
             )}
           </div>
         )}
-      </div>
-    </section>
 
-    <!-- Full source -->
-    <section class="section exd-source-section">
-      <div class="container">
-        <div class="section-head">
-          <div class="eyebrow"><span class="idx">02</span> {dt.sourceTitle}</div>
-          <p class="section-sub">{dt.sourceNote}</p>
-        </div>
-        <div class="exd-source">
-          <CodeBlock
-            lang="ts"
-            title={sourceFile}
-            code={detail.source}
-            copyLabel={t.landing.copy}
-            copiedLabel={t.landing.copied}
-          />
-        </div>
+        <details class="exd-source-disclosure">
+          <summary>
+            <span>{storyUi.fullSourceSummary(detail.loc)}</span>
+            <span class="exd-source-caret" aria-hidden="true">+</span>
+          </summary>
+          <p class="exd-source-note">{dt.sourceNote}</p>
+          <div class="exd-source">
+            <CodeBlock
+              lang="ts"
+              title={sourceFile}
+              code={detail.source}
+              copyLabel={t.landing.copy}
+              copiedLabel={t.landing.copied}
+            />
+          </div>
+        </details>
         <a class="text-link exd-gh" href={detail.blob} target="_blank" rel="noreferrer">
           <span>{dt.viewOnGithub}</span><span class="arrow">↗</span>
         </a>
       </div>
     </section>
 
-    <!-- Related examples (same category) -->
+    <!-- Related by business/story affinity for Cookbook; by category otherwise. -->
     {related.length > 0 && (
       <section class="section exd-related-section">
         <div class="container">
           <div class="eyebrow"><span class="idx">//</span> {dt.relatedTitle}</div>
-          <p class="section-sub exd-related-note">{dt.relatedNote}</p>
+          <p class="section-sub exd-related-note">{story ? storyUi.relatedNote : dt.relatedNote}</p>
           <div class="exd-related">
             {related.map((r) => (
               <a class="exd-related-link" href={L(`/examples/${r.name}/`)}>
                 <span class="exd-related-name">{recTitle(r.name, r.title)}</span>
-                <span class="exd-related-desc">{recIntent(r.name, r.intent)}</span>
+                <span class="exd-related-desc">{getExampleStory(locale, r.name)?.outcome ?? recIntent(r.name, r.intent)}</span>
                 <span class="arrow">→</span>
               </a>
             ))}
@@ -216,16 +320,113 @@ const jsonLd = {
 </BaseLayout>
 
 <style>
-  /* Extra bottom room so the at-a-glance box isn't cramped against the section
-     divider below it. */
-  .exd-hero { padding-top: 64px; padding-bottom: 40px; }
-  .exd-hero .hero-head-row { margin-bottom: 20px; }
+  .exd-hero { padding-top: 64px; padding-bottom: 36px; }
+  .exd-hero .hero-head-row { margin-bottom: 0; }
   .exd-back {
     display: inline-block; margin-bottom: 18px; font-family: var(--font-mono);
     font-size: 12px; color: var(--oma-fg-3); text-decoration: none;
   }
   .exd-back:hover { color: var(--oma-accent); }
-  .exd-hero .section-sub { max-width: 680px; }
+  .exd-hero .section-sub { max-width: 720px; }
+  .exd-outcome { font-size: var(--text-md); line-height: 1.55; }
+  .exd-audience {
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+    max-width: 720px; margin: 18px 0 0; color: var(--oma-fg-1); font-size: 13px;
+  }
+  .exd-audience span {
+    font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .08em; color: var(--oma-accent);
+  }
+
+  /* Story layer */
+  .exd-scenario-section { padding-top: 28px; }
+  .exd-story-grid {
+    display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(260px, .75fr);
+    gap: clamp(24px, 5vw, 64px); align-items: start; margin-top: 22px;
+  }
+  .exd-story-label {
+    margin: 0 0 14px; font-family: var(--font-mono); font-size: 10.5px;
+    font-weight: 600; text-transform: uppercase; letter-spacing: .09em; color: var(--oma-fg-3);
+  }
+  .exd-story-block p { margin: 0; color: var(--oma-fg-1); line-height: 1.72; }
+  .exd-problem p { max-width: 64ch; font-size: var(--text-h4); color: var(--oma-fg-0); }
+  .exd-input {
+    padding: 20px; border: 1px solid var(--oma-border-1); border-radius: var(--radius-md);
+    background: var(--oma-bg-1); box-shadow: var(--shadow-sm);
+  }
+  .exd-input h2, .exd-deliverable h2 {
+    margin: 0 0 9px; color: var(--oma-fg-0); font-family: var(--font-sans);
+    font-size: 19px; line-height: 1.25; text-wrap: balance;
+  }
+  .exd-input p { font-size: 14px; }
+
+  .exd-workflow-section { padding-top: 52px; }
+  .exd-workflow-head { max-width: 760px; }
+  .exd-flow { list-style: none; margin: 34px 0 0; padding: 0; }
+  .exd-flow-stage {
+    position: relative; display: grid; grid-template-columns: 58px minmax(0, 1fr);
+    gap: 18px; padding: 0 0 30px;
+  }
+  .exd-flow-stage:not(:last-child)::before {
+    content: ''; position: absolute; left: 28px; top: 36px; bottom: -2px;
+    width: 1px; background: linear-gradient(var(--oma-accent-line), var(--oma-border-1));
+  }
+  .exd-stage-index {
+    position: relative; z-index: 1; display: grid; place-items: center; width: 58px; height: 34px;
+    border: 1px solid var(--oma-accent-line); border-radius: var(--radius-xs);
+    background: var(--oma-bg-0); color: var(--oma-accent); font-family: var(--font-mono);
+    font-size: 11px; font-weight: 600; letter-spacing: .08em;
+  }
+  .exd-stage-body {
+    min-width: 0; padding: 20px; border: 1px solid var(--oma-border-1);
+    border-radius: var(--radius-md); background: var(--oma-bg-1);
+  }
+  .exd-stage-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+  .exd-stage-head h3 { margin: 0 0 6px; color: var(--oma-fg-0); font-size: 17px; line-height: 1.3; }
+  .exd-stage-head p { margin: 0; color: var(--oma-fg-2); font-size: 13.5px; line-height: 1.55; }
+  .exd-parallel {
+    flex: none; padding: 4px 8px; border: 1px solid var(--oma-accent-line);
+    border-radius: var(--radius-xs); background: var(--oma-accent-soft); color: var(--oma-accent);
+    font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .06em; white-space: nowrap;
+  }
+  .exd-agents { display: grid; grid-template-columns: minmax(0, 1fr); gap: 9px; margin-top: 16px; }
+  .exd-agents.is-multi { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+  .exd-agent {
+    min-width: 0; padding: 13px 14px; border: 1px solid var(--oma-border-0);
+    border-radius: var(--radius-sm); background: var(--oma-bg-2);
+  }
+  .exd-agent-name { margin-bottom: 5px; color: var(--oma-fg-0); font-size: 13px; font-weight: 600; }
+  .exd-agent p { margin: 0; color: var(--oma-fg-2); font-size: 12.5px; line-height: 1.5; }
+
+  .exd-result-section { padding-top: 42px; }
+  .exd-result-grid {
+    display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(260px, .75fr);
+    gap: 16px; margin-top: 22px;
+  }
+  .exd-deliverable, .exd-why {
+    padding: clamp(20px, 3vw, 28px); border: 1px solid var(--oma-border-1);
+    border-radius: var(--radius-md); background: var(--oma-bg-1);
+  }
+  .exd-deliverable > p { margin: 0; color: var(--oma-fg-2); font-size: 14px; line-height: 1.65; }
+  .exd-deliverable ol { list-style: none; margin: 20px 0 0; padding: 0; border-top: 1px solid var(--oma-border-0); }
+  .exd-deliverable li {
+    display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px;
+    padding: 11px 0; border-bottom: 1px solid var(--oma-border-0);
+    color: var(--oma-fg-1); font-size: 13.5px; line-height: 1.45;
+  }
+  .exd-deliverable li span { color: var(--oma-accent); font-family: var(--font-mono); font-size: 10px; padding-top: 2px; }
+  .exd-why ul { list-style: none; margin: 0; padding: 0; }
+  .exd-why li {
+    position: relative; margin: 0; padding: 0 0 15px 18px;
+    color: var(--oma-fg-1); font-size: 13.5px; line-height: 1.55;
+  }
+  .exd-why li:last-child { padding-bottom: 0; }
+  .exd-why li::before {
+    content: ''; position: absolute; left: 0; top: .58em; width: 6px; height: 6px;
+    border-radius: 50%; background: var(--oma-accent);
+  }
+  .exd-boundary { margin-top: 16px; }
 
   /* At a glance */
   .exd-glance {
@@ -249,8 +450,10 @@ const jsonLd = {
   .exd-glance-meta { display: flex; align-items: center; gap: 12px; flex: none; }
   .exd-loc { font-family: var(--font-mono); font-size: 12px; color: var(--oma-fg-3); }
 
-  /* Run it */
-  .exd-run-section { padding-top: 40px; }
+  /* Builder layer */
+  .exd-run-section { padding-top: 54px; }
+  .exd-run-section .exd-glance { margin-bottom: 26px; }
+  .exd-builder-subhead { margin: 0 0 6px; color: var(--oma-fg-0); font-size: 16px; }
   .exd-note { font-size: 14px; line-height: 1.6; color: var(--oma-fg-2); margin: 0 0 12px; }
   .exd-prereqs {
     margin-top: 14px; border-left: 3px solid var(--oma-border-2);
@@ -267,10 +470,25 @@ const jsonLd = {
   .exd-provider-note a { color: var(--oma-accent); text-decoration: none; white-space: nowrap; }
   .exd-provider-note a:hover { text-decoration: underline; }
 
-  /* Full source */
-  .exd-source-section { padding-top: 40px; }
-  /* Cap the source height so a long file scrolls in place instead of dominating
-     the page; the full text is still in the DOM (crawlable). */
+  /* The full source remains crawlable and copyable, but no longer dominates the
+     non-technical reading path. */
+  .exd-source-disclosure {
+    margin-top: 28px; border: 1px solid var(--oma-border-1);
+    border-radius: var(--radius-md); background: var(--oma-bg-1); overflow: clip;
+  }
+  .exd-source-disclosure summary {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    min-height: 48px; padding: 0 16px; cursor: pointer; color: var(--oma-fg-1);
+    font-size: 13px; font-weight: 500; list-style: none;
+  }
+  .exd-source-disclosure summary::-webkit-details-marker { display: none; }
+  .exd-source-disclosure summary:hover { color: var(--oma-accent); }
+  .exd-source-disclosure summary:focus-visible { outline: 2px solid var(--oma-accent); outline-offset: -2px; }
+  .exd-source-caret { color: var(--oma-accent); font-family: var(--font-mono); font-size: 18px; transition: transform var(--duration-base) var(--ease-out); }
+  .exd-source-disclosure[open] .exd-source-caret { transform: rotate(45deg); }
+  .exd-source-note { margin: 0; padding: 14px 16px; border-top: 1px solid var(--oma-border-0); color: var(--oma-fg-2); font-size: 13px; }
+  .exd-source { border-top: 1px solid var(--oma-border-0); }
+  .exd-source :global(.ds-codeblock) { border: 0; border-radius: 0; }
   .exd-source :global(.ds-codeblock__pre) { max-height: min(72vh, 760px); }
   .exd-gh { margin-top: 16px; display: inline-flex; }
 
@@ -305,7 +523,21 @@ const jsonLd = {
   .exd-learn-link:hover { border-color: var(--oma-accent-line); }
   .exd-learn-link .arrow { color: var(--oma-accent); }
 
+  @media (max-width: 760px) {
+    .exd-story-grid, .exd-result-grid { grid-template-columns: minmax(0, 1fr); }
+    .exd-flow-stage { grid-template-columns: 42px minmax(0, 1fr); gap: 10px; }
+    .exd-stage-index { width: 42px; }
+    .exd-flow-stage:not(:last-child)::before { left: 20px; }
+    .exd-stage-head { flex-direction: column; gap: 10px; }
+    .exd-agents.is-multi { grid-template-columns: minmax(0, 1fr); }
+  }
+
   @media (max-width: 640px) {
+    .exd-hero { padding-top: 44px; }
+    .exd-audience { align-items: flex-start; flex-direction: column; gap: 4px; }
+    .exd-story-grid { gap: 20px; }
+    .exd-stage-body { padding: 15px; }
     .exd-glance { flex-direction: column; gap: 14px; }
+    .exd-glance-meta { width: 100%; justify-content: space-between; }
   }
 </style>
