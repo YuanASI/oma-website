@@ -200,7 +200,7 @@ Why temperature? `gemma4:e2b` is a thinking model with a default `temperature: 1
 - **Fully local** when data residency is the hard constraint: nothing leaves the machine, $0 cost, and — as shown — even the coordinator can be local. The price is RAM and latency (minutes, not seconds).
 - **Hybrid** when one step genuinely needs a frontier model (the coder above) but the rest can stay home. The plumbing is sound — cloud and local in one `runTasks` pipeline via `baseURL`. Just pick your *local* agents for solid native tool-calling and tame their temperature, or you get a confident reviewer that never read the code.
 
-There's also a higher-level angle worth a link: in Part 2 I let the local model *be* the coordinator. If you want the mechanics of how a goal becomes a task DAG in this framework, I wrote that up in [Goal In, DAG Out](/blog/goal-to-task-dag-coordinator). The surprise of this post is that the model driving that decomposition can be 5B and running on your laptop.
+There's also a higher-level angle worth a link: in Part 2 I let the local model *be* the coordinator. If you want the mechanics of how a goal becomes a task DAG in this framework, I wrote that up in [Goal In, DAG Out](/blog/goal-to-task-dag-coordinator/). The surprise of this post is that the model driving that decomposition can be 5B and running on your laptop.
 
 ## Run it
 

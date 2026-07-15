@@ -92,6 +92,10 @@ function serializeSitemap(item) {
 export default defineConfig({
 	// Required for sitemap / canonical / OG absolute URLs (PRD §4.6 GEO).
 	site: 'https://open-multi-agent.com',
+	// Cloudflare serves directory routes with a trailing slash. Make Astro's
+	// generated links and canonical URLs use that same shape so crawlers are not
+	// sent through avoidable 308 redirects before reaching the canonical page.
+	trailingSlash: 'always',
 	// `/github` → repo, preserving the old direct-to-GitHub habit (PRD §3 / §9).
 	// In static output this emits a meta-refresh redirect page that works on any
 	// host. A true HTTP 301 is set at the host during deploy (PRD §12 item 6) —
