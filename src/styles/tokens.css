@@ -102,6 +102,12 @@
   --oma-danger-soft:  rgba(239, 68, 68, 0.12);
   --oma-info-soft:    rgba(96, 165, 250, 0.12);
 
+  /* Code syntax — separate from semantic UI colors. */
+  --code-keyword: var(--oma-info);
+  --code-string:  var(--oma-accent);
+  --code-number:  var(--oma-warning);
+  --code-comment: var(--oma-fg-2);
+
   /* ── Semantic aliases ── */
   --surface-page:    var(--oma-bg-0);
   --surface-card:    var(--oma-bg-1);
@@ -239,6 +245,12 @@
   --oma-warning-soft: rgba(180, 83, 9, 0.12);
   --oma-danger-soft:  rgba(220, 38, 38, 0.12);
   --oma-info-soft:    rgba(37, 99, 235, 0.12);
+
+  /* All syntax colors meet WCAG AA against the light code well (#E2DCD0). */
+  --code-keyword: #174EA6;
+  --code-string:  #065F46;
+  --code-number:  #7C2D12;
+  --code-comment: #595249;
 
   /* Shadows (soft on light — no heavy black) */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);

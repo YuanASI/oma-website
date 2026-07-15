@@ -96,8 +96,10 @@ export const en = {
       quickStart: 'Quick Start',
       ioInput: 'input · team.ts',
       ioGoal: 'goal',
+      capturedGoal: 'captured goal',
       decomposesInto: 'decomposes into',
       parallel: 'parallel',
+      expandTasks: '{count} more tasks · expand full DAG',
       runReal: 'real',
       runTasks: 'tasks',
       // Understated routing line under the primary CTA — self-identifies the
@@ -106,6 +108,8 @@ export const en = {
     },
     copy: 'copy',
     copied: '✓ copied',
+    copyCommand: 'Copy install command',
+    copyFailed: 'Copy failed — select and copy manually.',
     sectionCapabilities: {
       eyebrow: 'How it works',
       title: 'An agent runtime, not a graph builder.',
@@ -165,6 +169,12 @@ export const en = {
       caption: 'And when something does slip, every run can render an auditable dashboard — the task DAG, per-node assignee and status, token breakdown, and the agent output log.',
       obsLink: 'Observability',
       imgAlt: 'Post-run dashboard replaying a completed team run: the task DAG with per-node assignee, status, token breakdown, and the agent output log.',
+    },
+    sectionEvidence: {
+      eyebrow: 'Scenarios · stack · adoption',
+      title: 'Where OMA fits — and the proof behind it.',
+      sub: 'Start with a workflow, verify it fits your backend, then inspect live adoption and open-source projects without leaving the page.',
+      fullShowcase: 'browse the full showcase',
     },
     sectionBuild: {
       eyebrow: 'Use cases',
@@ -316,7 +326,7 @@ export const en = {
     hero: {
       eyebrow: 'Showcase',
       title: 'Built on Open Multi-Agent.',
-      subPre: 'Open-source projects built with the framework, and tools that integrate with it — drawn from the ecosystem, MIT-licensed. Building something with OMA? ',
+      subPre: 'Open-source projects and integrations built with the framework — drawn from the ecosystem and publicly verifiable. Building something with OMA? ',
       discuss: 'Open a discussion',
       subPost: ' to get listed.',
     },

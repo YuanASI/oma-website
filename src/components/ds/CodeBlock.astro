@@ -10,8 +10,9 @@ interface Props {
   /** Copy-button label + post-click confirmation (localized by the page). */
   copyLabel?: string;
   copiedLabel?: string;
+  copyFailedLabel?: string;
 }
-const { code = '', lang = 'ts', title = null, copyable = true, class: cls = '', copyLabel = 'copy', copiedLabel = '✓ copied' } = Astro.props;
+const { code = '', lang = 'ts', title = null, copyable = true, class: cls = '', copyLabel = 'copy', copiedLabel = '✓ copied', copyFailedLabel = 'Copy failed — select and copy manually.' } = Astro.props;
 
 type Tok = { t: string; c: string | null };
 const KEYWORDS = ['const','let','var','function','return','await','async','import','export','from','new','type','interface','if','else','for','of','in','true','false','null','undefined','class','extends'];
@@ -78,7 +79,12 @@ for (const raw of rawLines) {
 <div class={`ds-codeblock ${cls}`}>
   <div class="ds-codeblock__bar">
     <span class="ds-codeblock__lang">{title || lang}</span>
-    {copyable && <button type="button" class="ds-codeblock__copy" data-clip={code} data-copied={copiedLabel}>{copyLabel}</button>}
+    {copyable && (
+      <div class="ds-codeblock__copy-wrap">
+        <button type="button" class="ds-codeblock__copy" data-clip={code} data-copied={copiedLabel} data-failed={copyFailedLabel}>{copyLabel}</button>
+        <span class="ds-codeblock__status" aria-live="polite"></span>
+      </div>
+    )}
   </div>
   <pre class="ds-codeblock__pre" tabindex="0">{lines.map((line) => <div>{line === null ? ' ' : line.map((tok) => (tok.c ? <span class={tok.c}>{tok.t}</span> : tok.t))}</div>)}</pre>
 </div>
@@ -87,11 +93,15 @@ for (const raw of rawLines) {
   .ds-codeblock { background: var(--oma-bg-3); border: 1px solid var(--oma-border-1); border-radius: var(--radius-md); overflow: hidden; font-family: var(--font-mono); }
   .ds-codeblock__bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-bottom: 1px solid var(--oma-border-0); background: var(--oma-bg-2); }
   .ds-codeblock__lang { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--oma-fg-2); font-weight: 600; }
-  .ds-codeblock__copy { font-family: var(--font-mono); font-size: 11px; color: var(--oma-fg-2); background: transparent; border: none; cursor: pointer; padding: 0; }
+  .ds-codeblock__copy-wrap { position: relative; display: flex; align-items: center; }
+  .ds-codeblock__copy { min-width: 44px; min-height: 44px; font-family: var(--font-mono); font-size: 11px; color: var(--oma-fg-2); background: transparent; border: none; cursor: pointer; padding: 0 6px; }
   .ds-codeblock__copy.copied { color: var(--oma-accent); }
+  .ds-codeblock__copy.copy-failed { color: var(--oma-danger); }
+  .ds-codeblock__copy:focus-visible { outline: 2px solid var(--oma-accent); outline-offset: 1px; border-radius: var(--radius-sm); }
+  .ds-codeblock__status { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
   .ds-codeblock__pre { margin: 0; padding: 14px 16px; font-size: 13px; line-height: 1.6; color: var(--oma-fg-1); overflow-x: auto; }
-  .ds-codeblock__pre :global(.kw) { color: var(--oma-info); }
-  .ds-codeblock__pre :global(.str) { color: var(--oma-accent); }
-  .ds-codeblock__pre :global(.num) { color: var(--oma-warning); }
-  .ds-codeblock__pre :global(.cmt) { color: var(--oma-fg-2); }
+  .ds-codeblock__pre :global(.kw) { color: var(--code-keyword); }
+  .ds-codeblock__pre :global(.str) { color: var(--code-string); }
+  .ds-codeblock__pre :global(.num) { color: var(--code-number); }
+  .ds-codeblock__pre :global(.cmt) { color: var(--code-comment); }
 </style>

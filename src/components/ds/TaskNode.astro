@@ -13,6 +13,7 @@ interface Props {
   duration?: string | null;
   role?: string | null;
   selected?: boolean;
+  compact?: boolean;
   locale?: Locale;
 }
 const {
@@ -22,6 +23,7 @@ const {
   duration = null,
   role = null,
   selected = false,
+  compact = false,
   locale = 'en',
 } = Astro.props;
 const t = useTranslations(locale);
@@ -38,7 +40,7 @@ const label = t.taskStatus[status as Status] ?? t.taskStatus.done;
 const mark = status === 'done' ? '✓' : status === 'failed' ? '✕' : status === 'running' ? '◓' : '○';
 ---
 
-<div class={`ds-tasknode${selected ? ' is-selected' : ''}`}>
+<div class={`ds-tasknode${selected ? ' is-selected' : ''}${compact ? ' is-compact' : ''}`}>
   <div class="ds-tasknode__top">
     <span class="ds-tasknode__id">{id}</span>
     <span class="ds-tasknode__mark" style={`color:${s.color}`}>{mark}</span>
@@ -71,4 +73,9 @@ const mark = status === 'done' ? '✓' : status === 'failed' ? '✕' : status ==
   .ds-tasknode__title { color: var(--oma-fg-0); font-size: 15px; font-weight: 600; line-height: 1.3; margin: 8px 0 6px; }
   .ds-tasknode__status { font-family: var(--font-mono); font-size: 11px; color: var(--oma-fg-2); }
   .ds-tasknode__badges { display: flex; gap: 6px; margin-top: 10px; }
+  .ds-tasknode.is-compact { padding: 9px 12px; }
+  .ds-tasknode.is-compact .ds-tasknode__id,
+  .ds-tasknode.is-compact .ds-tasknode__status { font-size: 10px; }
+  .ds-tasknode.is-compact .ds-tasknode__title { margin: 4px 0; font-size: 13px; }
+  .ds-tasknode.is-compact .ds-tasknode__badges { margin-top: 6px; }
 </style>

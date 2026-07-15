@@ -31,15 +31,15 @@ const pick = (o: Loc) => o[locale];
 
 <nav class="nav">
   <div class="container nav-inner">
-    <a class="brand" href={L('/')} aria-label={t.nav.brandAria}>
+    <a class="brand" href={L('/')}>
       <img class="brand-mark brand-mark--dark" src="/logo-mark-dark.svg" alt="" width="26" height="26" />
       <img class="brand-mark brand-mark--light" src="/logo-mark-light.svg" alt="" width="26" height="26" />
-      <span class="brand-word" aria-hidden="true">open<span class="dash">-</span>multi<span class="dash">-</span>agent</span>
+      <span class="brand-word">open<span class="dash">-</span>multi<span class="dash">-</span>agent</span>
     </a>
-    <div class="nav-links">
+    <div class="nav-links" id="primary-navigation">
       <div class="nav-item">
-        <button type="button" class="nav-menu-btn" aria-haspopup="true">{t.nav.product} <span class="nav-menu-caret">▾</span></button>
-        <div class="nav-menu">
+        <button type="button" class="nav-menu-btn" aria-haspopup="true" aria-expanded="false" aria-controls="product-menu">{t.nav.product} <span class="nav-menu-caret">▾</span></button>
+        <div class="nav-menu" id="product-menu">
           <a class="nav-menu-link nav-menu-link--page" href={L('/architecture/')} aria-current={current === 'architecture' ? 'page' : undefined}>
             <span class="pkg">{t.nav.architecture}</span>
             <span class="desc">{t.nav.menuDesc.architecture}</span>
@@ -59,8 +59,8 @@ const pick = (o: Loc) => o[locale];
         </div>
       </div>
       <div class="nav-item">
-        <button type="button" class={`nav-menu-btn${current === 'examples' || current === 'solutions' ? ' is-current' : ''}`} aria-haspopup="true">{t.nav.useCases} <span class="nav-menu-caret">▾</span></button>
-        <div class="nav-menu nav-menu--cols">
+        <button type="button" class={`nav-menu-btn${current === 'examples' || current === 'solutions' ? ' is-current' : ''}`} aria-haspopup="true" aria-expanded="false" aria-controls="use-cases-menu">{t.nav.useCases} <span class="nav-menu-caret">▾</span></button>
+        <div class="nav-menu nav-menu--cols" id="use-cases-menu">
           <div class="nav-col">
             <div class="nav-col-head">{t.nav.useCasesCols.solutions}</div>
             {SOLUTIONS.map((s) => (
@@ -99,7 +99,7 @@ const pick = (o: Loc) => o[locale];
         <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
       </button>
       <LangSwitcher locale={locale} path={path} />
-      <button type="button" class="nav-mobile-toggle" aria-label={t.nav.menuAria}>≡</button>
+      <button type="button" class="nav-mobile-toggle" aria-label={t.nav.menuAria} aria-expanded="false" aria-controls="primary-navigation">≡</button>
     </div>
   </div>
 </nav>
@@ -108,11 +108,38 @@ const pick = (o: Loc) => o[locale];
   // Mobile nav toggle (co-located with the markup it drives).
   const toggle = document.querySelector<HTMLElement>('.nav-mobile-toggle');
   const links = document.querySelector<HTMLElement>('.nav-links');
+  const closeMobileNav = () => {
+    links?.classList.remove('open');
+    if (toggle) {
+      toggle.textContent = '≡';
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+    document.body.style.overflow = '';
+  };
   toggle?.addEventListener('click', () => {
-    const open = links?.classList.toggle('open');
+    const open = Boolean(links?.classList.toggle('open'));
     toggle.textContent = open ? '✕' : '≡';
+    toggle.setAttribute('aria-expanded', String(open));
     // Lock background scroll while the mobile menu is open.
     document.body.style.overflow = open ? 'hidden' : '';
+  });
+
+  document.querySelectorAll<HTMLElement>('.nav-item').forEach((item) => {
+    const button = item.querySelector<HTMLElement>('.nav-menu-btn');
+    const setExpanded = (open: boolean) => button?.setAttribute('aria-expanded', String(open));
+    item.addEventListener('mouseenter', () => setExpanded(true));
+    item.addEventListener('mouseleave', () => setExpanded(false));
+    item.addEventListener('focusin', () => setExpanded(true));
+    item.addEventListener('focusout', (event) => {
+      if (!item.contains(event.relatedTarget as Node | null)) setExpanded(false);
+    });
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    closeMobileNav();
+    document.querySelectorAll<HTMLElement>('.nav-menu-btn').forEach((button) => button.setAttribute('aria-expanded', 'false'));
+    toggle?.focus();
   });
 
   // Theme toggle — flips <html data-theme> and persists to the SAME key Starlight
