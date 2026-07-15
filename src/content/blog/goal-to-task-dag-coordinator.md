@@ -163,7 +163,7 @@ So the tradeoff is concrete:
 
 ## Goal-first vs graph-first
 
-This is the distinction that actually matters when you choose a framework. Graph-first tools (you wire the nodes) trade maintenance for control and determinism. Goal-first (you describe the outcome) trades an extra planning pass and a non-deterministic plan for flexibility. open-multi-agent ships both behind one API, so you can start goal-first and drop to an explicit graph on the paths that have to be locked down. I wrote more about that split in [Goal-Driven Agent Orchestration vs Explicit Graphs](/blog/goal-driven-vs-explicit-graphs).
+This is the distinction that actually matters when you choose a framework. Graph-first tools (you wire the nodes) trade maintenance for control and determinism. Goal-first (you describe the outcome) trades an extra planning pass and a non-deterministic plan for flexibility. open-multi-agent ships both behind one API, so you can start goal-first and drop to an explicit graph on the paths that have to be locked down. I wrote more about that split in [Goal-Driven Agent Orchestration vs Explicit Graphs](/blog/goal-driven-vs-explicit-graphs/).
 
 ## Try it
 

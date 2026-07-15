@@ -209,7 +209,7 @@ Then there is control flow. A flat DAG is the natural unit, so anything that is 
 
 Debugging is less predictable too. The coordinator can pick a slightly different decomposition between runs, which shifts the output shape. Low temperature, a pinned prompt, and reviewing the plan through the `onPlanReady` hook all help, but none of them are as deterministic as reading a graph file you wrote yourself.
 
-And there is social proof. Graph-first frameworks have shipped at LinkedIn, Klarna, and J.P. Morgan; goal-first is younger in production at that tier, so it is the harder sell in a board-level review today. For a documented case of an LLM-driven routing system hitting these walls and the engineering response, see [Mastra's year of network-to-supervisor](/blog/multi-agent-framework-walls), traced through its own issue tracker.
+And there is social proof. Graph-first frameworks have shipped at LinkedIn, Klarna, and J.P. Morgan; goal-first is younger in production at that tier, so it is the harder sell in a board-level review today. For a documented case of an LLM-driven routing system hitting these walls and the engineering response, see [Mastra's year of network-to-supervisor](/blog/multi-agent-framework-walls/), traced through its own issue tracker.
 
 ## Human-in-the-loop: the bridge to production, already shipped
 
@@ -254,4 +254,4 @@ Repo: <https://github.com/open-multi-agent/open-multi-agent>. Coordinator implem
 
 **Related posts.**
 
-- [5 Walls Multi-Agent Frameworks Hit](/blog/multi-agent-framework-walls): the empirical companion to this taxonomy. One TypeScript framework's year-long migration from LLM-driven routing to a supervisor tree, traced through its issue tracker, is the production evidence behind the goal-first / graph-first split.
+- [5 Walls Multi-Agent Frameworks Hit](/blog/multi-agent-framework-walls/): the empirical companion to this taxonomy. One TypeScript framework's year-long migration from LLM-driven routing to a supervisor tree, traced through its issue tracker, is the production evidence behind the goal-first / graph-first split.

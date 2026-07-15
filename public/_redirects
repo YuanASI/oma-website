@@ -4,3 +4,7 @@
 # which stays as a fallback for any other host. Keep in sync with the
 # `redirects` entry in astro.config.mjs.
 /github  https://github.com/open-multi-agent/open-multi-agent  301
+
+# Historical product URL still linked from third-party sites. Preserve its
+# accumulated signals instead of leaving Search Console with a persistent 404.
+/developer  /getting-started/quick-start/  301

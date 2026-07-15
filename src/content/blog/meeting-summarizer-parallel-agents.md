@@ -188,7 +188,7 @@ A thing to set expectations on: fan-out buys you **wall-clock time, not tokens.*
 
 **Don't** when the steps depend on each other — research-then-write is a pipeline, not a fan-out, and forcing it parallel just breaks the data flow. And don't fan out a single job for the sake of it: one agent is simpler than a pool plus an aggregator.
 
-There's also a higher-level option in the same framework. Here you wired the parallelism by hand — you decided what runs concurrently. If you'd rather describe a goal and let a coordinator decompose it into a task graph and parallelize *that* for you, that's what `runTeam()` does; I wrote it up in [Goal In, DAG Out](/blog/goal-to-task-dag-coordinator). Hand-wired fan-out like this post is the right call when the shape is fixed and you want it explicit; the coordinator is the right call when the shape varies with the goal.
+There's also a higher-level option in the same framework. Here you wired the parallelism by hand — you decided what runs concurrently. If you'd rather describe a goal and let a coordinator decompose it into a task graph and parallelize *that* for you, that's what `runTeam()` does; I wrote it up in [Goal In, DAG Out](/blog/goal-to-task-dag-coordinator/). Hand-wired fan-out like this post is the right call when the shape is fixed and you want it explicit; the coordinator is the right call when the shape varies with the goal.
 
 ## Run it
 

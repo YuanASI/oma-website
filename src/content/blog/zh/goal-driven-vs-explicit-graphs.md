@@ -208,7 +208,7 @@ const result = await orchestrator.runTeam(team, goal)
 
 调试也更不可预测。协调器在两次运行之间可能挑一个略有不同的拆解，从而改变输出的形状。低温、钉死的提示，以及通过 `onPlanReady` 钩子审一遍计划，都有帮助，但没有一个能像读一张你自己写的图文件那样确定。
 
-还有社会证明。图优先的框架已经在 LinkedIn、Klarna 和摩根大通上线；目标优先在那个量级的生产环境里更年轻，所以在今天的董事会级评审里更难推。要看一个 LLM 驱动的路由系统撞上这些墙、以及工程上如何回应的有据案例，见 [Mastra 从 network 到 supervisor 的那一年](/zh/blog/multi-agent-framework-walls)，全程顺着它自己的 issue tracker 追下来。
+还有社会证明。图优先的框架已经在 LinkedIn、Klarna 和摩根大通上线；目标优先在那个量级的生产环境里更年轻，所以在今天的董事会级评审里更难推。要看一个 LLM 驱动的路由系统撞上这些墙、以及工程上如何回应的有据案例，见 [Mastra 从 network 到 supervisor 的那一年](/zh/blog/multi-agent-framework-walls/)，全程顺着它自己的 issue tracker 追下来。
 
 ## Human-in-the-loop：通往生产的桥，已经造好
 
@@ -253,4 +253,4 @@ const result = await orchestrator.runTeam(team, goal)
 
 **相关文章。**
 
-- [多智能体框架会撞上的 5 堵墙](/zh/blog/multi-agent-framework-walls)：这份分类法的实证伴篇。一个 TypeScript 框架历时一年、从 LLM 驱动的路由迁到 supervisor 树，全程顺着它的 issue tracker 追下来，就是目标优先 / 图优先这道分野背后的生产证据。
+- [多智能体框架会撞上的 5 堵墙](/zh/blog/multi-agent-framework-walls/)：这份分类法的实证伴篇。一个 TypeScript 框架历时一年、从 LLM 驱动的路由迁到 supervisor 树，全程顺着它的 issue tracker 追下来，就是目标优先 / 图优先这道分野背后的生产证据。
