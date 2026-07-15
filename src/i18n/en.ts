@@ -96,8 +96,10 @@ export const en = {
       quickStart: 'Quick Start',
       ioInput: 'input · team.ts',
       ioGoal: 'goal',
+      capturedGoal: 'captured goal',
       decomposesInto: 'decomposes into',
       parallel: 'parallel',
+      expandTasks: '{count} more tasks · expand full DAG',
       runReal: 'real',
       runTasks: 'tasks',
       // Understated routing line under the primary CTA — self-identifies the
@@ -106,6 +108,7 @@ export const en = {
     },
     copy: 'copy',
     copied: '✓ copied',
+    copyFailed: 'Copy failed — select and copy manually.',
     sectionCapabilities: {
       eyebrow: 'How it works',
       title: 'An agent runtime, not a graph builder.',
@@ -166,10 +169,15 @@ export const en = {
       obsLink: 'Observability',
       imgAlt: 'Post-run dashboard replaying a completed team run: the task DAG with per-node assignee, status, token breakdown, and the agent output log.',
     },
+    sectionEvidence: {
+      eyebrow: 'Scenarios · stack · adoption',
+      title: 'Where OMA fits — and the proof behind it.',
+      sub: 'Start with a workflow, verify it fits your backend, then inspect live adoption and open-source projects without leaving the page.',
+      fullShowcase: 'browse the full showcase',
+    },
     sectionBuild: {
       eyebrow: 'Use cases',
       title: 'Three workflows worth a team.',
-      sub: 'Each is a single goal that benefits from parallel, multi-model decomposition — exactly what the coordinator is built for.',
       seeCode: 'see code',
     },
     builds: [
@@ -180,7 +188,6 @@ export const en = {
     sectionStack: {
       eyebrow: 'Integrations',
       title: 'Works with your stack.',
-      sub: 'OMA composes with the providers, protocols, and servers already in your backend — no platform to migrate to.',
     },
     stack: [
       { name: 'Providers', note: 'Anthropic, Gemini, OpenAI, Bedrock, Azure, DeepSeek — or any OpenAI-compatible endpoint', count: '13 built-in' },
@@ -192,7 +199,6 @@ export const en = {
     sectionProof: {
       eyebrow: 'Adoption',
       title: 'Open source, live from the repo.',
-      sub: 'MIT-licensed, with a growing ecosystem of projects and integrations. Star, fork, and contributor counts read straight from the repo at build time.',
       liveTag: 'live · synced from registry',
       stats: { stars: 'stars', forks: 'forks', contributors: 'contributors', latestRelease: 'latest release', license: 'license' },
     },
@@ -316,7 +322,7 @@ export const en = {
     hero: {
       eyebrow: 'Showcase',
       title: 'Built on Open Multi-Agent.',
-      subPre: 'Open-source projects built with the framework, and tools that integrate with it — drawn from the ecosystem, MIT-licensed. Building something with OMA? ',
+      subPre: 'Open-source projects and integrations built with the framework — drawn from the ecosystem and publicly verifiable. Building something with OMA? ',
       discuss: 'Open a discussion',
       subPost: ' to get listed.',
     },

@@ -80,14 +80,17 @@ export const zh: UiDict = {
       quickStart: '快速开始',
       ioInput: '输入 · team.ts',
       ioGoal: '目标',
+      capturedGoal: '真实运行目标',
       decomposesInto: '拆解为',
       parallel: '并行',
+      expandTasks: '其余 {count} 个任务 · 展开完整 DAG',
       runReal: '真实',
       runTasks: '个任务',
       enterprise: { pre: '在为公司做选型？', link: '企业交付与支持' },
     },
     copy: '复制',
     copied: '✓ 已复制',
+    copyFailed: '复制失败，请手动选择并复制。',
     sectionCapabilities: {
       eyebrow: '工作原理',
       title: '一个智能体运行时，不是图构建器。',
@@ -148,10 +151,15 @@ export const zh: UiDict = {
       obsLink: '可观测性',
       imgAlt: '运行后仪表盘正在回放一次已完成的团队运行：任务 DAG，标注每个节点的承担者、状态、token 拆解，以及智能体输出日志。',
     },
+    sectionEvidence: {
+      eyebrow: '场景 · 技术栈 · 采用证据',
+      title: '先看适用场景，再看真实证据。',
+      sub: '从工作流出发，确认它能嵌入你的后端，再直接查看实时采用数据和开源生态项目。',
+      fullShowcase: '浏览完整案例',
+    },
     sectionBuild: {
       eyebrow: '应用场景',
       title: '三个值得动用一个团队的工作流。',
-      sub: '每一个都是单一目标，且能从并行、多模型的拆解中获益——这正是协调器擅长的。',
       seeCode: '查看代码',
     },
     builds: [
@@ -162,7 +170,6 @@ export const zh: UiDict = {
     sectionStack: {
       eyebrow: '集成',
       title: '与你的技术栈协同。',
-      sub: 'OMA 与你后端里已有的提供方、协议和服务器组合使用——没有要迁移过去的平台。',
     },
     stack: [
       { name: '提供方', note: 'Anthropic、Gemini、OpenAI、Bedrock、Azure、DeepSeek——或任何兼容 OpenAI 的端点', count: '13 个内置' },
@@ -174,7 +181,6 @@ export const zh: UiDict = {
     sectionProof: {
       eyebrow: '采用情况',
       title: '开源，数字实时来自仓库。',
-      sub: 'MIT 许可，项目与集成的生态在持续生长。Star、fork 和贡献者数量在构建时直接读自仓库。',
       liveTag: '实时 · 同步自 registry',
       stats: { stars: 'Star', forks: 'Fork', contributors: '贡献者', latestRelease: '最新版本', license: '许可证' },
     },
@@ -421,7 +427,7 @@ export const zh: UiDict = {
     hero: {
       eyebrow: '案例',
       title: '基于 Open Multi-Agent 构建。',
-      subPre: '用这个框架构建的开源项目，以及与之集成的工具——取自生态、MIT 许可。在用 OMA 做东西？',
+      subPre: '用这个框架构建的开源项目与集成——来自生态，且均可公开验证。在用 OMA 做东西？',
       discuss: '发起一个讨论',
       subPost: ' 就能被收录。',
     },
