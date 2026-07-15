@@ -90,7 +90,6 @@ export const zh: UiDict = {
     },
     copy: '复制',
     copied: '✓ 已复制',
-    copyCommand: '复制安装命令',
     copyFailed: '复制失败，请手动选择并复制。',
     sectionCapabilities: {
       eyebrow: '工作原理',

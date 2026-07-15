@@ -107,6 +107,10 @@
   --code-string:  var(--oma-accent);
   --code-number:  var(--oma-warning);
   --code-comment: var(--oma-fg-2);
+  --badge-accent-text: var(--oma-accent);
+  --badge-info-text: var(--oma-info);
+  --badge-warning-text: var(--oma-warning);
+  --badge-danger-text: var(--oma-danger);
 
   /* ── Semantic aliases ── */
   --surface-page:    var(--oma-bg-0);
@@ -251,6 +255,10 @@
   --code-string:  #065F46;
   --code-number:  #7C2D12;
   --code-comment: #595249;
+  --badge-accent-text: #065F46;
+  --badge-info-text: #174EA6;
+  --badge-warning-text: #7C2D12;
+  --badge-danger-text: #9F1239;
 
   /* Shadows (soft on light — no heavy black) */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);

@@ -108,7 +108,6 @@ export const en = {
     },
     copy: 'copy',
     copied: '✓ copied',
-    copyCommand: 'Copy install command',
     copyFailed: 'Copy failed — select and copy manually.',
     sectionCapabilities: {
       eyebrow: 'How it works',

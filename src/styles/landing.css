@@ -18,6 +18,10 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--oma-border-2); border-radius: 5px; }
 ::-webkit-scrollbar-track { background: var(--oma-bg-0); }
 a { color: inherit; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
 
 .container { max-width: 1160px; margin: 0 auto; padding: 0 32px; }
 
@@ -48,9 +52,9 @@ a { color: inherit; }
 .nav-links { display: flex; align-items: center; gap: 28px; }
 .nav-link {
   font-family: var(--font-mono); font-size: 13px; color: var(--oma-fg-1);
-  display: inline-flex; align-items: center; min-height: 44px;
   text-decoration: none; transition: color var(--duration-fast) var(--ease-out);
 }
+.nav .nav-link { display: inline-flex; align-items: center; min-height: 44px; }
 .nav-link:hover { color: var(--oma-fg-0); }
 /* Active page gets a quiet lift from fg-1 to fg-0. Footer links carry no
    aria-current, so this only marks the current page in the top nav. */
@@ -181,6 +185,7 @@ a { color: inherit; }
   font-size: clamp(40px, 5.2vw, 64px); line-height: 1.04; color: var(--oma-fg-0);
   margin: 24px 0 0; text-wrap: balance;
 }
+:root[lang='zh-CN'] .hero h1 { font-size: clamp(40px, 4.6vw, 58px); }
 .hero h1 .accent { color: var(--oma-accent); }
 /* One-line capability meta (replaces the heavier bordered fact-strip box). */
 .hero-meta {
@@ -327,7 +332,7 @@ a { color: inherit; }
 .artifact-goal > span {
   display: block; margin-bottom: 6px;
   font-family: var(--font-mono); font-size: 10px; font-weight: 600;
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--oma-accent);
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--code-string);
 }
 .artifact-goal p {
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
@@ -448,7 +453,7 @@ a { color: inherit; }
 .rel-desc code {
   font-family: var(--font-mono); font-size: 12.5px; background: var(--oma-bg-3);
   border: 1px solid var(--border-default); border-radius: var(--radius-xs);
-  padding: 1px 5px; color: var(--oma-accent); white-space: nowrap;
+  padding: 1px 5px; color: var(--code-string); white-space: nowrap;
 }
 .rel-foot { margin-top: auto; padding-top: 18px; }
 
@@ -568,7 +573,7 @@ a { color: inherit; }
 .faq-a-inner code {
   font-family: var(--font-mono); font-size: 13px; background: var(--oma-bg-3);
   border: 1px solid var(--border-default); border-radius: var(--radius-xs);
-  padding: 1px 6px; color: var(--oma-accent);
+  padding: 1px 6px; color: var(--code-string);
 }
 
 /* ── Final CTA ── */
@@ -721,13 +726,21 @@ a { color: inherit; }
   .nav-links.open .nav-menu--cols { flex-direction: column; gap: 2px; }
   .nav-links.open .nav-col { min-width: 0; }
   .nav-links.open .nav-col + .nav-col { border-left: none; padding-left: 0; margin-top: 10px; }
-  .stats-row { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
   .stat { border-right: none; }
+  .stat:nth-child(odd) { border-right: 1px solid var(--border-subtle); }
+  .stat:last-child { grid-column: 1 / -1; border-right: none; }
   .stack-grid { grid-template-columns: 1fr; }
-  .stack-strip { grid-template-columns: 1fr; }
   .dag-parallel { grid-template-columns: 1fr; }
+  .evidence-block + .anchor-target { margin-top: 40px; }
+  .evidence-stack, .evidence-proof { padding-top: 36px; }
+  .evidence-block-head { margin-bottom: 18px; }
+  .build-desc, .case-desc { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+  .build-desc { -webkit-line-clamp: 3; }
+  .evidence-proof .case-desc { -webkit-line-clamp: 3; }
   .cmd { width: 100%; justify-content: space-between; }
   .cmd-wrap { width: 100%; }
+  .cap-code-wrap .text-link { white-space: normal; line-height: 1.5; }
   .hero-cta { gap: 18px; }
   .proof-head { gap: 16px; }
   .io-panel, .cap-code-wrap { min-width: 0; }

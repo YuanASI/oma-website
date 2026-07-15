@@ -85,12 +85,9 @@ const TEAM_CODE = `const agents: AgentConfig[] = [
 const team = oma.createTeam('api-team', { agents })
 const result = await oma.runTeam(team, 'Create a REST API for a todo list')`;
 
-// ── Production-proof cases — the `featured` subset of the shared ecosystem
-//    list (src/lib/showcase.ts), rendered in full on /showcase. zh desc/tag/
-//    status reuse the showcase dict (same entries), keyed by pkg. ──
-// Featured projects render as the uniform 3-up grid; the `practitioner` entry
-// (a named offline deployment + core contributor) is pulled out and rendered as
-// an elevated spotlight above the grid — see src/lib/showcase.ts.
+// ── Production proof uses two explicit ecosystem projects from the shared
+//    showcase list, plus the named practitioner spotlight. The full inventory
+//    remains on /showcase; localized copy is still keyed by package name. ──
 const CASES = SHOWCASE.filter((c) => c.pkg === 'temodar-agent' || c.pkg === 'Engram');
 const proofSpotlight = SHOWCASE.find((c) => c.kind === 'practitioner');
 const scEntries = t.showcase.entries;
@@ -185,8 +182,8 @@ const jsonLd = {
             <div class="hero-meta"><b>{l.hero.meta[0]}</b><span class="sep">·</span><b>{l.hero.meta[1]}</b><span class="sep">·</span><b>{l.hero.meta[2]}</b></div>
             <div class="hero-cta">
               <div class="cmd-wrap">
-                <button type="button" class="cmd" data-cmd="npm create oma-app@latest" data-copied={l.copied} data-failed={l.copyFailed} aria-label={l.copyCommand}>
-                  <span class="prompt" aria-hidden="true">$</span><span class="text">npm create oma-app@latest</span><span class="copy" aria-hidden="true" title={l.copy}><svg class="copy-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="check-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>
+                <button type="button" class="cmd" data-cmd="npm create oma-app@latest" data-copied={l.copied} data-failed={l.copyFailed}>
+                  <span class="sr-only">{l.copy} </span><span class="prompt">$</span><span class="text">npm create oma-app@latest</span><span class="copy" aria-hidden="true" title={l.copy}><svg class="copy-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="check-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>
                 </button>
                 <span class="copy-feedback" aria-live="polite"></span>
               </div>
@@ -337,7 +334,7 @@ const jsonLd = {
             <div class="build-grid">
               {BUILDS.map((b) => (
                 <a class="case-link" href={b.code} target="_blank" rel="noreferrer" style="text-decoration:none;">
-                  <Card padding="lg" interactive class="build-card">
+                  <Card padding="md" interactive class="build-card">
                     <div class="build-scenario">{b.scenario}</div>
                     <div class="build-title">{b.title}</div>
                     <p class="build-desc">{b.desc}</p>
@@ -403,7 +400,7 @@ const jsonLd = {
             <div class="cases-grid evidence-cases">
               {CASES.map((c) => (
                 <a class="case-link" href={c.href} target="_blank" rel="noreferrer" style="text-decoration:none;">
-                  <Card padding="lg" interactive>
+                  <Card padding="md" interactive>
                     <div class="case-pkg">{c.pkg}</div>
                     <div class="case-by">{c.by}</div>
                     <p class="case-desc">{caseTr(c).desc}</p>
@@ -435,10 +432,10 @@ const jsonLd = {
             <div class="faq-list">
               {FAQS.map((f, i) => (
                 <div class={`faq-item${i === 0 ? ' open' : ''}`}>
-                  <button type="button" class="faq-q" aria-expanded={i === 0 ? 'true' : 'false'}>
-                    <span>{f.q}</span><span class="faq-icon">+</span>
+                  <button type="button" class="faq-q" id={`faq-trigger-${i}`} aria-expanded={i === 0 ? 'true' : 'false'} aria-controls={`faq-panel-${i}`}>
+                    <span>{f.q}</span><span class="faq-icon" aria-hidden="true">+</span>
                   </button>
-                  <div class="faq-a"><div class="faq-a-inner">{f.a}</div></div>
+                  <div class="faq-a" id={`faq-panel-${i}`} role="region" aria-labelledby={`faq-trigger-${i}`} aria-hidden={i === 0 ? 'false' : 'true'}><div class="faq-a-inner">{f.a}</div></div>
                 </div>
               ))}
             </div>
@@ -472,8 +469,8 @@ const jsonLd = {
           <h2>{l.ctaFinal.title1}<br />{l.ctaFinal.title2}</h2>
           <div class="cta-actions">
             <div class="cmd-wrap">
-              <button type="button" class="cmd" data-cmd="npm create oma-app@latest" data-copied={l.copied} data-failed={l.copyFailed} aria-label={l.copyCommand}>
-                <span class="prompt" aria-hidden="true">$</span><span class="text">npm create oma-app@latest</span><span class="copy" aria-hidden="true" title={l.copy}><svg class="copy-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="check-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <button type="button" class="cmd" data-cmd="npm create oma-app@latest" data-copied={l.copied} data-failed={l.copyFailed}>
+                <span class="sr-only">{l.copy} </span><span class="prompt">$</span><span class="text">npm create oma-app@latest</span><span class="copy" aria-hidden="true" title={l.copy}><svg class="copy-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="check-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>
               </button>
               <span class="copy-feedback" aria-live="polite"></span>
             </div>
@@ -562,10 +559,12 @@ const jsonLd = {
           faqItems.forEach((i) => {
             i.classList.remove('open');
             i.querySelector('.faq-q')?.setAttribute('aria-expanded', 'false');
+            i.querySelector('.faq-a')?.setAttribute('aria-hidden', 'true');
           });
           if (!isOpen) {
             item.classList.add('open');
             q.setAttribute('aria-expanded', 'true');
+            item.querySelector('.faq-a')?.setAttribute('aria-hidden', 'false');
           }
         });
       });

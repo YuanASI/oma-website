@@ -23,9 +23,9 @@ const { tone = 'neutral', dot = false, class: cls = '' } = Astro.props;
     border: 1px solid;
   }
   .ds-badge--neutral { color: var(--oma-fg-1); background: var(--oma-bg-3); border-color: var(--oma-border-1); }
-  .ds-badge--accent  { color: var(--oma-accent); background: var(--oma-accent-soft); border-color: var(--oma-accent-line); }
-  .ds-badge--warning { color: var(--oma-warning); background: var(--oma-warning-soft); border-color: rgba(245, 158, 11, 0.34); }
-  .ds-badge--danger  { color: var(--oma-danger); background: var(--oma-danger-soft); border-color: rgba(239, 68, 68, 0.34); }
-  .ds-badge--info    { color: var(--oma-info); background: var(--oma-info-soft); border-color: rgba(96, 165, 250, 0.34); }
+  .ds-badge--accent  { color: var(--badge-accent-text); background: var(--oma-accent-soft); border-color: var(--oma-accent-line); }
+  .ds-badge--warning { color: var(--badge-warning-text); background: var(--oma-warning-soft); border-color: rgba(245, 158, 11, 0.34); }
+  .ds-badge--danger  { color: var(--badge-danger-text); background: var(--oma-danger-soft); border-color: rgba(239, 68, 68, 0.34); }
+  .ds-badge--info    { color: var(--badge-info-text); background: var(--oma-info-soft); border-color: rgba(96, 165, 250, 0.34); }
   .ds-badge__dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
 </style>
