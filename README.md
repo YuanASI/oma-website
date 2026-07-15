@@ -106,3 +106,18 @@ If a Reference page is incorrect, fix it in the [framework repository](https://g
 - [`open-multi-agent/open-multi-agent`](https://github.com/open-multi-agent/open-multi-agent) — the TypeScript framework and canonical API source
 - [`@open-multi-agent/core`](https://www.npmjs.com/package/@open-multi-agent/core) — the published npm package
 - [`open-multi-agent/oma-forge`](https://github.com/open-multi-agent/oma-forge) — the Open Multi-Agent ecosystem forge
+
+## License
+
+This repository is source-available for noncommercial use; it is not licensed
+as Open Source under the OSI definition.
+
+- Software, scripts, configuration, workflows, and site templates:
+  [PolyForm Noncommercial 1.0.0](LICENSE)
+- Original writing and media: [CC BY-NC 4.0](CONTENT-LICENSE.md)
+- Synchronized framework Reference documentation only:
+  [MIT License](REFERENCE-LICENSE.md)
+
+Commercial use of the code or original content is not permitted without a
+separate written license from YuanASI. Third-party materials and trademarks
+remain subject to their own terms.

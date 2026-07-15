@@ -15,15 +15,25 @@ yarn-error.log*
 pnpm-debug.log*
 
 
-# environment variables
-.env
-.env.production
+# environment variables and local runtime secrets
+.env*
+!.env.example
+.dev.vars
+*.pem
+*.key
+*.p12
+*.pfx
 
 # macOS-specific files
 .DS_Store
 
 _internal/
 design/
+
+# private planning and local agent context
+CLAUDE.md
+DESIGN.md
+docs/growth/seo-benchmark.md
 
 # local agent / preview tooling
 .claude/
