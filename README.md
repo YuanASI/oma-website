@@ -1,134 +1,108 @@
-# Open Multi-Agent — Documentation & Marketing Site
+# Open Multi-Agent Website
 
-The source for the [open-multi-agent](https://github.com/open-multi-agent/open-multi-agent) site, deployed at **[open-multi-agent.com](https://open-multi-agent.com)**. Built with [Astro](https://astro.build) + [Starlight](https://starlight.astro.build): Starlight powers the **docs**, and custom Astro pages power the **landing page**, **`/examples`**, **`/showcase`**, **`/architecture`**, and the **blog**. The site is bilingual — **English at the root and Simplified Chinese under `/zh/`** (see [Internationalization](#internationalization)).
+[English](README.md) | [简体中文](README.zh-CN.md)
 
-> Looking for the framework itself, not the site? It lives in [`open-multi-agent/open-multi-agent`](https://github.com/open-multi-agent/open-multi-agent) and ships as [`@open-multi-agent/core`](https://www.npmjs.com/package/@open-multi-agent/core).
+The official website, documentation hub, and example browser for [Open Multi-Agent](https://github.com/open-multi-agent/open-multi-agent) — a TypeScript framework that turns a goal into a coordinated task DAG and runs independent work in parallel.
 
-## About open-multi-agent
+[Live site](https://open-multi-agent.com) · [中文站点](https://open-multi-agent.com/zh/) · [Documentation](https://open-multi-agent.com/getting-started/introduction/) · [Framework repository](https://github.com/open-multi-agent/open-multi-agent) · [npm](https://www.npmjs.com/package/@open-multi-agent/core)
 
-TypeScript-native multi-agent orchestration. Give it a goal; a coordinator agent decomposes it into a task DAG, parallelizes the independent tasks, and synthesizes the result — three runtime dependencies, runs anywhere Node.js runs. It's **goal-first**: you describe the outcome and the coordinator builds the orchestration at runtime, instead of hand-wiring every node and edge up front.
+![Open Multi-Agent website preview](public/github-social.png)
 
-```bash
-npm create oma-app@latest      # scaffold a project and watch a run
-npm install @open-multi-agent/core   # add it to an existing backend
-```
+> This repository contains the **website**, not the framework runtime. To install or contribute to Open Multi-Agent itself, visit [`open-multi-agent/open-multi-agent`](https://github.com/open-multi-agent/open-multi-agent).
 
-The [Introduction](src/content/docs/getting-started/introduction.md) and [Quick Start](src/content/docs/getting-started/quick-start.md) in this repo are the canonical write-ups.
+## What this project is
+
+This site is the public front door for Open Multi-Agent. It helps developers understand the framework, evaluate whether it fits their use case, and move from an idea to working code.
+
+It brings together:
+
+- A product overview built around a captured, real `runTeam()` task DAG
+- Getting-started guides and the complete framework reference
+- Runnable examples with browsable TypeScript source
+- Architecture, solutions, integrations, and framework comparisons
+- Community projects, production use cases, and technical articles
+- Full English and Simplified Chinese experiences
+
+The result is one statically generated site for discovery, learning, and technical evaluation — rather than a marketing page separated from its docs and examples.
+
+## Built with
+
+- [Astro](https://astro.build) for the site and static generation
+- [Starlight](https://starlight.astro.build) for documentation
+- TypeScript for components, content tooling, and locale parity checks
+- Markdown content collections for documentation and the blog
+- GitHub Actions for validation and upstream data synchronization
 
 ## Local development
 
-Prerequisites: **Node.js 22** and **pnpm 10** (the versions CI builds with; a `pnpm-lock.yaml` is committed).
+Prerequisites: **Node.js 22** and **pnpm 10**.
 
 ```bash
-pnpm install        # install dependencies
-pnpm dev            # local dev server at http://localhost:4321
-pnpm build          # production build to ./dist/
-pnpm preview        # preview the production build locally
+pnpm install
+pnpm dev
 ```
 
-`pnpm dev` gives you hot-reloading for content and components.
+The development server runs at [http://localhost:4321](http://localhost:4321).
 
-> **Working with the live-data pages?** The landing page and `/examples` fetch GitHub repo stats and the example inventory at build time. They work without any setup — a magnitude fallback keeps them populated — but a shared/unauthenticated IP can hit GitHub's rate limit, in which case they fall back to placeholder data. Set `GITHUB_TOKEN` to lift the limit and get exact numbers: `GITHUB_TOKEN=ghp_… pnpm build`.
+Before opening a pull request, run the same core checks used by CI:
+
+```bash
+pnpm check
+pnpm build
+```
+
+To preview the production build locally:
+
+```bash
+pnpm preview
+```
+
+No GitHub token is required to build the site. Repository statistics and the example inventory are read from committed snapshots, keeping local and production builds deterministic.
 
 ## Project structure
 
-```
+```text
 src/
+├── components/        Shared navigation, footer, CTAs, and design-system primitives
 ├── content/
-│   ├── docs/                  # Starlight documentation pages (Markdown)
-│   │   ├── getting-started/       # maintained here
-│   │   ├── guides/                # maintained here
-│   │   ├── reference/             # vendored & auto-synced — see "Content model"
-│   │   └── zh/                    # Simplified Chinese docs (mirrors the English tree)
-│   └── blog/                  # blog posts migrated from dev.to (English, flat)
-│       └── zh/                    # Simplified Chinese translations (same filenames)
-├── content.config.ts          # `docs` + `blog` content collections
-├── pages/
-│   ├── [...locale]/           # custom pages — one template per page → / and /zh/
-│   │   ├── index.astro            # landing (real OMA run + live repo stats)
-│   │   ├── examples.astro         # /examples — build-time inventory of the example suite
-│   │   ├── showcase.astro         # /showcase — ecosystem / production-proof entries
-│   │   ├── architecture.astro     # /architecture — how OMA works, diagrammed
-│   │   └── blog/                  # blog index + per-post → /blog and /zh/blog
-│   └── rss.xml.ts             # blog RSS feed (English posts)
-├── i18n/                      # custom-page UI strings (Starlight handles the docs)
-│   ├── index.ts               # locales + helpers (localizePath, useTranslations, …)
-│   ├── en.ts                  # source of truth — UiDict = typeof en
-│   └── zh.ts                  # Simplified Chinese — must match en key-for-key
-├── layouts/
-│   └── BaseLayout.astro       # shared locale-aware <head> for the custom pages
-├── components/
-│   ├── Nav · Footer · LangSwitcher · ThemeInit · StarlightHead
-│   └── ds/                        # design system: Badge Callout Card CodeBlock TaskNode
-├── data/
-│   ├── hero-run.json          # the real task DAG the hero renders (English — see scripts/)
-│   └── hero-run.zh.json       # the same, captured with a Chinese goal
-├── lib/
-│   ├── site.ts                # site constants + build-time GitHub stats (ghStats)
-│   ├── examples.ts            # build-time /examples inventory
-│   └── showcase.ts            # ecosystem entries (landing + /showcase)
-└── styles/                    # tokens.css · starlight-theme.css · landing.css · blog.css · code-theme.mjs
-scripts/                       # capture-hero-dag · migrate-devto-blog · sync-reference-docs · check-reference-drift · update-translation-manifest
-public/                        # favicon, logos, social card, robots.txt, _redirects, llms*.txt
-astro.config.mjs               # site config, locales (en + zh), redirects, sidebar, sitemap, Expressive Code theme
-TRANSLATING.md                 # the spec for producing a translation
+│   ├── docs/          Starlight documentation in English and Chinese
+│   └── blog/          English posts and Chinese translations
+├── data/              Captured runs and synchronized GitHub data snapshots
+├── i18n/              Typed UI dictionaries and locale helpers
+├── layouts/           Shared page shells and metadata
+├── lib/               Examples, integrations, solutions, comparisons, and site data
+├── pages/             Localized landing, docs-adjacent, example, and blog routes
+└── styles/            Design tokens and page-level themes
+scripts/               Content sync, snapshot refresh, translation, and asset tooling
+public/                Logos, social cards, diagrams, media, robots.txt, and llms.txt
 ```
 
-## Content model
+## Content and data model
 
-Two content collections live under `src/content/`, and they're maintained differently:
+The site intentionally separates content maintained here from content owned by the framework repository:
 
-- **Docs** (`src/content/docs/`, rendered by Starlight):
-  - **Getting Started + Guides** are written and edited directly in this repo.
-  - **Reference** is **vendored from the framework repo's `docs/`** (baseline commit `ef31479`) and kept in step **automatically** (see [CI](#ci--contributing)). Treat these pages as a synced copy — fixes should land upstream in `open-multi-agent/open-multi-agent` first, then be re-vendored here, so the two don't drift.
-  - English lives at the root; each translation mirrors the tree under `src/content/docs/<locale>/` (e.g. `zh/`). See [Internationalization](#internationalization).
-- **Blog** (English in `src/content/blog/`, Chinese translations in `src/content/blog/zh/`; rendered by `src/pages/[...locale]/blog/`) — posts migrated from dev.to via [`scripts/migrate-devto-blog.mjs`](scripts/migrate-devto-blog.mjs). dev.to is the original; the site self-canonicals each post. English posts link back to the dev.to original; Chinese translations omit `devtoUrl` and link back to the English post. See [Internationalization](#internationalization).
+- **Getting Started and Guides** are authored in this repository.
+- **Reference docs** are synchronized from the framework repository so API documentation stays aligned with the published package.
+- **Examples and repository statistics** come from committed snapshots refreshed by automation. Builds never depend on a live GitHub API response.
+- **The landing-page DAG** comes from a captured Open Multi-Agent run, not a hand-drawn mock.
+- **English is the source locale.** Chinese UI dictionaries are checked against it key for key, while translated content mirrors the English content tree.
 
-Beyond the docs, the marketing pages are built from **live framework data at build time**, never a hand-maintained list:
+For translation conventions and workflow, see [TRANSLATING.md](TRANSLATING.md).
 
-- **Landing** (`src/pages/[...locale]/index.astro`) renders a **real OMA run** ([`src/data/hero-run.json`](src/data/hero-run.json)) plus live repo stats.
-- **`/examples`** mirrors the framework's example suite straight from its git tree.
-- **`/showcase`** lists the ecosystem entries from [`src/lib/showcase.ts`](src/lib/showcase.ts).
+## Contributing
 
-The site navigation (sidebar order, grouping) is defined in [`astro.config.mjs`](astro.config.mjs).
+Contributions that improve clarity, correctness, accessibility, performance, or the learning path are welcome.
 
-## Internationalization
+When changing the site:
 
-The site is bilingual — **English at the root (`/`)** and **Simplified Chinese under `/zh/`** — and built so more locales are a drop-in. [`TRANSLATING.md`](TRANSLATING.md) is the full spec; in short:
+1. Keep English and Chinese UI dictionaries in sync.
+2. Run `pnpm check` and `pnpm build`.
+3. Submit changes through a pull request; do not push directly to `main`.
 
-- **Docs** use Starlight's built-in i18n (`astro.config.mjs` → `locales`): English in `src/content/docs/`, translations under `src/content/docs/<locale>/`. Untranslated pages fall back to English automatically.
-- **Custom pages** (landing / examples / showcase / architecture) aren't Starlight-managed. Each is **one template** at `src/pages/[...locale]/<page>.astro` that emits both `/` and `/zh/` via `getStaticPaths`. Their UI strings live in per-locale dictionaries under [`src/i18n/`](src/i18n/) — `en.ts` is the source of truth (`UiDict = typeof en`) and `zh.ts` must match it key-for-key — and [`BaseLayout.astro`](src/layouts/BaseLayout.astro) renders the locale-aware `<head>` (`lang`, `og:locale`, hreflang). A language switcher in the nav links between locales.
-- **Blog** uses the same `[...locale]/blog/` routing: English posts in `src/content/blog/`, Chinese in `src/content/blog/zh/` (same filename). A post appears under `/zh/blog` only once translated, and the en↔zh `hreflang` pair is emitted only when both sides exist.
-- **Adding a locale** (e.g. `ja`): uncomment it in `astro.config.mjs` → `locales`, add a `src/i18n/ja.ts` dictionary, and a `src/content/docs/ja/` tree. The page templates never fork.
-- **The hero stays a real run** in every locale — `src/data/hero-run.<locale>.json` is captured with a goal *in that language* (`OMA_LANG=zh node scripts/capture-hero-dag.mjs`), never hand-translated.
-- **Reference drift:** the Reference docs are auto-vendored in English, so their translations can silently go stale. [`scripts/check-reference-drift.mjs`](scripts/check-reference-drift.mjs) flags pages whose English source changed since they were translated; [`scripts/update-translation-manifest.mjs`](scripts/update-translation-manifest.mjs) re-baselines a page after it's re-translated.
+If a Reference page is incorrect, fix it in the [framework repository](https://github.com/open-multi-agent/open-multi-agent) first, then synchronize it here. This prevents the website and the package documentation from drifting apart.
 
-> **Heads up:** `astro build` transpiles with esbuild and does **not** type-check, so a missing `zh.ts` key won't fail the build — it renders as `undefined`. Verify a translation against the rendered output (e.g. `grep -rc undefined dist/zh`), not just a green build.
+## Related projects
 
-## Scripts
-
-These are run on demand or by CI — they're not part of `pnpm build`.
-
-| Script | What it does |
-| --- | --- |
-| [`capture-hero-dag.mjs`](scripts/capture-hero-dag.mjs) | Reproduce the hero's real task DAG into `src/data/hero-run.json`. `OMA_LANG=zh` captures a Chinese-goal run into `hero-run.zh.json`. Re-run after an OMA release or a goal change. Runs outside this repo's dependency tree — see the header. |
-| [`migrate-devto-blog.mjs`](scripts/migrate-devto-blog.mjs) | (Re-)migrate the dev.to posts into `src/content/blog/`. Idempotent overwrite. |
-| [`sync-reference-docs.mjs`](scripts/sync-reference-docs.mjs) | Sync the vendored Reference docs from the framework's `main`. Run by CI weekly; also runnable locally. |
-| [`check-reference-drift.mjs`](scripts/check-reference-drift.mjs) | Report Reference translations whose English source changed since they were translated. Read-only; run after a Reference sync. |
-| [`update-translation-manifest.mjs`](scripts/update-translation-manifest.mjs) | Re-baseline a Reference page's translation manifest entry once it's been re-translated. |
-
-## Theming notes
-
-- Design tokens are the single source of truth in `src/styles/tokens.css`, mapped onto Starlight in `src/styles/starlight-theme.css` (dark-first). Landing-style pages use `src/styles/landing.css`; the blog uses `src/styles/blog.css`. The CJK font stack (for the `/zh/` pages) is appended in `tokens.css`, so English pages are unchanged.
-- Code blocks use the OMA syntax palette defined in `src/styles/code-theme.mjs` (`omaDark` / `omaLight`).
-
-> **Editing code-block colors?** Clear Astro's content-render cache before rebuilding: `rm -rf node_modules/.astro .astro`. That cache keys rendered code-block HTML on source content, not on `astro.config.mjs`, so a stale cache serves old styles after a palette change. Fresh CI checkouts have no cache, so production builds are unaffected.
-
-## CI & contributing
-
-Two GitHub Actions workflows back this repo:
-
-- **Build** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) is the gate. It runs on every pull request and on pushes to `main`. `pnpm build` runs the build-time GitHub fetches (repo stats + the `/examples` inventory) and catches import, ESM, and content-collection errors. `GITHUB_TOKEN` authenticates those fetches so a shared-runner IP doesn't hit the rate limit, and a hard-coded fallback keeps CI green even if the API is unreachable. Note that the build transpiles with esbuild and does **not** type-check (see the i18n heads-up above).
-- **Sync Reference docs** ([`.github/workflows/sync-reference.yml`](.github/workflows/sync-reference.yml)) runs weekly (Mon 06:17 UTC) and on demand. It re-vendors the Reference docs from the framework's `main`, validates the build, and **opens a PR** with any changes (and a translation-drift report) — it never pushes to `main`; the build CI plus a human review gate it.
-
-Changes go through pull requests — please don't push directly to `main`.
+- [`open-multi-agent/open-multi-agent`](https://github.com/open-multi-agent/open-multi-agent) — the TypeScript framework and canonical API source
+- [`@open-multi-agent/core`](https://www.npmjs.com/package/@open-multi-agent/core) — the published npm package
+- [`open-multi-agent/oma-forge`](https://github.com/open-multi-agent/oma-forge) — the Open Multi-Agent ecosystem forge
