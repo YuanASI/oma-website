@@ -14,7 +14,7 @@ Pass `checkpoint` per call, or set a default for every run via `OrchestratorConf
 ```typescript
 import { OpenMultiAgent, Team, InMemoryStore } from '@open-multi-agent/core'
 
-const store = new InMemoryStore() // or a durable MemoryStore (Redis, SQLite, ...)
+const store = new InMemoryStore() // for durability across restarts, use FileStore (below) or a custom MemoryStore
 
 const team = new Team({
   name: 'research',
@@ -44,6 +44,31 @@ const orchestrator = new OpenMultiAgent({ checkpoint: true }) // default for all
 | `key` | `string` | — | Exact store key. Takes precedence over `runId`. |
 
 > **A `runId`, `key`, or explicit `store` is required when the team has no shared-memory store.** The instance-level fallback store is shared across every run on the orchestrator, so without a distinct key two concurrent runs would overwrite each other at the default checkpoint key. The call throws rather than risk a silent stomp.
+
+## Durable persistence: `FileStore`
+
+`InMemoryStore` is a plain `Map` — it dies with the process, so a checkpoint held there does not survive a restart. For durability out of the box, use the bundled **`FileStore`**: a zero-dependency, filesystem-backed `MemoryStore` (Node built-ins only, so the three-dependency promise holds). Each write lands atomically — temp file → `fsync` → `rename` — so a reader never sees a half-written file, even across a power loss, not just a process crash.
+
+```typescript
+import { OpenMultiAgent, Team, InMemoryStore, FileStore } from '@open-multi-agent/core'
+
+const team = new Team({
+  name: 'research',
+  agents: [researcher, writer],
+  sharedMemoryStore: new InMemoryStore(), // hot-path memory stays in RAM
+})
+
+const orchestrator = new OpenMultiAgent()
+
+// Checkpoints are durable; a fresh process can resume from the same path.
+await orchestrator.runTasks(team, tasks, {
+  checkpoint: { store: new FileStore('./.oma/checkpoint.json') },
+})
+```
+
+**Which store gets the `FileStore`.** Prefer it as the *checkpoint* store, leaving shared memory on a fast `InMemoryStore` (above). A separate checkpoint store self-embeds the shared-memory snapshot (see [What gets saved](#what-gets-saved)), so resume rebuilds everything from the one file — while durability I/O stays at checkpoint cadence (once per completed task) instead of firing on every agent memory write. Using `FileStore` as `sharedMemoryStore` also works and is durable, but then *every* shared-memory write rewrites the whole file; reach for that only when shared memory itself must survive a restart independently of checkpoints.
+
+**Scope.** One process at a time — there is no cross-process file lock, so this is not a shared database. Concurrent writes *within* a process are serialized and safe. That matches the resume story, which is inherently sequential (process A crashes, process B resumes). A corrupt or unreadable state file makes the store throw rather than silently start empty, so durable data is never quietly discarded.
 
 ## Resume
 
@@ -103,6 +128,27 @@ const orchestrator = new OpenMultiAgent({
   },
 })
 ```
+
+## Redacting persisted secrets
+
+A checkpoint stores completed task results — and, for a separate checkpoint store, the shared-memory snapshot — **verbatim**. Redaction elsewhere (traces, dashboard) does **not** reach this path, so a secret an agent emits into its answer lands on disk. To scrub it, wrap the durable store with **`RedactingStore`**:
+
+```typescript
+import { RedactingStore, FileStore } from '@open-multi-agent/core'
+
+await orchestrator.runTasks(team, tasks, {
+  checkpoint: { store: new RedactingStore(new FileStore('./.oma/checkpoint.json')) },
+})
+```
+
+`RedactingStore` redacts values on write at the store boundary, so it covers **both** persistence paths through the same primitive:
+
+- Wrap the **checkpoint store** (above) to scrub the checkpoint's own results and any embedded shared-memory snapshot.
+- Wrap the **shared-memory store** (`sharedMemoryStore: new RedactingStore(...)`) to scrub the `<agent>/<key>` entries. In the default `checkpoint: true` reuse case the checkpoint store *is* that store, so one wrap scrubs both.
+
+Wrap **every durable store you persist to**: in a split setup — wrapped shared store, separate *unwrapped* checkpoint store — the checkpoint's `completedTaskResults` (sourced from the queue, not the store) would still be raw. Add custom value patterns (e.g. PII) via `new RedactingStore(store, { patterns: [/…/] })`.
+
+Redaction is opt-in by construction and lossy on purpose: a **resumed** run sees `[redacted]` in place of the masked values. Don't enable it if a downstream agent legitimately needs a persisted secret on resume.
 
 ## Advanced: the `Checkpoint` class
 
