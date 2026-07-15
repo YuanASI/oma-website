@@ -178,7 +178,6 @@ export const en = {
     sectionBuild: {
       eyebrow: 'Use cases',
       title: 'Three workflows worth a team.',
-      sub: 'Each is a single goal that benefits from parallel, multi-model decomposition — exactly what the coordinator is built for.',
       seeCode: 'see code',
     },
     builds: [
@@ -189,7 +188,6 @@ export const en = {
     sectionStack: {
       eyebrow: 'Integrations',
       title: 'Works with your stack.',
-      sub: 'OMA composes with the providers, protocols, and servers already in your backend — no platform to migrate to.',
     },
     stack: [
       { name: 'Providers', note: 'Anthropic, Gemini, OpenAI, Bedrock, Azure, DeepSeek — or any OpenAI-compatible endpoint', count: '13 built-in' },
@@ -201,7 +199,6 @@ export const en = {
     sectionProof: {
       eyebrow: 'Adoption',
       title: 'Open source, live from the repo.',
-      sub: 'MIT-licensed, with a growing ecosystem of projects and integrations. Star, fork, and contributor counts read straight from the repo at build time.',
       liveTag: 'live · synced from registry',
       stats: { stars: 'stars', forks: 'forks', contributors: 'contributors', latestRelease: 'latest release', license: 'license' },
     },
