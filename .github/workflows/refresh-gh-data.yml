@@ -10,10 +10,9 @@ name: Refresh GitHub snapshot
 # Fetching here instead — on Actions' reliable token + IP — and committing the
 # result decouples freshness from deploy: every build just reads the file.
 #
-# It pushes the refreshed snapshot straight to main (data-only paths). The commit
-# carries [skip ci] so it doesn't re-trigger CI / IndexNow (nothing to re-check on
-# a numbers-only change); Cloudflare Pages still rebuilds via its own GitHub App
-# webhook, so the fresh numbers reach the live site within a deploy.
+# It proposes refreshed snapshots through a PR so main can remain protected. The
+# PR is auto-merged after the required Build check passes; the resulting push to
+# main triggers Cloudflare Pages and IndexNow normally.
 
 on:
   schedule:
@@ -23,6 +22,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: refresh-gh-data
@@ -33,11 +33,7 @@ jobs:
     name: Refresh snapshot from GitHub
     runs-on: ubuntu-latest
     steps:
-      # Check out with SYNC_PAT (a real user) so the push below reaches main and
-      # fires the Cloudflare Pages deploy webhook.
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.SYNC_PAT }}
 
       # pnpm version is pinned by package.json "packageManager" (Corepack-style).
       # Do NOT add a `version:` input — action-setup errors if both are set.
@@ -59,21 +55,36 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Validate the build against the fresh snapshot before pushing, so a bad
-      # refresh never reaches main. No token here on purpose: the build no longer
-      # fetches GitHub, so it must pass fully offline.
+      # Validate the build against the fresh snapshot before proposing it. No
+      # token here on purpose: the build no longer fetches GitHub, so it must pass
+      # fully offline.
       - name: Validate build
         run: pnpm build
 
-      - name: Commit + push if the snapshot changed
-        run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet -- src/data; then
-            echo "Snapshot unchanged — nothing to push."
-          else
-            git add src/data/gh-stats.json src/data/examples.json
-            git commit -m "chore(data): refresh GitHub snapshot [skip ci]"
-            git push
-            echo "Pushed refreshed snapshot to main."
-          fi
+      - name: Open or update snapshot PR
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          # A PAT is required because the organization blocks GITHUB_TOKEN from
+          # creating pull requests.
+          token: ${{ secrets.SYNC_PAT }}
+          add-paths: |
+            src/data/gh-stats.json
+            src/data/examples.json
+          branch: chore/refresh-gh-data
+          delete-branch: true
+          base: main
+          commit-message: 'chore(data): refresh GitHub snapshot'
+          title: 'chore(data): refresh GitHub snapshot'
+          body: |
+            Automated refresh of the committed GitHub statistics and examples
+            inventory. The snapshot was validated with `pnpm build` before this
+            pull request was created or updated.
+
+      - name: Enable auto-merge
+        if: steps.cpr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.SYNC_PAT }}
+          PR_NUMBER: ${{ steps.cpr.outputs.pull-request-number }}
+          REPO: ${{ github.repository }}
+        run: gh pr merge "$PR_NUMBER" --repo "$REPO" --auto --squash
