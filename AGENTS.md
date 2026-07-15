@@ -136,6 +136,5 @@ deleting them unless permanent deletion was explicitly authorized.
 
 When instructions or documentation disagree, prefer current executable project
 configuration (`package.json`, workflows, and source code), then this file, then
-`README.md` and topic-specific documentation. `CLAUDE.md` is a compatibility
-shim that imports this file; `AGENTS.md` is the single tool-neutral source of
-repository instructions.
+`README.md` and topic-specific documentation. `AGENTS.md` is the single
+tool-neutral source of repository instructions.
