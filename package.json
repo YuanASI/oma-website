@@ -8,7 +8,9 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "check": "tsc --noEmit -p tsconfig.i18n.json",
+    "check": "tsc --noEmit -p tsconfig.i18n.json && pnpm test:hero-schema && pnpm verify:hero",
+    "test:hero-schema": "node --test scripts/hero-run-schema.test.mjs",
+    "verify:hero": "node scripts/validate-hero-dag.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },

@@ -81,6 +81,8 @@ export const zh: UiDict = {
       ioInput: '输入 · team.ts',
       ioGoal: '目标',
       capturedGoal: '真实运行目标',
+      expandGoal: '查看完整目标',
+      collapseGoal: '收起',
       decomposesInto: '拆解为',
       parallel: '并行',
       expandTasks: '其余 {count} 个任务 · 展开完整 DAG',
@@ -159,14 +161,14 @@ export const zh: UiDict = {
     },
     sectionBuild: {
       eyebrow: '应用场景',
-      title: '三个值得动用一个团队的工作流。',
+      title: '三个工作流，三种明确的编排选择。',
       seeCode: '查看代码',
     },
-    builds: [
-      { scenario: '法务 · 文档审查', title: '合同审查', desc: '一个目标——「标出这份 MSA 里的风险」——扇出给多个智能体，并行地研读条款、比对政策库、起草批注。', outcome: '一次 runTeam() 调用，产出一份结构化的风险报告。' },
-      { scenario: '市场 · 监测', title: '竞品监测', desc: '多个智能体通过 MCP 从不同来源抓取，各自用合适的模型——抓取用便宜的本地模型、分析用前沿模型——再把发现对齐。', outcome: '一份去重后的摘要，按计划定时刷新，一个团队里混用多个提供方。' },
-      { scenario: 'SRE · 运维', title: '事故复盘', desc: '日志、指标和部署时间线作为并行节点被调查；一个评审智能体综合出原因与诱因。', outcome: '事故解决几分钟后，就有一份基于时间线的复盘初稿。' },
-    ],
+    builds: {
+      'express-customer-support': { primitive: 'Express · runTasks()', scenario: '客服 · 后端', title: '客服 API', desc: '一条 POST /tickets 路由执行固定的「分类 → 起草 → QA」流水线，每次交接都由 Zod schema 校验。', outcome: '返回结构化 JSON，并明确处理 400、502 与 504。' },
+      'incident-postmortem-dag': { primitive: '显式 DAG · runTasks()', scenario: 'SRE · 运维', title: '事故复盘', desc: '三项基于 fixtures 的调查并行开始，再汇入根因假设与最终事故复盘。', outcome: '一份保留证据链、运行时长与 token 成本的 Markdown 产物。' },
+      'meeting-summarizer': { primitive: '并行 Agent', scenario: '运营 · 会议', title: '会议情报', desc: '摘要、待办与情绪三位专职 Agent 并行阅读同一份转录，最后组装成一份报告。', outcome: '带类型的待办事项，以及可直接分享的 Markdown 报告。' },
+    },
     sectionStack: {
       eyebrow: '集成',
       title: '与你的技术栈协同。',
@@ -175,7 +177,7 @@ export const zh: UiDict = {
       { name: '提供方', note: 'Anthropic、Gemini、OpenAI、Bedrock、Azure、DeepSeek——或任何兼容 OpenAI 的端点', count: '13 个内置' },
       { name: 'MCP', note: '把 Model Context Protocol 服务器作为工具接入', count: '原生' },
       { name: 'Vercel AI SDK', note: '桥接 60+ 个 AI SDK 提供方与平台', count: '兼容' },
-      { name: 'Express', note: '把 runTeam() 挂在一个路由处理器后面', count: '即插即用' },
+      { name: 'Express', note: '把固定的 runTasks() 流水线挂在路由处理器后面', count: '即插即用' },
       { name: '任意 Node.js', note: '没有守护进程，没有 sidecar——三个运行时依赖', count: 'Node 18+' },
     ],
     sectionProof: {
@@ -260,7 +262,7 @@ export const zh: UiDict = {
     // 运行命令在所有语言下都保持英文（从上游文件解析，和索引 blurb 一致）。
     detail: {
       backToIndex: '← 全部示例',
-      categories: { cookbook: 'Cookbook', basics: '基础', patterns: '模式' },
+      categories: { cookbook: 'Cookbook', basics: '基础', patterns: '模式', apps: '应用' },
       apisUsed: 'OMA API',
       linesLabel: '行',
       runTitle: '运行',
@@ -281,6 +283,10 @@ export const zh: UiDict = {
       // 按 slug 的中文覆盖：标题 + 描述。代码、API 名、运行命令、源码保持英文；
       // 未列出的例子回退到英文（en 源）。忠实翻译上游描述，不曲解例子行为。
       recipes: {
+        'express-customer-support': {
+          title: 'Express 客服 API',
+          intent: '一条 Express REST API 把 OMA 的显式 runTasks() DAG 放在 POST /tickets 后面；每次请求依次完成分类、回复起草与 QA 复核，并返回结构化 JSON。',
+        },
         'contract-review-dag': {
           title: '合同审查 DAG（步骤级重试）',
           intent: '用 runTasks() 演示 DAG 任务编排 + 步骤级重试。场景：由 4 个任务组成 DAG 的合同审查流水线。',

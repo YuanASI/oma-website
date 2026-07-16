@@ -189,9 +189,13 @@ function firstDocLine(src) {
 // ───────────── example detail (source + structure for /examples/<slug>) ─────────────
 // Everything below is EXTRACTED from the real file — the maintainer's own JSDoc
 // header and the file's imports — never generated. So the detail pages stay
-// honest (red-line §7) and re-sync with upstream on every refresh. Only the three
-// "ours" categories get detail pages; providers/integrations still link out.
+// honest (red-line §7) and re-sync with upstream on every refresh. The three
+// single-file "ours" categories get detail pages, plus selected full apps whose
+// README + entrypoint can be represented without inventing implementation facts.
 const DETAIL_CATEGORIES = ['cookbook', 'basics', 'patterns'];
+const APP_DETAIL_ENTRYPOINTS = {
+  'express-customer-support': 'index.ts',
+};
 
 // Section labels that end the intro prose / delimit doc sections. "Scenario" is
 // deliberately NOT here — its line is useful intent (the diagram after it stops us).
@@ -251,7 +255,7 @@ function parseSection(lines, labelRe) {
 // the framework's src/index.js entrypoint. Purely factual (it's the import line).
 function parseApis(src) {
   const symbols = new Set();
-  const re = /import\s+(?:type\s+)?\{([^}]*)\}\s+from\s+['"][^'"]*src\/index\.js['"]/g;
+  const re = /import\s+(?:type\s+)?\{([^}]*)\}\s+from\s+['"](?:[^'"]*src\/index\.js|@open-multi-agent\/core)['"]/g;
   let m;
   while ((m = re.exec(src))) {
     for (const part of m[1].split(',')) {
@@ -285,6 +289,78 @@ function buildDetail(category, ex, src) {
     prereqs: parseSection(lines, /^Prerequisites?\s*:/i),
     loc: src.replace(/\s+$/, '').split('\n').length,
     blob: ex.href,
+    source: src,
+  };
+}
+
+// Keep existing records in their committed order and append genuinely new
+// details. This prevents Promise scheduling or category additions from
+// rewriting hundreds of lines of generated JSON on an otherwise small refresh.
+function preserveDetailOrder(details, previousDetails) {
+  const ordered = {};
+  for (const name of Object.keys(previousDetails ?? {})) {
+    if (details[name]) ordered[name] = details[name];
+  }
+  for (const [name, detail] of Object.entries(details)) {
+    if (!ordered[name]) ordered[name] = detail;
+  }
+  return ordered;
+}
+
+function markdownIntro(md) {
+  const out = [];
+  for (const raw of md.split('\n')) {
+    const t = raw.trim();
+    if (!t || t.startsWith('# ')) {
+      if (out.length) break;
+      continue;
+    }
+    if (t.startsWith('## ') || t.startsWith('```')) break;
+    out.push(t);
+  }
+  return cleanMd(out.join(' '));
+}
+
+function markdownCodeSection(md, heading) {
+  const out = [];
+  let inSection = false;
+  let inCode = false;
+  for (const raw of md.split('\n')) {
+    const t = raw.trim();
+    if (/^##\s+/.test(t)) {
+      if (inSection) break;
+      inSection = t.toLowerCase() === `## ${heading.toLowerCase()}`;
+      continue;
+    }
+    if (!inSection) continue;
+    if (t.startsWith('```')) {
+      inCode = !inCode;
+      continue;
+    }
+    if (inCode && t && !t.startsWith('#')) out.push(t);
+  }
+  return out;
+}
+
+function buildAppDetail(ex, src, readme, sourcePath) {
+  const run = [
+    ...markdownCodeSection(readme, 'Setup'),
+    ...markdownCodeSection(readme, 'Start the server'),
+  ];
+  const apiKeys = run
+    .map((line) => line.match(/^export\s+([A-Z][A-Z0-9_]+)=/)?.[1])
+    .filter(Boolean);
+  return {
+    name: ex.name,
+    category: 'apps',
+    title: firstDocLine(src) || ex.title,
+    intent: markdownIntro(readme) || ex.blurb,
+    apis: parseApis(src),
+    run: run.length ? run : [`cd ${ROOT}/integrations/${ex.name}`, 'npm install', 'npm start'],
+    prereqs: apiKeys.map((key) => `${key} for the default provider configuration.`),
+    loc: src.replace(/\s+$/, '').split('\n').length,
+    blob: BLOB(`${ROOT}/${sourcePath}`),
+    sourcePath,
     source: src,
   };
 }
@@ -387,32 +463,64 @@ async function fetchExamples() {
     browseHref: TREE(ROOT),
   };
 
-  // Detail records (full source + parsed structure) for the "ours" categories,
-  // keyed by slug (== name; names are unique across these three categories). Raw
-  // CDN fetches aren't rate-limited; a rare miss just omits that page this cycle.
-  const detailTargets = DETAIL_CATEGORIES.flatMap((category) =>
-    (inventory[category] ?? []).map((ex) => ({ category, ex })),
+  // Detail records (full source + parsed structure), keyed by slug. A rare raw
+  // CDN miss is filled from the previous last-good detail later in main().
+  const fileDetailTargets = DETAIL_CATEGORIES.flatMap((category) =>
+    (inventory[category] ?? []).map((ex) => ({ category, ex, sourcePath: `${category}/${ex.name}.ts` })),
   );
+  const appDetailTargets = apps
+    .filter((ex) => APP_DETAIL_ENTRYPOINTS[ex.name])
+    .map((ex) => ({
+      category: 'apps',
+      ex,
+      sourcePath: `integrations/${ex.name}/${APP_DETAIL_ENTRYPOINTS[ex.name]}`,
+    }));
+  const detailTargets = [...fileDetailTargets, ...appDetailTargets];
   const details = {};
-  await Promise.all(
-    detailTargets.map(async ({ category, ex }) => {
-      const src = await fetchText(RAW(`${ROOT}/${category}/${ex.name}.ts`));
-      if (src) details[ex.name] = buildDetail(category, ex, src);
+  const detailEntries = await Promise.all(
+    detailTargets.map(async ({ category, ex, sourcePath }) => {
+      const src = await fetchText(RAW(`${ROOT}/${sourcePath}`));
+      if (!src) return null;
+      if (category !== 'apps') return [ex.name, buildDetail(category, ex, src)];
+      const readme = await fetchText(RAW(`${ROOT}/integrations/${ex.name}/README.md`));
+      return readme ? [ex.name, buildAppDetail(ex, src, readme, sourcePath)] : null;
     }),
   );
+  for (const entry of detailEntries) {
+    if (entry) details[entry[0]] = entry[1];
+  }
 
-  return { inventory, details, detailExpected: detailTargets.length };
+  return {
+    inventory,
+    details,
+    detailExpected: detailTargets.length,
+    detailTargetNames: detailTargets.map(({ ex }) => ex.name),
+  };
 }
 
 // ───────────────────────── main ─────────────────────────
 
 async function main() {
   const prevStats = await readJson(STATS_FILE);
+  const prevSource = await readJson(SOURCE_FILE);
 
   // Fetch both before writing anything, so a partial failure leaves the snapshot
   // untouched (all-or-nothing).
   const stats = await fetchStats(prevStats);
-  const { inventory: examples, details, detailExpected } = await fetchExamples();
+  const {
+    inventory: examples,
+    details: fetchedDetails,
+    detailExpected,
+    detailTargetNames,
+  } = await fetchExamples();
+  const detailFallbacks = [];
+  for (const name of detailTargetNames) {
+    if (!fetchedDetails[name] && prevSource?.details?.[name]) {
+      fetchedDetails[name] = prevSource.details[name];
+      detailFallbacks.push(name);
+    }
+  }
+  const details = preserveDetailOrder(fetchedDetails, prevSource?.details);
 
   await mkdir(DATA_DIR, { recursive: true });
   await writeFile(STATS_FILE, JSON.stringify(stats, null, 2) + '\n');
@@ -440,7 +548,11 @@ async function main() {
   const detailCount = Object.keys(details).length;
   console.log(
     `[refresh] example details: ${detailCount}/${detailExpected} sources captured` +
-      (detailCount < detailExpected ? ' — WARNING: some sources missed this cycle' : ''),
+      (detailFallbacks.length
+        ? ` — kept last-good source for: ${detailFallbacks.join(', ')}`
+        : detailCount < detailExpected
+          ? ' — WARNING: some sources missed this cycle and had no fallback'
+          : ''),
   );
 }
 

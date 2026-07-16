@@ -23,6 +23,7 @@ import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import { REPO, NPM, ghStats, yuanasiHref } from '../../lib/site';
 import { SHOWCASE } from '../../lib/showcase';
+import { FEATURED_USE_CASE_SLUGS, detailSlugs, getFeaturedUseCases } from '../../lib/examples';
 import { localeStaticPaths, toLocale, useTranslations, localizePath } from '../../i18n';
 
 export function getStaticPaths() { return localeStaticPaths(); }
@@ -45,7 +46,7 @@ const fmt = (n: number) => n.toLocaleString('en-US');
 const starsK = (stats.stars / 1000).toFixed(1) + 'k';
 
 // ── Hero right-visual: a REAL captured runTeam() DAG. The nodes below are
-//    rendered from src/data/hero-run.json, produced by a real DeepSeek run
+//    rendered from src/data/hero-run.json, produced by a real provider run
 //    (scripts/capture-hero-dag.mjs) — no hand-built mockup (PRD §4.1 ①). The
 //    snippet's goal is the exact goal that produced the DAG shown. ──
 // The compact artifact still renders the exact captured goal. Newlines in the
@@ -76,14 +77,23 @@ const heroDur = (ms: number | null) => (ms == null ? null : (ms / 1000).toFixed(
 const heroNodeId = (id: string) => '#' + id.slice(0, 8);
 const heroWallS = Math.round(heroRun.wallMs / 1000);
 
-// ── Capabilities code (real v1.7.0 API — verified against the repo). ──
-const TEAM_CODE = `const agents: AgentConfig[] = [
-  { name: 'architect', model: 'claude-sonnet-4-6' },
-  { name: 'developer', model: 'deepseek-chat' },
+// ── Capabilities code (current public API — verified against the repo). ──
+const TEAM_CODE = `const model = process.env.OMA_MODEL ?? 'gpt-5.4-mini'
+const oma = new OpenMultiAgent({ defaultModel: model })
+const agents: AgentConfig[] = [
+  { name: 'triage-specialist', model },
+  { name: 'order-specialist', model },
+  { name: 'billing-specialist', model },
+  { name: 'policy-specialist', model },
+  { name: 'response-specialist', model },
 ]
 
-const team = oma.createTeam('api-team', { agents })
-const result = await oma.runTeam(team, 'Create a REST API for a todo list')`;
+const team = oma.createTeam('adaptive-support-team', { agents })
+const result = await oma.runTeam(team, \`Resolve ticket #12345:
+1. Classify its urgency
+2. Investigate the shipping evidence
+3. Apply the support policy
+4. Draft a grounded customer reply\`)`;
 
 // ── Production proof uses two explicit ecosystem projects from the shared
 //    showcase list, plus the named practitioner spotlight. The full inventory
@@ -102,13 +112,23 @@ const CAPS = [l.caps[0], l.caps[1], l.caps[3]].map((c, i) => ({
 }));
 const RELIABILITY = l.reliability;
 
-// Cookbook source URLs for the three use-case cards (the copy comes from the dict).
-const BUILD_CODE = [
-  REPO + '/blob/main/packages/core/examples/cookbook/contract-review-dag.ts',
-  REPO + '/blob/main/packages/core/examples/cookbook/competitive-monitoring.ts',
-  REPO + '/blob/main/packages/core/examples/cookbook/incident-postmortem-dag.ts',
-];
-const BUILDS = l.builds.map((b, i) => ({ ...b, code: BUILD_CODE[i] }));
+// Curated across Cookbook + full apps, rather than assuming every business use
+// case lives in one upstream directory. URLs still resolve from the synchronized
+// inventory; localized editorial copy is keyed by slug so ordering cannot pair
+// the wrong claim with the wrong source.
+const featuredBySlug = new Map(getFeaturedUseCases().map((example) => [example.name, example]));
+const buildDetailSlugs = detailSlugs();
+const BUILDS = FEATURED_USE_CASE_SLUGS.flatMap((slug) => {
+  const example = featuredBySlug.get(slug);
+  if (!example) return [];
+  const internal = buildDetailSlugs.has(slug);
+  return [{
+    ...l.builds[slug],
+    slug,
+    code: internal ? L(`/examples/${slug}/`) : example.href,
+    external: !internal,
+  }];
+});
 
 const STACK = l.stack;
 const FAQS = [l.faqs[0], l.faqs[1], l.faqs[3], l.faqs[4]];
@@ -194,10 +214,22 @@ const jsonLd = {
           <div>
             <div class="io-panel">
               <div class="io-cap"><span>team.ts · goal</span><span style="color:var(--oma-accent);">{l.hero.ioGoal}</span></div>
-              <div class="artifact-goal">
-                <span>{l.hero.capturedGoal}</span>
-                <p>{heroGoalSummary}</p>
-              </div>
+              <details class="artifact-goal">
+                <summary>
+                  <span class="artifact-goal-head">
+                    <span class="artifact-goal-label">{l.hero.capturedGoal}</span>
+                    <span class="artifact-goal-action">
+                      <span class="artifact-goal-expand">{l.hero.expandGoal}</span>
+                      <span class="artifact-goal-collapse">{l.hero.collapseGoal}</span>
+                      <span class="artifact-goal-icon" aria-hidden="true">+</span>
+                    </span>
+                  </span>
+                  <span class="artifact-goal-preview" aria-hidden="true">{heroGoalSummary}</span>
+                </summary>
+                <div class="artifact-goal-full">
+                  <p>{heroRun.goal}</p>
+                </div>
+              </details>
               <div class="io-connector"><span class="line"></span>{l.hero.decomposesInto}<span class="line"></span></div>
               <div class="dag-desktop">
                 <div class="dag-stack">
@@ -332,9 +364,9 @@ const jsonLd = {
             </div>
             <div class="build-grid">
               {BUILDS.map((b) => (
-                <a class="case-link" href={b.code} target="_blank" rel="noreferrer" style="text-decoration:none;">
+                <a class="case-link" href={b.code} target={b.external ? '_blank' : undefined} rel={b.external ? 'noreferrer' : undefined} style="text-decoration:none;">
                   <Card padding="md" interactive class="build-card">
-                    <div class="build-scenario">{b.scenario}</div>
+                    <div class="build-kicker"><span>{b.scenario}</span><code>{b.primitive}</code></div>
                     <div class="build-title">{b.title}</div>
                     <p class="build-desc">{b.desc}</p>
                     <div class="build-outcome"><span class="arrow">▸</span><span>{b.outcome}</span></div>

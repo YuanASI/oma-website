@@ -36,11 +36,28 @@ export const FALLBACK_EXAMPLES: Example[] = [
   { name: 'paper-replication-triage', title: 'Paper Replication Triage', blurb: 'Multi-source paper-replication triage with artifact discovery and a structured go/no-go plan.', href: BLOB(`${ROOT}/cookbook/paper-replication-triage.ts`) },
 ];
 
+const FEATURED_FALLBACKS: Example[] = [
+  {
+    name: 'express-customer-support',
+    title: 'Express Customer Support',
+    blurb: 'Express REST API: runTasks() behind POST /tickets with structured output and explicit HTTP error mapping.',
+    href: `https://github.com/${SLUG}/tree/${BRANCH}/${ROOT}/integrations/express-customer-support`,
+  },
+  FALLBACK_EXAMPLES.find((e) => e.name === 'incident-postmortem-dag')!,
+  FALLBACK_EXAMPLES.find((e) => e.name === 'meeting-summarizer')!,
+];
+
+export const FEATURED_USE_CASE_SLUGS = [
+  'express-customer-support',
+  'incident-postmortem-dag',
+  'meeting-summarizer',
+] as const;
+
 // A single code example's detail record — full source + structure parsed from the
 // real file by scripts/refresh-gh-data.mjs (JSDoc header + imports; nothing hand-
-// written), powering the /examples/<slug>/ pages. Only the three "ours" categories
-// (cookbook/basics/patterns) get detail records; providers/integrations link out.
-export type ExampleCategory = 'cookbook' | 'basics' | 'patterns';
+// written), powering the /examples/<slug>/ pages. Selected full apps may also
+// provide a synchronized entrypoint + README-backed detail record.
+export type ExampleCategory = 'cookbook' | 'basics' | 'patterns' | 'apps';
 export interface ExampleDetail {
   name: string; // == slug, e.g. "contract-review-dag"
   category: ExampleCategory;
@@ -51,6 +68,7 @@ export interface ExampleDetail {
   prereqs: string[]; // "Prerequisites:" lines (e.g. required env vars)
   loc: number; // source line count
   blob: string; // canonical GitHub source URL
+  sourcePath?: string; // only needed when the source is outside <category>/<slug>.ts
   source: string; // full file text (rendered syntax-highlighted)
 }
 
@@ -87,6 +105,18 @@ export function getExamples(): ExamplesData | null {
     return null;
   }
   return d as ExamplesData;
+}
+
+export function getFeaturedUseCases(data: ExamplesData | null = getExamples()): Example[] {
+  if (!data) return FEATURED_FALLBACKS;
+  const bySlug = new Map(
+    [...data.cookbook, ...data.apps, ...data.basics, ...data.patterns]
+      .map((example) => [example.name, example] as const),
+  );
+  const featured = FEATURED_USE_CASE_SLUGS
+    .map((slug) => bySlug.get(slug))
+    .filter((example): example is Example => Boolean(example));
+  return featured.length === FEATURED_USE_CASE_SLUGS.length ? featured : FEATURED_FALLBACKS;
 }
 
 interface ExamplesSource {

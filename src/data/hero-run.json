@@ -1,53 +1,53 @@
 {
-  "capturedAt": "2026-06-19T08:44:06.947Z",
-  "runId": "f7c2a363-94ef-4563-9ed2-fbe25bb775bb",
-  "goal": "Build a REST API for a todo list: design the data model and routes, implement the CRUD endpoints, generate a test suite, and review it for security.",
+  "capturedAt": "2026-07-16T17:00:42.227Z",
+  "runId": "ba792750-554c-4f4a-a149-0cf20a75145d",
+  "scenario": "shipping-escalation",
+  "locale": "en",
+  "goal": "Resolve this escalated customer-support ticket.\n\nTicket #12345: The customer ordered two weeks ago. Carrier tracking has not moved for six days, and the item is needed for an event this weekend.\n\nAvailable evidence: the order was paid, packed, and handed to the carrier 13 days ago; the last scan was \"in transit\" six days ago; no replacement or refund has been issued; the customer has no prior delivery claims.\n\nApplicable policy: after five days without carrier movement, support may offer a replacement or refund after confirming identity and delivery address. Never promise an unconfirmed delivery date.\n\nComplete four coordinated deliverables:\n1. Classify the ticket and urgency.\n2. Investigate only the relevant operational domain.\n3. Apply the supplied policy and identify required checks.\n4. Draft a grounded customer reply with internal handoff notes.",
   "provider": "deepseek",
   "model": "deepseek-v4-flash",
   "success": true,
-  "wallMs": 72014,
+  "wallMs": 30610,
   "totalTokenUsage": {
-    "input_tokens": 10451,
-    "output_tokens": 9563
+    "input_tokens": 3106,
+    "output_tokens": 3219
   },
   "tasks": [
     {
-      "id": "91d351c7-927b-4b9e-a062-88886669768b",
-      "title": "Design data model and API routes",
-      "assignee": "architect",
+      "id": "c2e09514-c2fe-4168-95b9-118ba20fe808",
+      "title": "Classify ticket and urgency",
+      "assignee": "triage-specialist",
       "status": "completed",
       "dependsOn": [],
-      "durationMs": 5622
+      "durationMs": 1973
     },
     {
-      "id": "8400663f-acaf-453d-82d6-c8870ec012d6",
-      "title": "Implement CRUD endpoints",
-      "assignee": "developer",
+      "id": "4a5336b8-9203-4777-aa00-4e4afd32895d",
+      "title": "Investigate shipping and order evidence",
+      "assignee": "order-specialist",
       "status": "completed",
-      "dependsOn": [
-        "91d351c7-927b-4b9e-a062-88886669768b"
-      ],
-      "durationMs": 17796
+      "dependsOn": [],
+      "durationMs": 5070
     },
     {
-      "id": "a62da761-3fbd-4255-b85b-06015ef72e63",
-      "title": "Generate test suite for CRUD endpoints",
-      "assignee": "developer",
+      "id": "56f0cea0-b4ef-4af2-826d-60638c608e66",
+      "title": "Apply policy and identify required checks",
+      "assignee": "policy-specialist",
       "status": "completed",
-      "dependsOn": [
-        "8400663f-acaf-453d-82d6-c8870ec012d6"
-      ],
-      "durationMs": 19096
+      "dependsOn": [],
+      "durationMs": 2216
     },
     {
-      "id": "32347388-258e-4025-9ae5-3296d592233f",
-      "title": "Perform security review of implementation",
-      "assignee": "reviewer",
+      "id": "04acb569-51dc-4866-a840-3e6fc0083a4c",
+      "title": "Draft grounded customer reply with handoff notes",
+      "assignee": "response-specialist",
       "status": "completed",
       "dependsOn": [
-        "8400663f-acaf-453d-82d6-c8870ec012d6"
+        "c2e09514-c2fe-4168-95b9-118ba20fe808",
+        "4a5336b8-9203-4777-aa00-4e4afd32895d",
+        "56f0cea0-b4ef-4af2-826d-60638c608e66"
       ],
-      "durationMs": 19710
+      "durationMs": 8822
     }
   ]
 }

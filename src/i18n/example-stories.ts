@@ -1,6 +1,7 @@
 import type { Locale } from './index';
 
-// Editorial explanation for the nine Cookbook recipes surfaced under Use Cases.
+// Editorial explanation for the workflows surfaced under Use Cases, including
+// selected full applications as well as Cookbook recipes.
 // Runtime facts (source, commands, prerequisites, APIs, LOC) deliberately stay in
 // examples-source.json; this file explains those verified facts in plain language.
 // When an upstream Cookbook recipe changes, review its EN + ZH story alongside the
@@ -95,6 +96,27 @@ const ui: Record<Locale, ExampleStoryUi> = {
 };
 
 const en = {
+  'express-customer-support': {
+    audience: 'Backend and support-operations teams embedding a repeatable AI workflow behind an API',
+    outcome: 'Accept a support ticket over HTTP, run a fixed classify → draft → QA pipeline, and return schema-validated JSON.',
+    problem: 'A production support route needs more than a plausible reply. Input must be validated, each handoff must have a predictable shape, failures need explicit HTTP behavior, and the workflow should not pay to rediscover the same topology on every request.',
+    input: { title: 'One POST /tickets request', detail: 'A JSON body with a ticket subject and body. The Express route rejects malformed or missing input before any model call.' },
+    stages: [
+      { title: 'Classify the ticket', summary: 'The first task returns a schema-validated category and urgency.', agents: [
+        { name: 'Classifier', task: 'Categorizes the issue and assigns an urgency level.' },
+      ] },
+      { title: 'Draft the reply', summary: 'The drafter receives the original ticket plus the classifier result through the explicit task dependency.', agents: [
+        { name: 'Support drafter', task: 'Writes an empathetic customer-facing response.' },
+      ] },
+      { title: 'Review before returning', summary: 'The final task checks the draft against the ticket and classification.', agents: [
+        { name: 'QA reviewer', task: 'Reviews tone, empathy, and factual consistency.' },
+      ] },
+    ],
+    deliverable: { title: 'A typed HTTP response', summary: 'The endpoint assembles the three structured outputs and maps invalid input, pipeline failure, and timeout to explicit status codes.', items: ['Category and urgency', 'Customer-facing draft reply', 'QA notes with 400 / 502 / 504 error behavior'] },
+    why: ['A fixed runTasks() DAG keeps the high-volume route predictable.', 'Zod schemas make every handoff usable by application code.', 'A separate QA step checks the customer-facing draft before it leaves the pipeline.'],
+    boundary: 'This clone-and-run app demonstrates the API and orchestration boundary. It does not connect to a real CRM, order system, or ticketing platform, and it does not take account actions on a customer’s behalf.',
+    related: ['incident-postmortem-dag', 'meeting-summarizer', 'contract-review-dag'],
+  },
   'competitive-monitoring': {
     audience: 'Product intelligence and market research teams',
     outcome: 'Turn conflicting claims from several channels into one source-linked intelligence report.',
@@ -290,6 +312,27 @@ const en = {
 } satisfies Record<string, ExampleStory>;
 
 const zh: Record<keyof typeof en, ExampleStory> = {
+  'express-customer-support': {
+    audience: '希望把可重复 AI 工作流嵌进后端 API 的开发与客服运营团队',
+    outcome: '通过 HTTP 接收客服工单，执行固定的「分类 → 起草 → QA」流水线，再返回经 schema 校验的 JSON。',
+    problem: '生产级客服接口不能只产出一段看似合理的回复。输入必须校验，步骤之间要有可预测的数据结构，失败要映射成明确的 HTTP 行为，而且每次请求都不该重新推导同一套拓扑。',
+    input: { title: '一次 POST /tickets 请求', detail: 'JSON body 包含工单标题与正文；Express 路由会在任何模型调用前拒绝格式错误或字段缺失的输入。' },
+    stages: [
+      { title: '给工单分类', summary: '第一项任务返回经过 schema 校验的类别与紧急程度。', agents: [
+        { name: '分类 Agent', task: '判断问题类别并标记紧急程度。' },
+      ] },
+      { title: '起草回复', summary: '起草 Agent 通过显式任务依赖拿到原始工单和分类结果。', agents: [
+        { name: '客服起草 Agent', task: '撰写有同理心、面向客户的回复。' },
+      ] },
+      { title: '返回前复核', summary: '最后一步结合原始工单与分类结果检查回复。', agents: [
+        { name: 'QA 复核 Agent', task: '检查语气、同理心与事实一致性。' },
+      ] },
+    ],
+    deliverable: { title: '带类型的 HTTP 响应', summary: '接口组装三个结构化结果，并把输入错误、流水线失败和超时映射成明确状态码。', items: ['类别与紧急程度', '面向客户的回复草稿', 'QA 备注，以及 400 / 502 / 504 错误行为'] },
+    why: ['固定的 runTasks() DAG 让高频接口保持可预测。', 'Zod schema 让每次交接都能直接被应用代码消费。', '独立 QA 步骤会在回复离开流水线前完成检查。'],
+    boundary: '这个可克隆运行的应用展示 API 与编排边界；它没有连接真实 CRM、订单系统或工单平台，也不会代替客服执行账户操作。',
+    related: ['incident-postmortem-dag', 'meeting-summarizer', 'contract-review-dag'],
+  },
   'competitive-monitoring': {
     audience: '产品情报与市场研究团队',
     outcome: '把多个渠道中互相冲突的说法，整理成一份保留来源的竞品情报报告。',

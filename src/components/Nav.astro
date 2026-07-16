@@ -4,7 +4,7 @@
 // count (e.g. "6.4k"); `locale` localizes the labels and the in-site links; `path`
 // is this page's default-locale path, handed to the language switcher.
 import { REPO, yuanasiHref } from '../lib/site';
-import { getExamples, FALLBACK_EXAMPLES } from '../lib/examples';
+import { getFeaturedUseCases, detailSlugs } from '../lib/examples';
 import { SOLUTIONS } from '../lib/solutions';
 import { useTranslations, localizePath, type Locale } from '../i18n';
 import type { Loc } from '../lib/compare';
@@ -20,12 +20,14 @@ const { current = 'home', starsK, locale = 'en', path } = Astro.props;
 const t = useTranslations(locale);
 const L = (p: string) => localizePath(p, locale);
 
-// The 9 cookbook recipes surfaced in the Use Cases dropdown — real-world
-// scenarios, each linking to its /examples/<slug>/ detail page. Falls back to the
-// curated FALLBACK_EXAMPLES if the committed snapshot is ever missing. zh titles
-// come from the same per-slug override the /examples index uses.
-const useCases = getExamples()?.cookbook ?? FALLBACK_EXAMPLES;
+// A small cross-category set of verified workflows. This is deliberately not
+// the whole Cookbook: full apps such as Express customer support are use cases
+// too, and the exhaustive inventory remains on /examples.
+const useCases = getFeaturedUseCases();
+const useCaseDetails = detailSlugs();
 const ucTitle = (e: { name: string; title: string }) => t.examples.entries[e.name]?.title ?? e.title;
+const ucHref = (e: { name: string; href: string }) => useCaseDetails.has(e.name) ? L(`/examples/${e.name}/`) : e.href;
+const ucExternal = (e: { name: string }) => !useCaseDetails.has(e.name);
 const pick = (o: Loc) => o[locale];
 ---
 
@@ -75,7 +77,7 @@ const pick = (o: Loc) => o[locale];
           <div class="nav-col">
             <div class="nav-col-head">{t.nav.useCasesCols.examples}</div>
             {useCases.map((e) => (
-              <a class="nav-menu-link nav-menu-link--page nav-menu-link--compact" href={L(`/examples/${e.name}/`)}>
+              <a class="nav-menu-link nav-menu-link--page nav-menu-link--compact" href={ucHref(e)} target={ucExternal(e) ? '_blank' : undefined} rel={ucExternal(e) ? 'noreferrer' : undefined}>
                 <span class="pkg">{ucTitle(e)}</span>
               </a>
             ))}
@@ -166,7 +168,7 @@ const pick = (o: Loc) => o[locale];
 
   /* Use Cases dropdown: the button reads active on any /examples or /solutions
      page. Two columns — Solutions (capability shapes → /solutions/*) and Examples
-     (cookbook recipes → /examples/*) — each a list of compact rows (label only)
+     (featured workflows → /examples/*) — each a list of compact rows (label only)
      with a "view all" link separated at its foot. */
   .nav-menu-btn.is-current { color: var(--oma-fg-0); }
   .nav-menu--cols { flex-direction: row; gap: 8px; }
