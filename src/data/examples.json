@@ -77,6 +77,12 @@
       "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/integrations/external-agent-acp.ts"
     },
     {
+      "name": "external-agent-process",
+      "title": "External Agent Process",
+      "blurb": "Generic local processes as external agents.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/integrations/external-agent-process.ts"
+    },
+    {
       "name": "mcp-bilig-workpaper",
       "title": "MCP Bilig Workpaper",
       "blurb": "Bilig WorkPaper MCP tools for formula readback, recalculation, and persisted workbook JSON.",
