@@ -109,6 +109,12 @@
   ],
   "vendor": [
     {
+      "name": "observability-v2",
+      "title": "Observability V2",
+      "blurb": "No-key runnable v2 batching, InMemory/File TraceStore, OTel in-memory provider, CLI, SIGTERM server, and FaaS lifecycle examples.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/tree/main/packages/core/examples/integrations/observability-v2"
+    },
+    {
       "name": "with-engram",
       "title": "Engram",
       "blurb": "Engram memory backend.",
@@ -195,6 +201,12 @@
       "title": "Research Aggregation",
       "blurb": "Multi-source research collated by a synthesis agent.",
       "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/research-aggregation.ts"
+    },
+    {
+      "name": "risk-gated-bash",
+      "title": "Risk Gated Bash",
+      "blurb": "Per-call onToolCall gate + classifyBashCommand: auto-pass read-only bash, human-review ambiguous, block destructive.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/risk-gated-bash.ts"
     },
     {
       "name": "structured-output",
