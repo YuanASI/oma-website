@@ -97,6 +97,8 @@ export const en = {
       ioInput: 'input · team.ts',
       ioGoal: 'goal',
       capturedGoal: 'captured goal',
+      expandGoal: 'view full',
+      collapseGoal: 'collapse',
       decomposesInto: 'decomposes into',
       parallel: 'parallel',
       expandTasks: '{count} more tasks · expand full DAG',
@@ -105,7 +107,6 @@ export const en = {
       // Understated routing line under the primary CTA — self-identifies the
       // enterprise reader without competing with the developer install path.
       enterprise: { pre: 'Evaluating OMA for your company?', link: 'Enterprise delivery & support' },
-      fixedWorkflow: { pre: 'Fixed workflow?', link: 'See the Express support API' },
     },
     copy: 'copy',
     copied: '✓ copied',
