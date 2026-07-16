@@ -210,6 +210,13 @@ a { color: inherit; }
 .hero-enterprise a:hover { color: var(--oma-accent); border-color: var(--oma-accent-line); }
 .hero-enterprise .arrow { color: var(--oma-fg-3); transition: color var(--duration-fast) var(--ease-out); }
 .hero-enterprise a:hover .arrow { color: var(--oma-accent); }
+.hero-fixed {
+  margin: 8px 0 0; font-family: var(--font-mono); font-size: 12px;
+  line-height: 1.5; color: var(--oma-fg-3);
+}
+.hero-fixed a { color: var(--oma-fg-2); text-decoration: none; }
+.hero-fixed a:hover { color: var(--oma-accent); }
+.hero-fixed .arrow { color: var(--oma-accent); }
 
 /* ── Command block (primary CTA) ── */
 .cmd {
@@ -473,9 +480,15 @@ a { color: inherit; }
 
 /* ── What you can build ── */
 .build-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-.build-scenario {
-  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em;
-  text-transform: uppercase; color: var(--oma-fg-2); margin-bottom: 14px;
+.build-kicker {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-bottom: 14px; font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--oma-fg-2);
+}
+.build-kicker code {
+  flex: none; padding: 3px 6px; border: 1px solid var(--border-default);
+  border-radius: var(--radius-xs); background: var(--oma-bg-2); color: var(--oma-accent);
+  font-size: 10px; letter-spacing: 0; text-transform: none;
 }
 .build-title { font-size: 19px; font-weight: 600; color: var(--oma-fg-0); letter-spacing: -0.02em; line-height: 1.2; }
 .build-desc { font-size: 14px; line-height: 1.6; color: var(--oma-fg-1); margin: 12px 0 0; }

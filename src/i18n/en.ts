@@ -105,6 +105,7 @@ export const en = {
       // Understated routing line under the primary CTA — self-identifies the
       // enterprise reader without competing with the developer install path.
       enterprise: { pre: 'Evaluating OMA for your company?', link: 'Enterprise delivery & support' },
+      fixedWorkflow: { pre: 'Fixed workflow?', link: 'See the Express support API' },
     },
     copy: 'copy',
     copied: '✓ copied',
@@ -177,14 +178,14 @@ export const en = {
     },
     sectionBuild: {
       eyebrow: 'Use cases',
-      title: 'Three workflows worth a team.',
+      title: 'Three workflows, three explicit orchestration choices.',
       seeCode: 'see code',
     },
-    builds: [
-      { scenario: 'legal · document review', title: 'Contract review', desc: 'One goal — “flag risk in this MSA” — fans out to agents reading clauses, cross-checking a policy library, and drafting redlines in parallel.', outcome: 'A single structured risk report from one runTeam() call.' },
-      { scenario: 'market · monitoring', title: 'Competitive monitoring', desc: 'Agents pull from different sources via MCP, each on the model that fits — cheap-local for scraping, frontier for analysis — and reconcile findings.', outcome: 'A deduped digest, refreshed on a schedule, mixed providers in one team.' },
-      { scenario: 'sre · operations', title: 'Incident postmortem', desc: 'Logs, metrics, and the deploy timeline are investigated as parallel nodes; a reviewer agent synthesizes cause and contributing factors.', outcome: 'A timeline-grounded postmortem draft minutes after resolution.' },
-    ],
+    builds: {
+      'express-customer-support': { primitive: 'Express · runTasks()', scenario: 'support · backend', title: 'Customer support API', desc: 'A POST /tickets route runs a fixed classifier → drafter → QA pipeline, with a Zod schema at every handoff.', outcome: 'Structured JSON with explicit 400, 502, and 504 behavior.' },
+      'incident-postmortem-dag': { primitive: 'explicit DAG · runTasks()', scenario: 'sre · operations', title: 'Incident postmortem', desc: 'Three fixture-backed investigations start in parallel, then feed a root-cause hypothesis and final postmortem.', outcome: 'A traceable Markdown artifact with timing and token-cost evidence.' },
+      'meeting-summarizer': { primitive: 'parallel agents', scenario: 'operations · meetings', title: 'Meeting intelligence', desc: 'Summary, action-item, and sentiment specialists read the same transcript concurrently before one report is assembled.', outcome: 'Typed action items plus a ready-to-share Markdown report.' },
+    },
     sectionStack: {
       eyebrow: 'Integrations',
       title: 'Works with your stack.',
@@ -193,7 +194,7 @@ export const en = {
       { name: 'Providers', note: 'Anthropic, Gemini, OpenAI, Bedrock, Azure, DeepSeek — or any OpenAI-compatible endpoint', count: '13 built-in' },
       { name: 'MCP', note: 'Connect Model Context Protocol servers as tools', count: 'native' },
       { name: 'Vercel AI SDK', note: 'Bridge to 60+ AI SDK providers and hosts', count: 'compatible' },
-      { name: 'Express', note: 'Mount runTeam() behind a route handler', count: 'drop-in' },
+      { name: 'Express', note: 'Mount a fixed runTasks() pipeline behind a route handler', count: 'drop-in' },
       { name: 'Any Node.js', note: 'No daemon, no sidecar — three runtime deps', count: 'Node 18+' },
     ],
     sectionProof: {
@@ -281,7 +282,7 @@ export const en = {
     // from the upstream file, like the index blurbs).
     detail: {
       backToIndex: '← All examples',
-      categories: { cookbook: 'Cookbook', basics: 'Basics', patterns: 'Pattern' },
+      categories: { cookbook: 'Cookbook', basics: 'Basics', patterns: 'Pattern', apps: 'App' },
       apisUsed: 'OMA APIs',
       linesLabel: 'lines',
       runTitle: 'Run it',

@@ -1,53 +1,53 @@
 {
-  "capturedAt": "2026-06-25T08:38:16.515Z",
-  "runId": "5659122e-f979-47a1-852d-87d49ea05ea1",
-  "goal": "为待办事项列表构建一个 REST API。请完成：\n1. 设计数据模型与 API 路由\n2. 实现 CRUD 接口\n3. 为这些接口生成测试套件\n4. 对实现进行安全审查",
+  "capturedAt": "2026-07-16T17:01:15.289Z",
+  "runId": "a22eae61-d0cf-455d-9447-558a12472b0c",
+  "scenario": "shipping-escalation",
+  "locale": "zh",
+  "goal": "处理这张升级客服工单。\n\n工单 #12345：客户两周前下单，承运商物流六天没有更新，商品要在本周末的活动中使用。\n\n现有证据：订单已付款、打包，并在 13 天前交给承运商；最后一次扫描是六天前的“运输中”；尚未补发或退款；客户此前没有配送索赔记录。\n\n适用政策：物流连续五天未更新时，客服在确认客户身份与收货地址后，可以提供补发或退款。不得承诺承运商尚未确认的送达日期。\n\n请协作完成四项交付：\n1. 判断工单类别与紧急程度。\n2. 只调查相关的业务领域。\n3. 应用给定政策并列出必要核验。\n4. 起草有事实依据的客户回复与内部交接备注。",
   "provider": "deepseek",
   "model": "deepseek-v4-flash",
   "success": true,
-  "wallMs": 84788,
+  "wallMs": 32960,
   "totalTokenUsage": {
-    "input_tokens": 8605,
-    "output_tokens": 10577
+    "input_tokens": 3171,
+    "output_tokens": 3009
   },
   "tasks": [
     {
-      "id": "51404b86-d6de-4a77-ae8a-e06917511497",
-      "title": "设计数据模型与API路由",
-      "assignee": "architect",
+      "id": "f0b3169a-7b87-47f2-ab35-32824252802a",
+      "title": "判断工单类别与紧急程度",
+      "assignee": "triage-specialist",
       "status": "completed",
       "dependsOn": [],
-      "durationMs": 3899
+      "durationMs": 1768
     },
     {
-      "id": "9b326aae-36fe-4e1b-9962-c3650fa5a353",
-      "title": "实现CRUD接口",
-      "assignee": "developer",
+      "id": "4c6b5470-8553-4d7d-b82e-4d763d5b3ec3",
+      "title": "调查物流与订单证据",
+      "assignee": "order-specialist",
       "status": "completed",
-      "dependsOn": [
-        "51404b86-d6de-4a77-ae8a-e06917511497"
-      ],
-      "durationMs": 13008
+      "dependsOn": [],
+      "durationMs": 5451
     },
     {
-      "id": "faeee9c4-a99a-4892-ae17-9b0cd6bfe34a",
-      "title": "生成测试套件",
-      "assignee": "developer",
+      "id": "7b0236a0-8753-49d4-a3e4-d3eedbafacf0",
+      "title": "应用给定政策并列出必要核验",
+      "assignee": "policy-specialist",
       "status": "completed",
-      "dependsOn": [
-        "9b326aae-36fe-4e1b-9962-c3650fa5a353"
-      ],
-      "durationMs": 39428
+      "dependsOn": [],
+      "durationMs": 1394
     },
     {
-      "id": "158a577a-72e3-48e6-8b9a-79ccfa1e589a",
-      "title": "安全审查",
-      "assignee": "reviewer",
+      "id": "f0183742-7204-4fd0-a4c8-5de34b279fbb",
+      "title": "起草最终客户回复与内部交接备注",
+      "assignee": "response-specialist",
       "status": "completed",
       "dependsOn": [
-        "9b326aae-36fe-4e1b-9962-c3650fa5a353"
+        "f0b3169a-7b87-47f2-ab35-32824252802a",
+        "4c6b5470-8553-4d7d-b82e-4d763d5b3ec3",
+        "7b0236a0-8753-49d4-a3e4-d3eedbafacf0"
       ],
-      "durationMs": 16277
+      "durationMs": 8795
     }
   ]
 }

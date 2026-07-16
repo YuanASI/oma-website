@@ -5,7 +5,7 @@
 // (title, intent, source, run commands, APIs) is parsed from the real upstream
 // file by scripts/refresh-gh-data.mjs and stays English on every locale — like
 // the /examples index blurbs; only the page chrome is translated. Detail records
-// exist only for the three "ours" categories (cookbook/basics/patterns).
+// exist for the three single-file "ours" categories and selected full apps.
 import '@fontsource-variable/geist';
 import '@fontsource-variable/jetbrains-mono';
 import '../../../styles/tokens.css';
@@ -70,7 +70,7 @@ const related = story
       .slice(0, 4);
 
 const runCode = detail.run.join('\n');
-const sourceFile = `${detail.category}/${detail.name}.ts`;
+const sourceFile = detail.sourcePath ?? `${detail.category}/${detail.name}.ts`;
 const categoryLabel = dt.categories[detail.category];
 
 // The prereqs are the upstream file's own verbatim JSDoc — some examples are
@@ -120,7 +120,7 @@ const jsonLd = {
       </div>
     </section>
 
-    <!-- The non-technical story layer is curated for the nine Cookbook recipes.
+    <!-- The non-technical story layer is curated for selected workflow examples.
          Technical facts below remain synchronized from the upstream source. -->
     {story && (
       <>
