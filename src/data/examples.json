@@ -1,6 +1,12 @@
 {
   "cookbook": [
     {
+      "name": "adaptive-customer-support",
+      "title": "Adaptive Customer Support",
+      "blurb": "runTeam() selects only the relevant specialists for a shipping or billing escalation, then synthesizes a grounded customer response.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/cookbook/adaptive-customer-support.ts"
+    },
+    {
       "name": "competitive-monitoring",
       "title": "Competitive Monitoring",
       "blurb": "Parallel source monitoring (Twitter/Reddit/News), contradiction detection, and aggregated intelligence reporting.",
