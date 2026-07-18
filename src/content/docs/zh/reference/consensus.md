@@ -59,7 +59,7 @@ await orchestrator.runTasks(team, [
 
 ## 预算不变式
 
-共识的 token 用量像委派一样计入父预算。提议者、裁判和修订的用量全都累加进运行总量，并对照 `OrchestratorConfig.maxTokenBudget` 检查。一旦累计总量越过预算，共识就**停止发起更多的裁判调用**——没有单独的预算旋钮，没有逃生口。对于逐任务的 `verify` 钩子，裁判用量并入与流水线其余部分相同的运行级预算，并触发同一道闸。
+共识的 token 用量像委派一样计入父预算。提议者、裁判和修订的用量全都累加进运行总量，并对照 `OrchestratorConfig.maxTokenBudget` 检查。一旦累计总量越过预算，共识就**停止发起更多的裁判调用**——没有单独的预算旋钮，没有逃生口。对于逐任务的 `verify` 钩子，裁判用量并入与流水线其余部分相同的运行级预算，并触发同一道闸。成本方面同理：当配置了 `estimateCost` 和 `maxCostBudget` 时，verify 钩子的用量会被计入本次运行的累计预估成本，一旦越过上限，就在同一边界处停止更多的裁判调用。因为 `maxCostBudget` 是一个运行级上限，独立的 `runConsensus` 原语只跟踪 token。
 
 ## 可观测性
 

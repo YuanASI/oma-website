@@ -103,6 +103,6 @@ const agent: AgentConfig = {
 **说明：**
 - 默认禁用，以免静默膨胀 prompt token。
 - 默认开启的截断（`compressReasoningText`）在长链式思考上是强制的安全措施；只在调试时才关闭。
-- 某些本地 OpenAI 兼容模型可能把 `<thinking>` 文本回吐进自己的 assistant 回复里，这可能触发循环检测器。失败模式与缓解办法见 `examples/patterns/cross-provider-reasoning.ts`。
+- 某些本地 OpenAI 兼容模型可能把 `<thinking>` 文本回吐进自己的 assistant 回复里，这可能触发循环检测器。失败模式与缓解办法见 [`examples/patterns/cross-provider-reasoning.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/cross-provider-reasoning.ts)。
 - Bedrock 的 `capabilities.echoesReasoning === 'own-issued'`：带签名的推理块（`reasoningContent.reasoningText.signature`）和脱敏块（`reasoningContent.redactedContent`）在 `chat()` 和 `stream()` 上都能原生往返，入站提取与出站序列化两侧皆然（见 #223）。
 - `'tool-use-only'`（DeepSeek V4）是唯一一种**无需**用户启用 `preserveReasoningAsText` 就能做同提供方回传的能力——它在内部被强制开启，因为 DeepSeek API 要求如此。
