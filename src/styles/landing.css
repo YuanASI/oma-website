@@ -502,7 +502,7 @@ a { color: inherit; }
 .dashboard-shot { margin: 32px 0 0; }
 .dashboard-shot img,
 .dashboard-shot video {
-  display: block; width: 100%; height: auto; aspect-ratio: 1600 / 760;
+  display: block; width: 100%; height: auto; aspect-ratio: 16 / 9;
   border: 1px solid var(--border-default); border-radius: var(--radius-lg);
   background: var(--oma-bg-1); box-shadow: var(--shadow-md);
 }
