@@ -26,7 +26,7 @@ export const zh: UiDict = {
       showcase: '用 OMA 构建的项目',
       blog: '多智能体编排笔记',
       solutions: 'TypeScript 多智能体用例',
-      integrations: 'Anthropic、OpenAI、Gemini、Ollama 等',
+      integrations: 'OpenTelemetry、Anthropic、OpenAI 等',
     },
     useCasesCols: { solutions: '解决方案', examples: '示例' },
     viewAllSolutions: '全部解决方案',
@@ -110,7 +110,7 @@ export const zh: UiDict = {
     sectionReliability: {
       eyebrow: '掌控',
       title: '控制权在你手里。',
-      sub: '三个杠杆，全在 API 里——智能体运行时你留在回路内、给每次运行的花费封顶、事后检查或回放每一次调用。',
+      sub: '三层控制，全在 API 里——给智能体的动作把关，约束时间与花费，再检查或恢复一次运行。',
     },
     reliability: [
       {
@@ -121,8 +121,8 @@ export const zh: UiDict = {
         parts: [
           '在任何智能体运行前先审视计划——用 ', { c: 'onPlanReady' },
           '，再用 ', { c: 'onApproval' },
-          ' 逐轮审批。一次提议者→评审（', { c: 'runConsensus' },
-          '）让一个智能体检查另一个的输出，循环检测则会在某个智能体开始原地打转时将其叫停。',
+          ' 逐轮审批。用 ', { c: 'onToolCall' },
+          ' 在输入校验后、工具执行前为每次调用把关，再用循环检测叫停开始原地打转的智能体。',
         ],
       },
       {
@@ -132,8 +132,11 @@ export const zh: UiDict = {
         refLabel: '模型路由',
         parts: [
           '用 ', { c: 'modelRouting' },
-          ' 把规划交给旗舰模型、把叶子任务交给便宜模型。', { c: 'maxTokenBudget' },
-          ' 给一次运行的花费设上限——一旦越界，编排器就停止发起调用，而不是把账单越垒越高。',
+          ' 把规划交给旗舰模型、把叶子任务交给便宜模型。用 ', { c: 'maxTokenBudget' },
+          ' 和 ', { c: 'maxCostBudget' },
+          ' + ', { c: 'estimateCost' },
+          ' 在 token 或估算美元边界停止后续调用；', { c: 'callTimeoutMs' },
+          ' 约束每次模型调用，任务重试则会跳过已知无法恢复的错误。',
         ],
       },
       {
@@ -142,16 +145,16 @@ export const zh: UiDict = {
         ref: '/reference/observability/',
         refLabel: '可观测性',
         parts: [
-          '用 ', { c: 'onTrace' },
-          ' 把每一次 LLM 和工具调用流式发送到你的链路追踪栈，或在运行结束后打开一个自包含的 HTML 仪表盘（', { c: 'oma run --dashboard' },
-          '）。检查点能让崩溃的运行从最后一个已完成任务处恢复，密钥则会以尽力而为的方式从追踪和仪表盘中脱敏。',
+          '用 ', { c: 'createOtelTraceSink' },
+          ' 把 TraceRecord v2 span 发给由应用持有的 OpenTelemetry provider，或在运行后打开离线 Run Viewer（', { c: 'oma run --dashboard' },
+          '）。检查点从最后一个已完成任务之后恢复——被打断的任务会重新开始；遥测脱敏仍是尽力而为。',
         ],
       },
     ],
     dashboard: {
-      caption: '而当真的出岔子时，每一次运行都能渲染出一个可审计的仪表盘——任务 DAG、每个节点的承担者与状态、token 拆解，以及智能体的输出日志。',
+      caption: '而当真的出岔子时，离线 Run Viewer 可以回放已完成的运行——任务 DAG、每个节点的承担者与状态、token 拆解，以及智能体的输出日志。',
       obsLink: '可观测性',
-      imgAlt: '运行后仪表盘正在回放一次已完成的团队运行：任务 DAG，标注每个节点的承担者、状态、token 拆解，以及智能体输出日志。',
+      imgAlt: '离线 Run Viewer 正在回放一次已完成的团队运行：任务 DAG，标注每个节点的承担者、状态、token 拆解，以及智能体输出日志。',
     },
     sectionEvidence: {
       eyebrow: '场景 · 技术栈 · 采用证据',
@@ -196,9 +199,9 @@ export const zh: UiDict = {
       { q: '协调器如何把目标变成 DAG？', a: '协调器智能体会规划工作：把目标拆成一个个离散任务，推断它们之间的依赖，并产出一张有向无环图。相互独立的节点并发运行；有依赖的节点等待各自的输入。传入 planOnly 即可在任何智能体执行前审视这张 DAG。' },
       { q: '同一个团队里的智能体能用不同的模型提供方吗？', a: '可以。每个智能体声明自己的模型，所以一个团队可以混用前沿云端模型、自托管端点和本地 Ollama 实例。协调器把每个任务路由给指派的智能体——也就因此路由给对应的模型。' },
       { q: '工具是如何暴露给智能体的？', a: '默认拒绝。智能体只拥有它在 tools 数组里显式列出的工具，其余一律不可用。外部系统通过 MCP 服务器接入，遵循同样的按需授权约定。' },
-      { q: '某个节点失败了会怎样？', a: '失败的节点会按其策略重试；持续失败会以 FAILED 状态加一条错误显示在该节点上，下游依赖被挂起。DAG 的其余部分继续运行，所以一次失败不会让整次运行中止。' },
+      { q: '某个节点失败了会怎样？', a: '错误可能是暂时性问题时，失败节点会按任务策略重试。预算耗尽、输入格式错误、主动取消与不可重试的客户端错误会跳过无意义的重试。持续失败会以 FAILED 状态和错误显示在节点上，下游依赖被挂起，独立分支则可以继续。' },
       { q: '怎样防止一次多智能体运行失控？', a: '分层控制，全部可选开启。onPlanReady 把拆解出的计划交给你，在任何智能体运行前审视；onApproval 为每一轮把关；返回 false，剩余任务就被跳过。runConsensus 加一道提议者→评审检查，必须由第二个智能体认可；循环检测则会在某个智能体不断重复同一次工具调用或输出时将其叫停。' },
-      { q: '怎样给一次运行的成本设上限？', a: '两个杠杆。modelRouting 把规划和综合交给旗舰模型，叶子任务跑在更便宜的模型上，于是只在关键处付前沿模型的价。maxTokenBudget 是累计 token 的硬上限：一旦越界，编排器就停止发起调用、跳过剩余任务，而不是把账单越垒越高。' },
+      { q: '怎样给一次运行的成本设上限？', a: '使用 maxCostBudget 与 estimateCost。每个模型的美元价格表由你的估算器维护；OMA 在整次运行中累计估算成本，越过上限后停止后续调用。检查发生在回合与任务边界，因此最多可能多出一个模型回合，而不是在调用中途精确熔断。maxTokenBudget 同时提供累计 token 上限，modelRouting 则能把叶子任务路由给更便宜的模型。' },
       { q: '它是流式的，还是只在最后返回？', a: '都支持。你可以在 DAG 逐步填充时流式输出 token 和节点状态变化，也可以直接 await runTeam()，在图解析完成后拿到一个带类型、经 schema 校验的结果对象。' },
       { q: 'open-multi-agent 和 Claude Code 的动态工作流是什么关系？', a: '两者押的是同一个赌注——让模型在运行时规划工作，而不是你去接一张固定的图。Claude 的动态工作流跑在 Claude Code 内部，Claude 自己写编排脚本，在一次会话里扇出并行的子智能体。open-multi-agent 把同样的目标到任务 DAG 的思路嵌进你自己的 Node.js 后端，作为一个 MIT 库运行在任意提供方上，并把计划保留为可检视、可重放的数据。两者也能组合：通过 ACP，一个 open-multi-agent 团队甚至可以把 Claude Code 本身当作它的一个智能体来运行。' },
     ],
@@ -596,6 +599,7 @@ export const zh: UiDict = {
       eyebrow: '可组合',
       title: '可组合，不只是并行。',
       body: '两者并不互斥。open-multi-agent 讲 Agent Client Protocol（ACP），所以一个 OMA 团队可以把外部编码智能体——包括 Claude Code 本身——当作团队里的一个智能体来驱动。你在 Claude Code 里得到的模型规划式编排，可以成为一次更大的、由你端到端掌控、且中立于提供方的运行中的一个节点。',
+      cta: '查看 ACP 集成与权限边界',
     },
     fit: {
       eyebrow: 'OMA 适合什么',
@@ -645,28 +649,28 @@ export const zh: UiDict = {
     },
   },
 
-  // 提供方集成页。仅 chrome——每个提供方的文案与代码在 src/lib/integrations.ts。
+  // 集成页。仅 chrome——每个集成的文案与代码在 src/lib/integrations.ts。
   integrations: {
     seo: {
-      title: '集成 —— 让 open-multi-agent 跑在任意模型提供方上',
-      description: 'open-multi-agent 支持 Anthropic、OpenAI、Gemini、DeepSeek、AWS Bedrock、Azure OpenAI、Ollama，以及任意兼容 OpenAI 的端点——换提供方、保留团队。',
+      title: '集成 —— 模型、OpenTelemetry 与运行时适配器',
+      description: '把 open-multi-agent 接入 OpenTelemetry、Anthropic、OpenAI、Gemini、DeepSeek、AWS Bedrock、Azure OpenAI、Ollama，以及任意兼容 OpenAI 的端点。',
     },
     hero: {
       eyebrow: '集成',
-      title: '跑在任意提供方上。',
-      lede: '智能体的配置形状在各提供方之间保持一致——换提供方、模型与凭据，团队其余部分原样不动。还能在一个团队里自由混用。',
+      title: '把运行时接进来。',
+      lede: '接入模型提供方与可选运行时适配器，核心的目标到任务 DAG 编排保持不变。一个团队里可以混用模型，trace 则导出到由你的应用持有的基础设施。',
     },
     hub: { view: '去配置' },
     page: {
       eyebrow: '集成',
-      backToHub: '全部提供方',
+      backToHub: '全部集成',
       setupEyebrow: '配置',
-      setupTitle: '一个最小团队。',
+      setupTitle: '一份最小配置。',
       howEyebrow: '怎么契合',
       howTitle: '它怎么契合。',
       mixCta: '在一个团队里混用提供方',
       allProviders: '全部提供方与环境变量',
-      seeAlso: '其它提供方',
+      seeAlso: '其它集成',
     },
   },
 };

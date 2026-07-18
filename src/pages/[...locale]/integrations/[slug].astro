@@ -1,8 +1,8 @@
 ---
-// /integrations/<slug> and /zh/integrations/<slug> — one provider integration, one
+// /integrations/<slug> and /zh/integrations/<slug> — one integration, one
 // template for both locales. getStaticPaths emits the locale × integration cross
-// product. Provider copy + the real code snippet come from src/lib/integrations.ts
-// (snippets grounded in the vendored reference docs); page chrome from the dict.
+// product. Copy + grounded code snippets come from src/lib/integrations.ts; page
+// chrome comes from the locale dictionary.
 import '@fontsource-variable/geist';
 import '@fontsource-variable/jetbrains-mono';
 import '../../../styles/tokens.css';
@@ -41,6 +41,10 @@ const title = `${heading} — open-multi-agent`;
 const description = pick(itg.seoDescription);
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const others = INTEGRATIONS.filter((i) => i.slug !== itg.slug);
+const followUpLinks = itg.links ?? [
+  { href: '/solutions/mixed-model-teams/', label: { en: t.page.mixCta, zh: t.page.mixCta } },
+  { href: '/reference/providers/', label: { en: t.page.allProviders, zh: t.page.allProviders } },
+];
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -92,16 +96,45 @@ const jsonLd = {
         </div>
         <p class="int-prose" set:html={pick(itg.body)} />
         <div class="int-links">
-          <a class="text-link" href={L('/solutions/mixed-model-teams/')}><span>{t.page.mixCta}</span><span class="arrow">→</span></a>
-          <a class="text-link" href={L('/reference/providers/')}><span>{t.page.allProviders}</span><span class="arrow">→</span></a>
+          {followUpLinks.map((link) => (
+            <a
+              class="text-link"
+              href={link.external ? link.href : L(link.href)}
+              target={link.external ? '_blank' : undefined}
+              rel={link.external ? 'noreferrer' : undefined}
+            >
+              <span>{pick(link.label)}</span><span class="arrow">{link.external ? '↗' : '→'}</span>
+            </a>
+          ))}
         </div>
       </div>
     </section>
 
+    <!-- Optional evidence cards for integrations with material runtime boundaries. -->
+    {itg.sections?.map((section, sectionIndex) => (
+      <section class="section int-detail-section">
+        <div class="container">
+          <div class="section-head int-detail-head">
+            <div class="eyebrow"><span class="idx">{String(sectionIndex + 3).padStart(2, '0')}</span> {pick(section.eyebrow)}</div>
+            <h2 class="section-title">{pick(section.title)}</h2>
+            {section.intro && <p class="section-sub">{pick(section.intro)}</p>}
+          </div>
+          <div class="int-detail-grid">
+            {section.items.map((item) => (
+              <article class="int-detail-card">
+                <h3>{pick(item.title)}</h3>
+                <p set:html={pick(item.body)} />
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    ))}
+
     <!-- Enterprise support (§3.2) -->
     <EnterpriseCta locale={locale} />
 
-    <!-- See also: other providers -->
+    <!-- See also: other integrations -->
     <section class="section int-more-section">
       <div class="container">
         <div class="eyebrow"><span class="idx">//</span> {t.page.seeAlso}</div>
@@ -147,6 +180,35 @@ const jsonLd = {
   .int-prose :global(a) { color: var(--oma-accent); text-decoration: none; }
   .int-prose :global(a):hover { text-decoration: underline; }
   .int-links { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 18px; }
+  .int-links .text-link {
+    max-width: 100%; align-items: flex-start; white-space: normal;
+  }
+  .int-links .text-link > :global(span:first-child) {
+    min-width: 0; overflow-wrap: anywhere;
+  }
+
+  .int-detail-section { padding-top: 28px; }
+  .int-detail-head { max-width: 760px; }
+  .int-detail-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 14px; margin-top: 20px;
+  }
+  .int-detail-card {
+    border: 1px solid var(--oma-border-1); border-radius: var(--radius-md);
+    background: var(--oma-bg-1); padding: 20px 22px;
+  }
+  .int-detail-card h3 {
+    margin: 0 0 9px; color: var(--oma-fg-1); font-size: 15px;
+    letter-spacing: -0.01em;
+  }
+  .int-detail-card p {
+    margin: 0; color: var(--oma-fg-2); font-size: 13.5px; line-height: 1.7;
+  }
+  .int-detail-card :global(code) {
+    font-family: var(--font-mono); font-size: 0.88em;
+    background: var(--oma-bg-3); padding: 1px 5px; border-radius: var(--radius-xs);
+    color: var(--oma-fg-1);
+  }
 
   .int-more-section { padding-top: 8px; }
   .int-more { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 14px; }

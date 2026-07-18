@@ -1,14 +1,13 @@
-// Provider-integration page data — the source for /integrations/<slug> and the
-// /integrations hub. One dynamic template renders every entry, mirroring the
-// /compare and /solutions pairs.
+// Integration-page data — the source for /integrations/<slug> and the
+// /integrations hub. One dynamic template renders model providers and optional
+// runtime adapters alike, mirroring the /compare and /solutions pairs.
 //
 // HONESTY DISCIPLINE (red-line §1). Every code snippet is grounded in the vendored
 // reference docs, not invented: the OpenMultiAgent → createTeam → runTeam shape and
-// AgentConfig come from getting-started/quick-start.md; each provider's `provider`
-// name, env var, example model, and baseURL come verbatim from reference/providers.md
-// (itself synced from the framework repo). `code` is invariant (English) — it's code,
-// not prose. Bilingual copy (en/zh) is co-located here; page chrome lives in the
-// type-checked i18n dict. zh follows TRANSLATING.md; API identifiers stay verbatim.
+// AgentConfig come from getting-started/quick-start.md; provider identifiers come
+// from reference/providers.md, while adapter APIs come from their versioned package
+// docs and runnable examples. `code` is invariant (English) — it's code, not prose.
+// Bilingual copy is co-located here; page chrome lives in the type-checked i18n dict.
 
 import type { Loc } from './compare';
 
@@ -25,8 +24,17 @@ export type Integration = {
   lede: Loc;
   /** A real, minimal team config for this provider (invariant — it's code). */
   code: string;
-  /** How this provider fits open-multi-agent. Rendered set:html. */
+  /** How this integration fits open-multi-agent. Rendered set:html. */
   body: Loc;
+  /** Integration-specific follow-up links. Providers use the shared defaults. */
+  links?: readonly { href: string; label: Loc; external?: boolean }[];
+  /** Optional evidence cards for integrations whose operating boundary matters. */
+  sections?: readonly {
+    eyebrow: Loc;
+    title: Loc;
+    intro?: Loc;
+    items: readonly { title: Loc; body: Loc }[];
+  }[];
 };
 
 // Shared minimal team used across the snippets, so the only thing that changes per
@@ -41,6 +49,210 @@ console.log(result.success)`;
 const HEAD = `import { OpenMultiAgent, type AgentConfig } from '@open-multi-agent/core'`;
 
 export const INTEGRATIONS: Integration[] = [
+  {
+    slug: 'opentelemetry',
+    name: 'OpenTelemetry',
+    keywords: ['open multi agent opentelemetry', 'typescript multi agent tracing', 'open telemetry ai agents', 'open multi agent run viewer'],
+    seoDescription: {
+      en: 'Export open-multi-agent TraceRecord v2 spans to an application-owned OpenTelemetry provider with @open-multi-agent/otel, while keeping the three-dependency core and an offline Run Viewer.',
+      zh: '用 @open-multi-agent/otel 把 open-multi-agent 的 TraceRecord v2 span 导出到应用自有的 OpenTelemetry provider，同时保留三个依赖的 core 与离线 Run Viewer。',
+    },
+    title: { en: 'OpenTelemetry tracing for multi-agent runs', zh: '为多智能体运行接入 OpenTelemetry' },
+    lede: { en: 'An optional first-party adapter from TraceRecord v2 to the provider your application already owns.', zh: '一个可选的一方适配器：把 TraceRecord v2 映射到你的应用已经持有的 provider。' },
+    code: `import {
+  BasicTracerProvider,
+  InMemorySpanExporter,
+  SimpleSpanProcessor,
+} from '@opentelemetry/sdk-trace-base'
+import { OpenMultiAgent, type AgentConfig } from '@open-multi-agent/core'
+import { createOtelTraceSink } from '@open-multi-agent/otel'
+
+// npm install @open-multi-agent/core@^1.11.0 @open-multi-agent/otel@^0.1.0
+// npm install @opentelemetry/api @opentelemetry/sdk-trace-base
+// Set OPENAI_API_KEY in the environment for the demo team.
+const exporter = new InMemorySpanExporter()
+const provider = new BasicTracerProvider({
+  spanProcessors: [new SimpleSpanProcessor(exporter)],
+})
+const sink = createOtelTraceSink({ tracerProvider: provider })
+
+${AGENTS}
+
+const oma = new OpenMultiAgent({
+  defaultProvider: 'openai',
+  defaultModel: 'gpt-5.4-mini',
+  observability: { sinks: [sink] },
+})
+const team = oma.createTeam('brief', { name: 'brief', agents })
+
+try {
+  await oma.runTeam(team, 'Summarize the latest release notes.')
+  await sink.forceFlush({ timeoutMs: 1_000 })
+  console.log(exporter.getFinishedSpans().length)
+} finally {
+  await sink.shutdown({ timeoutMs: 1_000 })
+  await provider.shutdown()
+}`,
+    body: {
+      en: '<code>@open-multi-agent/otel</code> is the optional first-party bridge for core v1.11.0 TraceRecord v2. <code>createOtelTraceSink()</code> maps one OMA span lifecycle to OpenTelemetry spans, including stable run IDs, task and tool relationships, token counts, cost metadata, retry fields, and compatible <code>gen_ai.*</code> attributes. Your application supplies and owns the tracer or provider; the adapter never installs a global provider and does not shut down a shared provider unless you explicitly opt in. The in-memory exporter above keeps the example runnable without a collector—replace it with the SDK and exporter your application already uses. Prompt, completion, tool payload, credential, and reasoning content are filtered by the adapter by default; treat all telemetry redaction as best-effort and apply your own sink policy before export.',
+      zh: '<code>@open-multi-agent/otel</code> 是面向 core v1.11.0 TraceRecord v2 的可选一方桥接包。<code>createOtelTraceSink()</code> 把 OMA 的每段 span 生命周期映射为 OpenTelemetry span，保留稳定的运行 ID、任务与工具关系、token 计数、成本元数据、重试字段，以及兼容的 <code>gen_ai.*</code> 属性。tracer 或 provider 由你的应用提供并持有；适配器不会安装全局 provider，也不会关闭共享 provider，除非你显式开启。上面的内存 exporter 让示例无需 collector 也能运行——生产中请换成应用已经使用的 SDK 与 exporter。适配器默认过滤 prompt、completion、工具 payload、凭据与推理内容；所有遥测脱敏仍应视为尽力而为，导出前还要应用你自己的 sink 策略。',
+    },
+    links: [
+      { href: '/reference/observability/', label: { en: 'Observability lifecycle and Run Viewer', zh: '可观测性生命周期与 Run Viewer' } },
+      { href: '/compare/voltagent/', label: { en: 'Compare bundled vs optional OTel', zh: '对比内置与可选 OTel' } },
+    ],
+  },
+  {
+    slug: 'external-agents',
+    name: 'External agents (ACP)',
+    keywords: [
+      'claude code multi agent',
+      'agent client protocol typescript',
+      'acp external agents',
+      'claude code acp orchestration',
+      'external coding agent node js',
+    ],
+    seoDescription: {
+      en: 'Run external coding agents such as Claude Code inside an open-multi-agent task DAG over ACP. See the exact TypeScript config, permission boundary, token caveats, and lifecycle limits.',
+      zh: '通过 ACP 把 Claude Code 等外部编码智能体放进 open-multi-agent 任务 DAG：查看准确的 TypeScript 配置、权限边界、token 注意事项与生命周期限制。',
+    },
+    title: { en: 'External coding agents inside one task DAG', zh: '把外部编码智能体放进同一张任务 DAG' },
+    lede: {
+      en: 'Use ACP or a local process as one team member, while OMA keeps ownership of planning, scheduling, shared memory, and failure propagation.',
+      zh: '用 ACP 或本地进程接入一个团队成员，同时由 OMA 继续掌管规划、调度、共享记忆与失败传播。',
+    },
+    code: `import path from 'node:path'
+import { OpenMultiAgent } from '@open-multi-agent/core'
+
+// npm install @open-multi-agent/core@^1.11.0 @agentclientprotocol/sdk
+// Set ANTHROPIC_API_KEY. Keep this directory narrower than your repository root.
+const projectDir = path.resolve(
+  process.env.OMA_ACP_PROJECT_DIR ?? './scratch-project',
+)
+
+const oma = new OpenMultiAgent({
+  defaultProvider: 'anthropic',
+  defaultModel: 'claude-sonnet-4-6',
+})
+
+const team = oma.createTeam('hybrid-audit', {
+  name: 'hybrid-audit',
+  agents: [
+    {
+      name: 'planner',
+      systemPrompt: 'Plan a focused repository audit. Do not edit files.',
+    },
+    {
+      name: 'repo-auditor',
+      systemPrompt: 'Inspect the project and report evidence. Do not edit files.',
+      backend: {
+        kind: 'acp',
+        command: 'npx',
+        args: ['-y', '@agentclientprotocol/claude-agent-acp'],
+        cwd: projectDir,
+        // OMA defaults to 'auto-approve'. This example starts read-only instead.
+        permission: ({ kind }) => kind === 'read',
+      },
+    },
+    {
+      name: 'reviewer',
+      systemPrompt: 'Challenge the audit findings and summarize residual risk.',
+    },
+  ],
+  sharedMemory: true,
+})
+
+const result = await oma.runTeam(
+  team,
+  'Audit the authentication module for error-handling gaps, then review the evidence.',
+)
+
+console.log(result.success, result.totalTokenUsage)`,
+    body: {
+      en: 'Set <code>AgentConfig.backend</code> instead of a model for the external member. <code>kind: \'acp\'</code> starts a long-lived Agent Client Protocol session; <code>kind: \'process\'</code> starts a generic command for each run and maps stdout, stderr, exit status, and cancellation into a normal agent result. ACP is an optional peer loaded only when used. OMA is the ACP <strong>client</strong>: it launches the configured subprocess, sends prompts, receives tool and usage updates, and folds the result into the same task DAG and shared memory as its LLM-backed agents. Claude Code does not speak ACP natively; the example uses the official <code>@agentclientprotocol/claude-agent-acp</code> adapter.',
+      zh: '给外部成员设置 <code>AgentConfig.backend</code>，而不是模型。<code>kind: \'acp\'</code> 会启动一个长连接的 Agent Client Protocol 会话；<code>kind: \'process\'</code> 则为每次运行启动通用命令，并把 stdout、stderr、退出状态与取消映射成普通智能体结果。ACP 是仅在使用时才加载的可选 peer。OMA 扮演 ACP <strong>客户端</strong>：启动配置好的子进程、发送 prompt、接收工具与用量更新，再把结果并入与 LLM 智能体相同的任务 DAG 和共享记忆。Claude Code 本身不原生支持 ACP；示例使用官方 <code>@agentclientprotocol/claude-agent-acp</code> 适配器。',
+    },
+    links: [
+      { href: '/reference/external-agents/', label: { en: 'Full external-agent API reference', zh: '外部智能体完整 API 参考' } },
+      { href: '/compare/claude-dynamic-workflows/', label: { en: 'How this composes with Claude dynamic workflows', zh: '它如何与 Claude 动态工作流组合' } },
+      {
+        href: 'https://github.com/open-multi-agent/open-multi-agent/blob/v1.11.0/packages/core/examples/integrations/external-agent-acp.ts',
+        label: { en: 'Inspect the runnable ACP example', zh: '查看可运行的 ACP 示例' },
+        external: true,
+      },
+    ],
+    sections: [
+      {
+        eyebrow: { en: 'ownership', zh: '职责边界' },
+        title: { en: 'One DAG, two control loops.', zh: '一张 DAG，两层控制循环。' },
+        intro: {
+          en: 'OMA coordinates the run; the external agent remains an independent runtime with its own tools and context.',
+          zh: 'OMA 协调整次运行；外部智能体仍是拥有自身工具与上下文的独立运行时。',
+        },
+        items: [
+          {
+            title: { en: 'OMA owns the workflow', zh: 'OMA 掌管工作流' },
+            body: {
+              en: 'The coordinator decomposes the goal, assigns the external member a task, schedules dependencies, shares upstream results, and cascades failure to dependent tasks.',
+              zh: '协调器拆解目标、把任务分给外部成员、调度依赖、共享上游结果，并把失败级联到下游任务。',
+            },
+          },
+          {
+            title: { en: 'The external agent owns its loop', zh: '外部智能体掌管自身循环' },
+            body: {
+              en: 'Its CLI chooses tools, maintains its own session context, and performs work with the local process permissions you launched it with. OMA does not replace that runtime.',
+              zh: '外部 CLI 自己选择工具、维护会话上下文，并以启动它的本地进程权限执行工作；OMA 不会替代这层运行时。',
+            },
+          },
+          {
+            title: { en: 'ACP normalizes the handoff', zh: 'ACP 统一交接' },
+            body: {
+              en: 'Text deltas, tool-call updates, stop reasons, cancellation, and reported usage become a normal OMA result, so hybrid teams do not need a separate scheduler.',
+              zh: '文本增量、工具调用更新、停止原因、取消与上报用量都会变成普通 OMA 结果，因此混合团队不需要另写调度器。',
+            },
+          },
+        ],
+      },
+      {
+        eyebrow: { en: 'production boundary', zh: '生产边界' },
+        title: { en: 'Permission prompts are not a sandbox.', zh: '权限提示不等于沙箱。' },
+        intro: {
+          en: 'Treat an ACP backend as a local subprocess you are deliberately authorizing—not as an isolated OMA tool.',
+          zh: '应把 ACP backend 当作你明确授权的本地子进程，而不是被 OMA 隔离起来的工具。',
+        },
+        items: [
+          {
+            title: { en: 'Approval policy', zh: '审批策略' },
+            body: {
+              en: '<code>permission</code> defaults to <code>\'auto-approve\'</code>, preferring one-time approval when the agent offers it. Use <code>\'reject\'</code> or a callback for each deployment; the read-only callback above is a starting policy, not a universal one.',
+              zh: '<code>permission</code> 默认是 <code>\'auto-approve\'</code>，且在智能体提供选项时优先选择单次批准。每次部署都应改用 <code>\'reject\'</code> 或回调；上面的只读回调是起点，不是通用策略。',
+            },
+          },
+          {
+            title: { en: 'Filesystem and secrets', zh: '文件系统与密钥' },
+            body: {
+              en: 'The subprocess accesses <code>cwd</code> directly; OMA does not proxy ACP file operations through its filesystem sandbox. Scope <code>cwd</code>, command, args, and inherited environment to the minimum needed. The process backend has no protocol permission prompts.',
+              zh: '子进程直接访问 <code>cwd</code>；OMA 不会通过自身文件系统沙箱代理 ACP 文件操作。把 <code>cwd</code>、command、args 与继承的环境变量缩到最小。process backend 没有协议级权限提示。',
+            },
+          },
+          {
+            title: { en: 'Budget accounting', zh: '预算计量' },
+            body: {
+              en: 'ACP reports cumulative context tokens, not an input/output split. OMA converts readings into per-turn increments for <code>maxTokenBudget</code>; an agent that sends no usage update reports zero and is not token-gated. ACP cost is not wired into <code>maxCostBudget</code>.',
+              zh: 'ACP 上报累计上下文 token，而非输入/输出拆分。OMA 把读数换算成逐回合增量供 <code>maxTokenBudget</code> 使用；不发送用量更新的智能体会报告零，也不会被 token 门控。ACP 成本尚未接入 <code>maxCostBudget</code>。',
+            },
+          },
+          {
+            title: { en: 'Protocol and lifecycle scope', zh: '协议与生命周期范围' },
+            body: {
+              en: 'OMA is client-only; it does not expose OMA agents to editors as ACP agents. Orchestrated ACP subprocesses live until process exit; use <code>createAcpBackend()</code> with <code>dispose()</code> when explicit teardown is required.',
+              zh: 'OMA 目前只做客户端，不会把 OMA 智能体作为 ACP agent 暴露给编辑器。经编排启动的 ACP 子进程会存活到进程退出；需要显式清理时，使用 <code>createAcpBackend()</code> 与 <code>dispose()</code>。',
+            },
+          },
+        ],
+      },
+    ],
+  },
   {
     slug: 'anthropic',
     name: 'Anthropic (Claude)',

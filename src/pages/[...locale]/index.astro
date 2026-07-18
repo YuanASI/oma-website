@@ -79,7 +79,7 @@ const heroWallS = Math.round(heroRun.wallMs / 1000);
 
 // ── Capabilities code (current public API — verified against the repo). ──
 const TEAM_CODE = `const model = process.env.OMA_MODEL ?? 'gpt-5.4-mini'
-const oma = new OpenMultiAgent({ defaultModel: model })
+const oma = new OpenMultiAgent({ defaultProvider: 'openai', defaultModel: model })
 const agents: AgentConfig[] = [
   { name: 'triage-specialist', model },
   { name: 'order-specialist', model },
@@ -105,7 +105,8 @@ const caseTr = (c: (typeof SHOWCASE)[number]) => scEntries[c.pkg] ?? { desc: c.d
 
 // Section copy lives in the per-locale dictionary (src/i18n); the markup below
 // renders it via `l`. Every API name / code identifier inside the copy stays
-// verbatim (see src/i18n/en.ts for the verified-against-v1.8.0 source).
+// verbatim (see src/i18n/en.ts; the reliability surface is verified against
+// open-multi-agent core v1.11.0 and @open-multi-agent/otel v0.1.0).
 const CAPS = [l.caps[0], l.caps[1], l.caps[3]].map((c, i) => ({
   ...c,
   n: String(i + 1).padStart(2, '0'),
@@ -131,7 +132,10 @@ const BUILDS = FEATURED_USE_CASE_SLUGS.flatMap((slug) => {
 });
 
 const STACK = l.stack;
-const FAQS = [l.faqs[0], l.faqs[1], l.faqs[3], l.faqs[4]];
+// Keep the visible set focused on runtime decisions not already answered by the
+// capability cards. In particular, the cost answer must surface maxCostBudget;
+// model mixing is already covered in capability 02 and the stack section.
+const FAQS = [l.faqs[0], l.faqs[3], l.faqs[4], l.faqs[5]];
 
 const title = l.seo.title;
 const description = l.seo.description;

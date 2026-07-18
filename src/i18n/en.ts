@@ -35,7 +35,7 @@ export const en = {
       showcase: 'Projects built with OMA',
       blog: 'Notes on AI Agent orchestration',
       solutions: 'AI Agent use cases in TypeScript',
-      integrations: 'Anthropic, OpenAI, Gemini, Ollama & more',
+      integrations: 'OpenTelemetry, Anthropic, OpenAI & more',
     },
     // Use Cases dropdown column headers + the left column's "view all" link
     // (the right column reuses examples.detail.browseAll).
@@ -128,7 +128,7 @@ export const en = {
     sectionReliability: {
       eyebrow: 'Control',
       title: 'You hold the controls.',
-      sub: 'Three levers, all in the API — stay in the loop while agents run, cap what a run can spend, and inspect or replay every call after.',
+      sub: 'Three control layers, all in the API — gate what agents may do, bound time and spend, then inspect or resume the run.',
     },
     reliability: [
       {
@@ -139,8 +139,8 @@ export const en = {
         parts: [
           'Inspect the plan before any agent runs with ', { c: 'onPlanReady' },
           ', then approve each round with ', { c: 'onApproval' },
-          ". A proposer→judge pass (", { c: 'runConsensus' },
-          ") has one agent check another's output, and loop detection halts an agent that starts repeating itself.",
+          '. Gate each validated tool call before execution with ', { c: 'onToolCall' },
+          ', and use loop detection to halt an agent that starts repeating itself.',
         ],
       },
       {
@@ -150,8 +150,11 @@ export const en = {
         refLabel: 'model routing',
         parts: [
           'Route planning to a flagship model and the leaf tasks to cheap ones with ', { c: 'modelRouting' },
-          '. ', { c: 'maxTokenBudget' },
-          " caps a run's spend — cross it and the orchestrator stops issuing calls instead of running up the bill.",
+          '. Stop further calls at token or estimated-USD boundaries with ', { c: 'maxTokenBudget' },
+          ' and ', { c: 'maxCostBudget' },
+          ' + ', { c: 'estimateCost' },
+          '; bound each model call with ', { c: 'callTimeoutMs' },
+          ', while task retries skip errors known to be terminal.',
         ],
       },
       {
@@ -160,16 +163,16 @@ export const en = {
         ref: '/reference/observability/',
         refLabel: 'observability',
         parts: [
-          'Stream every LLM and tool call to your tracing stack with ', { c: 'onTrace' },
-          ', or open a self-contained HTML dashboard after the run (', { c: 'oma run --dashboard' },
-          '). Checkpoints resume a crashed run from its last completed task, and secrets are redacted from traces and dashboards on a best-effort basis.',
+          'Send TraceRecord v2 spans to an application-owned OpenTelemetry provider with ', { c: 'createOtelTraceSink' },
+          ', or open the offline Run Viewer after the run (', { c: 'oma run --dashboard' },
+          '). Checkpoints resume after the last completed task—an interrupted task starts again—and telemetry redaction remains best-effort.',
         ],
       },
     ],
     dashboard: {
-      caption: 'And when something does slip, every run can render an auditable dashboard — the task DAG, per-node assignee and status, token breakdown, and the agent output log.',
+      caption: 'And when something does slip, the offline Run Viewer can replay the completed run — the task DAG, per-node assignee and status, token breakdown, and the agent output log.',
       obsLink: 'Observability',
-      imgAlt: 'Post-run dashboard replaying a completed team run: the task DAG with per-node assignee, status, token breakdown, and the agent output log.',
+      imgAlt: 'Offline Run Viewer replaying a completed team run: the task DAG with per-node assignee, status, token breakdown, and the agent output log.',
     },
     sectionEvidence: {
       eyebrow: 'Scenarios · stack · adoption',
@@ -214,9 +217,9 @@ export const en = {
       { q: 'How does the coordinator turn a goal into a DAG?', a: 'A coordinator agent plans the work: it breaks the goal into discrete tasks, infers dependencies between them, and emits a directed acyclic graph. Independent nodes run concurrently; dependent nodes wait on their inputs. Pass planOnly to inspect the DAG before any agent executes.' },
       { q: 'Can agents in one team use different model providers?', a: 'Yes. Each agent declares its own model, so a single team can mix a frontier cloud model, a self-hosted endpoint, and a local Ollama instance. The coordinator routes each task to the agent — and therefore the model — assigned to it.' },
       { q: 'How do tools get exposed to an agent?', a: 'Default-deny. An agent only has the tools it explicitly lists in its tools array; everything else is unavailable. External systems are connected through MCP servers under the same opt-in contract.' },
-      { q: 'What happens when a node fails?', a: 'A failed node is retried under its policy; persistent failures surface on the node with FAILED state and an error, and downstream dependents are held. The rest of the DAG keeps running, so one failure does not abort the whole run.' },
+      { q: 'What happens when a node fails?', a: 'A failed node is retried under its task policy when the error may be transient. Budget exhaustion, malformed input, deliberate aborts, and non-retryable client errors skip pointless retries. Persistent failures surface on the node with FAILED state and an error, downstream dependents are held, and independent branches can continue.' },
       { q: 'How do I keep a multi-agent run from going off the rails?', a: 'Layered controls, all opt-in. onPlanReady hands you the decomposed plan to inspect before any agent runs, and onApproval gates each round; return false and the remaining tasks are skipped. runConsensus adds a proposer→judge check that a second agent must accept, and loop detection halts an agent that keeps repeating the same tool call or output.' },
-      { q: 'How do I cap what a run costs?', a: 'Two levers. modelRouting sends planning and synthesis to a flagship model while leaf tasks run on a cheaper one, so you pay frontier rates only where they matter. maxTokenBudget is a hard ceiling on cumulative tokens: cross it and the orchestrator stops issuing calls and skips the remaining tasks instead of running up the bill.' },
+      { q: 'How do I cap what a run costs?', a: 'Use maxCostBudget with estimateCost. Your estimator owns the per-model USD price table; OMA accumulates that estimate across the run and stops issuing further calls once the cap is crossed. The check happens at turn and task boundaries, so it can overshoot by one model turn rather than stopping mid-call. maxTokenBudget provides the parallel cumulative-token ceiling, and modelRouting can put cheaper models on leaf tasks.' },
       { q: 'Does it stream, or only return at the end?', a: 'Both. You can stream tokens and node-state transitions as the DAG fills, or simply await runTeam() for a typed, schema-validated result object once the graph resolves.' },
       { q: "How does open-multi-agent relate to Claude Code's dynamic workflows?", a: "They make the same bet — the model plans the work at runtime instead of you wiring a fixed graph. Claude's dynamic workflows run inside Claude Code, where Claude writes its own orchestration scripts and fans out parallel subagents in a session. open-multi-agent embeds that same goal-to-DAG idea in your own Node.js backend as an MIT library, on any provider, with the plan kept as inspectable, replayable data. The two also compose: over ACP an open-multi-agent team can run Claude Code itself as one of its agents." },
     ],
@@ -494,6 +497,7 @@ export const en = {
       eyebrow: 'composable',
       title: 'Composable, not just parallel.',
       body: "These aren't mutually exclusive. open-multi-agent speaks the Agent Client Protocol (ACP), so an OMA team can drive external coding agents — including Claude Code itself — as one agent inside the team. The model-planned orchestration you get in Claude Code can become a single node in a larger, provider-neutral run that you own end to end.",
+      cta: 'See the ACP integration and permission boundary',
     },
     fit: {
       eyebrow: 'where oma fits',
@@ -546,29 +550,29 @@ export const en = {
     },
   },
 
-  // Provider-integration pages. Chrome only — the per-provider copy + code lives
+  // Integration pages. Chrome only — the per-integration copy + code lives
   // in src/lib/integrations.ts.
   integrations: {
     seo: {
-      title: 'Integrations — run open-multi-agent on any model provider',
-      description: 'open-multi-agent works with Anthropic, OpenAI, Gemini, DeepSeek, AWS Bedrock, Azure OpenAI, Ollama, and any OpenAI-compatible endpoint — change the provider, keep the team.',
+      title: 'Integrations — models, OpenTelemetry, and runtime adapters',
+      description: 'Connect open-multi-agent to OpenTelemetry, Anthropic, OpenAI, Gemini, DeepSeek, AWS Bedrock, Azure OpenAI, Ollama, and any OpenAI-compatible endpoint.',
     },
     hero: {
       eyebrow: 'integrations',
-      title: 'Run on any provider.',
-      lede: 'The agent config shape stays the same across providers — change the provider, model, and credential, and the rest of your team stays put. Mix them freely in one team.',
+      title: 'Connect the runtime.',
+      lede: 'Add model providers and optional runtime adapters without changing the goal-to-DAG orchestration at the center. Mix models in one team; export traces through infrastructure your application owns.',
     },
     hub: { view: 'Set it up' },
     page: {
       eyebrow: 'integration',
-      backToHub: 'All providers',
+      backToHub: 'All integrations',
       setupEyebrow: 'setup',
-      setupTitle: 'A minimal team.',
+      setupTitle: 'A minimal setup.',
       howEyebrow: 'how it fits',
       howTitle: 'How it fits.',
       mixCta: 'Mix providers in one team',
       allProviders: 'All providers & env vars',
-      seeAlso: 'Other providers',
+      seeAlso: 'Other integrations',
     },
   },
 };
