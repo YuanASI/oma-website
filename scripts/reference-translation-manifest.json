@@ -1,39 +1,47 @@
 {
   "_comment": "Translation drift anchor for the vendored Reference docs. Maps each `reference/<slug>` to the sha256 of the English BODY (front-matter stripped) its zh translation was made from, plus the date. Written by scripts/update-translation-manifest.mjs; read by scripts/check-reference-drift.mjs to flag stale zh translations in the weekly sync PR. Empty until the first reference page is translated. See TRANSLATING.md.",
   "reference/checkpoint": {
-    "enBodySha256": "bf7f93ab4f402aadd7212aa0ecb2ab43ab491c8261c7fecabe394b67bb6bb1c3",
-    "translatedAt": "2026-06-25"
+    "enBodySha256": "502b3cc134f34b96cc23d065571a71023cac7ff98e9ecc31d8139b38906c2352",
+    "translatedAt": "2026-07-18"
   },
   "reference/cli": {
-    "enBodySha256": "92a63550d313ee2c24b5f068fe541da1f80a31cbc30cffbe0649f02b252980a3",
-    "translatedAt": "2026-06-25"
+    "enBodySha256": "fe56aa6fb4dd12a7cbca7f26a910a53e3a755c5b3809c2f342e0eabcf2dfabd8",
+    "translatedAt": "2026-07-18"
   },
   "reference/consensus": {
-    "enBodySha256": "56e2a9d35bef8e78641a118c5b7278759c453ead4bd3234da30831a2c23c63c9",
-    "translatedAt": "2026-06-25"
+    "enBodySha256": "3aebc5b0d0264b05c55c3995b89221d396eb37a6b8ae9c4cbb66e65f8c35feb1",
+    "translatedAt": "2026-07-18"
   },
   "reference/context-management": {
-    "enBodySha256": "fb7119898ef01ce528cdc578108f40051b9b46bffd934e0582174e6e0d5ab3a7",
-    "translatedAt": "2026-06-25"
+    "enBodySha256": "fd6c8e98e6d116ad96719fdc5179e4cbad0e48afe9f01c59da8aec7667eb9dda",
+    "translatedAt": "2026-07-18"
+  },
+  "reference/external-agents": {
+    "enBodySha256": "15bbf7bcb86cad2acd0a185d5a9fa3de02464fbbdc9b0b9c98b5326c2500e791",
+    "translatedAt": "2026-07-18"
   },
   "reference/model-routing": {
     "enBodySha256": "9950a3ae3971f3e73fe2629bf4ae84dd78a22e9d5e0d3507c533e1364093ed7f",
     "translatedAt": "2026-06-25"
   },
   "reference/observability": {
-    "enBodySha256": "121c9b5d09d96d3f8f2bac82bfa936d697fc6f8d3d2e83a9b111e8cbaa436090",
-    "translatedAt": "2026-06-25"
+    "enBodySha256": "a2dedcbcb8373e64a731e9ea81db7e4647635c89519acfef4d05172ec4e23774",
+    "translatedAt": "2026-07-18"
+  },
+  "reference/plan-replay": {
+    "enBodySha256": "f3f0db45e920738de97dfc846e11a4112e4c71119065586763ae15acd3b64ca3",
+    "translatedAt": "2026-07-18"
   },
   "reference/providers": {
     "enBodySha256": "5ad7bb4d2e0230aadbd7db8f6c5fc6498a0fbeed4992537c1782ce8d01ce3c06",
     "translatedAt": "2026-06-25"
   },
   "reference/shared-memory": {
-    "enBodySha256": "26660f1a1dc3e19b37052ca5b4e79346a44572ca1871bd52e6218e30ff9d9e5e",
-    "translatedAt": "2026-06-25"
+    "enBodySha256": "16cec06d3a1045c8dbc37c756fb195feb946b35c06ddae3d83bd5613dcc341eb",
+    "translatedAt": "2026-07-18"
   },
   "reference/tool-configuration": {
-    "enBodySha256": "7cc05987e8d015b4b1ddea3c85ed00956351da0daaa3a4bcda179792001ad29e",
-    "translatedAt": "2026-06-25"
+    "enBodySha256": "4dd9eeb69200d0e4cc8ab874328ad1d9ef112c763ba61d63c2a77b073ee66fde",
+    "translatedAt": "2026-07-18"
   }
 }

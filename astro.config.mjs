@@ -206,9 +206,11 @@ export default defineConfig({
 					items: [
 						{ label: 'Providers', slug: 'reference/providers', translations: { 'zh-CN': '模型提供方' } },
 						{ label: 'Tool configuration', slug: 'reference/tool-configuration', translations: { 'zh-CN': '工具配置' } },
+						{ label: 'External agents', slug: 'reference/external-agents', translations: { 'zh-CN': '外部智能体' } },
 						{ label: 'Observability', slug: 'reference/observability', translations: { 'zh-CN': '可观测性' } },
 						{ label: 'Shared memory', slug: 'reference/shared-memory', translations: { 'zh-CN': '共享内存' } },
 						{ label: 'Checkpoint & resume', slug: 'reference/checkpoint', translations: { 'zh-CN': '检查点与恢复' } },
+						{ label: 'Plan preview & replay', slug: 'reference/plan-replay', translations: { 'zh-CN': '计划预览与重放' } },
 						{ label: 'Context management', slug: 'reference/context-management', translations: { 'zh-CN': '上下文管理' } },
 						{ label: 'Consensus', slug: 'reference/consensus', translations: { 'zh-CN': '共识' } },
 						{ label: 'Model routing', slug: 'reference/model-routing', translations: { 'zh-CN': '模型路由' } },

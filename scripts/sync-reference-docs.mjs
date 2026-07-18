@@ -24,9 +24,10 @@ const REFDIR = 'src/content/docs/reference';
 
 // Vendored reference files ↔ framework `docs/<name>.md`. Only these sync.
 const FILES = [
-  'checkpoint', 'cli', 'consensus', 'context-management', 'model-routing', 'observability',
-  'providers', 'shared-memory', 'tool-configuration',
+  'checkpoint', 'cli', 'consensus', 'context-management', 'external-agents', 'model-routing',
+  'observability', 'plan-replay', 'providers', 'shared-memory', 'tool-configuration',
 ];
+const VENDORED = new Set(FILES);
 
 const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
 const apiHeaders = token
@@ -34,15 +35,21 @@ const apiHeaders = token
   : { Accept: 'application/vnd.github+json' };
 
 // Rewrite framework-relative markdown links to forms that resolve on the site:
-//   ](../<repo path>)   → absolute GitHub blob URL (escapes docs/ to repo root)
-//   ](./x.md) / ](x.md) → /reference/x/   (intra-docs → Starlight route)
+//   ](../<repo path>)      → absolute GitHub blob URL (escapes docs/ to repo root)
+//   ](./x.md) where x is   → /reference/x/   (intra-docs → Starlight route)
+//     a VENDORED sibling
+//   ](./x.md) where x is   → absolute GitHub blob URL (the page isn't on the
+//     NOT vendored              site — e.g. observability-migration — so a
+//                               /reference/x/ route would 404)
 // The intra-docs rule excludes protocol URLs ([\w./-] can't match ':'), so it
 // never touches the absolute links produced by the first rule.
 const rewriteLinks = (md) =>
   md
     .replace(/\]\(\.\.\/([^)]+)\)/g, (_m, p) => `](${BLOB}/${p})`)
     .replace(/\]\((?:\.\/)?([\w./-]+)\.md(#[^)]*)?\)/g,
-      (_m, name, hash) => `](/reference/${name}/${hash ?? ''})`);
+      (_m, name, hash) => VENDORED.has(name)
+        ? `](/reference/${name}/${hash ?? ''})`
+        : `](${BLOB}/docs/${name}.md${hash ?? ''})`);
 
 // Drop a leading "# Title" heading (+ following blank lines) from the body.
 const stripH1 = (md) => md.replace(/^#\s+.*\n+/, '');
