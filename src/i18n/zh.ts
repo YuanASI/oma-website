@@ -41,7 +41,7 @@ export const zh: UiDict = {
   },
 
   footer: {
-    blurb: '从目标到任务 DAG，自动完成。<br />TypeScript 原生的多智能体框架。',
+    blurb: '给出一个目标，让团队在你的环境里自动分工。<br />TypeScript 原生 AI Agent 框架。',
     product: { head: '产品', capabilities: '能力', useCases: '应用场景', integrations: '集成', faq: '常见问题' },
     resources: { head: '资源', docs: '文档', architecture: '架构', examples: '示例', showcase: '案例', compare: '对比', blog: '博客' },
     project: { head: '项目', github: 'GitHub', npm: 'npm', mitLicense: 'MIT 许可证', llmsTxt: 'llms.txt', rss: 'RSS' },
@@ -69,14 +69,15 @@ export const zh: UiDict = {
 
   landing: {
     seo: {
-      title: 'Open Multi-Agent：TypeScript 多智能体框架',
-      description: 'TypeScript 原生的多智能体框架。协调器把目标转成任务 DAG、并行执行，并综合出带类型的结果，可嵌入任意 Node.js 后端。',
+      title: 'Open Multi-Agent：TypeScript AI Agent 框架',
+      description: 'TypeScript 原生 AI Agent 框架。给出目标，OMA 在你的 Node.js 后端规划可检视的任务 DAG，使用云端或本地模型自动分工并返回带类型结果。',
     },
     hero: {
-      eyebrow: 'TypeScript 多智能体框架',
-      h1: '从目标到任务 DAG，',
-      h1Accent: '自动完成。',
-      meta: ['3 个运行时依赖', '任意模型', '随处运行'],
+      eyebrow: 'TypeScript 原生 AI Agent 框架',
+      h1: '给出一个目标，让团队在',
+      h1Accent: '你的环境里自动分工。',
+      lede: 'OMA 在你的 Node.js 后端规划可检视的任务 DAG，并行执行独立任务并返回带类型结果；云端与本地模型可以在同一团队运行。',
+      meta: ['3 个运行时依赖', '进程内运行', '云端与本地模型混用'],
       quickStart: '快速开始',
       ioInput: '输入 · team.ts',
       ioGoal: '目标',

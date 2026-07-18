@@ -53,7 +53,7 @@ export const en = {
   },
 
   footer: {
-    blurb: 'From a goal to a task DAG, automatically.<br />TypeScript-native AI Agent framework.',
+    blurb: 'Give it a goal. Run the team in your environment.<br />TypeScript-native AI Agent framework.',
     product: { head: 'Product', capabilities: 'Capabilities', useCases: 'Use cases', integrations: 'Integrations', faq: 'FAQ' },
     resources: { head: 'Resources', docs: 'Docs', architecture: 'Architecture', examples: 'Examples', showcase: 'Showcase', compare: 'Compare', blog: 'Blog' },
     project: { head: 'Project', github: 'GitHub', npm: 'npm', mitLicense: 'MIT license', llmsTxt: 'llms.txt', rss: 'RSS' },
@@ -86,13 +86,14 @@ export const en = {
   landing: {
     seo: {
       title: 'Open Multi-Agent — TypeScript AI Agent framework',
-      description: 'TypeScript-native AI Agent framework. A coordinator turns a goal into a task DAG, parallelizes it, and synthesizes a typed result — drops into any Node.js backend.',
+      description: 'TypeScript-native AI Agent framework for Node.js. Give it a goal; OMA plans an inspectable task DAG and runs cloud or local models in your own backend.',
     },
     hero: {
       eyebrow: 'TypeScript AI Agent framework',
-      h1: 'From a goal to a task DAG, ',
-      h1Accent: 'automatically.',
-      meta: ['3 runtime deps', 'any model', 'runs anywhere'],
+      h1: 'Give it a goal. Run the team in ',
+      h1Accent: 'your environment.',
+      lede: 'OMA plans an inspectable task DAG, runs independent agents in parallel, and returns a typed result — inside your Node.js backend, with cloud and local models in one team.',
+      meta: ['3 runtime deps', 'in-process', 'cloud + local models'],
       quickStart: 'Quick Start',
       ioInput: 'input · team.ts',
       ioGoal: 'goal',

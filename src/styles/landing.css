@@ -189,9 +189,14 @@ a { color: inherit; }
 }
 :root[lang='zh-CN'] .hero h1 { font-size: clamp(40px, 4.6vw, 58px); }
 .hero h1 .accent { color: var(--oma-accent); }
+.hero-lede {
+  max-width: 560px; margin: 20px 0 0;
+  font-size: var(--text-md); line-height: var(--leading-normal);
+  color: var(--oma-fg-1); text-wrap: balance;
+}
 /* One-line capability meta (replaces the heavier bordered fact-strip box). */
 .hero-meta {
-  margin: 22px 0 0; font-family: var(--font-mono); font-size: 13px;
+  margin: 18px 0 0; font-family: var(--font-mono); font-size: 13px;
   line-height: 1.5; letter-spacing: 0.01em; color: var(--oma-fg-2);
 }
 .hero-meta b { color: var(--oma-fg-1); font-weight: 600; }
@@ -795,4 +800,6 @@ a { color: inherit; }
 }
 @media (max-width: 520px) {
   .nav-github { display: none; }
+  .hero-meta { font-size: 11px; letter-spacing: 0; }
+  .hero-meta .sep { margin: 0 4px; }
 }
