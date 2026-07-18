@@ -169,6 +169,7 @@ a { color: inherit; }
   font-size: var(--text-md); line-height: var(--leading-normal);
   color: var(--oma-fg-1); margin: 16px 0 0; max-width: 620px;
 }
+.home-section .section-sub { text-wrap: balance; }
 .home-section { padding: 80px 0; }
 .home-section > .container > .section-head { margin-bottom: 40px; }
 
@@ -502,13 +503,13 @@ a { color: inherit; }
 .dashboard-shot { margin: 32px 0 0; }
 .dashboard-shot img,
 .dashboard-shot video {
-  display: block; width: 100%; height: auto; aspect-ratio: 1600 / 760;
+  display: block; width: 100%; height: auto; aspect-ratio: 16 / 9;
   border: 1px solid var(--border-default); border-radius: var(--radius-lg);
   background: var(--oma-bg-1); box-shadow: var(--shadow-md);
 }
 .dashboard-shot figcaption {
   font-size: 13px; line-height: 1.6; color: var(--oma-fg-2);
-  margin-top: 16px; max-width: 760px;
+  margin-top: 16px; max-width: 760px; text-wrap: balance;
 }
 .dashboard-shot figcaption .text-link { font-size: inherit; }
 

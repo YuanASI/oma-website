@@ -6,7 +6,8 @@
 // July 2026 against a PRIMARY source — the framework's own pyproject.toml /
 // package.json (dependency counts), its docs (paradigm, budget, tracing), and
 // the PyPI/npm registry (latest version, license) — not from memory. OMA's
-// column was verified against open-multi-agent core v1.9.0 source + docs. The
+// column was verified against open-multi-agent core v1.11.0 source + docs and
+// the first-party optional @open-multi-agent/otel v0.1.0 package. The
 // whole point of these pages is the fair "when the other tool is the better
 // choice" paragraph, so the competitor gets genuine credit and nothing is
 // rounded up. Where a value would be a guess, it is stated qualitatively, never
@@ -50,13 +51,13 @@ export const AXES: Axis[] = [
   },
   {
     key: 'budget',
-    label: { en: 'Token-budget control', zh: 'Token 预算控制' },
-    oma: { en: 'Hard cap — maxTokenBudget aborts the run and skips remaining tasks', zh: '硬上限——maxTokenBudget 中止运行并跳过剩余任务' },
+    label: { en: 'Run-budget control', zh: '运行预算控制' },
+    oma: { en: 'Token + estimated-USD ceilings — maxTokenBudget, or maxCostBudget with your estimateCost price table', zh: 'Token + 估算美元上限——maxTokenBudget，或 maxCostBudget 加上由你维护价格表的 estimateCost' },
   },
   {
     key: 'observability',
     label: { en: 'Observability', zh: '可观测性' },
-    oma: { en: 'onTrace spans you forward to OTel / Datadog / Langfuse, plus a self-contained post-run HTML dashboard', zh: 'onTrace span 由你转发到 OTel / Datadog / Langfuse，另有一个自包含的运行后 HTML 仪表盘' },
+    oma: { en: 'TraceRecord v2 + TraceStore, an optional first-party OTel adapter, and an offline post-run Run Viewer', zh: 'TraceRecord v2 + TraceStore、可选的一方 OTel 适配器，以及离线的运行后 Run Viewer' },
   },
 ];
 
@@ -199,8 +200,8 @@ export const COMPARISONS: Comparison[] = [
       zh: '你在 Python 里，偏好对话式或 actor 模型的思维方式，想要原生 OpenTelemetry——并且已把 AutoGen 的维护状态纳入考量。',
     },
     chooseUs: {
-      en: 'You want an actively-developed, TypeScript-native runtime with goal-driven decomposition and a hard token budget.',
-      zh: '你想要一个仍在积极开发、TypeScript 原生、目标驱动拆解、且带硬性 token 预算的运行时。',
+      en: 'You want an actively-developed, TypeScript-native runtime with goal-driven decomposition, token + estimated-cost ceilings, and an optional first-party OTel adapter.',
+      zh: '你想要一个仍在积极开发、TypeScript 原生、目标驱动拆解、带 token + 估算成本上限和可选一方 OTel 适配器的运行时。',
     },
     them: {
       language: { en: 'Python (autogen-core / autogen-agentchat); .NET in preview; no TypeScript', zh: 'Python（autogen-core / autogen-agentchat）；.NET 尚在 preview；无 TypeScript' },
@@ -215,16 +216,16 @@ export const COMPARISONS: Comparison[] = [
       zh: '提醒：2026 年微软把 AutoGen 与 Semantic Kernel 合并进了新的 <strong>Microsoft Agent Framework</strong>，作为其受支持的继任者。AutoGen 仍在收修复，但实际上已进入维护模式（最新版本 0.7.5，2025 年 9 月）。如果你在为一个全新、长期的项目选框架，这点值得掂量。',
     },
     howDiffer: {
-      en: 'AutoGen models multi-agent work as a <em>conversation</em>: agents exchange messages in a group chat and coordination emerges from that dialogue (its v0.4 core adds an event-driven, actor-model runtime underneath). open-multi-agent is goal-driven: you hand the coordinator an outcome and it decomposes it into a task DAG with explicit dependencies, running independents in parallel. AutoGen’s tracing story is strong — OpenTelemetry is emitted natively — while OMA forwards its own <code>onTrace</code> spans to whichever backend you choose.',
-      zh: 'AutoGen 把多智能体工作建模为一场<em>对话</em>：智能体在 group chat 里交换消息，协作从这场对话中涌现（它的 v0.4 内核在底层加了一个事件驱动的 actor 模型运行时）。open-multi-agent 则目标驱动：你把一个结果交给协调器，它拆解成一张带显式依赖的任务 DAG，并行运行相互独立的部分。AutoGen 的追踪能力很强——原生发出 OpenTelemetry——而 OMA 把自己的 <code>onTrace</code> span 转发到你选定的任意后端。',
+      en: 'AutoGen models multi-agent work as a <em>conversation</em>: agents exchange messages in a group chat and coordination emerges from that dialogue (its v0.4 core adds an event-driven, actor-model runtime underneath). open-multi-agent is goal-driven: you hand the coordinator an outcome and it decomposes it into a task DAG with explicit dependencies, running independents in parallel. Both now have a first-party OpenTelemetry path. AutoGen auto-emits OTel spans; OMA keeps OTel out of its three-dependency core and maps TraceRecord v2 through the optional <code>@open-multi-agent/otel</code> adapter to a provider your application owns, alongside TraceStore and the offline Run Viewer.',
+      zh: 'AutoGen 把多智能体工作建模为一场<em>对话</em>：智能体在 group chat 里交换消息，协作从这场对话中涌现（它的 v0.4 内核在底层加了一个事件驱动的 actor 模型运行时）。open-multi-agent 则目标驱动：你把一个结果交给协调器，它拆解成一张带显式依赖的任务 DAG，并行运行相互独立的部分。两者现在都有一方 OpenTelemetry 路径。AutoGen 自动发出 OTel span；OMA 不把 OTel 拉进只有三个依赖的 core，而是通过可选的 <code>@open-multi-agent/otel</code> 适配器，把 TraceRecord v2 映射到由应用持有的 provider，另有 TraceStore 与离线 Run Viewer。',
     },
     whenThem: {
       en: 'AutoGen is a strong fit if you’re in Python, prefer a conversational or actor-model mental model, and value native OpenTelemetry out of the box; its research lineage runs deep. The caveat is momentum: with Microsoft steering new work to the Agent Framework, AutoGen is now a maintenance-mode choice — fine for an existing system, worth a second thought for a brand-new one.',
       zh: '如果你在 Python 里、偏好对话式或 actor 模型的思维、并看重开箱即用的原生 OpenTelemetry，AutoGen 很合适；它的研究血统很深。要留意的是势能：随着微软把新工作导向 Agent Framework，AutoGen 如今是个维护模式的选择——用在既有系统上没问题，但为一个全新项目选它就值得再想想。',
     },
     whenUs: {
-      en: 'open-multi-agent fits when you want a TypeScript-native runtime under active development, a goal-first model instead of a conversation you have to steer, and a hard <code>maxTokenBudget</code> cap. Starting fresh in Node.js, OMA avoids both a Python dependency and a framework in transition.',
-      zh: 'open-multi-agent 适合你想要一个 TypeScript 原生、仍在积极开发的运行时，想要目标优先的模型、而不是一场需要你去引导的对话，以及一道硬性 <code>maxTokenBudget</code> 上限。若从零起步于 Node.js，OMA 既省去 Python 依赖，也避开一个正在过渡期的框架。',
+      en: 'open-multi-agent fits when you want a TypeScript-native runtime under active development, a goal-first model instead of a conversation you have to steer, and run-level ceilings through <code>maxTokenBudget</code> or <code>maxCostBudget</code> + <code>estimateCost</code>. Its optional OTel adapter preserves the lean core while the offline Run Viewer gives each completed run a local inspection path. Starting fresh in Node.js, OMA avoids both a Python dependency and a framework in transition.',
+      zh: 'open-multi-agent 适合你想要一个 TypeScript 原生、仍在积极开发的运行时，想要目标优先的模型、而不是一场需要你去引导的对话，并通过 <code>maxTokenBudget</code> 或 <code>maxCostBudget</code> + <code>estimateCost</code> 给整次运行设上限的场景。可选 OTel 适配器让 core 保持精简，离线 Run Viewer 则给每次已完成运行一条本地检查路径。若从零起步于 Node.js，OMA 既省去 Python 依赖，也避开一个正在过渡期的框架。',
     },
   },
   {
@@ -257,8 +258,8 @@ export const COMPARISONS: Comparison[] = [
       observability: { en: 'Built-in tracing on by default (OpenAI dashboard) + 25+ external processors', zh: '内置追踪默认开启（OpenAI 仪表盘）+ 25 个以上外部 processor' },
     },
     howDiffer: {
-      en: 'The Agents SDK orchestrates through <em>handoffs</em>: an agent decides to delegate to another agent and control passes along that chain (agents can also be exposed as tools). open-multi-agent orchestrates through <em>decomposition</em>: a coordinator breaks the goal into a task DAG up front and runs independent tasks in parallel. The SDK’s tracing is a genuine strength — on by default, with a large processor ecosystem — whereas OMA gives you <code>onTrace</code> spans plus a self-contained post-run dashboard. The SDK is lightest when you build on OpenAI; OMA is provider-neutral by design.',
-      zh: 'Agents SDK 通过 <em>handoff</em> 编排：一个智能体决定委派给另一个，控制权沿这条链传递（智能体也能被暴露为工具）。open-multi-agent 则通过<em>拆解</em>编排：协调器先把目标拆成任务 DAG，再并行运行相互独立的任务。SDK 的追踪是实打实的强项——默认开启、processor 生态庞大——而 OMA 给你 <code>onTrace</code> span 加一个自包含的运行后仪表盘。SDK 在你构建于 OpenAI 之上时最轻；OMA 则从设计上就提供方中立。',
+      en: 'The Agents SDK orchestrates through <em>handoffs</em>: an agent decides to delegate to another agent and control passes along that chain (agents can also be exposed as tools). open-multi-agent orchestrates through <em>decomposition</em>: a coordinator breaks the goal into a task DAG up front and runs independent tasks in parallel. The SDK’s tracing is a genuine strength — on by default, with a large processor ecosystem. OMA instead exposes TraceRecord v2, TraceStore, an optional first-party OTel adapter for an application-owned provider, and an offline Run Viewer. The SDK is lightest when you build on OpenAI; OMA is provider-neutral by design.',
+      zh: 'Agents SDK 通过 <em>handoff</em> 编排：一个智能体决定委派给另一个，控制权沿这条链传递（智能体也能被暴露为工具）。open-multi-agent 则通过<em>拆解</em>编排：协调器先把目标拆成任务 DAG，再并行运行相互独立的任务。SDK 的追踪是实打实的强项——默认开启、processor 生态庞大。OMA 则提供 TraceRecord v2、TraceStore、面向应用自有 provider 的可选一方 OTel 适配器，以及离线 Run Viewer。SDK 在你构建于 OpenAI 之上时最轻；OMA 则从设计上就提供方中立。',
     },
     whenThem: {
       en: 'Pick the OpenAI Agents SDK if your world is OpenAI-centric, you like the handoffs model, and you want tracing that just works out of the box. It’s minimal and well-instrumented. Its TypeScript port is official, though both it and the Python package are still pre-1.0, so expect some churn.',
@@ -372,8 +373,8 @@ export const COMPARISONS: Comparison[] = [
       zh: '你想要开箱即用的追踪——内置的整套 OpenTelemetry——以及一个协调子智能体的 supervisor，附带 workflow、记忆与 RAG。',
     },
     chooseUs: {
-      en: 'You want a much smaller footprint (three dependencies vs ~44), goal-driven decomposition, a hard token budget, and to forward your own spans rather than adopt a bundled OTel stack.',
-      zh: '你想要小得多的足迹（三个依赖 vs 约 44 个）、目标驱动的拆解、一道硬性 token 预算，并且更愿意转发自己的 span、而非采纳一整套内置 OTel。',
+      en: 'You want a much smaller core (three dependencies vs ~44), goal-driven decomposition, token + estimated-cost ceilings, and an optional OTel adapter instead of a bundled OTel stack.',
+      zh: '你想要小得多的 core（三个依赖 vs 约 44 个）、目标驱动的拆解、token + 估算成本上限，以及可选 OTel 适配器，而非一整套内置 OTel。',
     },
     them: {
       language: { en: 'TypeScript-native; runs on Node.js', zh: 'TypeScript 原生；运行于 Node.js' },
@@ -384,16 +385,16 @@ export const COMPARISONS: Comparison[] = [
       observability: { en: 'Native OpenTelemetry — the core bundles the OTel SDK and auto-instruments agents', zh: '原生 OpenTelemetry——内核内置 OTel SDK 并自动为智能体埋点' },
     },
     howDiffer: {
-      en: 'VoltAgent puts <em>observability first</em>: its core bundles a full OpenTelemetry stack and auto-instruments agents, and it structures work as a <em>supervisor</em> coordinating sub-agents, with memory, RAG, and workflows included. open-multi-agent keeps the core to three dependencies and forwards <code>onTrace</code> spans to whichever backend you choose, and instead of a supervisor topology it hands a coordinator a goal to decompose into a task DAG at runtime. The trade-off is footprint versus batteries: ~44 core dependencies against three.',
-      zh: 'VoltAgent 把<em>可观测性放在第一位</em>：内核内置整套 OpenTelemetry 栈、自动为智能体埋点，并把工作组织成一个 <em>supervisor</em> 协调子智能体，附带记忆、RAG 与 workflow。open-multi-agent 把内核控制在三个依赖，并把 <code>onTrace</code> span 转发到你选定的任意后端；它不用 supervisor 拓扑，而是把目标交给协调器、在运行时拆解成任务 DAG。取舍就是足迹 vs 开箱即全：约 44 个内核依赖，对上三个。',
+      en: 'VoltAgent puts <em>observability first</em>: its core bundles a full OpenTelemetry stack and auto-instruments agents, and it structures work as a <em>supervisor</em> coordinating sub-agents, with memory, RAG, and workflows included. open-multi-agent keeps the core to three dependencies and puts its OTel mapping in the optional <code>@open-multi-agent/otel</code> package, which writes to an application-owned provider; TraceStore and the offline Run Viewer cover local persistence and inspection. Instead of a supervisor topology, OMA hands a coordinator a goal to decompose into a task DAG at runtime. The trade-off is still bundled batteries versus a smaller, composable core.',
+      zh: 'VoltAgent 把<em>可观测性放在第一位</em>：内核内置整套 OpenTelemetry 栈、自动为智能体埋点，并把工作组织成一个 <em>supervisor</em> 协调子智能体，附带记忆、RAG 与 workflow。open-multi-agent 把 core 控制在三个依赖，并把 OTel 映射放进可选的 <code>@open-multi-agent/otel</code> 包，由它写入应用持有的 provider；TraceStore 与离线 Run Viewer 覆盖本地持久化和检查。OMA 不用 supervisor 拓扑，而是把目标交给协调器、在运行时拆解成任务 DAG。取舍仍是内置电池，对上更小、可组合的 core。',
     },
     whenThem: {
       en: 'Choose VoltAgent when first-class observability out of the box is a deciding factor — you want OpenTelemetry tracing without wiring it yourself — and a supervisor/sub-agent model fits how you think about coordination. It’s a batteries-included framework with memory, RAG, and workflows, at the cost of a heavier dependency footprint.',
       zh: '当开箱即用的一流可观测性是决定性因素时，选 VoltAgent——你想要 OpenTelemetry 追踪、又不必自己接线——并且 supervisor/子智能体模型贴合你对协作的思考方式。它是一个开箱即全的框架，带记忆、RAG 与 workflow，代价是更重的依赖足迹。',
     },
     whenUs: {
-      en: 'open-multi-agent fits when you want a lean core and goal-driven orchestration: three dependencies instead of ~44, a coordinator that plans the task DAG from a goal, a hard <code>maxTokenBudget</code> cap, and tracing you forward to your own OTel / Datadog / Langfuse backend plus a self-contained post-run HTML dashboard.',
-      zh: 'open-multi-agent 适合你想要精简内核与目标驱动编排的场景：三个依赖而非约 44 个、一个从目标规划任务 DAG 的协调器、一道硬性 <code>maxTokenBudget</code> 上限，以及由你转发到自有 OTel / Datadog / Langfuse 后端的追踪，另有一个自包含的运行后 HTML 仪表盘。',
+      en: 'open-multi-agent fits when you want a lean core and goal-driven orchestration: three dependencies instead of ~44, a coordinator that plans the task DAG from a goal, token or estimated-cost ceilings, and OpenTelemetry through an optional first-party adapter rather than a bundled SDK. TraceStore and the offline Run Viewer provide local query and inspection paths.',
+      zh: 'open-multi-agent 适合你想要精简 core 与目标驱动编排的场景：三个依赖而非约 44 个、一个从目标规划任务 DAG 的协调器、token 或估算成本上限，以及经可选一方适配器而非内置 SDK 接入的 OpenTelemetry。TraceStore 与离线 Run Viewer 提供本地查询和检查路径。',
     },
   },
   {
