@@ -336,15 +336,15 @@ const jsonLd = {
             ))}
           </div>
           <figure class="dashboard-shot">
-            {/* MP4 (245KB) replaces the old 851KB GIF — same frames, transcoded by
-                ffmpeg from public/demo-dashboard.gif. Sources carry data-src and the
+            {/* The web-optimized MP4 is transcoded from the real Run Viewer capture
+                in public/demo-dashboard.gif. Sources carry data-src and the
                 lazy-video script below swaps them in near the viewport, so the video
                 never competes with above-the-fold loading. <noscript> keeps the GIF
                 for no-JS visitors. */}
-            <video width="1600" height="760" autoplay muted loop playsinline preload="none" aria-label={l.dashboard.imgAlt} data-lazy-video>
+            <video width="1600" height="900" autoplay muted loop playsinline preload="none" aria-label={l.dashboard.imgAlt} data-lazy-video>
               <source data-src="/demo-dashboard.mp4" type="video/mp4" />
             </video>
-            <noscript><img src="/demo-dashboard.gif" width="1600" height="760" loading="lazy" decoding="async" alt={l.dashboard.imgAlt} /></noscript>
+            <noscript><img src="/demo-dashboard.gif" width="1600" height="900" loading="lazy" decoding="async" alt={l.dashboard.imgAlt} /></noscript>
             <figcaption>{l.dashboard.caption} <a class="text-link" href={L('/reference/observability/')}><span>{l.dashboard.obsLink}</span><span class="arrow">→</span></a></figcaption>
           </figure>
         </div>
