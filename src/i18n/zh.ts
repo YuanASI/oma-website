@@ -7,7 +7,7 @@ import type { UiDict } from './en';
 
 export const zh: UiDict = {
   nav: {
-    brandAria: 'Open Multi-Agent — 首页',
+    brandAria: 'Open Multi-Agent 首页',
     product: '产品',
     docs: '文档',
     useCases: '应用场景',
@@ -69,8 +69,8 @@ export const zh: UiDict = {
 
   landing: {
     seo: {
-      title: 'Open Multi-Agent — TypeScript 多智能体框架',
-      description: 'TypeScript 原生的多智能体框架。协调器把目标转成任务 DAG、并行执行，并综合出带类型的结果——可嵌入任意 Node.js 后端。',
+      title: 'Open Multi-Agent：TypeScript 多智能体框架',
+      description: 'TypeScript 原生的多智能体框架。协调器把目标转成任务 DAG、并行执行，并综合出带类型的结果，可嵌入任意 Node.js 后端。',
     },
     hero: {
       eyebrow: 'TypeScript 多智能体框架',
@@ -105,12 +105,12 @@ export const zh: UiDict = {
       { n: '04', t: '流式与结构化输出', d: '在 DAG 逐步填充时流式输出 token 和节点状态变化，或在运行结束时取回一个带类型、经 schema 校验的对象。' },
       { n: '05', t: '跨提供方推理', d: '一份 thinking 配置，映射到 Anthropic 的 thinking、Gemini 的 thinkingConfig 和 OpenAI 的 reasoning_effort。推理以事件形式流式输出，开启后还能在切换提供方时保留。' },
     ],
-    oneCall: { title: '一次调用', body: '整个 DAG 解析完成时 runTeam() 才返回——无需手工接线节点，也没有调度器要维护。' },
-    capsLinks: { threeWays: 'runAgent · runTeam · runTasks —— 三种运行方式', archFlow: '查看架构与 runTeam() 流程' },
+    oneCall: { title: '一次调用', body: '整个 DAG 解析完成时 runTeam() 才返回。无需手工接线节点，也没有调度器要维护。' },
+    capsLinks: { threeWays: 'runAgent · runTeam · runTasks：三种运行方式', archFlow: '查看架构与 runTeam() 流程' },
     sectionReliability: {
       eyebrow: '掌控',
       title: '控制权在你手里。',
-      sub: '三层控制，全在 API 里——给智能体的动作把关，约束时间与花费，再检查或恢复一次运行。',
+      sub: '三层控制，全在 API 里：给智能体的动作把关，约束时间与花费，再检查或恢复运行。',
     },
     reliability: [
       {
@@ -119,7 +119,7 @@ export const zh: UiDict = {
         ref: '/guides/orchestration-controls/',
         refLabel: '编排控制',
         parts: [
-          '在任何智能体运行前先审视计划——用 ', { c: 'onPlanReady' },
+          '在任何智能体运行前先审视计划。用 ', { c: 'onPlanReady' },
           '，再用 ', { c: 'onApproval' },
           ' 逐轮审批。用 ', { c: 'onToolCall' },
           ' 在输入校验后、工具执行前为每次调用把关，再用循环检测叫停开始原地打转的智能体。',
@@ -147,12 +147,12 @@ export const zh: UiDict = {
         parts: [
           '用 ', { c: 'createOtelTraceSink' },
           ' 把 TraceRecord v2 span 发给由应用持有的 OpenTelemetry provider，或在运行后打开离线 Run Viewer（', { c: 'oma run --dashboard' },
-          '）。检查点从最后一个已完成任务之后恢复——被打断的任务会重新开始；遥测脱敏仍是尽力而为。',
+          '）。检查点从最后一个已完成任务之后恢复；被打断的任务会重新开始，遥测脱敏仍是尽力而为。',
         ],
       },
     ],
     dashboard: {
-      caption: '而当真的出岔子时，离线 Run Viewer 可以回放已完成的运行——任务 DAG、每个节点的承担者与状态、token 拆解，以及智能体的输出日志。',
+      caption: '而当真的出岔子时，离线 Run Viewer 可以回放已完成的运行。你可以查看任务 DAG、每个节点的承担者与状态、token 拆解，以及智能体的输出日志。',
       obsLink: '可观测性',
       imgAlt: '离线 Run Viewer 正在回放一次已完成的团队运行：任务 DAG，标注每个节点的承担者、状态、token 拆解，以及智能体输出日志。',
     },
@@ -177,11 +177,11 @@ export const zh: UiDict = {
       title: '与你的技术栈协同。',
     },
     stack: [
-      { name: '提供方', note: 'Anthropic、Gemini、OpenAI、Bedrock、Azure、DeepSeek——或任何兼容 OpenAI 的端点', count: '13 个内置' },
+      { name: '提供方', note: 'Anthropic、Gemini、OpenAI、Bedrock、Azure、DeepSeek，以及任何兼容 OpenAI 的端点', count: '13 个内置' },
       { name: 'MCP', note: '把 Model Context Protocol 服务器作为工具接入', count: '原生' },
       { name: 'Vercel AI SDK', note: '桥接 60+ 个 AI SDK 提供方与平台', count: '兼容' },
       { name: 'Express', note: '把固定的 runTasks() 流水线挂在路由处理器后面', count: '即插即用' },
-      { name: '任意 Node.js', note: '没有守护进程，没有 sidecar——三个运行时依赖', count: 'Node 18+' },
+      { name: '任意 Node.js', note: '没有守护进程，没有 sidecar，只有三个运行时依赖', count: 'Node 18+' },
     ],
     sectionProof: {
       eyebrow: '采用情况',
@@ -192,24 +192,24 @@ export const zh: UiDict = {
     sectionFaq: {
       eyebrow: '常见问题',
       title: '运行时如何表现。',
-      sub: '最常被问到的问题，直接回答——完整参考在文档里。',
+      sub: '最常被问到的问题，直接回答。完整参考在文档里。',
       viewAll: '查看全部问题',
     },
     faqs: [
       { q: '协调器如何把目标变成 DAG？', a: '协调器智能体会规划工作：把目标拆成一个个离散任务，推断它们之间的依赖，并产出一张有向无环图。相互独立的节点并发运行；有依赖的节点等待各自的输入。传入 planOnly 即可在任何智能体执行前审视这张 DAG。' },
-      { q: '同一个团队里的智能体能用不同的模型提供方吗？', a: '可以。每个智能体声明自己的模型，所以一个团队可以混用前沿云端模型、自托管端点和本地 Ollama 实例。协调器把每个任务路由给指派的智能体——也就因此路由给对应的模型。' },
+      { q: '同一个团队里的智能体能用不同的模型提供方吗？', a: '可以。每个智能体声明自己的模型，所以一个团队可以混用前沿云端模型、自托管端点和本地 Ollama 实例。协调器把每个任务路由给指派的智能体，也就因此路由给对应的模型。' },
       { q: '工具是如何暴露给智能体的？', a: '默认拒绝。智能体只拥有它在 tools 数组里显式列出的工具，其余一律不可用。外部系统通过 MCP 服务器接入，遵循同样的按需授权约定。' },
       { q: '某个节点失败了会怎样？', a: '错误可能是暂时性问题时，失败节点会按任务策略重试。预算耗尽、输入格式错误、主动取消与不可重试的客户端错误会跳过无意义的重试。持续失败会以 FAILED 状态和错误显示在节点上，下游依赖被挂起，独立分支则可以继续。' },
       { q: '怎样防止一次多智能体运行失控？', a: '分层控制，全部可选开启。onPlanReady 把拆解出的计划交给你，在任何智能体运行前审视；onApproval 为每一轮把关；返回 false，剩余任务就被跳过。runConsensus 加一道提议者→评审检查，必须由第二个智能体认可；循环检测则会在某个智能体不断重复同一次工具调用或输出时将其叫停。' },
       { q: '怎样给一次运行的成本设上限？', a: '使用 maxCostBudget 与 estimateCost。每个模型的美元价格表由你的估算器维护；OMA 在整次运行中累计估算成本，越过上限后停止后续调用。检查发生在回合与任务边界，因此最多可能多出一个模型回合，而不是在调用中途精确熔断。maxTokenBudget 同时提供累计 token 上限，modelRouting 则能把叶子任务路由给更便宜的模型。' },
       { q: '它是流式的，还是只在最后返回？', a: '都支持。你可以在 DAG 逐步填充时流式输出 token 和节点状态变化，也可以直接 await runTeam()，在图解析完成后拿到一个带类型、经 schema 校验的结果对象。' },
-      { q: 'open-multi-agent 和 Claude Code 的动态工作流是什么关系？', a: '两者押的是同一个赌注——让模型在运行时规划工作，而不是你去接一张固定的图。Claude 的动态工作流跑在 Claude Code 内部，Claude 自己写编排脚本，在一次会话里扇出并行的子智能体。open-multi-agent 把同样的目标到任务 DAG 的思路嵌进你自己的 Node.js 后端，作为一个 MIT 库运行在任意提供方上，并把计划保留为可检视、可重放的数据。两者也能组合：通过 ACP，一个 open-multi-agent 团队甚至可以把 Claude Code 本身当作它的一个智能体来运行。' },
+      { q: 'open-multi-agent 和 Claude Code 的动态工作流是什么关系？', a: '两者押的是同一个赌注：让模型在运行时规划工作，而不是你去接一张固定的图。Claude 的动态工作流跑在 Claude Code 内部，Claude 自己写编排脚本，在一次会话里扇出并行的子智能体。open-multi-agent 把同样的目标到任务 DAG 的思路嵌进你自己的 Node.js 后端，作为一个 MIT 库运行在任意提供方上，并把计划保留为可检视、可重放的数据。两者也能组合：通过 ACP，一个 open-multi-agent 团队甚至可以把 Claude Code 本身当作它的一个智能体来运行。' },
     ],
     endorse: {
       eyebrow: '被提及',
       quote: 'A brilliant TypeScript-native multi-agent orchestration framework.',
       cite: 'GithubAwesome · 58K subscribers · GitHub Trending Monthly #6',
-      imgAlt: '在 YouTube 观看——GithubAwesome 的 GitHub Trending Monthly #6，画面停在 open-multi-agent 的 GitHub 仓库（6k stars）。',
+      imgAlt: '在 YouTube 观看 GithubAwesome 的 GitHub Trending Monthly #6，画面停在 open-multi-agent 的 GitHub 仓库（6k stars）。',
     },
     ctaFinal: {
       eyebrow: '开始上手',
@@ -445,14 +445,14 @@ export const zh: UiDict = {
     spotlight: { eyebrow: '聚焦', heading: '完全离线，跑在生产环境。', cta: '查看主页' },
     entries: {
       'Mark Galyan': {
-        desc: '完全离线运行 OMA——纯本地量化模型，不联网、无需 API key。靠协调器和上下文压缩，在紧张显存下维持自主智能体循环不中断。',
+        desc: '完全离线运行 OMA：使用纯本地量化模型，不联网、无需 API key。靠协调器和上下文压缩，在紧张显存下维持自主智能体循环不中断。',
         tag: '离线 · 本地模型',
-        status: '框架第一个月起的贡献者——涉及上下文压缩、采样、工具调用解析。',
+        status: '框架第一个月起的贡献者，涉及上下文压缩、采样、工具调用解析。',
       },
       'temodar-agent': { desc: 'WordPress 安全分析平台。在 Docker 运行时里调用 OMA 内置工具（bash、文件操作、grep）。', tag: '安全', status: '已上架 Docker Hub' },
       'PR-Copilot': { desc: 'AI 拉取请求审查助手。运行一个 OMA 审查团队——一个协调器加若干限定范围的审查智能体——配自定义工具和按 token 感知的 diff 压缩。', tag: '代码审查', status: '基于 OMA 构建' },
       'StuFlow': { desc: '终端 AI 编码助手。用自定义的 RunTeamOptions 协调器，通过 runAgent / runTasks / runTeam 驱动一个 OMA 团队，搭配 DeepSeek。', tag: '编码智能体', status: '基于 OMA 构建' },
-      'Engram': { desc: '「AI 记忆的 Git」——跨智能体的共享记忆，带冲突检测，基于 OMA 的 MemoryStore + ToolRegistry 工具包。', tag: '记忆', status: '工具包' },
+      'Engram': { desc: '「AI 记忆的 Git」：跨智能体的共享记忆，带冲突检测，基于 OMA 的 MemoryStore + ToolRegistry 工具包。', tag: '记忆', status: '工具包' },
       '@agentsonar/oma': { desc: '一个 sidecar，检测跨运行的委派环路、重复和速率突发。', tag: '可观测性', status: '集成' },
       'CodingScaffold': { desc: '一个智能体编码脚手架，把 OMA 列为可选的编排后端，附带一个 runTeam 工作流模板。', tag: '脚手架', status: '可选后端' },
     },
