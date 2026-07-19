@@ -202,22 +202,8 @@ a { color: inherit; }
 .hero-meta b { color: var(--oma-fg-1); font-weight: 600; }
 .hero-meta .sep { color: var(--oma-fg-3); margin: 0 8px; }
 .hero-cta { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin-top: 28px; }
-/* Enterprise routing line — deliberately low-weight: muted mono at hero-meta size,
-   sits under the primary CTA so it never competes with the install path. The link
-   lifts to fg-1 with a faint underline (present but quiet), accent on hover. */
-.hero-enterprise {
-  margin: 20px 0 0; font-family: var(--font-mono); font-size: 13px;
-  line-height: 1.5; color: var(--oma-fg-3);
-}
-.hero-enterprise a {
-  color: var(--oma-fg-1); text-decoration: none;
-  border-bottom: 1px solid var(--border-default);
-  transition: color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
-}
-.hero-enterprise a:hover { color: var(--oma-accent); border-color: var(--oma-accent-line); }
-.hero-enterprise .arrow { color: var(--oma-fg-3); transition: color var(--duration-fast) var(--ease-out); }
-.hero-enterprise a:hover .arrow { color: var(--oma-accent); }
-/* ── Command block (primary CTA) ── */
+/* ── Command block (secondary CTA — the install path, sits below the Quick Start
+   button so a first-time visitor meets the docs before scaffolding a project) ── */
 .cmd {
   display: inline-flex; align-items: center; gap: 14px;
   background: var(--oma-bg-3); border: 1px solid var(--border-strong);
@@ -271,6 +257,17 @@ a { color: inherit; }
 /* bg-3 is dark-first (a raised well on near-black); in light mode it inverts to the
    darkest warm surface and reads as a muddy tan for a standalone CTA — drop to bg-1. */
 :root[data-theme='light'] .cmd { background: var(--oma-bg-1); }
+/* In the hero the command is SECONDARY to the Quick Start button, so strip the
+   filled box, border, and hover glow — it reads as a quiet, flush-left copyable
+   mono line, dimmed to fg-1. (The closing CTA keeps the full .cmd chip, where the
+   install command is the primary action.) The light-mode selector must out-specify
+   the :root[data-theme='light'] .cmd fill above. */
+.hero-cta .cmd { background: transparent; border-color: transparent; box-shadow: none; padding: 6px 8px 6px 0; }
+:root[data-theme='light'] .hero-cta .cmd { background: transparent; }
+.hero-cta .cmd:hover { border-color: transparent; box-shadow: none; }
+.hero-cta .cmd .prompt, .hero-cta .cmd .text { font-size: 14px; }
+.hero-cta .cmd .text { color: var(--oma-fg-1); }
+.hero-cta .cmd:hover .text { color: var(--oma-fg-0); }
 .text-link {
   display: inline-flex; align-items: center; gap: 7px; text-decoration: none;
   font-family: var(--font-mono); font-size: 14px; color: var(--oma-fg-1);
@@ -287,9 +284,10 @@ a { color: inherit; }
 .case-link:hover .text-link .arrow { transform: translateX(3px); color: var(--oma-accent); }
 
 /* ── Primary button (filled accent) ──
-   The site's only solid button: an accent fill reserved for the enterprise CTA,
-   which is deliberately lifted above the understated text-links. Used in the
-   page-hero header row (right) and the closing EnterpriseCta band. */
+   The site's only solid button: an accent fill reserved for the page's primary
+   path, lifted above the understated text-links. Used for the hero's Quick Start
+   CTA (learn-first), the page-hero header row (right), and the closing
+   EnterpriseCta band. */
 .btn-primary {
   display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0;
   background: var(--oma-accent); color: var(--oma-accent-fg);
@@ -302,6 +300,9 @@ a { color: inherit; }
 .btn-primary:hover { background: var(--oma-accent-deep); box-shadow: var(--shadow-md); }
 .btn-primary .arrow { color: currentColor; transition: transform var(--duration-base) var(--ease-out); }
 .btn-primary:hover .arrow { transform: translateX(3px); }
+/* Hero primary CTA — sized a touch larger than the base button so the learn-first
+   path (Quick Start) reads as the strongest CTA, above the install command block. */
+.hero-cta-primary { font-size: 15px; padding: 13px 22px; }
 
 /* ── Hero header row ──
    Pairs a page's H1 block (left) with the enterprise primary button (right),
@@ -795,6 +796,7 @@ a { color: inherit; }
   .cmd-wrap { width: 100%; }
   .cap-code-wrap .text-link { white-space: normal; line-height: 1.5; }
   .hero-cta { gap: 18px; }
+  .hero-cta-primary { width: 100%; justify-content: center; }
   .proof-head { gap: 16px; }
   .io-panel, .cap-code-wrap { min-width: 0; }
 }

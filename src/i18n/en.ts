@@ -92,7 +92,7 @@ export const en = {
       eyebrow: 'TypeScript AI Agent framework',
       h1: 'Describe the goal, ',
       h1Accent: 'not the graph.',
-      meta: ['3 runtime deps', 'any model', 'local, offline, or air-gapped'],
+      meta: ['3 runtime deps', 'any model', 'offline or air-gapped'],
       quickStart: 'Quick Start',
       ioInput: 'input · team.ts',
       ioGoal: 'goal',
@@ -104,9 +104,6 @@ export const en = {
       expandTasks: '{count} more tasks · expand full DAG',
       runReal: 'real',
       runTasks: 'tasks',
-      // Understated routing line under the primary CTA — self-identifies the
-      // enterprise reader without competing with the developer install path.
-      enterprise: { pre: 'Evaluating OMA for your company?', link: 'Enterprise delivery & support' },
     },
     copy: 'copy',
     copied: '✓ copied',

@@ -207,15 +207,14 @@ const jsonLd = {
             <h1>{l.hero.h1}<span class="accent">{l.hero.h1Accent}</span></h1>
             <div class="hero-meta"><b>{l.hero.meta[0]}</b><span class="sep">·</span><b>{l.hero.meta[1]}</b><span class="sep">·</span><b>{l.hero.meta[2]}</b></div>
             <div class="hero-cta">
+              <a class="btn-primary hero-cta-primary" href={L('/getting-started/quick-start/')}><span>{l.hero.quickStart}</span><span class="arrow" aria-hidden="true">→</span></a>
               <div class="cmd-wrap">
                 <button type="button" class="cmd" data-cmd="npm create oma-app@latest" data-copied={l.copied} data-failed={l.copyFailed}>
                   <span class="sr-only">{l.copy} </span><span class="prompt">$</span><span class="text">npm create oma-app@latest</span><span class="copy" aria-hidden="true" title={l.copy}><svg class="copy-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="check-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>
                 </button>
                 <span class="copy-feedback" aria-live="polite"></span>
               </div>
-              <a class="text-link" href={L('/getting-started/quick-start/')}><span>{l.hero.quickStart}</span><span class="arrow">→</span></a>
             </div>
-            <p class="hero-enterprise">{l.hero.enterprise.pre} <a href={yuanasiHref(locale)} target="_blank" rel="noreferrer">{l.hero.enterprise.link} <span class="arrow" aria-hidden="true">→</span></a></p>
           </div>
           <div>
             <div class="io-panel">
