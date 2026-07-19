@@ -91,7 +91,7 @@ export const en = {
     contactNote: 'When adding, mention your company name and what you need.',
     qrAlt: 'Personal WeChat QR code for open-multi-agent author JackChen',
     wechatLabel: 'WeChat ID',
-    wechatId: 'JackChen_me',
+    wechatId: 'JackChen_co',
     copy: 'Copy ID',
     copied: 'Copied',
     copyFailed: 'Copy failed',
