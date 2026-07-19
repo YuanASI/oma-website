@@ -4,8 +4,8 @@
 // getStaticPaths emits the locale × recipe cross product. ALL recipe content
 // (title, intent, source, run commands, APIs) is parsed from the real upstream
 // file by scripts/refresh-gh-data.mjs and stays English on every locale — like
-// the /examples index blurbs; only the page chrome is translated. Detail records
-// exist for the three single-file "ours" categories and selected full apps.
+// the /examples index descriptions; only the page chrome is translated. The
+// synchronized detail set keeps each stable slug while goal metadata drives IA.
 import '@fontsource-variable/geist';
 import '@fontsource-variable/jetbrains-mono';
 import '../../../styles/tokens.css';
@@ -19,7 +19,7 @@ import CodeBlock from '../../../components/ds/CodeBlock.astro';
 import Badge from '../../../components/ds/Badge.astro';
 import Callout from '../../../components/ds/Callout.astro';
 import { REPO, ghStats } from '../../../lib/site';
-import { getAllExampleDetails, type ExampleDetail } from '../../../lib/examples';
+import { getAllExampleDetails, getCatalogExample, type ExampleDetail } from '../../../lib/examples';
 import { locales, defaultLocale, toLocale, useTranslations, localizePath, type Locale } from '../../../i18n';
 import { getExampleStory, getExampleStoryUi } from '../../../i18n/example-stories';
 
@@ -40,6 +40,7 @@ const dt = t.examples.detail;
 const L = (p: string) => localizePath(p, locale);
 const story = getExampleStory(locale, detail.name);
 const storyUi = getExampleStoryUi(locale);
+const catalogEntry = getCatalogExample(detail.name);
 
 // Recipe title/intent: zh overrides (dt.recipes keyed by slug) win; en's map is
 // empty so it falls back to the English parsed from the upstream file. Code, API
@@ -66,12 +67,15 @@ const related = story
       .filter((d): d is ExampleDetail => Boolean(d))
       .slice(0, 4)
   : allDetails
-      .filter((d) => d.category === detail.category && d.name !== detail.name)
+      .filter((candidate) =>
+        candidate.name !== detail.name &&
+        catalogEntry?.goal !== undefined &&
+        getCatalogExample(candidate.name)?.goal === catalogEntry.goal)
       .slice(0, 4);
 
 const runCode = detail.run.join('\n');
-const sourceFile = detail.sourcePath ?? `${detail.category}/${detail.name}.ts`;
-const categoryLabel = dt.categories[detail.category];
+const sourceFile = detail.sourcePath;
+const goalLabel = catalogEntry?.goal ? dt.goals[catalogEntry.goal] : dt.exampleLabel;
 
 // The prereqs are the upstream file's own verbatim JSDoc — some examples are
 // written for Anthropic models, others are multi-provider. OMA itself is
@@ -94,7 +98,7 @@ const jsonLd = {
   codeSampleType: 'full (compile ready) solution',
   programmingLanguage: 'TypeScript',
   runtimePlatform: 'Node.js',
-  keywords: [...detail.apis, detail.category, 'multi-agent', 'open-multi-agent'].join(', '),
+  keywords: [...detail.apis, ...(catalogEntry?.capabilities ?? []), 'multi-agent', 'open-multi-agent'].join(', '),
   isPartOf: { '@type': 'WebSite', name: 'Open Multi-Agent', url: 'https://open-multi-agent.com' },
 };
 ---
@@ -108,7 +112,7 @@ const jsonLd = {
         <a class="exd-back" href={L('/examples/')}>{dt.backToIndex}</a>
         <div class="hero-head-row">
           <div class="section-head exd-head">
-            <div class="eyebrow"><span class="idx">//</span> {categoryLabel}</div>
+            <div class="eyebrow"><span class="idx">//</span> {goalLabel}</div>
             <h1 class="section-title">{displayTitle}</h1>
             <p class="section-sub exd-outcome">{heroLede}</p>
             {story && (
@@ -226,7 +230,7 @@ const jsonLd = {
             </span>
           </div>
           <div class="exd-glance-meta">
-            <Badge tone="info">{categoryLabel}</Badge>
+            <Badge tone="info">{goalLabel}</Badge>
             <span class="exd-loc">{detail.loc} {dt.linesLabel}</span>
           </div>
         </div>
@@ -277,7 +281,7 @@ const jsonLd = {
       </div>
     </section>
 
-    <!-- Related by business/story affinity for Cookbook; by category otherwise. -->
+    <!-- Related by curated story affinity where available; by catalog goal otherwise. -->
     {related.length > 0 && (
       <section class="section exd-related-section">
         <div class="container">

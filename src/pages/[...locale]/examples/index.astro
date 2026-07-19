@@ -1,10 +1,9 @@
 ---
 // /examples — the example gallery (PRD §4.3). Same self-contained landing-style
 // shell as index.astro (shared Nav/Footer), but the content is built entirely
-// from the repo at build time via getExamples() — no hand-maintained list.
-// Example titles/blurbs are fetched English from the repo README and stay English
-// in every locale (upstream-sourced, like the vendored docs Reference); only the
-// page chrome is translated.
+// from the framework catalog via getExamples() — no hand-maintained list or
+// physical-path classification. English catalog titles/descriptions are the
+// fallback; the Chinese dictionary may provide faithful display overrides.
 import '@fontsource-variable/geist';
 import '@fontsource-variable/jetbrains-mono';
 import '../../../styles/tokens.css';
@@ -16,7 +15,14 @@ import Footer from '../../../components/Footer.astro';
 import EnterpriseCta from '../../../components/EnterpriseCta.astro';
 import EnterpriseHeadCta from '../../../components/EnterpriseHeadCta.astro';
 import { REPO, ghStats } from '../../../lib/site';
-import { getExamples, FALLBACK_EXAMPLES, detailSlugs } from '../../../lib/examples';
+import {
+  detailSlugs,
+  getExampleGoalGroups,
+  getExamples,
+  getModelsProviderExamples,
+  type CatalogExample,
+  type ExampleGoal,
+} from '../../../lib/examples';
 import { localeStaticPaths, localizePath, toLocale, useTranslations } from '../../../i18n';
 
 export function getStaticPaths() { return localeStaticPaths(); }
@@ -27,23 +33,37 @@ const ex_t = t.examples;
 const stats = await ghStats();
 const starsK = (stats.stars / 1000).toFixed(1) + 'k';
 const ex = await getExamples();
+const goalGroups = getExampleGoalGroups(ex);
+const modelsProviders = getModelsProviderExamples(ex);
 
 const L = (p: string) => localizePath(p, locale);
 // Entries that have a detail page (/examples/<slug>/) link in-site; the rest keep
 // linking out to GitHub. detailSlugs() is empty when the source snapshot is
 // missing, so this degrades gracefully to the old all-external behavior.
 const dset = detailSlugs();
-const hrefFor = (e: { name: string; href: string }) =>
-  dset.has(e.name) ? L(`/examples/${e.name}/`) : e.href;
-const isExternal = (e: { name: string }) => !dset.has(e.name);
-const detailUrl = (e: { name: string; href: string }) =>
-  dset.has(e.name) ? new URL(L(`/examples/${e.name}/`), Astro.site).href : e.href;
+const hrefFor = (e: CatalogExample) =>
+  dset.has(e.id) ? L(`/examples/${e.id}/`) : e.href;
+const isExternal = (e: CatalogExample) => !dset.has(e.id);
+const detailUrl = (e: CatalogExample) =>
+  dset.has(e.id) ? new URL(L(`/examples/${e.id}/`), Astro.site).href : e.href;
 
 // zh index overrides (short title + blurb), keyed by slug; en's map is empty so
-// each entry falls back to the English title/blurb parsed from the repo.
+// each entry falls back to the English title/description from the catalog.
 const ent = t.examples.entries;
-const entTitle = (e: { name: string; title: string }) => ent[e.name]?.title ?? e.title;
-const entBlurb = (e: { name: string; blurb: string }) => ent[e.name]?.blurb ?? e.blurb;
+const entTitle = (e: CatalogExample) => ent[e.id]?.title ?? e.title;
+const entDescription = (e: CatalogExample) => ent[e.id]?.blurb ?? e.description;
+
+const legacyAnchors: Record<ExampleGoal, string[]> = {
+  'start-here': ['building-blocks'],
+  'use-case-recipes': ['cookbook'],
+  orchestration: [],
+  'production-controls': [],
+  'connect-your-stack': ['integrations'],
+};
+const featured = (entries: CatalogExample[]) => entries.filter((entry) => entry.featuredOrder !== undefined);
+const unfeatured = (entries: CatalogExample[]) => entries.filter((entry) => entry.featuredOrder === undefined);
+const entryMeta = (entry: CatalogExample) =>
+  `${ex_t.formats[entry.format]} · ${ex_t.levels[entry.level]}`;
 
 const EXAMPLES_GH = REPO + '/tree/main/packages/core/examples';
 
@@ -63,7 +83,7 @@ const jsonLd = {
     ? {
         mainEntity: {
           '@type': 'ItemList',
-          itemListElement: ex.cookbook.map((e, i) => ({
+          itemListElement: ex.entries.map((e, i) => ({
             '@type': 'ListItem',
             position: i + 1,
             name: entTitle(e),
@@ -93,185 +113,99 @@ const jsonLd = {
       </div>
     </header>
 
-      {ex ? (
-        <Fragment>
-          <!-- ── 1. Cookbook (primary) ── -->
-          <section class="section ex-first" id="cookbook">
-            <div class="container">
-              <div class="section-head">
-                <div class="eyebrow"><span class="idx">01</span> {ex_t.cookbook.eyebrow}</div>
-                <h2 class="section-title">{ex_t.cookbook.title}</h2>
-                <p class="section-sub">{ex_t.cookbook.sub}</p>
+    {ex ? (
+      <Fragment>
+        {goalGroups.map((group, groupIndex) => {
+          const copy = ex_t.goals[group.goal];
+          const primary = featured(group.entries);
+          const more = unfeatured(group.entries);
+          return (
+            <section class={`section${groupIndex === 0 ? ' ex-first' : ''}`} id={group.goal}>
+              {legacyAnchors[group.goal].map((anchor) => (
+                <span class="legacy-anchor" id={anchor} aria-hidden="true"></span>
+              ))}
+              <div class="container">
+                <div class="section-head">
+                  <div class="eyebrow"><span class="idx">{String(groupIndex + 1).padStart(2, '0')}</span> {copy.eyebrow}</div>
+                  <h2 class="section-title">{copy.title}</h2>
+                  <p class="section-sub">{copy.sub}</p>
+                </div>
+
+                <div class="build-grid ex-featured-grid">
+                  {primary.map((entry) => (
+                    <a class="case-link" href={hrefFor(entry)} target={isExternal(entry) ? '_blank' : undefined} rel={isExternal(entry) ? 'noreferrer' : undefined} style="text-decoration:none;">
+                      <Card padding="lg" interactive>
+                        <div class="ex-card-meta">{entryMeta(entry)}</div>
+                        <div class="build-title">{entTitle(entry)}</div>
+                        <p class="build-desc">{entDescription(entry)}</p>
+                        <div class="ex-capabilities">
+                          {entry.capabilities.slice(0, 3).map((capability) => <code>{capability}</code>)}
+                        </div>
+                        <div class="build-foot">
+                          <span class="text-link"><span>{ex_t.openExample}</span><span class="arrow">→</span></span>
+                        </div>
+                      </Card>
+                    </a>
+                  ))}
+                </div>
+
+                {more.length > 0 && (
+                  <div class="ex-group">
+                    <div class="ex-subhead">{ex_t.moreInGoal}</div>
+                    <div class="ex-list">
+                      {more.map((entry) => (
+                        <a class="ex-row" href={hrefFor(entry)} target={isExternal(entry) ? '_blank' : undefined} rel={isExternal(entry) ? 'noreferrer' : undefined}>
+                          <span class="name">{entTitle(entry)}</span>
+                          <span class="desc">{entDescription(entry)}</span>
+                          <span class="meta">{entryMeta(entry)}</span>
+                          <span class="arr">→</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-              <div class="build-grid">
-                {ex.cookbook.map((e) => (
-                  <a class="case-link" href={hrefFor(e)} target={isExternal(e) ? '_blank' : undefined} rel={isExternal(e) ? 'noreferrer' : undefined} style="text-decoration:none;">
-                    <Card padding="lg" interactive>
-                      <div class="build-title">{entTitle(e)}</div>
-                      <p class="build-desc">{entBlurb(e)}</p>
-                      <div class="build-foot">
-                        <span class="text-link"><span>{ex_t.seeSource}</span><span class="arrow">→</span></span>
-                      </div>
-                    </Card>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </section>
+            </section>
+          );
+        })}
 
-          <!-- ── 2. Integrations (primary) ── -->
-          <section class="section" id="integrations">
-            <div class="container">
-              <div class="section-head">
-                <div class="eyebrow"><span class="idx">02</span> {ex_t.integrations.eyebrow}</div>
-                <h2 class="section-title">{ex_t.integrations.title}</h2>
-                <p class="section-sub">{ex_t.integrations.sub}</p>
-              </div>
-
-              {ex.reference.length > 0 && (
-                <div class="ex-group">
-                  <div class="ex-subhead">{ex_t.integrations.reference}</div>
-                  <div class="ex-list">
-                    {ex.reference.map((e) => (
-                      <a class="ex-row mono" href={e.href} target="_blank" rel="noreferrer">
-                        <span class="name">{e.name}</span>
-                        <span class="desc">{entBlurb(e)}</span>
-                        <span class="arr">→</span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {ex.apps.length > 0 && (
-                <div class="ex-group">
-                  <div class="ex-subhead">{ex_t.integrations.apps}</div>
-                  <div class="ex-list">
-                    {ex.apps.map((e) => (
-                      <a class="ex-row" href={e.href} target="_blank" rel="noreferrer">
-                        <span class="name">{entTitle(e)}</span>
-                        <span class="desc">{entBlurb(e)}</span>
-                        <span class="arr">→</span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {ex.vendor.length > 0 && (
-                <div class="ex-group">
-                  <div class="ex-subhead">{ex_t.integrations.vendor}</div>
-                  <div class="ex-list">
-                    {ex.vendor.map((e) => (
-                      <a class="ex-row" href={e.href} target="_blank" rel="noreferrer">
-                        <span class="name">{entTitle(e)}</span>
-                        <span class="desc">{entBlurb(e)}</span>
-                        <span class="arr">→</span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </section>
-
-          <!-- ── 3. Building blocks (secondary) ── -->
-          <section class="section" id="building-blocks">
-            <div class="container">
-              <div class="section-head">
-                <div class="eyebrow"><span class="idx">03</span> {ex_t.buildingBlocks.eyebrow}</div>
-                <h2 class="section-title">{ex_t.buildingBlocks.title}</h2>
-                <p class="section-sub">{ex_t.buildingBlocks.sub}</p>
-              </div>
-
-              {ex.basics.length > 0 && (
-                <div class="ex-group">
-                  <div class="ex-subhead">{ex_t.buildingBlocks.basics}</div>
-                  <div class="ex-list">
-                    {ex.basics.map((e) => (
-                      <a class="ex-row mono" href={hrefFor(e)} target={isExternal(e) ? '_blank' : undefined} rel={isExternal(e) ? 'noreferrer' : undefined}>
-                        <span class="name">{e.name}</span>
-                        <span class="desc">{entBlurb(e)}</span>
-                        <span class="arr">→</span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {ex.patterns.length > 0 && (
-                <div class="ex-group">
-                  <div class="ex-subhead">{ex_t.buildingBlocks.patterns}</div>
-                  <div class="ex-list">
-                    {ex.patterns.map((e) => (
-                      <a class="ex-row mono" href={hrefFor(e)} target={isExternal(e) ? '_blank' : undefined} rel={isExternal(e) ? 'noreferrer' : undefined}>
-                        <span class="name">{e.name}</span>
-                        <span class="desc">{entBlurb(e)}</span>
-                        <span class="arr">→</span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {ex.providers.length > 0 && (
-                <div class="ex-group">
-                  <div class="ex-subhead">{ex_t.buildingBlocks.providers}</div>
-                  <div class="ex-chips">
-                    {ex.providers.map((e) => (
-                      <a class="ex-chip" href={e.href} target="_blank" rel="noreferrer" title={e.blurb}>{e.name}</a>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </section>
-
-          <!-- ── 4. Production pointer + provenance ── -->
-          <section class="section" id="more">
-            <div class="container">
-              <div class="ex-callout">
-                <div>
-                  <div class="ex-callout-title">{ex_t.production.title}</div>
-                  <p class="ex-callout-desc">{ex_t.production.desc}</p>
-                </div>
-                <a class="text-link" href={ex.productionHref} target="_blank" rel="noreferrer">
-                  <span>{ex_t.production.link}</span><span class="arrow">→</span>
-                </a>
-              </div>
-              <p class="ex-foot">
-                {ex_t.footPre}<code>{ex_t.footCode}</code>{ex_t.footPost}<a class="text-link inline" href={ex.browseHref} target="_blank" rel="noreferrer"><span>{ex_t.browseAll}</span><span class="arrow">→</span></a>
-              </p>
-            </div>
-          </section>
-        </Fragment>
-      ) : (
-        <section class="section ex-first">
+        <section class="section" id="models-providers">
+          <span class="legacy-anchor" id="more" aria-hidden="true"></span>
           <div class="container">
             <div class="section-head">
-              <div class="eyebrow"><span class="idx">01</span> {ex_t.cookbook.eyebrow}</div>
-              <h2 class="section-title">{ex_t.cookbook.title}</h2>
-              <p class="section-sub">{ex_t.cookbook.subFallback}</p>
+              <div class="eyebrow"><span class="idx">06</span> {ex_t.modelsProviders.eyebrow}</div>
+              <h2 class="section-title">{ex_t.modelsProviders.title}</h2>
+              <p class="section-sub">{ex_t.modelsProviders.sub}</p>
             </div>
-            <div class="build-grid">
-              {FALLBACK_EXAMPLES.map((e) => (
-                <a class="case-link" href={e.href} target="_blank" rel="noreferrer" style="text-decoration:none;">
-                  <Card padding="lg" interactive>
-                    <div class="build-title">{e.title}</div>
-                    <p class="build-desc">{e.blurb}</p>
-                    <div class="build-foot">
-                      <span class="text-link"><span>{ex_t.seeSource}</span><span class="arrow">→</span></span>
-                    </div>
-                  </Card>
+            <div class="ex-provider-grid">
+              {modelsProviders.map((entry) => (
+                <a class="ex-provider" href={entry.href} target="_blank" rel="noreferrer" title={entDescription(entry)}>
+                  <span class="name">{entTitle(entry)}</span>
+                  <span class="flags">
+                    {entry.capabilities.includes('local-models') && <span>{ex_t.modelsProviders.local}</span>}
+                    {entry.capabilities.includes('openai-compatible') && <span>{ex_t.modelsProviders.compatible}</span>}
+                  </span>
+                  <span class="arr">↗</span>
                 </a>
               ))}
             </div>
             <p class="ex-foot">
-              <a class="text-link inline" href={EXAMPLES_GH} target="_blank" rel="noreferrer"><span>{ex_t.browseAll}</span><span class="arrow">→</span></a>
+              {ex_t.footPre}<code>{ex_t.footCode}</code>{ex_t.footPost}<a class="text-link inline" href={ex.browseHref} target="_blank" rel="noreferrer"><span>{ex_t.browseAll}</span><span class="arrow">→</span></a>
             </p>
           </div>
         </section>
-      )}
+      </Fragment>
+    ) : (
+      <section class="section ex-first">
+        <div class="container">
+          <div class="ex-empty">
+            <h2>{ex_t.unavailable.title}</h2>
+            <p>{ex_t.unavailable.desc}</p>
+            <a class="text-link inline" href={EXAMPLES_GH} target="_blank" rel="noreferrer"><span>{ex_t.browseAll}</span><span class="arrow">→</span></a>
+          </div>
+        </div>
+      </section>
+    )}
 
     <EnterpriseCta locale={locale} />
   </main>
@@ -280,61 +214,85 @@ const jsonLd = {
 </BaseLayout>
 
 <style>
-      .ex-hero { padding: 72px 0 8px; }
-      .ex-hero .hero-head-row { margin-bottom: 0; }
-      .ex-title {
-        font-size: clamp(34px, 5vw, 52px); font-weight: 600; letter-spacing: -0.03em;
-        line-height: 1.05; color: var(--oma-fg-0); margin: 16px 0 0;
-      }
-      .ex-lede { font-size: 17px; line-height: 1.6; color: var(--oma-fg-1); margin: 18px 0 0; max-width: 640px; }
-      .ex-first { padding-top: 56px; }
+  .ex-hero { padding: 72px 0 8px; }
+  .ex-hero .hero-head-row { margin-bottom: 0; }
+  .ex-title {
+    font-size: clamp(34px, 5vw, 52px); font-weight: 600; letter-spacing: -0.03em;
+    line-height: 1.05; color: var(--oma-fg-0); margin: 16px 0 0;
+  }
+  .ex-lede { font-size: 17px; line-height: 1.6; color: var(--oma-fg-1); margin: 18px 0 0; max-width: 680px; }
+  .ex-first { padding-top: 56px; }
+  .legacy-anchor { display: block; position: relative; top: -84px; height: 0; visibility: hidden; }
 
-      .ex-group { margin-top: 32px; }
-      .ex-group:first-of-type { margin-top: 0; }
-      .ex-subhead {
-        font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em;
-        text-transform: uppercase; color: var(--oma-fg-2); margin-bottom: 6px;
-      }
+  .ex-featured-grid { margin-top: 28px; }
+  .ex-card-meta {
+    margin-bottom: 12px; color: var(--oma-fg-3); font-family: var(--font-mono);
+    font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase;
+  }
+  .ex-capabilities { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+  .ex-capabilities code {
+    padding: 3px 7px; border: 1px solid var(--oma-border-0); border-radius: var(--radius-xs);
+    background: var(--oma-bg-2); color: var(--oma-fg-2); font-family: var(--font-mono); font-size: 10.5px;
+  }
 
-      .ex-list { border-top: 1px solid var(--border-subtle); }
-      .ex-row {
-        display: flex; align-items: baseline; gap: 18px;
-        padding: 15px 4px; border-bottom: 1px solid var(--border-subtle);
-        text-decoration: none; transition: background var(--duration-base) var(--ease-out);
-      }
-      .ex-row:hover { background: var(--oma-bg-1); }
-      .ex-row .name {
-        flex: none; min-width: 232px; color: var(--oma-fg-0);
-        font-weight: 500; font-size: 15px; line-height: 1.35;
-      }
-      .ex-row.mono .name { font-family: var(--font-mono); font-size: 13px; }
-      .ex-row:hover .name { color: var(--oma-accent); }
-      .ex-row .desc { flex: 1; min-width: 0; color: var(--oma-fg-1); font-size: 13px; line-height: 1.5; }
-      .ex-row .arr { flex: none; color: var(--oma-fg-2); transition: transform var(--duration-base) var(--ease-out); }
-      .ex-row:hover .arr { color: var(--oma-accent); transform: translateX(3px); }
+  .ex-group { margin-top: 32px; }
+  .ex-subhead {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--oma-fg-2); margin-bottom: 6px;
+  }
+  .ex-list { border-top: 1px solid var(--border-subtle); }
+  .ex-row {
+    display: grid; grid-template-columns: minmax(190px, .8fr) minmax(260px, 1.5fr) auto auto;
+    align-items: baseline; gap: 18px; padding: 15px 4px;
+    border-bottom: 1px solid var(--border-subtle); text-decoration: none;
+    transition: background var(--duration-base) var(--ease-out);
+  }
+  .ex-row:hover { background: var(--oma-bg-1); }
+  .ex-row .name { color: var(--oma-fg-0); font-weight: 500; font-size: 14px; line-height: 1.35; }
+  .ex-row:hover .name { color: var(--oma-accent); }
+  .ex-row .desc { min-width: 0; color: var(--oma-fg-1); font-size: 13px; line-height: 1.5; }
+  .ex-row .meta { color: var(--oma-fg-3); font-family: var(--font-mono); font-size: 10.5px; white-space: nowrap; }
+  .ex-row .arr, .ex-provider .arr { color: var(--oma-fg-2); transition: transform var(--duration-base) var(--ease-out); }
+  .ex-row:hover .arr, .ex-provider:hover .arr { color: var(--oma-accent); transform: translateX(3px); }
 
-      .ex-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-      .ex-chip {
-        font-family: var(--font-mono); font-size: 12px; color: var(--oma-fg-1);
-        border: 1px solid var(--border-default); border-radius: var(--radius-sm);
-        padding: 6px 11px; text-decoration: none;
-        transition: border-color var(--duration-base) var(--ease-out), color var(--duration-base) var(--ease-out);
-      }
-      .ex-chip:hover { border-color: var(--border-strong); color: var(--oma-accent); }
+  .ex-provider-grid {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px; margin-top: 28px;
+  }
+  .ex-provider {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 8px;
+    min-height: 44px; padding: 9px 11px; border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm); text-decoration: none;
+    transition: border-color var(--duration-base) var(--ease-out), background var(--duration-base) var(--ease-out);
+  }
+  .ex-provider:hover { border-color: var(--border-strong); background: var(--oma-bg-1); }
+  .ex-provider .name { overflow: hidden; color: var(--oma-fg-1); font-size: 13px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+  .ex-provider:hover .name { color: var(--oma-accent); }
+  .ex-provider .flags { display: flex; gap: 4px; }
+  .ex-provider .flags span {
+    padding: 2px 5px; border-radius: var(--radius-xs); background: var(--oma-bg-2);
+    color: var(--oma-fg-3); font-family: var(--font-mono); font-size: 9px; text-transform: uppercase;
+  }
 
-      .ex-callout {
-        display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
-        padding: 22px 24px; background: var(--oma-bg-1);
-        border: 1px solid var(--border-default); border-radius: var(--radius-md);
-      }
-      .ex-callout-title { font-size: 16px; font-weight: 600; color: var(--oma-fg-0); }
-      .ex-callout-desc { font-size: 13px; line-height: 1.55; color: var(--oma-fg-2); margin: 6px 0 0; max-width: 560px; }
-      .ex-foot { margin-top: 28px; font-size: 13px; line-height: 1.65; color: var(--oma-fg-2); }
-      .ex-foot code { font-family: var(--font-mono); font-size: 12px; color: var(--oma-fg-1); }
-      .text-link.inline { display: inline-flex; }
+  .ex-foot { margin-top: 28px; font-size: 13px; line-height: 1.65; color: var(--oma-fg-2); }
+  .ex-foot code { font-family: var(--font-mono); font-size: 12px; color: var(--oma-fg-1); }
+  .text-link.inline { display: inline-flex; }
+  .ex-empty {
+    padding: 28px; border: 1px solid var(--border-default); border-radius: var(--radius-md);
+    background: var(--oma-bg-1);
+  }
+  .ex-empty h2 { margin: 0; color: var(--oma-fg-0); font-size: 20px; }
+  .ex-empty p { margin: 8px 0 16px; color: var(--oma-fg-1); }
 
-      @media (max-width: 640px) {
-        .ex-row { flex-direction: column; gap: 4px; }
-        .ex-row .name { min-width: 0; }
-      }
+  @media (max-width: 900px) {
+    .ex-provider-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ex-row { grid-template-columns: minmax(170px, .8fr) minmax(220px, 1.4fr) auto; }
+    .ex-row .meta { display: none; }
+  }
+  @media (max-width: 640px) {
+    .ex-row { grid-template-columns: minmax(0, 1fr) auto; gap: 5px 12px; padding: 14px 4px; }
+    .ex-row .desc { grid-column: 1 / -1; }
+    .ex-row .arr { grid-column: 2; grid-row: 1; }
+    .ex-provider-grid { grid-template-columns: minmax(0, 1fr); }
+  }
 </style>

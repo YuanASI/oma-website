@@ -142,12 +142,10 @@ function buildScriptDetail(entry, example, source, commit) {
   const run = parseSection(lines, /^Run\s*:/i);
   let intent = parseIntent(lines);
   if (!intent || intent.length < 25 || /\b(?:either|or|and|the|an?|with|via|to|of|for|that|into|when|which|then)$/i.test(intent)) {
-    intent = example.blurb || intent;
+    intent = example.description || intent;
   }
-  const category = entry.path.split('/')[0];
   return {
     name: entry.id,
-    category,
     title: (lines[0] || '').trim() || example.title,
     intent,
     apis: parseApis(source),
@@ -155,6 +153,7 @@ function buildScriptDetail(entry, example, source, commit) {
     prereqs: parseSection(lines, /^Prerequisites?\s*:/i),
     loc: source.replace(/\s+$/, '').split('\n').length,
     blob: blobUrl(`${EXAMPLES_ROOT}/${entry.path}`, commit),
+    sourcePath: entry.path,
     source,
   };
 }
@@ -169,9 +168,8 @@ function buildAppDetail(entry, example, source, readme, sourcePath, commit) {
     .filter(Boolean);
   return {
     name: entry.id,
-    category: 'apps',
     title: firstDocLine(source) || example.title,
-    intent: markdownIntro(readme) || example.blurb,
+    intent: markdownIntro(readme) || example.description,
     apis: parseApis(source),
     run: run.length
       ? run
@@ -449,9 +447,17 @@ export function validateMultiFileEntrypoints(entry, sourceByRelativePath) {
 function exampleFromEntry(entry, commit) {
   const sourcePath = `${EXAMPLES_ROOT}/${entry.path}`;
   return {
-    name: entry.id,
+    id: entry.id,
+    path: entry.path,
     title: entry.title,
-    blurb: entry.description,
+    description: entry.description,
+    section: entry.section,
+    ...(entry.goal ? { goal: entry.goal } : {}),
+    capabilities: [...entry.capabilities],
+    format: entry.format,
+    level: entry.level,
+    ...(Number.isInteger(entry.featuredOrder) ? { featuredOrder: entry.featuredOrder } : {}),
+    ...(entry.entrypoints ? { entrypoints: [...entry.entrypoints] } : {}),
     href: entry.format === 'script'
       ? blobUrl(sourcePath, commit)
       : treeUrl(sourcePath, commit),
@@ -459,37 +465,13 @@ function exampleFromEntry(entry, commit) {
 }
 
 export function buildInventory(catalog, commit) {
-  const inventory = {
-    cookbook: [],
-    apps: [],
-    reference: [],
-    vendor: [],
-    basics: [],
-    patterns: [],
-    providers: [],
-    production: [],
-    productionHref: treeUrl(`${EXAMPLES_ROOT}/production`, commit),
+  return {
+    // Preserve the catalog's complete metadata instead of projecting physical
+    // paths back into the website's old cookbook/apps/vendor taxonomy. The
+    // website groups these entries exclusively by section + goal.
+    entries: catalog.examples.map((entry) => exampleFromEntry(entry, commit)),
     browseHref: treeUrl(EXAMPLES_ROOT, commit),
   };
-  for (const entry of catalog.examples) {
-    const example = exampleFromEntry(entry, commit);
-    const topLevel = entry.path.split('/')[0];
-    if (['cookbook', 'basics', 'patterns', 'providers'].includes(topLevel)) {
-      inventory[topLevel].push(example);
-    } else if (topLevel === 'integrations') {
-      if (entry.format === 'script') inventory.reference.push(example);
-      else if (entry.format === 'app') inventory.apps.push(example);
-      else inventory.vendor.push(example);
-    } else if (topLevel === 'production') {
-      inventory.production.push(example);
-    } else {
-      throw new Error(`unsupported catalog path for current examples IA: ${entry.path}`);
-    }
-  }
-  for (const key of ['cookbook', 'apps', 'reference', 'vendor', 'basics', 'patterns', 'providers', 'production']) {
-    inventory[key].sort((left, right) => left.name.localeCompare(right.name));
-  }
-  return inventory;
 }
 
 async function fetchJsonStrict(url, label, fetchImpl, headers) {

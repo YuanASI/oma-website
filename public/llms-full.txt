@@ -115,7 +115,7 @@ in one team.
 investigated as parallel nodes; a reviewer agent synthesizes cause and contributing
 factors. Outcome: a timeline-grounded postmortem draft minutes after resolution.
 
-Runnable versions of these live in the cookbook:
+Runnable versions of these live in the goal-grouped examples catalog:
 https://open-multi-agent.com/examples/
 
 ## Works with your stack
@@ -259,7 +259,7 @@ Reference:
 
 - GitHub: https://github.com/open-multi-agent/open-multi-agent
 - npm: https://www.npmjs.com/package/@open-multi-agent/core
-- Examples (cookbook): https://open-multi-agent.com/examples/
+- Examples by goal: https://open-multi-agent.com/examples/
 - Solutions: https://open-multi-agent.com/solutions/
 - Integrations: https://open-multi-agent.com/integrations/
 - Showcase: https://open-multi-agent.com/showcase/

@@ -24,7 +24,7 @@ import Footer from '../../components/Footer.astro';
 import EnterpriseLink from '../../components/EnterpriseLink.astro';
 import { REPO, NPM, ghStats } from '../../lib/site';
 import { SHOWCASE } from '../../lib/showcase';
-import { FEATURED_USE_CASE_SLUGS, detailSlugs, getFeaturedUseCases } from '../../lib/examples';
+import { detailSlugs, getFeaturedUseCases } from '../../lib/examples';
 import { localeStaticPaths, toLocale, useTranslations, localizePath } from '../../i18n';
 
 export function getStaticPaths() { return localeStaticPaths(); }
@@ -115,20 +115,19 @@ const CAPS = [l.caps[0], l.caps[1], l.caps[5], l.caps[3]].map((c, i) => ({
 const RELIABILITY = l.reliability;
 const ENVIRONMENT = l.environment;
 
-// Curated across Cookbook + full apps, rather than assuming every business use
-// case lives in one upstream directory. URLs still resolve from the synchronized
-// inventory; localized editorial copy is keyed by slug so ordering cannot pair
-// the wrong claim with the wrong source.
-const featuredBySlug = new Map(getFeaturedUseCases().map((example) => [example.name, example]));
+// The first three featured Use-case Recipes come from catalog featuredOrder.
+// URLs resolve from the synchronized inventory; localized editorial copy stays
+// keyed by stable catalog id so ordering cannot pair the wrong claim and source.
 const buildDetailSlugs = detailSlugs();
-const BUILDS = FEATURED_USE_CASE_SLUGS.flatMap((slug) => {
-  const example = featuredBySlug.get(slug);
-  if (!example) return [];
-  const internal = buildDetailSlugs.has(slug);
+const buildCopy = l.builds as Record<string, (typeof l.builds)[keyof typeof l.builds]>;
+const BUILDS = getFeaturedUseCases().flatMap((example) => {
+  const copy = buildCopy[example.id];
+  if (!copy) return [];
+  const internal = buildDetailSlugs.has(example.id);
   return [{
-    ...l.builds[slug],
-    slug,
-    code: internal ? L(`/examples/${slug}/`) : example.href,
+    ...copy,
+    slug: example.id,
+    code: internal ? L(`/examples/${example.id}/`) : example.href,
     external: !internal,
   }];
 });

@@ -170,9 +170,12 @@ test('tree and catalog coverage is bidirectional', () => {
 test('directory examples resolve nested catalog entrypoints instead of same-name files', () => {
   assert.deepEqual(validateCatalogTree(catalogFixture(), treeFixture()), []);
   const inventory = buildInventory(catalogFixture(), FRAMEWORK_COMMIT);
-  assert.equal(inventory.apps[0].name, 'nested-app');
+  assert.equal(inventory.entries[1].id, 'nested-app');
+  assert.equal(inventory.entries[1].goal, 'start-here');
+  assert.equal(inventory.entries[1].format, 'app');
+  assert.deepEqual(inventory.entries[1].entrypoints, ['app/api/chat/route.ts']);
   assert.equal(
-    inventory.apps[0].href,
+    inventory.entries[1].href,
     treeUrl(`${EXAMPLES_ROOT}/integrations/nested-app`, FRAMEWORK_COMMIT),
   );
 });
@@ -206,9 +209,15 @@ test('checked-in snapshots carry matching auditable provenance and directory sou
   assert.equal(source.repo, `${FRAMEWORK_REPOSITORY}@${FRAMEWORK_COMMIT}`);
   assert.equal(
     inventory.provenance.generation.catalogEntryCount,
-    ['cookbook', 'apps', 'reference', 'vendor', 'basics', 'patterns', 'providers', 'production']
-      .reduce((count, key) => count + inventory[key].length, 0),
+    inventory.entries.length,
   );
+  assert.equal(inventory.entries.length, 58);
+  assert.equal(inventory.entries.filter((entry) => entry.section === 'goal').length, 38);
+  assert.equal(inventory.entries.filter((entry) => entry.section === 'models-providers').length, 20);
+  assert.equal(inventory.entries.find((entry) => entry.id === 'single-agent').goal, 'start-here');
+  assert.equal(inventory.entries.find((entry) => entry.id === 'single-agent').featuredOrder, 1);
+  assert.ok(!('category' in source.details['single-agent']));
+  assert.equal(source.details['single-agent'].sourcePath, 'basics/single-agent.ts');
   assert.equal(
     source.details['express-customer-support'].sourcePath,
     'integrations/express-customer-support/index.ts',
