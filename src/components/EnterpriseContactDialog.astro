@@ -354,7 +354,8 @@ const t = useTranslations(locale).enterpriseDialog;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 14px;
+    width: min(100%, 220px);
+    margin: 0 auto 14px;
   }
   .enterprise-contact-head .enterprise-panel-label { margin: 0; }
 
@@ -393,16 +394,16 @@ const t = useTranslations(locale).enterpriseDialog;
     display: grid;
     place-items: center;
     flex: none;
-    width: 150px;
-    min-height: 34px;
-    padding: 0 12px;
+    width: 124px;
+    min-height: 28px;
+    padding: 0 9px;
     overflow: hidden;
     color: var(--oma-accent);
     background: var(--oma-accent-soft);
     border: 1px solid var(--oma-accent-line);
     border-radius: var(--radius-sm);
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 600;
     cursor: pointer;
     transition: color var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
@@ -415,19 +416,19 @@ const t = useTranslations(locale).enterpriseDialog;
   .enterprise-copy-id {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
   }
   .enterprise-copy-id code {
     color: inherit;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 10px;
   }
-  .enterprise-copy-icon { width: 15px; height: 15px; }
-  .enterprise-copy-label { opacity: 0; transform: translateY(4px); }
+  .enterprise-copy-icon { width: 12px; height: 12px; }
+  .enterprise-copy-label { opacity: 0; transform: translateY(3px); }
   .enterprise-copy:hover .enterprise-copy-id,
   .enterprise-copy:focus-visible .enterprise-copy-id,
   .enterprise-copy.is-copied .enterprise-copy-id,
-  .enterprise-copy.is-failed .enterprise-copy-id { opacity: 0; transform: translateY(-4px); }
+  .enterprise-copy.is-failed .enterprise-copy-id { opacity: 0; transform: translateY(-3px); }
   .enterprise-copy:hover .enterprise-copy-label,
   .enterprise-copy:focus-visible .enterprise-copy-label,
   .enterprise-copy.is-copied .enterprise-copy-label,
@@ -477,7 +478,6 @@ const t = useTranslations(locale).enterpriseDialog;
 
   @media (max-width: 420px) {
     .enterprise-service { grid-template-columns: 42px minmax(0, 1fr); gap: 10px; }
-    .enterprise-copy { width: 144px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
