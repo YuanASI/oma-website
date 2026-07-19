@@ -2,7 +2,8 @@ name: Refresh GitHub snapshot
 
 # Refreshes the committed GitHub snapshot the site builds against —
 # src/data/gh-stats.json (stars/forks/contributors/release) and
-# src/data/examples.json (the /examples inventory). See scripts/refresh-gh-data.mjs.
+# src/data/examples{,-source}.json (the /examples inventory and details). See
+# scripts/refresh-gh-data.mjs.
 #
 # WHY: those numbers + the example list used to be fetched from the GitHub API at
 # *build time*. On Cloudflare Pages' shared build IP a transient rate-limit/blip
@@ -55,9 +56,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Validate the build against the fresh snapshot before proposing it. No
-      # token here on purpose: the build no longer fetches GitHub, so it must pass
-      # fully offline.
+      # Validate the generated snapshot contract and then build against the fresh
+      # files before proposing them. No token here on purpose: validation and the
+      # build consume only committed data and must pass fully offline.
+      - name: Validate snapshots
+        run: pnpm check
+
       - name: Validate build
         run: pnpm build
 
@@ -71,15 +75,17 @@ jobs:
           add-paths: |
             src/data/gh-stats.json
             src/data/examples.json
+            src/data/examples-source.json
           branch: chore/refresh-gh-data
           delete-branch: true
           base: main
           commit-message: 'chore(data): refresh GitHub snapshot'
           title: 'chore(data): refresh GitHub snapshot'
           body: |
-            Automated refresh of the committed GitHub statistics and examples
-            inventory. The snapshot was validated with `pnpm build` before this
-            pull request was created or updated.
+            Automated refresh of the committed GitHub statistics and the
+            commit-pinned examples inventory plus detail sources. The snapshots
+            were validated with `pnpm check` and `pnpm build` before this pull
+            request was created or updated.
 
       - name: Enable auto-merge
         if: steps.cpr.outputs.pull-request-number != ''
