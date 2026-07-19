@@ -197,6 +197,7 @@ export default defineConfig({
 					translations: { 'zh-CN': '指南' },
 					items: [
 						{ label: 'Orchestration Controls', slug: 'guides/orchestration-controls', translations: { 'zh-CN': '编排控制' } },
+						{ label: 'Control costs & budgets', slug: 'guides/cost-budget-control', translations: { 'zh-CN': '控制成本与预算' } },
 						{ label: 'Production Checklist', slug: 'guides/production-checklist', translations: { 'zh-CN': '生产清单' } },
 					],
 				},
