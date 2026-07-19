@@ -522,7 +522,10 @@ const jsonLd = {
       <section class="section" id="start">
         <div class="container cta-final">
           <div class="eyebrow" style="justify-content:center;"><span class="idx">//</span> {l.ctaFinal.eyebrow}</div>
-          <h2>{l.ctaFinal.title1}<br />{l.ctaFinal.title2}</h2>
+          <h2 class:list={['cta-final-title', { 'cta-final-title--zh': locale === 'zh' }]}>
+            <span class="cta-final-title-line">{l.ctaFinal.title1}</span>
+            <span class="cta-final-title-line">{l.ctaFinal.title2}</span>
+          </h2>
           <div class="cta-actions">
             <div class="cmd-wrap">
               <button type="button" class="cmd" data-cmd="npm create oma-app@latest" data-copied={l.copied} data-failed={l.copyFailed}>
