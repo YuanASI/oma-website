@@ -73,6 +73,31 @@ export const en = {
     button: 'Enterprise support',
   },
 
+  // The dialog is currently a Chinese-only conversion path. English strings
+  // keep the shared dictionary shape complete for any future locale rollout;
+  // English triggers continue to link directly to yuanasi.com/en.
+  enterpriseDialog: {
+    eyebrow: 'Direct contact',
+    title: 'Put Open Multi-Agent to work in your business',
+    body: 'Talk directly with the framework author about your business scenario, technical approach, and path to production.',
+    servicesLabel: 'Engineering services',
+    services: [
+      { code: 'S-01', title: 'Custom AI Agent delivery', body: 'Business scenario mapping, Agent design, prompts and evaluation, production deployment, private hosting, and ongoing support.' },
+      { code: 'S-02', title: 'Multi-agent system integration', body: 'Multi-Agent architecture and orchestration, RAG, CRM / ERP / internal API integration, performance, and reliability tuning.' },
+      { code: 'S-03', title: 'Enterprise AI advisory', body: 'AI scenario assessment, technology selection, POC development, ROI estimation, and implementation roadmaps.' },
+    ],
+    contactEyebrow: 'Direct line',
+    contactTitle: 'Scan to add open-multi-agent author JackChen',
+    contactNote: 'When adding, mention your company name and what you need.',
+    qrAlt: 'Personal WeChat QR code for open-multi-agent author JackChen',
+    wechatLabel: 'WeChat ID',
+    wechatId: 'JackChen_me',
+    copy: 'Copy ID',
+    copied: 'Copied',
+    copyFailed: 'Copy failed',
+    closeAria: 'Close enterprise contact dialog',
+  },
+
   taskStatus: {
     done: 'DONE',
     running: 'RUNNING',

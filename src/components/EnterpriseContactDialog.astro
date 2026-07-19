@@ -1,0 +1,463 @@
+---
+// Shared Chinese enterprise-contact dialog. It is mounted once by BaseLayout;
+// every locale-aware EnterpriseLink button targets this single instance.
+import { useTranslations, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale).enterpriseDialog;
+---
+
+<dialog
+  class="enterprise-dialog"
+  id="enterprise-contact-dialog"
+  aria-labelledby="enterprise-dialog-title"
+  aria-describedby="enterprise-dialog-description"
+>
+  <div class="enterprise-dialog-shell">
+    <header class="enterprise-dialog-head">
+      <div class="enterprise-dialog-heading">
+        <div class="enterprise-dialog-eyebrow"><span>//</span> {t.eyebrow}</div>
+        <h2 id="enterprise-dialog-title">{t.title}</h2>
+        <p id="enterprise-dialog-description">{t.body}</p>
+      </div>
+      <button class="enterprise-dialog-close" type="button" data-enterprise-close aria-label={t.closeAria}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M6 6l12 12M18 6 6 18" />
+        </svg>
+      </button>
+    </header>
+
+    <div class="enterprise-dialog-grid">
+      <section class="enterprise-services" aria-labelledby="enterprise-services-title">
+        <div class="enterprise-panel-label" id="enterprise-services-title">{t.servicesLabel}</div>
+        <div class="enterprise-service-list">
+          {t.services.map((service) => (
+            <article class="enterprise-service">
+              <div class="enterprise-service-code">{service.code}</div>
+              <div>
+                <h3>{service.title}</h3>
+                <p>{service.body}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <aside class="enterprise-contact" aria-labelledby="enterprise-contact-title">
+        <div class="enterprise-panel-label">{t.contactEyebrow}</div>
+        <div class="enterprise-qr-frame">
+          <span class="enterprise-qr-corner enterprise-qr-corner--tl" aria-hidden="true"></span>
+          <span class="enterprise-qr-corner enterprise-qr-corner--br" aria-hidden="true"></span>
+          <img
+            src="/contact/wechat-qr.jpg"
+            alt={t.qrAlt}
+            width="888"
+            height="1128"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <h3 id="enterprise-contact-title">{t.contactTitle}</h3>
+        <p class="enterprise-contact-note">{t.contactNote}</p>
+        <div class="enterprise-wechat-row">
+          <div>
+            <span>{t.wechatLabel}</span>
+            <code>{t.wechatId}</code>
+          </div>
+          <button
+            type="button"
+            class="enterprise-copy"
+            data-enterprise-copy
+            data-copy-value={t.wechatId}
+            data-copy-label={t.copy}
+            data-copied-label={t.copied}
+            data-failed-label={t.copyFailed}
+          >{t.copy}</button>
+        </div>
+        <span class="enterprise-copy-feedback" data-enterprise-copy-feedback aria-live="polite"></span>
+      </aside>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('#enterprise-contact-dialog');
+
+  if (dialog) {
+    const triggers = document.querySelectorAll<HTMLElement>('[data-enterprise-trigger]');
+    const closeButton = dialog.querySelector<HTMLButtonElement>('[data-enterprise-close]');
+    const copyButton = dialog.querySelector<HTMLButtonElement>('[data-enterprise-copy]');
+    const copyFeedback = dialog.querySelector<HTMLElement>('[data-enterprise-copy-feedback]');
+    let opener: HTMLElement | null = null;
+    let previousBodyOverflow = '';
+    let copyResetTimer: number | undefined;
+
+    const closeMobileNavigation = () => {
+      const links = document.querySelector<HTMLElement>('.nav-links');
+      const toggle = document.querySelector<HTMLElement>('.nav-mobile-toggle');
+      links?.classList.remove('open');
+      if (toggle) {
+        toggle.textContent = '≡';
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+      document.body.style.overflow = '';
+    };
+
+    const openDialog = (trigger: HTMLElement) => {
+      if (dialog.open) return;
+      opener = trigger;
+      closeMobileNavigation();
+      previousBodyOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      dialog.showModal();
+      requestAnimationFrame(() => closeButton?.focus());
+    };
+
+    const closeDialog = () => {
+      if (dialog.open) dialog.close();
+    };
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', () => openDialog(trigger));
+    });
+
+    closeButton?.addEventListener('click', closeDialog);
+
+    dialog.addEventListener('cancel', (event) => {
+      event.preventDefault();
+      closeDialog();
+    });
+
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) closeDialog();
+    });
+
+    dialog.addEventListener('close', () => {
+      document.body.style.overflow = previousBodyOverflow;
+      opener?.focus();
+      opener = null;
+    });
+
+    const fallbackCopy = (value: string): boolean => {
+      const textarea = document.createElement('textarea');
+      textarea.value = value;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      const copied = document.execCommand('copy');
+      textarea.remove();
+      return copied;
+    };
+
+    copyButton?.addEventListener('click', async () => {
+      const value = copyButton.dataset.copyValue ?? '';
+      const copyLabel = copyButton.dataset.copyLabel ?? '';
+      const copiedLabel = copyButton.dataset.copiedLabel ?? '';
+      const failedLabel = copyButton.dataset.failedLabel ?? '';
+      let copied = false;
+
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(value);
+          copied = true;
+        } else {
+          copied = fallbackCopy(value);
+        }
+      } catch {
+        copied = fallbackCopy(value);
+      }
+
+      const message = copied ? copiedLabel : failedLabel;
+      copyButton.textContent = message;
+      copyButton.classList.toggle('is-copied', copied);
+      if (copyFeedback) copyFeedback.textContent = message;
+      window.clearTimeout(copyResetTimer);
+      copyResetTimer = window.setTimeout(() => {
+        copyButton.textContent = copyLabel;
+        copyButton.classList.remove('is-copied');
+        if (copyFeedback) copyFeedback.textContent = '';
+      }, 2200);
+    });
+  }
+</script>
+
+<style>
+  .enterprise-dialog {
+    width: min(900px, calc(100vw - 32px));
+    max-width: none;
+    max-height: calc(100dvh - 32px);
+    margin: auto;
+    padding: 0;
+    overflow: auto;
+    color: var(--oma-fg-0);
+    background: var(--oma-bg-1);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg), 0 0 0 1px var(--oma-accent-line);
+  }
+
+  .enterprise-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: enterprise-backdrop-in var(--duration-slow) var(--ease-out) both;
+  }
+
+  .enterprise-dialog[open] .enterprise-dialog-shell {
+    animation: enterprise-dialog-in var(--duration-slow) var(--ease-out) both;
+  }
+
+  .enterprise-dialog-shell {
+    position: relative;
+    padding: 32px;
+    background-image: radial-gradient(var(--grid-dot) 1.2px, transparent 1.2px);
+    background-size: var(--grid-size) var(--grid-size);
+  }
+
+  .enterprise-dialog-head {
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  .enterprise-dialog-heading { max-width: 700px; padding-right: 56px; }
+
+  .enterprise-dialog-eyebrow,
+  .enterprise-panel-label,
+  .enterprise-service-code,
+  .enterprise-wechat-row span {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+  }
+
+  .enterprise-dialog-eyebrow {
+    margin-bottom: 12px;
+    color: var(--oma-fg-2);
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .enterprise-dialog-eyebrow span { color: var(--oma-accent); }
+
+  .enterprise-dialog h2 {
+    margin: 0;
+    color: var(--oma-fg-0);
+    font-family: var(--font-sans);
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  .enterprise-dialog-heading > p {
+    max-width: 570px;
+    margin: 12px 0 0;
+    color: var(--oma-fg-1);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .enterprise-dialog-close {
+    position: absolute;
+    top: 32px;
+    right: 32px;
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    flex: none;
+    padding: 0;
+    color: var(--oma-fg-1);
+    background: var(--oma-bg-2);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+  }
+  .enterprise-dialog-close:hover { color: var(--oma-fg-0); border-color: var(--oma-accent-line); transform: rotate(3deg); }
+  .enterprise-dialog-close svg { width: 18px; height: 18px; }
+
+  .enterprise-dialog-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(260px, 0.7fr);
+    gap: 32px;
+    padding-top: 28px;
+  }
+
+  .enterprise-panel-label {
+    margin-bottom: 14px;
+    color: var(--oma-fg-3);
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .enterprise-service-list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--border-default);
+  }
+
+  .enterprise-service {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 14px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  .enterprise-service-code {
+    padding-top: 3px;
+    color: var(--oma-accent);
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .enterprise-service h3,
+  .enterprise-contact h3 {
+    margin: 0;
+    color: var(--oma-fg-0);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .enterprise-service p {
+    margin: 7px 0 0;
+    color: var(--oma-fg-1);
+    font-size: 13.5px;
+    line-height: 1.65;
+  }
+
+  .enterprise-contact {
+    min-width: 0;
+    padding-left: 28px;
+    border-left: 1px solid var(--border-default);
+  }
+
+  .enterprise-qr-frame {
+    position: relative;
+    width: min(100%, 220px);
+    margin: 0 auto 18px;
+    padding: 8px;
+    background: #fff;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+  }
+  .enterprise-qr-frame img { display: block; width: 100%; height: auto; border-radius: 2px; }
+
+  .enterprise-qr-corner {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-color: var(--oma-accent);
+    pointer-events: none;
+  }
+  .enterprise-qr-corner--tl { top: -5px; left: -5px; border-top: 2px solid; border-left: 2px solid; }
+  .enterprise-qr-corner--br { right: -5px; bottom: -5px; border-right: 2px solid; border-bottom: 2px solid; }
+
+  .enterprise-contact h3 { font-size: 16px; text-wrap: balance; }
+
+  .enterprise-contact-note {
+    margin: 8px 0 16px;
+    color: var(--oma-fg-2);
+    font-size: 12.5px;
+    line-height: 1.55;
+  }
+
+  .enterprise-wechat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px;
+    background: var(--oma-bg-2);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+  }
+  .enterprise-wechat-row > div { min-width: 0; }
+  .enterprise-wechat-row span {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--oma-fg-3);
+    font-size: 9px;
+  }
+  .enterprise-wechat-row code {
+    color: var(--oma-fg-0);
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+
+  .enterprise-copy {
+    flex: none;
+    min-height: 36px;
+    padding: 0 11px;
+    color: var(--oma-accent);
+    background: var(--oma-accent-soft);
+    border: 1px solid var(--oma-accent-line);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out);
+  }
+  .enterprise-copy:hover,
+  .enterprise-copy.is-copied { color: var(--oma-accent-fg); background: var(--oma-accent); }
+
+  .enterprise-copy-feedback {
+    display: block;
+    min-height: 16px;
+    margin-top: 6px;
+    color: var(--oma-fg-2);
+    font-family: var(--font-mono);
+    font-size: 10px;
+  }
+
+  .enterprise-dialog-close:focus-visible,
+  .enterprise-copy:focus-visible {
+    outline: 2px solid var(--oma-accent);
+    outline-offset: 3px;
+  }
+
+  @keyframes enterprise-dialog-in {
+    from { opacity: 0; transform: translateY(16px) scale(0.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes enterprise-backdrop-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @media (max-width: 720px) {
+    .enterprise-dialog { width: min(100% - 20px, 560px); max-height: calc(100dvh - 20px); }
+    .enterprise-dialog-shell { padding: 22px 18px; }
+    .enterprise-dialog-head { padding-bottom: 22px; }
+    .enterprise-dialog-heading { padding-right: 52px; }
+    .enterprise-dialog-close { top: 22px; right: 18px; }
+    .enterprise-dialog h2 { font-size: clamp(26px, 8vw, 34px); }
+    .enterprise-dialog-grid { grid-template-columns: 1fr; gap: 28px; padding-top: 22px; }
+    .enterprise-contact { padding: 26px 0 0; border-top: 1px solid var(--border-default); border-left: 0; }
+    .enterprise-qr-frame { width: min(78vw, 220px); }
+  }
+
+  @media (max-width: 420px) {
+    .enterprise-service { grid-template-columns: 42px minmax(0, 1fr); gap: 10px; }
+    .enterprise-wechat-row { align-items: stretch; flex-direction: column; }
+    .enterprise-copy { width: 100%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .enterprise-dialog::backdrop,
+    .enterprise-dialog[open] .enterprise-dialog-shell { animation: none; }
+    .enterprise-dialog-close,
+    .enterprise-copy { transition: none; }
+  }
+</style>

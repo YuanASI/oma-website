@@ -3,12 +3,13 @@
 // place. `current` marks the active in-site link; `starsK` is the build-time star
 // count (e.g. "6.4k"); `locale` localizes the labels and the in-site links; `path`
 // is this page's default-locale path, handed to the language switcher.
-import { REPO, yuanasiHref } from '../lib/site';
+import { REPO } from '../lib/site';
 import { getFeaturedUseCases, detailSlugs } from '../lib/examples';
 import { SOLUTIONS } from '../lib/solutions';
 import { useTranslations, localizePath, type Locale } from '../i18n';
 import type { Loc } from '../lib/compare';
 import LangSwitcher from './LangSwitcher.astro';
+import EnterpriseLink from './EnterpriseLink.astro';
 
 interface Props {
   current?: 'home' | 'docs' | 'architecture' | 'examples' | 'showcase' | 'blog' | 'compare' | 'solutions' | 'integrations';
@@ -89,7 +90,9 @@ const pick = (o: Loc) => o[locale];
       </div>
       <a class="nav-link" href={L('/getting-started/introduction/')} aria-current={current === 'docs' ? 'page' : undefined}>{t.nav.docs}</a>
       <a class="nav-link" href={L('/blog/')} aria-current={current === 'blog' ? 'page' : undefined}>{t.nav.blog}</a>
-      <a class="nav-link nav-link--ext" href={yuanasiHref(locale)} target="_blank" rel="noreferrer">{t.nav.forCompanies} <span class="ext" aria-hidden="true">↗</span></a>
+      <EnterpriseLink class="nav-link nav-link--ext" locale={locale}>
+        {t.nav.forCompanies} {locale === 'en' && <span class="ext" aria-hidden="true">↗</span>}
+      </EnterpriseLink>
     </div>
     <div class="nav-ghost">
       <a class="nav-github" href={REPO} target="_blank" rel="noreferrer" aria-label={`GitHub — ${starsK} ${t.nav.stars}`} title="GitHub">
@@ -161,9 +164,8 @@ const pick = (o: Loc) => o[locale];
      sans nav font, not the mono .pkg default (which is meant for package names). */
   .nav-menu-link--page .pkg { font-family: var(--font-sans); font-weight: 500; }
 
-  /* For Companies is a top-level external link; its ↗ marker isn't inside a
-     .nav-menu .pkg, so it needs its own muted styling (the .ext rule in
-     landing.css is scoped to the dropdown). */
+  /* The English For Companies link keeps its external ↗ marker. Chinese opens
+     the in-page contact dialog and therefore intentionally has no marker. */
   .nav-link--ext .ext { color: var(--oma-fg-3); font-size: 11px; margin-left: 1px; }
 
   /* Use Cases dropdown: the button reads active on any /examples or /solutions
