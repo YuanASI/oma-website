@@ -184,11 +184,16 @@ a { color: inherit; }
 .hero-grid > div { min-width: 0; }
 .hero h1 {
   font-family: var(--font-sans); font-weight: 600; letter-spacing: -0.035em;
-  font-size: clamp(40px, 5.2vw, 64px); line-height: 1.04; color: var(--oma-fg-0);
+  /* 58px cap (not 64) so the first clause "Describe the goal," fits the hero
+     column on one line — at 64px it is ~512px > the ~480px column, so
+     text-wrap:balance split the headline into 3 lines. */
+  font-size: clamp(40px, 5.2vw, 58px); line-height: 1.04; color: var(--oma-fg-0);
   margin: 24px 0 0; text-wrap: balance;
 }
 :root[lang='zh-CN'] .hero h1 { font-size: clamp(40px, 4.6vw, 58px); }
-.hero h1 .accent { color: var(--oma-accent); }
+/* accent on its own line → headline reads as two clauses:
+   "Describe the goal," / "not the graph." (zh already breaks here). */
+.hero h1 .accent { color: var(--oma-accent); display: block; }
 /* One-line capability meta (replaces the heavier bordered fact-strip box). */
 .hero-meta {
   margin: 22px 0 0; font-family: var(--font-mono); font-size: 13px;
