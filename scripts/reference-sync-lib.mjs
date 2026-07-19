@@ -11,8 +11,7 @@ export const BLOB = `https://github.com/${REPO}/blob/${BRANCH}`;
 // reviewed and given a local page, sidebar entry, and translation.
 export const EXCLUDE = new Set([
   'featured-partner',
-  'observability-migration',
-  'observability-performance',
+  // Release-audit evidence, rather than a user-facing product guide.
   'observability-release-readiness',
 ]);
 
