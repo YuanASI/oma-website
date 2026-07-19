@@ -12,12 +12,16 @@
     "enBodySha256": "1bf737c1aa7bedc6973ace5f8fc0ccdb4a242e641843b933ff56eaa865b5091c",
     "translatedAt": "2026-07-19"
   },
+  "guides/cost-budget-control": {
+    "enBodySha256": "ad2c390f15939783d548db29905f10c723481fdfcf8b60b02d0a80643a7d99e6",
+    "translatedAt": "2026-07-19"
+  },
   "guides/orchestration-controls": {
     "enBodySha256": "6994a49603a6d6c37b945c7b7fa0fe1822d7c28c8d7c7029c7129469b3e11522",
     "translatedAt": "2026-07-19"
   },
   "guides/production-checklist": {
-    "enBodySha256": "69caa0d4e30fc6b1b7edf7415ab4806b25eaa3af7cdbfb89c175061a0a387585",
+    "enBodySha256": "29ef3db8693fd1d2a82e0a7e3fede17cd712f6b26eb7d3d4939f50d0721c6e68",
     "translatedAt": "2026-07-19"
   },
   "reference/checkpoint": {
