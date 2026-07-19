@@ -59,6 +59,51 @@ const agent = {
 
 其它服务只要实现了 OpenAI Chat Completions API，也能以同样方式接入，但这里未把它们列为已验证的提供方。对于密钥不是 `OPENAI_API_KEY` 的服务，通过 `apiKey` 显式传入；否则 `openai` 适配器会回退到 `OPENAI_API_KEY`。
 
+## Vercel AI SDK（可选）
+
+AI SDK 桥接器让智能体通过[任意 AI SDK 提供方](https://ai-sdk.dev/providers)运行，而不是使用内置的 `provider` 工厂。使用 `npm i ai @ai-sdk/<provider>` 安装可选 peer；peer 版本范围接受 AI SDK 5、6 和 7，AI SDK 7 要求 Node.js >= 22。
+
+在 `AgentConfig` 上传入 `adapter: new AISdkAdapter(model)`。设置 `adapter` 后，该智能体会忽略 `provider`、`apiKey`、`baseURL` 和 `region`。混合团队仍照常工作：只有带 `adapter` 的智能体使用 AI SDK。
+
+```typescript
+import { openai } from '@ai-sdk/openai'
+import { AISdkAdapter } from '@open-multi-agent/core/ai-sdk'
+import { OpenMultiAgent } from '@open-multi-agent/core'
+
+const oma = new OpenMultiAgent()
+await oma.runAgent(
+  {
+    name: 'researcher',
+    model: 'gpt-4o',
+    adapter: new AISdkAdapter(openai('gpt-4o')),
+    systemPrompt: 'You are a researcher.',
+  },
+  'What are the latest AI trends?',
+)
+```
+
+协调器通过 `runTeam(team, goal, { coordinator: { adapter: new AISdkAdapter(...) } })` 接受同一个钩子。完整应用见 [`integrations/with-vercel-ai-sdk`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/integrations/with-vercel-ai-sdk/)。
+
+## 扩展思考 / 推理
+
+`AgentConfig` 上的一份 `thinking` 配置会映射到各提供方的原生推理设置：
+
+```typescript
+const agent = {
+  name: 'deep-reasoner',
+  provider: 'anthropic',
+  model: 'claude-opus-4-6',
+  systemPrompt: 'Reason carefully before answering.',
+  thinking: { enabled: true, budgetTokens: 8_000 },
+}
+```
+
+- `budgetTokens` 映射到 Anthropic 的 `thinking.budget_tokens` 和 Gemini 的 `thinkingConfig.thinkingBudget`。
+- `effort`（`'low' | 'medium' | 'high'`）映射到 OpenAI 的 `reasoning_effort`。固定版本 SDK 的 union 尚未声明的值（例如 `'minimal'` 或 `'none'`）可通过 `extraBody: { reasoning_effort: '<value>' }` 传入。
+- 适配器会忽略无法识别的字段，因此同一份配置可安全用于混合提供方团队。
+
+推理以 `reasoning` 事件流式传输。跨提供方切换时保留推理需通过 `preserveReasoningAsText` 选择启用；参见[上下文管理](/zh/reference/context-management/)和 [`patterns/cross-provider-reasoning`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/cross-provider-reasoning.ts)。
+
 ## 本地模型工具调用
 
 框架支持对由 Ollama、vLLM、LM Studio 或 llama.cpp 提供服务的本地模型进行工具调用。工具调用通过 OpenAI 兼容 API 原生处理。

@@ -2,8 +2,9 @@
 dist/
 # generated types
 .astro/
-# CI drift report (written by scripts/check-reference-drift.mjs)
+# CI drift reports (written by the Reference sync checks)
 reference-drift-report.md
+upstream-drift-report.md
 
 # dependencies
 node_modules/

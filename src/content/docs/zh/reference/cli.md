@@ -3,7 +3,7 @@ title: "CLI"
 description: "JSON 优先的 oma 二进制命令——面向 shell 与 CI：命令、配置文件、输出与退出码。"
 ---
 
-这个包附带一个小巧的二进制 **`oma`**，它把 TypeScript API 的同一批原语暴露出来：`runTeam`、`runTasks`、单次运行的仪表盘导出，外加一份静态的 provider 参考。它面向 **shell 脚本和 CI**（stdout 输出 JSON、退出码稳定）。
+这个包附带一个小巧的二进制 **`oma`**，它把 TypeScript API 的同一批原语暴露出来：`runTeam`、`runTasks`、离线 EvalSet 执行、单次运行的仪表盘导出，外加一份静态的 provider 参考。它面向 **shell 脚本和 CI**（stdout 输出 JSON、退出码稳定）。
 
 它**不**提供交互式 REPL、向工具注入工作目录、人工审批闸门或会话持久化。这些留在应用代码里。
 
@@ -77,6 +77,58 @@ oma dashboard \
 | `--team` | No | JSON `TeamConfig` 的路径。设置后会覆盖 `--file` 里的 `team` 对象。 |
 
 全局标志：[`--pretty`](#输出标志)、[`--include-messages`](#输出标志)。
+
+### `oma eval run`
+
+用用户提供的目标运行一个版本化 EvalSet，写出一份或多份离线报告，并可选择应用质量闸门：
+
+```bash
+oma eval run --set ./evals/greetings.json --target ./evals/target.mjs \
+  [--scorers ./evals/scorers.mjs] \
+  [--repeats 3] [--concurrency 2] [--tags smoke,regression] \
+  [--report json] [--report markdown] [--report junit] \
+  [--out ./eval-results] [--meta prompt_version=v2] \
+  [--gate ./evals/gate.json] [--baseline ./evals/baseline.json] [--pretty]
+```
+
+`--set` 和 `--target` 是必填的。EvalSet 文件按 JSON 解析，并使用与 TypeScript API 相同的 `defineEvalSet()` 契约校验。`--repeats`、`--concurrency` 和 `--tags` 会覆盖对应的 runner 选项。重复传入 `--meta key=value`，可为每条记录附加字符串元数据。
+
+目标路径会作为 ES 模块动态导入。其默认导出可以是一个 `EvalTarget` 函数，也可以是包含 `{ target, scorers? }` 的对象：
+
+```js
+const target = async (input) => ({ output: String(input).toUpperCase() })
+
+const exact = {
+  name: 'exact',
+  score({ output, evalCase }) {
+    const pass = output === evalCase.expected
+    return { score: pass ? 1 : 0, pass }
+  },
+}
+
+export default { target, scorers: [exact] }
+```
+
+设置 `--scorers` 时，该 ES 模块必须默认导出一个 `Scorer[]`。显式 scorer 会追加到所有内嵌 scorer 之后。每个 scorer 名称必须唯一，没有 scorer 的评估属于用法错误。动态导入会以当前进程权限执行所提供的模块；只加载你信任的代码。CLI 不会对目标或 scorer 模块进行沙箱隔离。
+
+可以在任一模块中从 `@open-multi-agent/core/eval` 导入 `toolCallSuccessScorer()`、`costBudgetScorer()`、`createAnswerRelevancyScorer()` 等参考工厂。请为自定义 scorer 和 judge scorer 设置版本，使基线漂移警告保持可操作性。
+
+重复传入 `--report`，可请求 `json`、`markdown` 和 `junit` 的任意组合；默认为 JSON。输出根目录默认为 `./eval-results`。每次调用都会写入 `<out>/<evalRunId>/`，对应使用 `report.json`、`report.md` 和 `report.junit.xml`。JSON 是权威的 `EvalRunReport` 表示。Markdown 包含便于阅读的聚合结果与失败详情。JUnit 会把 `pass: false` 映射为 `<failure>`，把目标/scorer 错误映射为 `<error>`。
+
+不带 `--gate` 的已完成评估即使包含低分或失败分数，也会以 0 退出。带 `--gate` 时，CLI 会加载经过校验的 `GatePolicy`，应用阈值、scorer/目标健康度和可选的基线回归检查，在 stdout 摘要中加入 `verdict` 与 `verdictPath`，并把原样 verdict 写入 `<out>/<evalRunId>/verdict.json`。闸门失败或所有选中目标都失败时以 1 退出。文件、模块、参数和契约错误以 2 退出。
+
+`--baseline` 加载先前的 JSON `EvalRunReport`，且要求同时设置 `--gate`。策略含基线规则但未设置 `--baseline` 时，仍会执行阈值和健康度检查，随后报告跳过回归检查的警告。
+
+### `oma eval gate`
+
+把闸门应用到已有的权威 JSON 报告，而不重新运行目标：
+
+```bash
+oma eval gate --report ./candidate/report.json --gate ./evals/gate.json \
+  [--baseline ./evals/baseline.json] [--pretty]
+```
+
+`--report` 和 `--gate` 是必填的。该命令向 stdout 打印原样的 `GateVerdict` JSON（`pass`、`failures` 和 `warnings`）。verdict 通过时以 0 退出，失败时以 1 退出；报告、策略、基线或参数无效时以 2 退出。GatePolicy 参考、基线工作流、确定性闸门示例和 GitHub Actions 接线方式见[评估](/zh/reference/evaluation/#在-ci-中设置质量闸门)。
 
 ### `oma provider`
 
@@ -244,6 +296,25 @@ CLI 强制执行的校验规则：
 }
 ```
 
+**成功的离线评估**
+
+```json
+{
+  "command": "eval",
+  "subcommand": "run",
+  "evalRunId": "eval_run_...",
+  "caseCount": 2,
+  "repeats": 1,
+  "targetErrors": 0,
+  "scorers": [
+    { "name": "exact", "avg": 1, "passRate": 1, "errorCount": 0 }
+  ],
+  "reports": {
+    "json": "/workspace/eval-results/eval_run_.../report.json"
+  }
+}
+```
+
 **错误（usage、validation、I/O、runtime）**
 
 ```json
@@ -272,9 +343,9 @@ CLI 强制执行的校验规则：
 
 | Code | Meaning |
 |------|---------|
-| **0** | 成功：`run`/`task` 以 `success === true` 结束、仪表盘导出完成，或 help / `provider` 正常完成。 |
-| **1** | 运行结束但 **`success === false`**（库报告的 agent 或任务失败）。 |
-| **2** | usage、validation、可读的 JSON 错误，或文件访问问题（例如文件缺失）。 |
+| **0** | 成功：`run`/`task` 成功；仪表盘导出完成；eval 已完成且并非所有目标都失败，任何已配置闸门也已通过；或 help / `provider` 正常完成。未配置闸门时，eval 低分本身仍以 0 退出。 |
+| **1** | `run`/`task` 报告失败、所有选中的 eval 目标调用都失败，或 eval 闸门失败。 |
+| **2** | usage、validation、可读的 JSON 错误、模块加载错误，或文件访问问题（例如文件缺失）。 |
 | **3** | 意外错误，包括以抛出错误形式暴露的典型 LLM/API 失败。 |
 
 在脚本里：
@@ -296,6 +367,7 @@ esac
 
 - 只有长选项：`--goal`、`--team`、`--file` 等。
 - 值可以用 `=` 附带：`--team=./team.json`。
+- `oma eval run` 接受重复的 `--report` 和 `--meta` 选项，可以使用附加值或分开的值。闸门、基线和报告文件选项各接受一个路径。
 - 布尔式标志（`--pretty`、`--include-messages`）不取值；如果下一个 token 不以 `--` 开头，它会被当作前一个选项的值（标准的 `getopt` 风格配对）。
 
 ---
