@@ -1,11 +1,10 @@
 // Inventory of the framework's example suite, for /examples.
 //
-// PRD §4.3 hard requirement: the page must list EVERY entry and stay in sync
-// with the repo — no hand-maintained list. The canonical inventory is derived
-// from the repo's git tree + README tables by scripts/refresh-gh-data.mjs, which
-// writes src/data/examples.json. getExamples() below just reads that committed
-// snapshot — the fetch/parse used to run at build time and moved out so a
-// GitHub blip at deploy can't degrade the page. See the note in ./site.
+// PRD §4.3 hard requirement: the page must list EVERY supported entry and stay
+// in sync with the repo — no hand-maintained list. The canonical inventory is
+// derived from the framework catalog + schema and cross-checked against the git
+// tree at one immutable commit by scripts/refresh-gh-data.mjs. getExamples()
+// below just reads the committed snapshot, so builds remain deterministic.
 
 import examplesSnapshot from '../data/examples.json';
 import sourceSnapshot from '../data/examples-source.json';
@@ -73,6 +72,7 @@ export interface ExampleDetail {
 }
 
 export interface ExamplesData {
+  provenance: ExamplesProvenance;
   cookbook: Example[];
   apps: Example[];
   reference: Example[];
@@ -80,8 +80,57 @@ export interface ExamplesData {
   basics: Example[];
   patterns: Example[];
   providers: Example[];
+  // Kept in the snapshot for full catalog coverage. The current /examples IA
+  // continues to expose production examples through productionHref.
+  production: Example[];
   productionHref: string;
   browseHref: string;
+}
+
+export interface ExamplesProvenance {
+  sourceRepository: string;
+  requestedCommit: string;
+  resolvedCommit: string;
+  commitTreeSha: string;
+  inputs: {
+    catalog: { path: string; blobSha: string };
+    schema: { path: string; blobSha: string };
+    examplesTree: { path: string; treeSha: string };
+  };
+  generation: {
+    consumer: string;
+    catalogSchemaVersion: number;
+    catalogEntryCount: number;
+    relation: string;
+  };
+}
+
+function isExamplesProvenance(value: unknown): value is ExamplesProvenance {
+  if (!value || typeof value !== 'object') return false;
+  const provenance = value as Partial<ExamplesProvenance>;
+  return (
+    typeof provenance.sourceRepository === 'string' &&
+    typeof provenance.requestedCommit === 'string' &&
+    provenance.requestedCommit === provenance.resolvedCommit &&
+    typeof provenance.commitTreeSha === 'string' &&
+    typeof provenance.inputs?.catalog?.blobSha === 'string' &&
+    typeof provenance.inputs?.schema?.blobSha === 'string' &&
+    typeof provenance.inputs?.examplesTree?.treeSha === 'string'
+  );
+}
+
+function sameExamplesProvenance(left: ExamplesProvenance, right: ExamplesProvenance): boolean {
+  return (
+    left.sourceRepository === right.sourceRepository &&
+    left.resolvedCommit === right.resolvedCommit &&
+    left.commitTreeSha === right.commitTreeSha &&
+    left.inputs.catalog.path === right.inputs.catalog.path &&
+    left.inputs.catalog.blobSha === right.inputs.catalog.blobSha &&
+    left.inputs.schema.path === right.inputs.schema.path &&
+    left.inputs.schema.blobSha === right.inputs.schema.blobSha &&
+    left.inputs.examplesTree.path === right.inputs.examplesTree.path &&
+    left.inputs.examplesTree.treeSha === right.inputs.examplesTree.treeSha
+  );
 }
 
 // Read the committed snapshot. Returns null only if the file is missing or
@@ -99,6 +148,8 @@ export function getExamples(): ExamplesData | null {
     !Array.isArray(d.basics) ||
     !Array.isArray(d.patterns) ||
     !Array.isArray(d.providers) ||
+    !Array.isArray(d.production) ||
+    !isExamplesProvenance(d.provenance) ||
     typeof d.productionHref !== 'string' ||
     typeof d.browseHref !== 'string'
   ) {
@@ -121,23 +172,38 @@ export function getFeaturedUseCases(data: ExamplesData | null = getExamples()): 
 
 interface ExamplesSource {
   repo: string;
+  provenance: ExamplesProvenance;
   details: Record<string, ExampleDetail>;
+}
+
+function getExamplesSource(): ExamplesSource | null {
+  const source = sourceSnapshot as Partial<ExamplesSource>;
+  const inventory = examplesSnapshot as Partial<ExamplesData>;
+  if (
+    typeof source.repo !== 'string' ||
+    typeof source.details !== 'object' ||
+    source.details === null ||
+    !isExamplesProvenance(source.provenance) ||
+    !isExamplesProvenance(inventory.provenance) ||
+    !sameExamplesProvenance(source.provenance, inventory.provenance)
+  ) {
+    return null;
+  }
+  return source as ExamplesSource;
 }
 
 // All example detail records, in the JSON's insertion order. Returns [] if the
 // snapshot is missing/malformed — getStaticPaths then simply emits no detail
 // pages (the index still renders and links out), rather than failing the build.
 export function getAllExampleDetails(): ExampleDetail[] {
-  const d = sourceSnapshot as Partial<ExamplesSource>;
-  if (!d || typeof d.details !== 'object' || d.details === null) return [];
-  return Object.values(d.details as Record<string, ExampleDetail>);
+  const source = getExamplesSource();
+  return source ? Object.values(source.details) : [];
 }
 
 // One detail record by slug (== Example.name), or null when absent — lets the
 // index link out to GitHub for entries without a captured source.
 export function getExampleDetail(slug: string): ExampleDetail | null {
-  const d = sourceSnapshot as Partial<ExamplesSource>;
-  const detail = d?.details?.[slug];
+  const detail = getExamplesSource()?.details[slug];
   return detail ?? null;
 }
 

@@ -1,366 +1,393 @@
 {
+  "provenance": {
+    "sourceRepository": "open-multi-agent/open-multi-agent",
+    "requestedCommit": "9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c",
+    "resolvedCommit": "9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c",
+    "commitTreeSha": "1d62cb104bb742752aaec4e8fc04e116ce67d1cc",
+    "inputs": {
+      "catalog": {
+        "path": "packages/core/examples/catalog.json",
+        "blobSha": "d8c4dd4dfcb0f742ff24ec1ad74c1da7c9c33b70"
+      },
+      "schema": {
+        "path": "packages/core/examples/catalog.schema.json",
+        "blobSha": "8ea573de1bb96aa67b79deb450ab904bb6b598ea"
+      },
+      "examplesTree": {
+        "path": "packages/core/examples",
+        "treeSha": "24b24baa6fe929ca440f7ec25cf3a1fc97e9cafb"
+      }
+    },
+    "generation": {
+      "consumer": "scripts/refresh-gh-data.mjs",
+      "catalogSchemaVersion": 1,
+      "catalogEntryCount": 58,
+      "relation": "inventory and detail records are generated only from the pinned catalog and matching commit tree"
+    }
+  },
   "cookbook": [
     {
       "name": "adaptive-customer-support",
       "title": "Adaptive Customer Support",
-      "blurb": "runTeam() selects only the relevant specialists for a shipping or billing escalation, then synthesizes a grounded customer response.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/cookbook/adaptive-customer-support.ts"
+      "blurb": "Let runTeam() select the specialists needed for a shipping or billing escalation and synthesize a grounded response.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/cookbook/adaptive-customer-support.ts"
     },
     {
       "name": "competitive-monitoring",
       "title": "Competitive Monitoring",
-      "blurb": "Parallel source monitoring (Twitter/Reddit/News), contradiction detection, and aggregated intelligence reporting.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/cookbook/competitive-monitoring.ts"
+      "blurb": "Monitor multiple sources in parallel, detect contradictions, and aggregate an intelligence report.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/cookbook/competitive-monitoring.ts"
     },
     {
       "name": "contract-review-dag",
       "title": "Contract Review DAG",
-      "blurb": "4-task DAG (extract → compliance-check + summary → notify) with step-level retry. Run normally or with FORCE_FAIL=task2 to exercise retry.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/cookbook/contract-review-dag.ts"
+      "blurb": "Run a four-task contract review DAG with parallel checks and step-level retry.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/cookbook/contract-review-dag.ts"
     },
     {
       "name": "incident-postmortem-dag",
       "title": "Incident Postmortem DAG",
-      "blurb": "5-task DAG with three parallel root tasks (log patterns + deploy correlation + blast radius) feeding root-cause hypothesis and final postmortem synthesis.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/cookbook/incident-postmortem-dag.ts"
+      "blurb": "Fan three independent incident investigations into root-cause analysis and a final postmortem.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/cookbook/incident-postmortem-dag.ts"
     },
     {
       "name": "meeting-summarizer",
       "title": "Meeting Summarizer",
-      "blurb": "Fan-out post-processing of a transcript into summary, structured action items, and sentiment.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/cookbook/meeting-summarizer.ts"
+      "blurb": "Process a transcript in parallel into a summary, structured action items, and sentiment.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/cookbook/meeting-summarizer.ts"
     },
     {
       "name": "narrative-puzzle-hint-arbitration",
       "title": "Narrative Puzzle Hint Arbitration",
-      "blurb": "Multi-source hint arbitration with an external safety veto that sits outside the generation loop.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/cookbook/narrative-puzzle-hint-arbitration.ts"
+      "blurb": "Resolve conflicting hint sources through parallel analysis, synthesis, and an external safety veto.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/cookbook/narrative-puzzle-hint-arbitration.ts"
     },
     {
       "name": "paper-replication-triage",
       "title": "Paper Replication Triage",
-      "blurb": "Multi-source paper replication triage with artifact discovery, seeded conflicts, and a structured go/no-go plan.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/cookbook/paper-replication-triage.ts"
+      "blurb": "Reconcile multiple evidence sources into a structured paper-replication go or no-go plan.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/cookbook/paper-replication-triage.ts"
     },
     {
       "name": "personalized-interview-simulator",
       "title": "Personalized Interview Simulator",
-      "blurb": "Interactive interviewer loop with observer flags, shared memory, and structured debrief.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/cookbook/personalized-interview-simulator.ts"
+      "blurb": "Run an interactive interviewer and observer loop with shared memory and a structured debrief.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/cookbook/personalized-interview-simulator.ts"
     },
     {
       "name": "rare-disease-information-triage",
       "title": "Rare Disease Information Triage",
-      "blurb": "Source-isolated rare disease information triage with mock fixtures, seeded misinformation/conflict detection, and safety-boundary arbitration.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/cookbook/rare-disease-information-triage.ts"
+      "blurb": "Audit isolated mock evidence sources, detect conflicts, and apply an explicit medical safety boundary.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/cookbook/rare-disease-information-triage.ts"
     },
     {
       "name": "translation-backtranslation",
-      "title": "Translation Backtranslation",
-      "blurb": "Translate → back-translate with a different provider → flag semantic drift (cross-model).",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/cookbook/translation-backtranslation.ts"
+      "title": "Translation and Backtranslation",
+      "blurb": "Translate with one provider, backtranslate with another, and flag semantic drift with structured output.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/cookbook/translation-backtranslation.ts"
     }
   ],
   "apps": [
     {
       "name": "express-customer-support",
       "title": "Express Customer Support",
-      "blurb": "Express REST API: runTasks() behind POST /tickets, per-agent Zod schemas, swappable provider env vars, HTTP error mapping (400/502/504)",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/tree/main/packages/core/examples/integrations/express-customer-support"
+      "blurb": "Embed a structured runTasks() support pipeline behind an Express POST /tickets endpoint.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/tree/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/integrations/express-customer-support"
     },
     {
       "name": "with-vercel-ai-sdk",
       "title": "Vercel AI SDK",
-      "blurb": "Next.js: OMA runTeam() plus AI SDK useChat streaming",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/tree/main/packages/core/examples/integrations/with-vercel-ai-sdk"
+      "blurb": "Combine OMA runTeam() orchestration with an AI SDK streaming chat interface in Next.js.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/tree/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/integrations/with-vercel-ai-sdk"
     }
   ],
   "reference": [
     {
       "name": "external-agent-acp",
-      "title": "External Agent Acp",
-      "blurb": "External coding agents over ACP (Agent Client Protocol)",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/integrations/external-agent-acp.ts"
+      "title": "External Agent over ACP",
+      "blurb": "Use an external coding CLI over ACP as a team member in an OMA task DAG.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/integrations/external-agent-acp.ts"
     },
     {
       "name": "external-agent-process",
       "title": "External Agent Process",
-      "blurb": "Generic local processes as external agents.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/integrations/external-agent-process.ts"
+      "blurb": "Run deterministic local subprocesses as external agents without a model API key.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/integrations/external-agent-process.ts"
     },
     {
       "name": "mcp-bilig-workpaper",
-      "title": "MCP Bilig Workpaper",
-      "blurb": "Bilig WorkPaper MCP tools for formula readback, recalculation, and persisted workbook JSON.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/integrations/mcp-bilig-workpaper.ts"
+      "title": "MCP Bilig WorkPaper",
+      "blurb": "Use Bilig WorkPaper MCP tools for formula readback, recalculation, and persisted workbook data.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/integrations/mcp-bilig-workpaper.ts"
     },
     {
       "name": "mcp-github",
       "title": "MCP GitHub",
-      "blurb": "An MCP server's tools exposed to an agent via connectMCPTools().",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/integrations/mcp-github.ts"
+      "blurb": "Connect an MCP server over stdio and expose its tools through the OMA tool registry.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/integrations/mcp-github.ts"
     },
     {
       "name": "mcp-open-design",
       "title": "MCP Open Design",
-      "blurb": "Batch fan-out over an MCP server's async jobs: N Open Design runs generated in parallel via runTasks(), each polling get_run to completion with code-driven orchestration.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/integrations/mcp-open-design.ts"
+      "blurb": "Drive multiple asynchronous Open Design MCP jobs in parallel through an explicit task pipeline.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/integrations/mcp-open-design.ts"
     },
     {
       "name": "trace-observability",
       "title": "Trace Observability",
-      "blurb": "onTrace spans for LLM calls, tools, and tasks.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/integrations/trace-observability.ts"
+      "blurb": "Collect structured onTrace events for LLM calls, tools, tasks, and agent runs.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/integrations/trace-observability.ts"
     }
   ],
   "vendor": [
     {
       "name": "observability-v2",
-      "title": "Observability V2",
-      "blurb": "No-key runnable v2 batching, InMemory/File TraceStore, OTel in-memory provider, CLI, SIGTERM server, and FaaS lifecycle examples.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/tree/main/packages/core/examples/integrations/observability-v2"
+      "title": "Observability v2",
+      "blurb": "No-key examples for batching, trace stores, OpenTelemetry, lifecycle handling, and the offline Run Viewer.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/tree/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/integrations/observability-v2"
     },
     {
       "name": "with-engram",
-      "title": "Engram",
-      "blurb": "Engram memory backend.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/tree/main/packages/core/examples/integrations/with-engram"
+      "title": "Engram Memory",
+      "blurb": "Use Engram for manual agent memory tools or as the shared-memory store behind runTeam().",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/tree/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/integrations/with-engram"
     },
     {
       "name": "with-tencentdb-memory",
-      "title": "TencentDB Memory",
-      "blurb": "TencentDB-Agent-Memory long-term memory (L0→L3 pipeline) via its Hermes Gateway sidecar.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/tree/main/packages/core/examples/integrations/with-tencentdb-memory"
+      "title": "TencentDB Agent Memory",
+      "blurb": "Back an OMA team's shared memory with TencentDB-Agent-Memory through its Hermes Gateway.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/tree/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/integrations/with-tencentdb-memory"
     }
   ],
   "basics": [
     {
       "name": "multi-model-team",
-      "title": "Multi Model Team",
-      "blurb": "Different models per agent in one team.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/basics/multi-model-team.ts"
+      "title": "Multi-Model Team",
+      "blurb": "Combine models from different providers with custom tools in one agent pool.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/basics/multi-model-team.ts"
     },
     {
       "name": "single-agent",
       "title": "Single Agent",
-      "blurb": "One agent with bash + file tools, then streaming via the Agent class.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/basics/single-agent.ts"
+      "blurb": "One agent with bash and file tools, followed by streaming and multi-turn conversation examples.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/basics/single-agent.ts"
     },
     {
       "name": "task-pipeline",
       "title": "Task Pipeline",
-      "blurb": "runTasks() with explicit task DAG and dependencies.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/basics/task-pipeline.ts"
+      "blurb": "Use runTasks() with an explicit task DAG, assignments, and dependency-scoped context.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/basics/task-pipeline.ts"
     },
     {
       "name": "team-collaboration",
       "title": "Team Collaboration",
-      "blurb": "runTeam() coordinator pattern — goal in, results out.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/basics/team-collaboration.ts"
+      "blurb": "Use runTeam() to turn a goal into a coordinated multi-agent task graph and final result.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/basics/team-collaboration.ts"
     }
   ],
   "patterns": [
     {
       "name": "agent-handoff",
       "title": "Agent Handoff",
-      "blurb": "Synchronous sub-agent delegation via delegate_to_agent.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/agent-handoff.ts"
+      "blurb": "Delegate a synchronous sub-prompt from one specialist to another with delegate_to_agent.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/patterns/agent-handoff.ts"
     },
     {
       "name": "consensus",
       "title": "Consensus",
-      "blurb": "Proposer→judge refutation loop via runConsensus(): default judge prompt and per-judge judgePrompt function.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/consensus.ts"
+      "blurb": "Use a proposer and a panel of judges in a configurable refutation and quorum loop.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/patterns/consensus.ts"
     },
     {
       "name": "cost-tiered-pipeline",
-      "title": "Cost Tiered Pipeline",
-      "blurb": "Run the same four-stage pipeline twice to compare flagship vs tiered model cost.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/cost-tiered-pipeline.ts"
+      "title": "Cost-Tiered Pipeline",
+      "blurb": "Compare the token and cost profile of an all-flagship pipeline with a tiered model mix.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/patterns/cost-tiered-pipeline.ts"
     },
     {
       "name": "cross-provider-reasoning",
-      "title": "Cross Provider Reasoning",
-      "blurb": "Preserve a reasoning model's thought stream across providers via preserveReasoningAsText.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/cross-provider-reasoning.ts"
+      "title": "Cross-Provider Reasoning",
+      "blurb": "Preserve a reasoning model's thought stream as text when a conversation moves between providers.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/patterns/cross-provider-reasoning.ts"
     },
     {
       "name": "eval-offline-regression",
-      "title": "Eval Offline Regression",
-      "blurb": "No-key EvalSet regression across two model configurations with rule + judge scorers and a gate.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/eval-offline-regression.ts"
+      "title": "Offline Evaluation Regression",
+      "blurb": "Run a no-key EvalSet regression across two targets with rule and judge scorers plus a gate.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/patterns/eval-offline-regression.ts"
     },
     {
       "name": "eval-online-sampling",
-      "title": "Eval Online Sampling",
-      "blurb": "Best-effort online sampling into FileEvalStore with explicit flush and shutdown.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/eval-online-sampling.ts"
+      "title": "Online Evaluation Sampling",
+      "blurb": "Sample live runs for asynchronous scoring in a durable FileEvalStore with explicit shutdown.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/patterns/eval-online-sampling.ts"
     },
     {
       "name": "fan-out-aggregate",
-      "title": "Fan Out Aggregate",
-      "blurb": "MapReduce-style fan-out via AgentPool.runParallel().",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/fan-out-aggregate.ts"
+      "title": "Fan-Out and Aggregate",
+      "blurb": "Send the same question to multiple agents in parallel and aggregate their results.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/patterns/fan-out-aggregate.ts"
     },
     {
       "name": "multi-perspective-code-review",
-      "title": "Multi Perspective Code Review",
-      "blurb": "Multiple reviewer agents in parallel, then synthesis.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/multi-perspective-code-review.ts"
+      "title": "Multi-Perspective Code Review",
+      "blurb": "Generate code, run several specialist reviews in parallel, and synthesize structured findings.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/patterns/multi-perspective-code-review.ts"
     },
     {
       "name": "plan-replay",
       "title": "Plan Replay",
-      "blurb": "Pin a coordinator plan with createPlanArtifact, then replay it with runFromPlan, no coordinator re-run.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/plan-replay.ts"
+      "blurb": "Freeze a coordinator plan into a diffable artifact and replay it without another planning call.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/patterns/plan-replay.ts"
     },
     {
       "name": "research-aggregation",
       "title": "Research Aggregation",
-      "blurb": "Multi-source research collated by a synthesis agent.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/research-aggregation.ts"
+      "blurb": "Run independent research tasks in parallel and collate them through a synthesis task.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/patterns/research-aggregation.ts"
     },
     {
       "name": "risk-gated-bash",
-      "title": "Risk Gated Bash",
-      "blurb": "Per-call onToolCall gate + classifyBashCommand: auto-pass read-only bash, human-review ambiguous, block destructive.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/risk-gated-bash.ts"
+      "title": "Risk-Gated Bash",
+      "blurb": "Combine tool grants with a per-call gate that allows, reviews, or blocks bash commands.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/patterns/risk-gated-bash.ts"
     },
     {
       "name": "structured-output",
       "title": "Structured Output",
-      "blurb": "Zod-validated JSON output from an agent.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/structured-output.ts"
+      "blurb": "Validate an agent's JSON response against a Zod output schema.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/patterns/structured-output.ts"
     },
     {
       "name": "task-retry",
       "title": "Task Retry",
-      "blurb": "Per-task retry with exponential backoff.",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/task-retry.ts"
+      "blurb": "Retry failed tasks with configurable delay and exponential backoff.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/patterns/task-retry.ts"
     }
   ],
   "providers": [
     {
       "name": "azure-openai",
       "title": "Azure OpenAI",
-      "blurb": "Azure OpenAI",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/azure-openai.ts"
+      "blurb": "Run the standard three-agent team with Azure OpenAI deployments.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/azure-openai.ts"
     },
     {
       "name": "bedrock",
-      "title": "Bedrock",
-      "blurb": "AWS Bedrock (Claude via Converse API)",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/bedrock.ts"
+      "title": "AWS Bedrock",
+      "blurb": "Run the standard three-agent team through the AWS Bedrock Converse API.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/bedrock.ts"
     },
     {
       "name": "copilot",
-      "title": "Copilot",
-      "blurb": "GitHub Copilot (GPT-4o + Claude)",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/copilot.ts"
+      "title": "GitHub Copilot",
+      "blurb": "Run the standard three-agent team through GitHub Copilot's OpenAI-compatible endpoint.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/copilot.ts"
     },
     {
       "name": "deepseek",
-      "title": "Deepseek",
-      "blurb": "DeepSeek Chat",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/deepseek.ts"
+      "title": "DeepSeek",
+      "blurb": "Run the standard three-agent team with DeepSeek models.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/deepseek.ts"
     },
     {
       "name": "doubao",
       "title": "Doubao",
-      "blurb": "Doubao / ByteDance (OpenAI-compatible)",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/doubao.ts"
+      "blurb": "Run the standard three-agent team through ByteDance Volcengine Ark.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/doubao.ts"
     },
     {
       "name": "gemini",
-      "title": "Gemini",
-      "blurb": "Google Gemini",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/gemini.ts"
+      "title": "Google Gemini",
+      "blurb": "Run the standard three-agent team with the native Google Gemini adapter.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/gemini.ts"
     },
     {
       "name": "gemma4-local",
-      "title": "Gemma4 Local",
-      "blurb": "Gemma 4 via Ollama (100% local)",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/gemma4-local.ts"
+      "title": "Gemma 4 Local",
+      "blurb": "Run both execution modes locally with Gemma 4 through Ollama and no cloud API key.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/gemma4-local.ts"
     },
     {
       "name": "grok",
       "title": "Grok",
-      "blurb": "xAI Grok",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/grok.ts"
+      "blurb": "Run the standard three-agent team with xAI Grok models.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/grok.ts"
     },
     {
       "name": "groq",
       "title": "Groq",
-      "blurb": "Groq (OpenAI-compatible)",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/groq.ts"
+      "blurb": "Run the standard three-agent team through Groq's OpenAI-compatible API.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/groq.ts"
     },
     {
       "name": "hunyuan",
-      "title": "Hunyuan",
-      "blurb": "Tencent Hunyuan (MaaS, hy3)",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/hunyuan.ts"
+      "title": "Tencent Hunyuan",
+      "blurb": "Run the standard three-agent team with Tencent Hunyuan through MaaS.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/hunyuan.ts"
     },
     {
       "name": "local-quantized",
-      "title": "Local Quantized",
-      "blurb": "Quantized MoE on vLLM / llama-server with tuned sampling (topK / minP / frequencyPenalty / parallelToolCalls / extraBody.repetition_penalty)",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/local-quantized.ts"
+      "title": "Local Quantized Model",
+      "blurb": "Tune sampling and tool-call behavior for a quantized local model on vLLM or llama-server.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/local-quantized.ts"
     },
     {
       "name": "mimo",
-      "title": "Mimo",
-      "blurb": "MiMo V2.5 Pro",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/mimo.ts"
+      "title": "MiMo",
+      "blurb": "Run the standard three-agent team with Xiaomi MiMo's API.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/mimo.ts"
     },
     {
       "name": "minimax",
-      "title": "Minimax",
-      "blurb": "MiniMax M3",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/minimax.ts"
+      "title": "MiniMax",
+      "blurb": "Run the standard three-agent team with MiniMax models.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/minimax.ts"
     },
     {
       "name": "mistral",
       "title": "Mistral",
-      "blurb": "Mistral (OpenAI-compatible)",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/mistral.ts"
+      "blurb": "Run the standard three-agent team through Mistral's OpenAI-compatible API.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/mistral.ts"
     },
     {
       "name": "moonshot",
-      "title": "Moonshot",
-      "blurb": "Moonshot AI / Kimi (OpenAI-compatible)",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/moonshot.ts"
+      "title": "Moonshot AI",
+      "blurb": "Run the standard three-agent team through Moonshot AI's OpenAI-compatible API.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/moonshot.ts"
     },
     {
       "name": "ollama",
       "title": "Ollama",
-      "blurb": "Ollama (local) + Claude",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/ollama.ts"
+      "blurb": "Mix a local Ollama model with a cloud model in one task pipeline.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/ollama.ts"
     },
     {
       "name": "openrouter",
-      "title": "Openrouter",
-      "blurb": "OpenRouter (OpenAI-compatible)",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/openrouter.ts"
+      "title": "OpenRouter",
+      "blurb": "Run the standard three-agent team through OpenRouter's OpenAI-compatible API.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/openrouter.ts"
     },
     {
       "name": "qiniu",
       "title": "Qiniu",
-      "blurb": "Qiniu (OpenAI-compatible)",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/qiniu.ts"
+      "blurb": "Run the standard three-agent team through Qiniu's OpenAI-compatible API.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/qiniu.ts"
     },
     {
       "name": "qwen",
       "title": "Qwen",
-      "blurb": "Qwen / DashScope (OpenAI-compatible)",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/qwen.ts"
+      "blurb": "Run the standard three-agent team through DashScope's OpenAI-compatible API.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/qwen.ts"
     },
     {
       "name": "zhipu",
-      "title": "Zhipu",
-      "blurb": "Zhipu GLM (OpenAI-compatible)",
-      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/zhipu.ts"
+      "title": "Zhipu GLM",
+      "blurb": "Run the standard three-agent team through Zhipu's OpenAI-compatible API.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/providers/zhipu.ts"
     }
   ],
-  "productionHref": "https://github.com/open-multi-agent/open-multi-agent/tree/main/packages/core/examples/production",
-  "browseHref": "https://github.com/open-multi-agent/open-multi-agent/tree/main/packages/core/examples"
+  "production": [],
+  "productionHref": "https://github.com/open-multi-agent/open-multi-agent/tree/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples/production",
+  "browseHref": "https://github.com/open-multi-agent/open-multi-agent/tree/9478b2ff5ffc00db28f103ab5fcfc0f25da31c7c/packages/core/examples"
 }
