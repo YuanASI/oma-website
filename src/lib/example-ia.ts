@@ -31,6 +31,11 @@ export interface ExampleGoalGroup {
   entries: CatalogExample[];
 }
 
+export const PRIMARY_EXAMPLE_LIMITS: Partial<Record<ExampleGoal, number>> = {
+  'use-case-recipes': 3,
+  'connect-your-stack': 3,
+};
+
 export function compareExamples(left: CatalogExample, right: CatalogExample): number {
   if (left.featuredOrder !== undefined || right.featuredOrder !== undefined) {
     if (left.featuredOrder === undefined) return 1;
@@ -48,6 +53,19 @@ export function getGoalGroups(entries: readonly CatalogExample[]): ExampleGoalGr
       .filter((entry) => entry.section === 'goal' && entry.goal === goal)
       .sort(compareExamples),
   }));
+}
+
+export function splitGoalEntries(group: ExampleGoalGroup): {
+  primary: CatalogExample[];
+  remaining: CatalogExample[];
+} {
+  const featured = group.entries.filter((entry) => entry.featuredOrder !== undefined);
+  const primary = featured.slice(0, PRIMARY_EXAMPLE_LIMITS[group.goal] ?? featured.length);
+  const primaryIds = new Set(primary.map((entry) => entry.id));
+  return {
+    primary,
+    remaining: group.entries.filter((entry) => !primaryIds.has(entry.id)),
+  };
 }
 
 export function getModelsProviders(entries: readonly CatalogExample[]): CatalogExample[] {

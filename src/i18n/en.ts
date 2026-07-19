@@ -317,7 +317,7 @@ export const en = {
     goals: {
       'start-here': {
         eyebrow: 'Start Here',
-        title: 'Learn the three ways to run.',
+        title: 'Learn the four ways to run.',
         sub: 'Begin with one agent, then move to a coordinator-planned team, an explicit task DAG, or a mixed-model pool.',
       },
       'use-case-recipes': {

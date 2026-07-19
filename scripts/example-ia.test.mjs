@@ -9,6 +9,7 @@ import {
   getFeaturedUseCases,
   getGoalGroups,
   getModelsProviders,
+  splitGoalEntries,
 } from '../src/lib/example-ia.ts';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -49,6 +50,30 @@ test('featuredOrder is stable within each goal and unfeatured entries remain dis
   );
 });
 
+test('primary grids stay balanced without hiding overflow entries', async () => {
+  const { inventory } = await snapshots();
+  const groups = new Map(getGoalGroups(inventory.entries).map((group) => [group.goal, group]));
+  const useCaseGroup = groups.get('use-case-recipes');
+  const stackGroup = groups.get('connect-your-stack');
+  assert.ok(useCaseGroup);
+  assert.ok(stackGroup);
+  const useCases = splitGoalEntries(useCaseGroup);
+  const stack = splitGoalEntries(stackGroup);
+
+  assert.deepEqual(
+    useCases.primary.map((entry) => entry.id),
+    ['adaptive-customer-support', 'contract-review-dag', 'incident-postmortem-dag'],
+  );
+  assert.equal(useCases.primary.length, 3);
+  assert.equal(useCases.primary.length + useCases.remaining.length, 10);
+  assert.deepEqual(
+    stack.primary.map((entry) => entry.id),
+    ['express-customer-support', 'mcp-github', 'with-vercel-ai-sdk'],
+  );
+  assert.equal(stack.primary.length, 3);
+  assert.equal(stack.primary.length + stack.remaining.length, 9);
+});
+
 test('every catalog entry appears exactly once without legacy category projections', async () => {
   const { inventory, source } = await snapshots();
   const groups = getGoalGroups(inventory.entries);
@@ -81,6 +106,9 @@ test('UI keeps public routes and legacy share anchors while using bilingual goal
   }
   assert.match(detailPage, /\/examples\/\$\{detail\.name\}\//);
   assert.match(page, /\/examples\/\$\{e\.id\}\//);
+  assert.match(en, /Learn the four ways to run\./);
+  assert.match(zh, /先掌握四种运行方式。/);
+  assert.match(zh, /'adaptive-customer-support': \{ title: '自适应客服'/);
 });
 
 test('legacy README, path, app/vendor, and hard-coded featured fallbacks are absent', async () => {

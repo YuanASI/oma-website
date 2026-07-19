@@ -20,6 +20,7 @@ import {
   getExampleGoalGroups,
   getExamples,
   getModelsProviderExamples,
+  splitGoalEntries,
   type CatalogExample,
   type ExampleGoal,
 } from '../../../lib/examples';
@@ -60,8 +61,6 @@ const legacyAnchors: Record<ExampleGoal, string[]> = {
   'production-controls': [],
   'connect-your-stack': ['integrations'],
 };
-const featured = (entries: CatalogExample[]) => entries.filter((entry) => entry.featuredOrder !== undefined);
-const unfeatured = (entries: CatalogExample[]) => entries.filter((entry) => entry.featuredOrder === undefined);
 const entryMeta = (entry: CatalogExample) =>
   `${ex_t.formats[entry.format]} · ${ex_t.levels[entry.level]}`;
 
@@ -117,8 +116,7 @@ const jsonLd = {
       <Fragment>
         {goalGroups.map((group, groupIndex) => {
           const copy = ex_t.goals[group.goal];
-          const primary = featured(group.entries);
-          const more = unfeatured(group.entries);
+          const { primary, remaining: more } = splitGoalEntries(group);
           return (
             <section class={`section${groupIndex === 0 ? ' ex-first' : ''}`} id={group.goal}>
               {legacyAnchors[group.goal].map((anchor) => (

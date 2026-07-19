@@ -296,7 +296,7 @@ export const zh: UiDict = {
     goals: {
       'start-here': {
         eyebrow: '从这里开始',
-        title: '先掌握三种运行方式。',
+        title: '先掌握四种运行方式。',
         sub: '从单个 Agent 开始，再进入协调器规划的团队、显式任务 DAG，或混合模型池。',
       },
       'use-case-recipes': {
@@ -469,6 +469,7 @@ export const zh: UiDict = {
     // （Engram、Vercel AI SDK 等）保留英文；未列出的条目回退英文。
     entries: {
       // cookbook
+      'adaptive-customer-support': { title: '自适应客服', blurb: '协调器根据物流或账单升级问题动态选择专职 Agent，再综合各自证据，形成一份有依据的回复。' },
       'competitive-monitoring': { title: '竞品监控', blurb: '并行监控多个来源（Twitter/Reddit/News）、检测矛盾，并聚合成情报报告。' },
       'contract-review-dag': { title: '合同审查 DAG', blurb: '4 个任务的 DAG（extract → compliance-check + summary → notify）+ 步骤级重试。正常运行，或用 FORCE_FAIL=task2 触发重试。' },
       'incident-postmortem-dag': { title: '事故复盘 DAG', blurb: '5 个任务的 DAG：三个并行的根任务（日志模式 + 部署关联 + 影响范围）汇入根因假设与最终复盘综合。' },

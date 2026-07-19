@@ -12,6 +12,7 @@ import {
   getFeaturedUseCases as selectFeaturedUseCases,
   getGoalGroups,
   getModelsProviders,
+  splitGoalEntries,
   type CatalogExample,
   type ExampleFormat,
   type ExampleGoal,
@@ -26,6 +27,7 @@ export type {
   ExampleGoalGroup,
   ExampleLevel,
 };
+export { splitGoalEntries };
 
 export interface ExampleDetail {
   name: string;
