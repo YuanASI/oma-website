@@ -126,7 +126,7 @@ export const en = {
     sectionReliability: {
       eyebrow: 'Control',
       title: 'You hold the controls.',
-      sub: 'Deterministic control around non-deterministic agents. Three layers, all in the API — gate what agents may do, bound time and spend, then freeze, replay, or resume the run.',
+      sub: 'Deterministic control around non-deterministic agents — three layers, all in the API.',
     },
     reliability: [
       {
@@ -135,11 +135,11 @@ export const en = {
         ref: '/guides/orchestration-controls/',
         refLabel: 'orchestration controls',
         parts: [
-          'Inspect the plan before any agent runs with ', { c: 'onPlanReady' },
-          ', then approve each round with ', { c: 'onApproval' },
-          '. Gate each validated tool call before execution with ', { c: 'onToolCall' },
-          ', add a proposer→judge check with ', { c: 'runConsensus' },
-          ' when one answer needs a second agent to sign off, and use loop detection to halt an agent that starts repeating itself.',
+          'Preview the plan with ', { c: 'onPlanReady' },
+          ', approve each round with ', { c: 'onApproval' },
+          ', and gate every tool call with ', { c: 'onToolCall' },
+          '. ', { c: 'runConsensus' },
+          ' adds a second-agent check; loop detection stops an agent that repeats itself.',
         ],
       },
       {
@@ -148,12 +148,11 @@ export const en = {
         ref: '/reference/model-routing/',
         refLabel: 'model routing',
         parts: [
-          'Route planning to a flagship model and the leaf tasks to cheap ones with ', { c: 'modelRouting' },
-          '. Stop further calls at token or estimated-USD boundaries with ', { c: 'maxTokenBudget' },
+          'Route planning to a flagship model and leaf tasks to cheap ones with ', { c: 'modelRouting' },
+          '. Cap spend at a token or USD ceiling with ', { c: 'maxTokenBudget' },
           ' and ', { c: 'maxCostBudget' },
           ' + ', { c: 'estimateCost' },
-          '; bound each model call with ', { c: 'callTimeoutMs' },
-          ', while task retries skip errors known to be terminal.',
+          '.',
         ],
       },
       {
@@ -163,10 +162,9 @@ export const en = {
         refLabel: 'observability',
         parts: [
           'Freeze a vetted plan with ', { c: 'createPlanArtifact' },
-          ' and replay it deterministically with ', { c: 'runFromPlan' },
-          '. Send TraceRecord v2 spans to an application-owned OpenTelemetry provider with ', { c: 'createOtelTraceSink' },
-          ', or open the offline Run Viewer after the run (', { c: 'oma run --dashboard' },
-          '). Checkpoints resume after the last completed task—an interrupted task starts again—and telemetry redaction remains best-effort.',
+          ' and replay it with ', { c: 'runFromPlan' },
+          '. Open the offline Run Viewer after any run (', { c: 'oma run --dashboard' },
+          '); checkpoints resume from the last completed task.',
         ],
       },
     ],

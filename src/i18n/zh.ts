@@ -110,7 +110,7 @@ export const zh: UiDict = {
     sectionReliability: {
       eyebrow: '掌控',
       title: '控制权在你手里。',
-      sub: '在非确定性的智能体外面裹一层确定性控制。三层，全在 API 里：给智能体的动作把关，约束时间与花费，再冻结、重放或恢复运行。',
+      sub: '在非确定性的智能体外面裹一层确定性控制——三层，全在 API 里。',
     },
     reliability: [
       {
@@ -119,11 +119,11 @@ export const zh: UiDict = {
         ref: '/guides/orchestration-controls/',
         refLabel: '编排控制',
         parts: [
-          '在任何智能体运行前先审视计划。用 ', { c: 'onPlanReady' },
-          '，再用 ', { c: 'onApproval' },
-          ' 逐轮审批。用 ', { c: 'onToolCall' },
-          ' 在输入校验后、工具执行前为每次调用把关；当某个答案需要第二个智能体背书时，用 ', { c: 'runConsensus' },
-          ' 加一道提议者→评审检查，再用循环检测叫停开始原地打转的智能体。',
+          '用 ', { c: 'onPlanReady' },
+          ' 预览计划、', { c: 'onApproval' },
+          ' 逐轮审批、', { c: 'onToolCall' },
+          ' 为每次工具调用把关。', { c: 'runConsensus' },
+          ' 加一道第二智能体校验；循环检测叫停原地打转的智能体。',
         ],
       },
       {
@@ -133,11 +133,10 @@ export const zh: UiDict = {
         refLabel: '模型路由',
         parts: [
           '用 ', { c: 'modelRouting' },
-          ' 把规划交给旗舰模型、把叶子任务交给便宜模型。用 ', { c: 'maxTokenBudget' },
+          ' 把规划交给旗舰模型、叶子任务交给便宜模型。用 ', { c: 'maxTokenBudget' },
           ' 和 ', { c: 'maxCostBudget' },
           ' + ', { c: 'estimateCost' },
-          ' 在 token 或估算美元边界停止后续调用；', { c: 'callTimeoutMs' },
-          ' 约束每次模型调用，任务重试则会跳过已知无法恢复的错误。',
+          ' 给花费封一个 token 或美元上限。',
         ],
       },
       {
@@ -148,9 +147,8 @@ export const zh: UiDict = {
         parts: [
           '用 ', { c: 'createPlanArtifact' },
           ' 冻结一份已审过的计划，再用 ', { c: 'runFromPlan' },
-          ' 确定性地重放。用 ', { c: 'createOtelTraceSink' },
-          ' 把 TraceRecord v2 span 发给由应用持有的 OpenTelemetry provider，或在运行后打开离线 Run Viewer（', { c: 'oma run --dashboard' },
-          '）。检查点从最后一个已完成任务之后恢复；被打断的任务会重新开始，遥测脱敏仍是尽力而为。',
+          ' 重放。运行后打开离线 Run Viewer（', { c: 'oma run --dashboard' },
+          '）；检查点从最后一个已完成任务之后恢复。',
         ],
       },
     ],
