@@ -12,12 +12,16 @@
     "enBodySha256": "1bf737c1aa7bedc6973ace5f8fc0ccdb4a242e641843b933ff56eaa865b5091c",
     "translatedAt": "2026-07-19"
   },
+  "guides/cost-budget-control": {
+    "enBodySha256": "ad2c390f15939783d548db29905f10c723481fdfcf8b60b02d0a80643a7d99e6",
+    "translatedAt": "2026-07-19"
+  },
   "guides/orchestration-controls": {
     "enBodySha256": "6994a49603a6d6c37b945c7b7fa0fe1822d7c28c8d7c7029c7129469b3e11522",
     "translatedAt": "2026-07-19"
   },
   "guides/production-checklist": {
-    "enBodySha256": "69caa0d4e30fc6b1b7edf7415ab4806b25eaa3af7cdbfb89c175061a0a387585",
+    "enBodySha256": "29ef3db8693fd1d2a82e0a7e3fede17cd712f6b26eb7d3d4939f50d0721c6e68",
     "translatedAt": "2026-07-19"
   },
   "reference/checkpoint": {
@@ -49,8 +53,16 @@
     "translatedAt": "2026-06-25"
   },
   "reference/observability": {
-    "enBodySha256": "a2dedcbcb8373e64a731e9ea81db7e4647635c89519acfef4d05172ec4e23774",
-    "translatedAt": "2026-07-18"
+    "enBodySha256": "da9b5b553a1a940486f8d898809e57c5390f7a48ad627f30247322eb841ad12f",
+    "translatedAt": "2026-07-19"
+  },
+  "reference/observability-migration": {
+    "enBodySha256": "c38fd01a4013b3ba38e85c1dab56768e9cecee93c3726764d5fe9fe749d743e8",
+    "translatedAt": "2026-07-19"
+  },
+  "reference/observability-performance": {
+    "enBodySha256": "1ba6d380fa3f88c77d1230423a215c23536c176f983a7bda85e4e7de4fa0fb4e",
+    "translatedAt": "2026-07-19"
   },
   "reference/plan-replay": {
     "enBodySha256": "f3f0db45e920738de97dfc846e11a4112e4c71119065586763ae15acd3b64ca3",

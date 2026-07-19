@@ -21,7 +21,8 @@ import TaskNode from '../../components/ds/TaskNode.astro';
 import heroRunEn from '../../data/hero-run.json';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
-import { REPO, NPM, ghStats, yuanasiHref } from '../../lib/site';
+import EnterpriseLink from '../../components/EnterpriseLink.astro';
+import { REPO, NPM, ghStats } from '../../lib/site';
 import { SHOWCASE } from '../../lib/showcase';
 import { FEATURED_USE_CASE_SLUGS, detailSlugs, getFeaturedUseCases } from '../../lib/examples';
 import { localeStaticPaths, toLocale, useTranslations, localizePath } from '../../i18n';
@@ -481,7 +482,7 @@ const jsonLd = {
               <p class="section-sub">{l.sectionFaq.sub}</p>
               <div class="faq-head-foot">
                 <a class="text-link" href={REPO + '#how-is-this-different-from-x'} target="_blank" rel="noreferrer"><span>{l.sectionFaq.viewAll}</span><span class="arrow">→</span></a>
-                <a class="btn-primary" href={yuanasiHref(locale)} target="_blank" rel="noreferrer"><span>{t.enterpriseCta.button}</span><span class="arrow" aria-hidden="true">→</span></a>
+                <EnterpriseLink class="btn-primary" locale={locale}><span>{t.enterpriseCta.button}</span><span class="arrow" aria-hidden="true">→</span></EnterpriseLink>
               </div>
             </div>
             <div class="faq-list">

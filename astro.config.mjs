@@ -197,6 +197,7 @@ export default defineConfig({
 					translations: { 'zh-CN': '指南' },
 					items: [
 						{ label: 'Orchestration Controls', slug: 'guides/orchestration-controls', translations: { 'zh-CN': '编排控制' } },
+						{ label: 'Control costs & budgets', slug: 'guides/cost-budget-control', translations: { 'zh-CN': '控制成本与预算' } },
 						{ label: 'Production Checklist', slug: 'guides/production-checklist', translations: { 'zh-CN': '生产清单' } },
 					],
 				},
@@ -224,6 +225,8 @@ export default defineConfig({
 					translations: { 'zh-CN': '可靠运行' },
 					items: [
 						{ label: 'Observability', slug: 'reference/observability', translations: { 'zh-CN': '可观测性' } },
+						{ label: 'Observability migration', slug: 'reference/observability-migration', translations: { 'zh-CN': '可观测性迁移' } },
+						{ label: 'Observability performance', slug: 'reference/observability-performance', translations: { 'zh-CN': '可观测性性能' } },
 						{ label: 'Checkpoint & resume', slug: 'reference/checkpoint', translations: { 'zh-CN': '检查点与恢复' } },
 						{ label: 'Context management', slug: 'reference/context-management', translations: { 'zh-CN': '上下文管理' } },
 						{ label: 'Evaluation', slug: 'reference/evaluation', translations: { 'zh-CN': '评估' } },

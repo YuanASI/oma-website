@@ -6,9 +6,9 @@ description: "三个遥测层：onProgress 事件、带 TraceStore 和可选 Ope
 `open-multi-agent` 暴露三个遥测层：实时进度事件、结构化的 trace span，以及运行后的单次运行 DAG/Waterfall Viewer。
 
 对于已有的回调集成，请遵循分阶段的
-[`onTrace` 迁移指南](https://github.com/open-multi-agent/open-multi-agent/blob/main/docs/observability-migration.md)。发布工程
+[`onTrace` 迁移指南](/zh/reference/observability-migration/)。发布工程
 与基准测试证据记录在
-[`observability-performance.md`](https://github.com/open-multi-agent/open-multi-agent/blob/main/docs/observability-performance.md) 和
+[`observability-performance.md`](/zh/reference/observability-performance/) 以及
 [`observability-release-readiness.md`](https://github.com/open-multi-agent/open-multi-agent/blob/main/docs/observability-release-readiness.md) 中。
 
 ## 运行标识与结果
@@ -504,7 +504,7 @@ const orchestrator = new OpenMultiAgent({
 异步的拒绝仍然是隔离的，不会变成未处理的拒绝。`onTrace` 在本次发布中未被标记为弃用；
 1.x 兼容窗口保持开放，用户可以按自己的节奏把传输代码迁移到 `observability.sinks`。
 可复制的逐阶段路径见
-[`observability-migration.md`](https://github.com/open-multi-agent/open-multi-agent/blob/main/docs/observability-migration.md)，
+[`observability-migration.md`](/zh/reference/observability-migration/)，
 包括直接使用 `LegacyCallbackTraceSink`、批处理、TraceStore/OTel 以及生命周期所有权。
 
 Span 的父子关系是尽力而为的，并使用运行时已知的因果结构。在团队运行中，工作者智能体

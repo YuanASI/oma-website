@@ -1,0 +1,50 @@
+---
+// Locale-aware enterprise-service trigger. English keeps the existing external
+// YuanASI link; Chinese opens the shared contact dialog mounted by BaseLayout.
+// Keeping this decision in one component prevents CTA behavior from drifting
+// between the nav, footer, homepage, and shared enterprise bands.
+import { yuanasiHref } from '../lib/site';
+import type { Locale } from '../i18n';
+
+interface Props {
+  locale?: Locale;
+  class?: string;
+  style?: string;
+}
+
+const { locale = 'en', class: className, style } = Astro.props;
+const isChinese = locale === 'zh';
+---
+
+{isChinese ? (
+  <button
+    type="button"
+    class:list={[className, 'enterprise-trigger']}
+    style={style}
+    data-enterprise-trigger
+    aria-haspopup="dialog"
+    aria-controls="enterprise-contact-dialog"
+  >
+    <slot />
+  </button>
+) : (
+  <a class={className} style={style} href={yuanasiHref(locale)} target="_blank" rel="noreferrer">
+    <slot />
+  </a>
+)}
+
+<style>
+  /* Remove only browser button chrome. Visual classes such as .nav-link and
+     .btn-primary remain the source of typography, color, and spacing. */
+  button.enterprise-trigger {
+    appearance: none;
+    border: 0;
+    margin: 0;
+    cursor: pointer;
+    text-align: inherit;
+  }
+  button.enterprise-trigger:not(.btn-primary) {
+    background: none;
+    padding: 0;
+  }
+</style>

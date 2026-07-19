@@ -33,10 +33,10 @@ test('discovers vendored docs while excluding deliberate GitHub-only pages', () 
 
 test('rewrites vendored links locally and all other doc links to GitHub', () => {
   const input = '[CLI](./cli.md) [migration](observability-migration.md) [new](new-capability.md#api)';
-  const output = rewriteLinks(input, new Set(['cli']));
+  const output = rewriteLinks(input, new Set(['cli', 'observability-migration']));
 
   assert.match(output, /\]\(\/reference\/cli\/\)/);
-  assert.match(output, /github\.com\/open-multi-agent\/open-multi-agent\/blob\/main\/docs\/observability-migration\.md/);
+  assert.match(output, /\]\(\/reference\/observability-migration\/\)/);
   assert.match(output, /github\.com\/open-multi-agent\/open-multi-agent\/blob\/main\/docs\/new-capability\.md#api/);
 });
 

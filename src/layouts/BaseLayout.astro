@@ -6,6 +6,7 @@
 // en. Starlight emits its own head for the docs — this only covers src/pages/.
 import ThemeInit from '../components/ThemeInit.astro';
 import LangInit from '../components/LangInit.astro';
+import EnterpriseContactDialog from '../components/EnterpriseContactDialog.astro';
 import { localeMeta, localizePath, type Locale } from '../i18n';
 // Hashed URLs of the two latin webfonts every page renders above the fold —
 // preloaded below so the fonts land before first paint (kills the font-swap
@@ -115,5 +116,6 @@ const ogImage = new URL('/github-social.png', Astro.site).href;
   </head>
   <body>
     <slot />
+    {locale === 'zh' && <EnterpriseContactDialog locale={locale} />}
   </body>
 </html>

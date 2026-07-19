@@ -4,16 +4,14 @@
 // where selection- and production-stage readers already are. The OSS site stays
 // zero-commercial; this mirrors the footer's Enterprise-support link (same
 // locale-matched target), it is not a hard sell. Strings live in the i18n dict.
-import { yuanasiHref } from '../lib/site';
 import { useTranslations, type Locale } from '../i18n';
+import EnterpriseLink from './EnterpriseLink.astro';
 
 interface Props {
   locale?: Locale;
 }
 const { locale = 'en' } = Astro.props;
 const t = useTranslations(locale).enterpriseCta;
-// Locale-matched landing, same contract as the footer's Enterprise-support link.
-const href = yuanasiHref(locale);
 ---
 
 <section class="section enterprise-cta">
@@ -24,7 +22,7 @@ const href = yuanasiHref(locale);
         <h2 class="section-title">{t.title}</h2>
         <p class="section-sub">{t.body}</p>
       </div>
-      <a class="btn-primary" href={href} target="_blank" rel="noreferrer"><span>{t.button}</span><span class="arrow" aria-hidden="true">→</span></a>
+      <EnterpriseLink class="btn-primary" locale={locale}><span>{t.button}</span><span class="arrow" aria-hidden="true">→</span></EnterpriseLink>
     </div>
   </div>
 </section>
