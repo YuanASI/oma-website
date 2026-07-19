@@ -185,6 +185,18 @@
       "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/cross-provider-reasoning.ts"
     },
     {
+      "name": "eval-offline-regression",
+      "title": "Eval Offline Regression",
+      "blurb": "No-key EvalSet regression across two model configurations with rule + judge scorers and a gate.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/eval-offline-regression.ts"
+    },
+    {
+      "name": "eval-online-sampling",
+      "title": "Eval Online Sampling",
+      "blurb": "Best-effort online sampling into FileEvalStore with explicit flush and shutdown.",
+      "href": "https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/eval-online-sampling.ts"
+    },
+    {
       "name": "fan-out-aggregate",
       "title": "Fan Out Aggregate",
       "blurb": "MapReduce-style fan-out via AgentPool.runParallel().",
