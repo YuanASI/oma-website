@@ -69,6 +69,13 @@ Do not directly edit its substantive content: make the change upstream and then
 run the reference sync workflow. Getting Started and Guides are maintained here
 and may be edited directly.
 
+### Keep documentation activation-focused
+
+Marketing pages acquire interest; the documentation layer moves users from
+activation to mastery: explain the mental model in 60 seconds, run an example in
+5 minutes, and make every capability findable and configurable. Competitive
+comparisons belong under `/compare/`, not in documentation body content.
+
 ### Preserve the i18n architecture
 
 - Keep English at `/` and Chinese at `/zh/`.
