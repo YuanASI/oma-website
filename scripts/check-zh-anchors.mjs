@@ -49,11 +49,16 @@ const decodeEntities = (text) =>
 // Headings in this docs tree use ordinary inline Markdown. Reduce that markup
 // to the visible text github-slugger receives from Starlight's Markdown AST.
 const headingText = (raw) => {
+  // Inline HTML would require the same AST parsing Starlight performs. Fail
+  // closed instead of attempting to sanitize arbitrary markup with a regex.
+  if (raw.includes('<') || raw.includes('>')) {
+    throw new Error(`Inline HTML is not supported in a checked heading: ${raw}`);
+  }
+
   const codeSpans = [];
   const text = decodeEntities(raw)
     .replace(/[ \t]+#+[ \t]*$/, '')
     .replace(/!?(\[([^\]]*)\])\([^)]*\)/g, '$2')
-    .replace(/<[^>]+>/g, '')
     .replace(/(`+)(.*?)\1/g, (_, __, code) => {
       const index = codeSpans.push(code) - 1;
       return `\u{e000}${index}\u{e001}`;
