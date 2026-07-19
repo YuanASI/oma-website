@@ -176,8 +176,8 @@ export default defineConfig({
 				'./src/styles/tokens.css',
 				'./src/styles/starlight-theme.css',
 			],
-			// Phase 1 IA (PRD §4.2). Reference is vendored from the framework repo docs/
-			// (baseline commit ef31479); Getting Started + Guides are maintained here.
+			// Reference is vendored from framework docs/ through the discovery +
+			// exclusion sync model; Getting Started + Guides are maintained here.
 			// Each label carries its zh-CN translation inline (Starlight's
 			// SidebarItem.translations, keyed by `lang`). English labels stay as the
 			// root-locale text; `slug` is locale-agnostic — Starlight resolves it to

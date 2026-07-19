@@ -11,79 +11,73 @@
 //   • The upstream `# H1` is dropped (Starlight renders the title from
 //     front-matter), and framework-relative links are rewritten to forms that
 //     resolve on the site.
-//   • New upstream docs are reported but NOT auto-added — they need a sidebar
-//     slot (astro.config.mjs) and a red-line review first.
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+//   • The upstream file list is discovered. Explicitly excluded docs remain on
+//     GitHub; every other new doc or directory fails a visible integration gate.
+import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-
-const REPO = 'open-multi-agent/open-multi-agent';
-const BRANCH = 'main';
-const RAW = (p) => `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${p}`;
-const BLOB = `https://github.com/${REPO}/blob/${BRANCH}`;
-const REFDIR = 'src/content/docs/reference';
-
-// Vendored reference files ↔ framework `docs/<name>.md`. Only these sync.
-const FILES = [
-  'checkpoint', 'cli', 'consensus', 'context-management', 'evaluation', 'external-agents', 'model-routing',
-  'observability', 'plan-replay', 'providers', 'shared-memory', 'tool-configuration',
-];
-const VENDORED = new Set(FILES);
+import {
+  BRANCH,
+  EXCLUDE,
+  REPO,
+  REFDIR,
+  RAW,
+  classifyUpstreamEntries,
+  discoveryHasBlockers,
+  formatDiscoveryGate,
+  frontmatterOf,
+  listLocalFlatReferences,
+  transformUpstreamBody,
+} from './reference-sync-lib.mjs';
 
 const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
 const apiHeaders = token
   ? { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }
   : { Accept: 'application/vnd.github+json' };
 
-// Rewrite framework-relative markdown links to forms that resolve on the site:
-//   ](../<repo path>)      → absolute GitHub blob URL (escapes docs/ to repo root)
-//   ](./x.md) where x is   → /reference/x/   (intra-docs → Starlight route)
-//     a VENDORED sibling
-//   ](./x.md) where x is   → absolute GitHub blob URL (the page isn't on the
-//     NOT vendored              site — e.g. observability-migration — so a
-//                               /reference/x/ route would 404)
-// The intra-docs rule excludes protocol URLs ([\w./-] can't match ':'), so it
-// never touches the absolute links produced by the first rule.
-const rewriteLinks = (md) =>
-  md
-    .replace(/\]\(\.\.\/([^)]+)\)/g, (_m, p) => `](${BLOB}/${p})`)
-    .replace(/\]\((?:\.\/)?([\w./-]+)\.md(#[^)]*)?\)/g,
-      (_m, name, hash) => VENDORED.has(name)
-        ? `](/reference/${name}/${hash ?? ''})`
-        : `](${BLOB}/docs/${name}.md${hash ?? ''})`);
-
-// Drop a leading "# Title" heading (+ following blank lines) from the body.
-const stripH1 = (md) => md.replace(/^#\s+.*\n+/, '');
-
 function frontmatter(file) {
-  const m = readFileSync(join(REFDIR, `${file}.md`), 'utf8').match(/^---\n[\s\S]*?\n---\n/);
-  if (!m) throw new Error(`No front-matter in ${file}.md — cannot preserve curated metadata`);
-  return m[0];
+  return frontmatterOf(readFileSync(join(REFDIR, `${file}.md`), 'utf8'), `${file}.md`);
 }
 
-let changed = 0;
-let failed = 0;
-for (const file of FILES) {
-  const path = join(REFDIR, `${file}.md`);
-  if (!existsSync(path)) { console.warn('skip (not vendored locally):', file); continue; }
-  const r = await fetch(RAW(`docs/${file}.md`));
-  if (!r.ok) { console.error('FAIL fetch', file, r.status); failed++; continue; }
-  const body = `${rewriteLinks(stripH1(await r.text())).replace(/\s+$/, '')}\n`;
-  const next = `${frontmatter(file)}\n${body}`;
-  if (next !== readFileSync(path, 'utf8')) { writeFileSync(path, next); changed++; console.log('updated', file); }
-  else console.log('unchanged', file);
-}
+async function main() {
+  const listing = await fetch(`https://api.github.com/repos/${REPO}/contents/docs?ref=${BRANCH}`, { headers: apiHeaders });
+  if (!listing.ok) throw new Error(`GitHub contents API returned ${listing.status}`);
+  const entries = await listing.json();
+  if (!Array.isArray(entries)) throw new Error('GitHub contents API did not return a directory listing');
 
-// Report (don't add) new upstream docs so the team can decide on placement.
-try {
-  const r = await fetch(`https://api.github.com/repos/${REPO}/contents/docs?ref=${BRANCH}`, { headers: apiHeaders });
-  if (r.ok) {
-    const known = new Set(FILES.map((f) => `${f}.md`));
-    const novel = (await r.json())
-      .filter((e) => e.type === 'file' && e.name.endsWith('.md') && !known.has(e.name))
-      .map((e) => e.name);
-    if (novel.length) console.log(`\nNEW upstream docs (not auto-added — need a sidebar slot + review): ${novel.join(', ')}`);
+  const classification = classifyUpstreamEntries(entries, listLocalFlatReferences(REFDIR), EXCLUDE);
+  if (discoveryHasBlockers(classification)) {
+    console.error(formatDiscoveryGate(classification));
+    process.exitCode = 1;
+    return;
   }
-} catch { /* reporting only */ }
 
-console.log(`\n${changed} file(s) changed, ${failed} fetch failure(s)`);
-if (failed) process.exitCode = 1;
+  const vendored = new Set(classification.vendored);
+  let changed = 0;
+  let failed = 0;
+  for (const file of classification.vendored) {
+    const path = join(REFDIR, `${file}.md`);
+    const response = await fetch(RAW(`docs/${file}.md`));
+    if (!response.ok) {
+      console.error('FAIL fetch', file, response.status);
+      failed++;
+      continue;
+    }
+    const body = transformUpstreamBody(await response.text(), vendored);
+    const next = `${frontmatter(file)}\n${body}`;
+    if (next !== readFileSync(path, 'utf8')) {
+      writeFileSync(path, next);
+      changed++;
+      console.log('updated', file);
+    } else {
+      console.log('unchanged', file);
+    }
+  }
+
+  console.log(`\n${changed} file(s) changed, ${failed} fetch failure(s)`);
+  if (failed) process.exitCode = 1;
+}
+
+main().catch((error) => {
+  console.error(`Reference sync failed: ${error.message}`);
+  process.exitCode = 1;
+});
