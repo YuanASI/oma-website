@@ -81,19 +81,18 @@ const heroWallS = Math.round(heroRun.wallMs / 1000);
 const TEAM_CODE = `const model = process.env.OMA_MODEL ?? 'gpt-5.4-mini'
 const oma = new OpenMultiAgent({ defaultProvider: 'openai', defaultModel: model })
 const agents: AgentConfig[] = [
-  { name: 'triage-specialist', model },
-  { name: 'order-specialist', model },
-  { name: 'billing-specialist', model },
-  { name: 'policy-specialist', model },
-  { name: 'response-specialist', model },
+  { name: 'attack-surface-reviewer', model },
+  { name: 'data-security-reviewer', model },
+  { name: 'supply-chain-reviewer', model },
+  { name: 'synthesizer', model },
 ]
 
-const team = oma.createTeam('adaptive-support-team', { agents })
-const result = await oma.runTeam(team, \`Resolve ticket #12345:
-1. Classify its urgency
-2. Investigate the shipping evidence
-3. Apply the support policy
-4. Draft a grounded customer reply\`)`;
+const team = oma.createTeam('security-analysis-team', { agents })
+const result = await oma.runTeam(team, \`Review this service for vulnerabilities:
+1. Review the attack surface
+2. Review data security (injection, secrets)
+3. Review the supply chain
+4. Synthesize a severity-ranked report\`)`;
 
 // ── Production proof uses the three "Built with OMA" apps from the shared
 //    showcase list (temodar-agent, PR-Copilot, StuFlow) plus the Engram

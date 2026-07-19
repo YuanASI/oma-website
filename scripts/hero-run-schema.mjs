@@ -1,11 +1,11 @@
-export const HERO_SCENARIO = 'shipping-escalation'
+export const HERO_SCENARIO = 'security-analysis'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const REQUIRED_ASSIGNEES = [
-  'triage-specialist',
-  'order-specialist',
-  'policy-specialist',
-  'response-specialist',
+  'attack-surface-reviewer',
+  'data-security-reviewer',
+  'supply-chain-reviewer',
+  'synthesizer',
 ]
 
 function isRecord(value) {
@@ -25,8 +25,8 @@ export function validateHeroRun(run, locale) {
   add(run.locale === locale, `locale must be ${locale}`)
   add(typeof run.capturedAt === 'string' && Number.isFinite(Date.parse(run.capturedAt)), 'capturedAt must be an ISO timestamp')
   add(typeof run.runId === 'string' && UUID_RE.test(run.runId), 'runId must be a UUID emitted by the real run')
-  add(typeof run.goal === 'string' && run.goal.includes('#12345'), 'goal must contain the shipping ticket fixture #12345')
-  add(locale !== 'zh' || /[\u3400-\u9fff]/u.test(run.goal), 'the zh capture goal must be Chinese')
+  add(typeof run.goal === 'string' && run.goal.includes('/admin/users'), 'goal must contain the vulnerable-service fixture (/admin/users)')
+  add(locale !== 'zh' || /[㐀-鿿]/u.test(run.goal), 'the zh capture goal must be Chinese')
   add(typeof run.provider === 'string' && run.provider.length > 0, 'provider must be recorded')
   add(typeof run.model === 'string' && run.model.length > 0, 'model must be recorded')
   add(run.success === true, 'run must finish successfully')
@@ -69,17 +69,25 @@ export function validateHeroRun(run, locale) {
   for (const assignee of REQUIRED_ASSIGNEES) {
     add(assigned.has(assignee), `capture must include ${assignee}`)
   }
-  add(!assigned.has('billing-specialist'), 'shipping capture must not select billing-specialist')
+
+  // The zh hero renders the coordinator's own task titles, so they must come out
+  // in Chinese (the English-heavy code fixture can otherwise steer the model to
+  // English titles even from a Chinese goal — the coordinator prompt asks for
+  // Chinese, and this makes shipping English titles a loud failure, not a silent one).
+  add(
+    locale !== 'zh' || run.tasks.every((task) => /[㐀-鿿]/u.test(task?.title ?? '')),
+    'the zh capture task titles must be Chinese',
+  )
 
   const roots = run.tasks.filter((task) => Array.isArray(task?.dependsOn) && task.dependsOn.length === 0)
-  add(roots.length >= 3, 'triage, order, and policy work must run as parallel root tasks')
+  add(roots.length >= 3, 'the three security reviews must run as parallel root tasks')
 
-  const responseTasks = run.tasks.filter((task) => task?.assignee === 'response-specialist')
-  add(responseTasks.length === 1, 'capture must contain exactly one response-specialist task')
-  if (responseTasks.length === 1) {
+  const synthTasks = run.tasks.filter((task) => task?.assignee === 'synthesizer')
+  add(synthTasks.length === 1, 'capture must contain exactly one synthesizer task')
+  if (synthTasks.length === 1) {
     add(
-      Array.isArray(responseTasks[0].dependsOn) && responseTasks[0].dependsOn.length >= 3,
-      'response-specialist must depend directly on all three analyses',
+      Array.isArray(synthTasks[0].dependsOn) && synthTasks[0].dependsOn.length >= 3,
+      'synthesizer must depend directly on all three reviews',
     )
   }
 
