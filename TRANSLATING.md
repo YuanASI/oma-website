@@ -89,7 +89,7 @@ translation of `src/content/docs/getting-started/introduction.md`. It exercises
 every rule above — front-matter, an aside, a table, a fenced code block, an
 ASCII diagram, and internal links. Match its style.
 
-## Reference pages have a drift guard — update it after translating
+## Docs pages have a drift guard — update it after translating
 
 The Reference section (`reference/**`) is **vendored** from the framework repo
 and re-synced weekly (`.github/workflows/sync-reference.yml`). The sync discovers
@@ -97,17 +97,17 @@ top-level upstream Markdown files, skips only the explicit exclusion set, and
 fails when a new page or directory needs an integration decision; it never
 silently creates an untranslated page. After you translate or re-translate a
 reference page, record the English baseline it was translated from, so the drift
-checker knows the translation is current:
+checker knows the translation is current. The same guard covers the hand-written
+Getting Started and Guides sections, where ordinary PRs can also change English
+without updating the matching Chinese page:
 
 ```
 node scripts/update-translation-manifest.mjs reference/<slug>
 # e.g.  node scripts/update-translation-manifest.mjs reference/cli
+# e.g.  node scripts/update-translation-manifest.mjs getting-started/quick-start
 ```
 
 This stamps `scripts/reference-translation-manifest.json` with the hash of the
-English body. When upstream later changes that English page, the weekly sync PR
-comments that the `zh/` copy is **stale** until you re-translate and re-run the
-command above.
-
-Getting Started and Guides are maintained in this repo (not vendored), so they
-have **no** drift guard — just translate them.
+English body. `ci.yml` runs the checker on ordinary PRs as a soft signal, while
+the weekly Reference sync also comments on its generated PR when the `zh/` copy
+is **stale**. Re-translate and re-run the command above to refresh the baseline.

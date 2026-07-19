@@ -582,7 +582,7 @@ npx tsx packages/core/examples/integrations/observability-v2/run-viewer.ts
 
 > **脱敏范围。** 上面提到的脱敏适用于*遥测*——trace span 和仪表盘载荷。它并**不**
 > 覆盖已持久化的运行状态：共享内存写入和检查点保存会原样存储智能体输出。若要在那里
-> 清除机密，请用 [`RedactingStore`](/zh/reference/shared-memory/#对持久化的密钥脱敏)
+> 清除密钥，请用 [`RedactingStore`](/zh/reference/shared-memory/#对持久化的密钥脱敏)
 > 包裹持久化存储。
 
 ## 默认隐私边界

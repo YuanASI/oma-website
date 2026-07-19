@@ -33,6 +33,9 @@ importers:
         specifier: ^0.34.5
         version: 0.34.5
     devDependencies:
+      github-slugger:
+        specifier: ^2.0.0
+        version: 2.0.0
       typescript:
         specifier: ^6.0.3
         version: 6.0.3

@@ -62,8 +62,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Flag any zh/ Reference translations the just-synced English bodies have
-      # outpaced. Read-only; writes reference-drift-report.md; always exits 0.
+      # Flag any zh/ docs translations their English bodies have outpaced.
+      # Read-only; writes reference-drift-report.md; always exits 0.
       - name: Check translation drift
         run: node scripts/check-reference-drift.mjs
 

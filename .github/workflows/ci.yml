@@ -30,6 +30,16 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # English-only edits should surface translation drift in ordinary PRs.
+      # This remains a soft signal: the checker reports drift and exits 0.
+      - name: Check translation drift
+        run: pnpm check:translation-drift
+
+      # Chinese headings generate localized IDs. Fail before build when an
+      # in-page or cross-page fragment no longer targets a real heading.
+      - name: Check Chinese doc anchors
+        run: pnpm check:zh-anchors
+
       # i18n key-parity gate: tsc type-checks the locale dicts against the en
       # UiDict (zh must match it key-for-key). `astro build` uses esbuild and
       # does NOT type-check, so a missing zh key would otherwise ship green and
