@@ -41,7 +41,7 @@ export const zh: UiDict = {
   },
 
   footer: {
-    blurb: '从目标到任务 DAG，自动完成。<br />TypeScript 原生的多智能体框架。',
+    blurb: '自动分工的智能体团队，<br />跑在你掌控的环境里。',
     product: { head: '产品', capabilities: '能力', useCases: '应用场景', integrations: '集成', faq: '常见问题' },
     resources: { head: '资源', docs: '文档', architecture: '架构', examples: '示例', showcase: '案例', compare: '对比', blog: '博客' },
     project: { head: '项目', github: 'GitHub', npm: 'npm', mitLicense: 'MIT 许可证', llmsTxt: 'llms.txt', rss: 'RSS' },
@@ -70,13 +70,15 @@ export const zh: UiDict = {
   landing: {
     seo: {
       title: 'Open Multi-Agent：TypeScript 多智能体框架',
-      description: 'TypeScript 原生的多智能体框架。协调器把目标转成任务 DAG、并行执行，并综合出带类型的结果，可嵌入任意 Node.js 后端。',
+      description: 'TypeScript 原生的多智能体框架：给一个目标，自动分工的智能体团队并行完成——跑在你自己的环境里，云端或完全离线均可。',
     },
     hero: {
       eyebrow: 'TypeScript 多智能体框架',
-      h1: '只描述目标，',
-      h1Accent: '不画任务图。',
-      meta: ['3 个运行时依赖', '任意模型', '离线或气隙'],
+      h1: '自动分工的智能体团队，',
+      h1Accent: '跑在你自己的环境里。',
+      sub: '给一个目标，它自动拆任务、并行执行、汇总出一个结果。云端与本地开源模型同队混用，可以完全不上云。',
+      meta: ['3 个运行时依赖', '任意模型同队混用', 'MIT 许可'],
+      proof: '驱动着 WordPress 安全分析平台与纯离线的本地模型栈 · GitHub ★ {stars}',
       quickStart: '快速开始',
       ioInput: '输入 · team.ts',
       ioGoal: '目标',
@@ -251,9 +253,10 @@ export const zh: UiDict = {
     },
     ctaFinal: {
       eyebrow: '开始上手',
-      title1: '从一个目标开始。',
-      title2: '让团队自己想清楚要做什么。',
+      title1: '一条命令，跑起你的第一支团队。',
+      title2: '在你自己的机器上——无需注册，无需云。',
       quickStart: '快速开始',
+      aiSdk: '在用 Vercel AI SDK？OMA 可直接驱动 60+ AI SDK 提供方',
     },
   },
 

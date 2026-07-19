@@ -53,7 +53,7 @@ export const en = {
   },
 
   footer: {
-    blurb: 'From a goal to a task DAG, automatically.<br />TypeScript-native AI Agent framework.',
+    blurb: 'A self-organizing agent team,<br />in an environment you control.',
     product: { head: 'Product', capabilities: 'Capabilities', useCases: 'Use cases', integrations: 'Integrations', faq: 'FAQ' },
     resources: { head: 'Resources', docs: 'Docs', architecture: 'Architecture', examples: 'Examples', showcase: 'Showcase', compare: 'Compare', blog: 'Blog' },
     project: { head: 'Project', github: 'GitHub', npm: 'npm', mitLicense: 'MIT license', llmsTxt: 'llms.txt', rss: 'RSS' },
@@ -86,13 +86,15 @@ export const en = {
   landing: {
     seo: {
       title: 'Open Multi-Agent — TypeScript AI Agent framework',
-      description: 'TypeScript-native AI Agent framework. A coordinator turns a goal into a task DAG, parallelizes it, and synthesizes a typed result — drops into any Node.js backend.',
+      description: 'TypeScript-native AI agent framework: one goal in, a self-organizing agent team plans and runs it in parallel — in your environment, cloud or fully offline.',
     },
     hero: {
       eyebrow: 'TypeScript AI Agent framework',
-      h1: 'Describe the goal, ',
-      h1Accent: 'not the graph.',
-      meta: ['3 runtime deps', 'any model', 'offline or air-gapped'],
+      h1: 'A self-organizing agent team, ',
+      h1Accent: 'in an environment you control.',
+      sub: 'Hand it one goal — it plans the tasks, runs specialists in parallel, and merges one result. Frontier cloud models and local open models on the same team, offline or air-gapped included.',
+      meta: ['3 runtime deps', 'any model, one team', 'MIT license'],
+      proof: 'Powers a WordPress security analysis platform and fully-offline local-model stacks · ★ {stars} on GitHub',
       quickStart: 'Quick Start',
       ioInput: 'input · team.ts',
       ioGoal: 'goal',
@@ -269,9 +271,10 @@ export const en = {
     },
     ctaFinal: {
       eyebrow: 'get started',
-      title1: 'Start with one goal.',
-      title2: 'Let the team figure out the work.',
+      title1: 'Your first team, one command away.',
+      title2: 'On your machine — no signup, no cloud required.',
       quickStart: 'Quick Start',
+      aiSdk: 'Already on Vercel AI SDK? OMA drives 60+ AI SDK providers',
     },
   },
 
