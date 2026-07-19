@@ -7,9 +7,9 @@ description: "Three telemetry layers: onProgress events, structured onTrace span
 structured trace spans, and an offline single-run DAG/Waterfall Viewer.
 
 For an existing callback integration, follow the staged
-[`onTrace` migration guide](https://github.com/open-multi-agent/open-multi-agent/blob/main/docs/observability-migration.md). Release engineering
+[`onTrace` migration guide](/reference/observability-migration/). Release engineering
 and benchmark evidence are recorded in
-[`observability-performance.md`](https://github.com/open-multi-agent/open-multi-agent/blob/main/docs/observability-performance.md) and
+[`observability-performance.md`](/reference/observability-performance/) and
 [`observability-release-readiness.md`](https://github.com/open-multi-agent/open-multi-agent/blob/main/docs/observability-release-readiness.md).
 
 ## Run identity and outcome
@@ -572,7 +572,7 @@ isolated and cannot become unhandled rejections. `onTrace` is not marked
 deprecated in this release; the 1.x compatibility window remains open while
 users can migrate transport code to `observability.sinks` at their own pace.
 The copyable stage-by-stage path is in
-[`observability-migration.md`](https://github.com/open-multi-agent/open-multi-agent/blob/main/docs/observability-migration.md), including direct
+[`observability-migration.md`](/reference/observability-migration/), including direct
 `LegacyCallbackTraceSink`, batching, TraceStore/OTel, and lifecycle ownership.
 
 Span parentage is best-effort and uses the causal structure known to the runtime. In team runs, worker agent spans point to their task span, and LLM/tool/stream spans point to the agent span. Root spans such as top-level agent runs omit `parentId`.
