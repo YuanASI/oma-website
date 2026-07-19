@@ -5,8 +5,8 @@
     "translatedAt": "2026-07-18"
   },
   "reference/cli": {
-    "enBodySha256": "fe56aa6fb4dd12a7cbca7f26a910a53e3a755c5b3809c2f342e0eabcf2dfabd8",
-    "translatedAt": "2026-07-18"
+    "enBodySha256": "38e8aac4f23b4cc6425f97fb8b219f8cdac8240a6580034e2fba1e04c5ab98ef",
+    "translatedAt": "2026-07-19"
   },
   "reference/consensus": {
     "enBodySha256": "3aebc5b0d0264b05c55c3995b89221d396eb37a6b8ae9c4cbb66e65f8c35feb1",
@@ -15,6 +15,10 @@
   "reference/context-management": {
     "enBodySha256": "fd6c8e98e6d116ad96719fdc5179e4cbad0e48afe9f01c59da8aec7667eb9dda",
     "translatedAt": "2026-07-18"
+  },
+  "reference/evaluation": {
+    "enBodySha256": "c2f966e55f9b50293d768b8589e34fab4349cea6937e4de2eebfdc484b03e226",
+    "translatedAt": "2026-07-19"
   },
   "reference/external-agents": {
     "enBodySha256": "15bbf7bcb86cad2acd0a185d5a9fa3de02464fbbdc9b0b9c98b5326c2500e791",
@@ -33,8 +37,8 @@
     "translatedAt": "2026-07-18"
   },
   "reference/providers": {
-    "enBodySha256": "5ad7bb4d2e0230aadbd7db8f6c5fc6498a0fbeed4992537c1782ce8d01ce3c06",
-    "translatedAt": "2026-06-25"
+    "enBodySha256": "7ac41001dd7c5713c47a283c80050604721cbd714139b168849566852b706254",
+    "translatedAt": "2026-07-19"
   },
   "reference/shared-memory": {
     "enBodySha256": "16cec06d3a1045c8dbc37c756fb195feb946b35c06ddae3d83bd5613dcc341eb",
