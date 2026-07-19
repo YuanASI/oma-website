@@ -95,10 +95,11 @@ const result = await oma.runTeam(team, \`Resolve ticket #12345:
 3. Apply the support policy
 4. Draft a grounded customer reply\`)`;
 
-// ── Production proof uses two explicit ecosystem projects from the shared
-//    showcase list, plus the named practitioner spotlight. The full inventory
+// ── Production proof uses the three "Built with OMA" apps from the shared
+//    showcase list (temodar-agent, PR-Copilot, StuFlow) plus the Engram
+//    integration, on top of the named practitioner spotlight. The full inventory
 //    remains on /showcase; localized copy is still keyed by package name. ──
-const CASES = SHOWCASE.filter((c) => c.pkg === 'temodar-agent' || c.pkg === 'Engram');
+const CASES = SHOWCASE.filter((c) => ['temodar-agent', 'PR-Copilot', 'StuFlow', 'Engram'].includes(c.pkg));
 const proofSpotlight = SHOWCASE.find((c) => c.kind === 'practitioner');
 const scEntries = t.showcase.entries;
 const caseTr = (c: (typeof SHOWCASE)[number]) => scEntries[c.pkg] ?? { desc: c.desc, tag: c.tag, status: c.status };
@@ -107,11 +108,12 @@ const caseTr = (c: (typeof SHOWCASE)[number]) => scEntries[c.pkg] ?? { desc: c.d
 // renders it via `l`. Every API name / code identifier inside the copy stays
 // verbatim (see src/i18n/en.ts; the reliability surface is verified against
 // open-multi-agent core v1.11.0 and @open-multi-agent/otel v0.1.0).
-const CAPS = [l.caps[0], l.caps[1], l.caps[3]].map((c, i) => ({
+const CAPS = [l.caps[0], l.caps[1], l.caps[5], l.caps[3]].map((c, i) => ({
   ...c,
   n: String(i + 1).padStart(2, '0'),
 }));
 const RELIABILITY = l.reliability;
+const ENVIRONMENT = l.environment;
 
 // Curated across Cookbook + full apps, rather than assuming every business use
 // case lives in one upstream directory. URLs still resolve from the synchronized
@@ -319,11 +321,32 @@ const jsonLd = {
         </div>
       </section>
 
-      <!-- ── 3. Capabilities ── -->
+      <!-- ── 3. Runs in your environment (data-sovereignty narrative) ── -->
+      <section class="section home-section" id="environment">
+        <div class="container">
+          <div class="section-head">
+            <div class="eyebrow"><span class="idx">02</span> {l.sectionEnvironment.eyebrow}</div>
+            <h2 class="section-title">{l.sectionEnvironment.title}</h2>
+            <p class="section-sub">{l.sectionEnvironment.sub}</p>
+          </div>
+          <div class="rel-grid">
+            {ENVIRONMENT.map((c) => (
+              <Card padding="lg" class="rel-card">
+                <div class="rel-tag">{c.tag}</div>
+                <div class="rel-title">{c.t}</div>
+                <p class="rel-desc">{c.parts.map((p) => (typeof p === 'string' ? p : <code>{p.c}</code>))}</p>
+                <div class="rel-foot"><a class="text-link" href={L(c.ref)}><span>{c.refLabel}</span><span class="arrow">→</span></a></div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 4. Capabilities ── -->
       <section class="section home-section" id="capabilities">
         <div class="container">
           <div class="section-head">
-            <div class="eyebrow"><span class="idx">02</span> {l.sectionCapabilities.eyebrow}</div>
+            <div class="eyebrow"><span class="idx">03</span> {l.sectionCapabilities.eyebrow}</div>
             <h2 class="section-title">{l.sectionCapabilities.title}</h2>
             <p class="section-sub">{l.sectionCapabilities.sub}</p>
           </div>
@@ -354,7 +377,7 @@ const jsonLd = {
       <section class="section home-section evidence" id="build">
         <div class="container">
           <div class="section-head evidence-intro">
-            <div class="eyebrow"><span class="idx">03</span> {l.sectionEvidence.eyebrow}</div>
+            <div class="eyebrow"><span class="idx">04</span> {l.sectionEvidence.eyebrow}</div>
             <h2 class="section-title">{l.sectionEvidence.title}</h2>
             <p class="section-sub">{l.sectionEvidence.sub}</p>
           </div>
@@ -454,7 +477,7 @@ const jsonLd = {
         <div class="container">
           <div class="faq-grid">
             <div class="section-head faq-head">
-              <div class="eyebrow"><span class="idx">04</span> {l.sectionFaq.eyebrow}</div>
+              <div class="eyebrow"><span class="idx">05</span> {l.sectionFaq.eyebrow}</div>
               <h2 class="section-title">{l.sectionFaq.title}</h2>
               <p class="section-sub">{l.sectionFaq.sub}</p>
               <div class="faq-head-foot">

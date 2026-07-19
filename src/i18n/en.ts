@@ -90,9 +90,9 @@ export const en = {
     },
     hero: {
       eyebrow: 'TypeScript AI Agent framework',
-      h1: 'From a goal to a task DAG, ',
-      h1Accent: 'automatically.',
-      meta: ['3 runtime deps', 'any model', 'runs anywhere'],
+      h1: 'Describe the goal, ',
+      h1Accent: 'not the graph.',
+      meta: ['3 runtime deps', 'any model', 'local, offline, or air-gapped'],
       quickStart: 'Quick Start',
       ioInput: 'input · team.ts',
       ioGoal: 'goal',
@@ -122,13 +122,14 @@ export const en = {
       { n: '03', t: 'Tools and MCP, default-deny', d: 'An agent gets only the tools it is granted. Model Context Protocol servers expose external systems under the same opt-in contract.' },
       { n: '04', t: 'Streaming and structured output', d: 'Stream tokens and node-state transitions as the DAG fills, or await a typed, schema-validated object when the run completes.' },
       { n: '05', t: 'Cross-provider reasoning', d: 'One thinking config maps to Anthropic thinking, Gemini thinkingConfig, and OpenAI reasoning_effort. Reasoning streams as events, and can be preserved across a provider switch when you opt in.' },
+      { n: '06', t: 'Run coding CLIs as agents', d: 'Over the Agent Client Protocol (ACP), external coding agents — Claude Code included — join a team as OMA agents while the coordinator keeps scheduling, shared memory, and budgets.' },
     ],
     oneCall: { title: 'One call', body: 'runTeam() returns when the whole DAG resolves — no manual node wiring, no scheduler to maintain.' },
     capsLinks: { threeWays: 'runAgent · runTeam · runTasks — three ways to run', archFlow: 'See the architecture and runTeam() flow' },
     sectionReliability: {
       eyebrow: 'Control',
       title: 'You hold the controls.',
-      sub: 'Three control layers, all in the API — gate what agents may do, bound time and spend, then inspect or resume the run.',
+      sub: 'Deterministic control around non-deterministic agents. Three layers, all in the API — gate what agents may do, bound time and spend, then freeze, replay, or resume the run.',
     },
     reliability: [
       {
@@ -140,7 +141,8 @@ export const en = {
           'Inspect the plan before any agent runs with ', { c: 'onPlanReady' },
           ', then approve each round with ', { c: 'onApproval' },
           '. Gate each validated tool call before execution with ', { c: 'onToolCall' },
-          ', and use loop detection to halt an agent that starts repeating itself.',
+          ', add a proposer→judge check with ', { c: 'runConsensus' },
+          ' when one answer needs a second agent to sign off, and use loop detection to halt an agent that starts repeating itself.',
         ],
       },
       {
@@ -163,7 +165,9 @@ export const en = {
         ref: '/reference/observability/',
         refLabel: 'observability',
         parts: [
-          'Send TraceRecord v2 spans to an application-owned OpenTelemetry provider with ', { c: 'createOtelTraceSink' },
+          'Freeze a vetted plan with ', { c: 'createPlanArtifact' },
+          ' and replay it deterministically with ', { c: 'runFromPlan' },
+          '. Send TraceRecord v2 spans to an application-owned OpenTelemetry provider with ', { c: 'createOtelTraceSink' },
           ', or open the offline Run Viewer after the run (', { c: 'oma run --dashboard' },
           '). Checkpoints resume after the last completed task—an interrupted task starts again—and telemetry redaction remains best-effort.',
         ],
@@ -174,6 +178,43 @@ export const en = {
       obsLink: 'Observability',
       imgAlt: 'Offline Run Viewer replaying a completed team run: the task DAG with per-node assignee, status, token breakdown, and the agent output log.',
     },
+    sectionEnvironment: {
+      eyebrow: 'Your environment',
+      title: 'Runs in your environment.',
+      sub: 'Local, offline, or air-gapped — on your own credentials, with tools locked down by default and three runtime dependencies. No hosted service, no cloud required.',
+    },
+    environment: [
+      {
+        tag: 'your infrastructure',
+        t: 'Runs where your data lives',
+        ref: '/reference/providers/',
+        refLabel: 'local & self-hosted models',
+        parts: [
+          'Run OMA local, offline, or air-gapped — on your own servers and your own credentials. Point it at a local endpoint with ', { c: 'baseURL' },
+          ' and a whole run stays offline: no hosted OMA service to adopt, no cloud required.',
+        ],
+      },
+      {
+        tag: 'least privilege',
+        t: 'Locked down by default',
+        ref: '/reference/tool-configuration/',
+        refLabel: 'tools & sandbox',
+        parts: [
+          'Built-in tools are default-deny — an agent gets only what you grant, and filesystem tools stay inside the configured ', { c: 'cwd' },
+          '. Secrets are redacted from traces, shell output, and Viewer payloads on a best-effort path.',
+        ],
+      },
+      {
+        tag: 'lightweight',
+        t: 'Light enough for locked-down infra',
+        ref: '/guides/production-checklist/',
+        refLabel: 'production checklist',
+        parts: [
+          'Core installs three runtime dependencies — ', { c: '@anthropic-ai/sdk' }, ', ', { c: 'openai' }, ', and ', { c: 'zod' },
+          '. No daemon, no sidecar; every other SDK is a lazy-loaded, opt-in peer.',
+        ],
+      },
+    ],
     sectionEvidence: {
       eyebrow: 'Scenarios · stack · adoption',
       title: 'Where OMA fits — and the proof behind it.',
