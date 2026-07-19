@@ -227,9 +227,9 @@ export const zh: UiDict = {
       seeCode: '查看代码',
     },
     builds: {
-      'express-customer-support': { primitive: 'Express · runTasks()', scenario: '客服 · 后端', title: '客服 API', desc: '一条 POST /tickets 路由执行固定的「分类 → 起草 → QA」流水线，每次交接都由 Zod schema 校验。', outcome: '返回结构化 JSON，并明确处理 400、502 与 504。' },
+      'adaptive-customer-support': { primitive: '目标驱动 · runTeam()', scenario: '客服 · 升级处理', title: '自适应客服', desc: '协调器根据物流或账单升级问题选择所需的专职 Agent，再综合各自证据。', outcome: '围绕实际客服目标形成一份有依据的回复。' },
+      'contract-review-dag': { primitive: '显式 DAG · runTasks()', scenario: '法务运营 · 审查', title: '合同审查', desc: '只提取一次条款，并行完成合规检查与摘要，等待两者完成后再生成通知。', outcome: '一份支持步骤级重试的完整 Markdown 审查。' },
       'incident-postmortem-dag': { primitive: '显式 DAG · runTasks()', scenario: 'SRE · 运维', title: '事故复盘', desc: '三项基于 fixtures 的调查并行开始，再汇入根因假设与最终事故复盘。', outcome: '一份保留证据链、运行时长与 token 成本的 Markdown 产物。' },
-      'meeting-summarizer': { primitive: '并行 Agent', scenario: '运营 · 会议', title: '会议情报', desc: '摘要、待办与情绪三位专职 Agent 并行阅读同一份转录，最后组装成一份报告。', outcome: '带类型的待办事项，以及可直接分享的 Markdown 报告。' },
     },
     sectionStack: {
       eyebrow: '集成',
@@ -282,50 +282,72 @@ export const zh: UiDict = {
   examples: {
     seo: {
       title: '示例 — Open Multi-Agent',
-      description: '可运行的 Open Multi-Agent 端到端示例——围绕所解决的问题来组织的 Cookbook 实例、框架与应用集成、编排模式，以及每个模型提供方一个示例。直接来自仓库。',
+      description: '按目标浏览全部 Open Multi-Agent 示例：从这里开始、场景实例、编排、生产控制、技术栈集成，以及紧凑的模型 / 提供方目录。',
     },
     hero: {
       eyebrow: '示例',
       title: '用 OMA 能搭出什么。',
       lede: '直接来自仓库、可直接运行的实例——每一个都围绕它解决的问题来组织。按你想搭的东西浏览，然后打开源码。',
     },
-    seeSource: '查看源码',
-    cookbook: {
-      eyebrow: 'Cookbook',
-      title: '面向真实问题的实例。',
-      sub: '围绕一个具体任务、而非单个原语写成的端到端脚本——打开源码，看这些模式如何在真实工作流里组合。',
-      subFallback: '先从几个端到端实例上手。完整且始终保持同步的全集——集成、编排模式、每个模型提供方一个示例——都在仓库里。',
+    openExample: '打开示例',
+    moreInGoal: '这个目标下的更多示例',
+    advancedComposition: '进阶组合',
+    formats: { script: '脚本', 'multi-file': '多文件', app: '应用' },
+    levels: { beginner: '入门', intermediate: '进阶', advanced: '高级' },
+    goals: {
+      'start-here': {
+        eyebrow: '从这里开始',
+        title: '先掌握三种运行方式。',
+        sub: '掌握单个 Agent、协调器规划的团队和显式任务 DAG，再进阶组合混合模型池。',
+      },
+      'use-case-recipes': {
+        eyebrow: '场景实例',
+        title: '从你要解决的问题出发。',
+        sub: '覆盖客服、运营、研究、会议、安全等具体结果的完整工作流。',
+      },
+      orchestration: {
+        eyebrow: '编排',
+        title: '选择工作应该如何流动。',
+        sub: '可复用的协调模式：并行处理、任务交接、共识、依赖，以及跨模型推理。',
+      },
+      'production-controls': {
+        eyebrow: '生产控制',
+        title: '给一次运行加上边界。',
+        sub: '在工作流进入生产前加入 schema、重试、评估、预算、工具闸门、计划重放与可观测性。',
+      },
+      'connect-your-stack': {
+        eyebrow: '连接你的技术栈',
+        title: '把 OMA 嵌进你已经在用的系统。',
+        sub: '连接服务器、MCP 工具、记忆、AI SDK 应用、外部编码 Agent 与链路追踪设施。',
+      },
     },
-    integrations: {
-      eyebrow: '集成',
-      title: '与你的技术栈协同。',
-      sub: '它是库，不是平台——与你后端里已有的协议、服务器和框架组合使用。',
-      reference: '参考集成',
-      apps: '应用 · 克隆即跑',
-      vendor: '厂商集成',
+    modelsProviders: {
+      eyebrow: '模型 / 提供方',
+      title: '让同一支团队运行在你的模型栈上。',
+      sub: '来自 catalog 的紧凑目录，覆盖 provider adapter、OpenAI 兼容端点与本地模型配置。',
+      local: '本地',
+      compatible: '兼容',
     },
-    buildingBlocks: {
-      eyebrow: '构建块',
-      title: '原语、模式与提供方。',
-      sub: 'Cookbook 所组合的那些更底层的零件——如果你在学 API 或在对比模型，从这里开始。',
-      basics: '基础 · 从这里开始',
-      patterns: '模式',
-      providers: '提供方 · 每个模型一个示例',
+    unavailable: {
+      title: '同步 catalog 暂时不可用。',
+      desc: '已提交的 snapshot 未通过校验，因此页面不会静默显示一份残缺或手工维护的列表。',
     },
-    production: {
-      title: '生产级示例',
-      desc: '端到端、生产级的用例——更高的门槛，带测试、锁定模型。想加一个，先看贡献标准。',
-      link: 'GitHub 上的 production/',
-    },
-    footPre: '在构建时从仓库的 ',
-    footCode: 'packages/core/examples',
-    footPost: ' 目录生成，所以它始终与源码一致。',
+    footPre: '由已校验的 catalog 在固定的 ',
+    footCode: 'Framework commit',
+    footPost: ' 上生成；每条 catalog entry 都恰好出现一次。',
     browseAll: '在 GitHub 上浏览全部',
     // 单个实例详情页（/zh/examples/<slug>/）。仅壳文案——实例标题、描述、源码、
     // 运行命令在所有语言下都保持英文（从上游文件解析，和索引 blurb 一致）。
     detail: {
       backToIndex: '← 全部示例',
-      categories: { cookbook: 'Cookbook', basics: '基础', patterns: '模式', apps: '应用' },
+      goals: {
+        'start-here': '从这里开始',
+        'use-case-recipes': '场景实例',
+        orchestration: '编排',
+        'production-controls': '生产控制',
+        'connect-your-stack': '连接你的技术栈',
+      },
+      exampleLabel: '示例',
       apisUsed: 'OMA API',
       linesLabel: '行',
       runTitle: '运行',
@@ -334,10 +356,10 @@ export const zh: UiDict = {
       providerNote: 'OMA 与 provider 无关——这个示例按上面的 key 编写，但你也可以用 OpenAI、Gemini、Groq 等任意 provider 运行。',
       providerLink: '全部 provider',
       sourceTitle: '完整源码',
-      sourceNote: '完整示例，从仓库 main 分支同步刷新。',
+      sourceNote: '完整示例，从固定的 Framework commit 同步。',
       viewOnGithub: '在 GitHub 查看 / 编辑',
       relatedTitle: '相关示例',
-      relatedNote: '同类目下的更多实例。',
+      relatedNote: '同一目标下的更多示例。',
       learnTitle: '学习相关概念',
       learnQuickStart: '快速开始',
       learnDocs: '文档',
@@ -448,6 +470,7 @@ export const zh: UiDict = {
     // （Engram、Vercel AI SDK 等）保留英文；未列出的条目回退英文。
     entries: {
       // cookbook
+      'adaptive-customer-support': { title: '自适应客服', blurb: '协调器根据物流或账单升级问题动态选择专职 Agent，再综合各自证据，形成一份有依据的回复。' },
       'competitive-monitoring': { title: '竞品监控', blurb: '并行监控多个来源（Twitter/Reddit/News）、检测矛盾，并聚合成情报报告。' },
       'contract-review-dag': { title: '合同审查 DAG', blurb: '4 个任务的 DAG（extract → compliance-check + summary → notify）+ 步骤级重试。正常运行，或用 FORCE_FAIL=task2 触发重试。' },
       'incident-postmortem-dag': { title: '事故复盘 DAG', blurb: '5 个任务的 DAG：三个并行的根任务（日志模式 + 部署关联 + 影响范围）汇入根因假设与最终复盘综合。' },

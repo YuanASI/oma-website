@@ -109,23 +109,12 @@ export async function refreshSnapshots() {
   ]);
 
   const inventory = examples.inventory;
-  const categories = [
-    'cookbook',
-    'apps',
-    'reference',
-    'vendor',
-    'basics',
-    'patterns',
-    'providers',
-    'production',
-  ];
-  const total = categories.reduce((sum, category) => sum + inventory[category].length, 0);
   console.log(
     `[refresh] stats: stars=${stats.stars} forks=${stats.forks} ` +
       `contributors=${stats.contributors} release=${stats.latestRelease}`,
   );
   console.log(
-    `[refresh] examples: ${total} catalog entries at ` +
+    `[refresh] examples: ${inventory.entries.length} catalog entries at ` +
       `${inventory.provenance.resolvedCommit}`,
   );
   console.log(

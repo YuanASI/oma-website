@@ -106,7 +106,7 @@ Honest, sourced comparisons against the main multi-agent frameworks — language
 ## Project
 
 - [GitHub repository](https://github.com/open-multi-agent/open-multi-agent): source, examples, and issues.
-- [Examples (cookbook)](https://open-multi-agent.com/examples/): runnable multi-agent recipes — contract review, competitive monitoring, incident postmortem, and more.
+- [Examples by goal](https://open-multi-agent.com/examples/): start here, use-case recipes, orchestration, production controls, stack integrations, and models/providers.
 - [Showcase](https://open-multi-agent.com/showcase/): open-source projects built with OMA and tools that integrate with it.
 - [npm package](https://www.npmjs.com/package/@open-multi-agent/core)
 

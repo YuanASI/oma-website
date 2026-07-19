@@ -5,15 +5,15 @@
 // ship a missing key as `undefined`).
 //
 // What is NOT here (stays English / invariant on every locale): package names,
-// API identifiers, URLs, and build-time-fetched data (example blurbs from the repo
-// README, live GitHub stats). The third-party endorsement quote is a real attributed
+// API identifiers, URLs, and synchronized catalog data (example descriptions and
+// live GitHub stats). The third-party endorsement quote is a real attributed
 // citation and is kept verbatim in both locales.
 export const en = {
   nav: {
     brandAria: 'Open Multi-Agent — home',
     // Top-level nav labels. `product` fronts the evaluate-the-framework pages
     // (architecture/compare/solutions/integrations) plus Showcase (third-party
-    // adoption proof) at its foot; `useCases` fronts the 9 cookbook recipes;
+    // adoption proof) at its foot; `useCases` fronts catalog-featured examples;
     // `docs` and `blog` are their own top-level tabs.
     product: 'Product',
     docs: 'Docs',
@@ -246,9 +246,9 @@ export const en = {
       seeCode: 'see code',
     },
     builds: {
-      'express-customer-support': { primitive: 'Express · runTasks()', scenario: 'support · backend', title: 'Customer support API', desc: 'A POST /tickets route runs a fixed classifier → drafter → QA pipeline, with a Zod schema at every handoff.', outcome: 'Structured JSON with explicit 400, 502, and 504 behavior.' },
+      'adaptive-customer-support': { primitive: 'goal-driven · runTeam()', scenario: 'support · escalation', title: 'Adaptive customer support', desc: 'A coordinator selects the specialists needed for a shipping or billing escalation, then synthesizes their evidence.', outcome: 'A grounded response shaped around the actual support goal.' },
+      'contract-review-dag': { primitive: 'explicit DAG · runTasks()', scenario: 'legal ops · review', title: 'Contract review', desc: 'Extract clauses once, run compliance and summary work in parallel, then wait for both before producing the notification.', outcome: 'A complete Markdown review with step-level retry.' },
       'incident-postmortem-dag': { primitive: 'explicit DAG · runTasks()', scenario: 'sre · operations', title: 'Incident postmortem', desc: 'Three fixture-backed investigations start in parallel, then feed a root-cause hypothesis and final postmortem.', outcome: 'A traceable Markdown artifact with timing and token-cost evidence.' },
-      'meeting-summarizer': { primitive: 'parallel agents', scenario: 'operations · meetings', title: 'Meeting intelligence', desc: 'Summary, action-item, and sentiment specialists read the same transcript concurrently before one report is assembled.', outcome: 'Typed action items plus a ready-to-share Markdown report.' },
     },
     sectionStack: {
       eyebrow: 'Integrations',
@@ -303,51 +303,73 @@ export const en = {
   examples: {
     seo: {
       title: 'Examples — Open Multi-Agent',
-      description: 'Runnable, end-to-end examples for Open Multi-Agent — cookbook recipes framed by the problem they solve, framework and app integrations, orchestration patterns, and one example per model provider. Straight from the repo.',
+      description: 'Browse all Open Multi-Agent examples by goal: start here, use-case recipes, orchestration, production controls, stack integrations, and a compact models/providers directory.',
     },
     hero: {
       eyebrow: 'examples',
       title: 'What you can build with OMA.',
       lede: 'Runnable recipes straight from the repo — each framed by the problem it solves. Browse by what you want to build, then open the source.',
     },
-    seeSource: 'see source',
-    cookbook: {
-      eyebrow: 'Cookbook',
-      title: 'Recipes for real problems.',
-      sub: 'End-to-end scripts built around a concrete task, not a single primitive — open the source to see how the patterns compose on a real workflow.',
-      subFallback: 'A few end-to-end recipes to start from. The full, always-in-sync suite — integrations, orchestration patterns, and one example per model provider — lives in the repo.',
+    openExample: 'open example',
+    moreInGoal: 'More in this goal',
+    advancedComposition: 'Advanced composition',
+    formats: { script: 'Script', 'multi-file': 'Multi-file', app: 'App' },
+    levels: { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced' },
+    goals: {
+      'start-here': {
+        eyebrow: 'Start Here',
+        title: 'Learn the three ways to run.',
+        sub: 'Master one agent, coordinator-planned teams, and explicit task DAGs, then compose a mixed-model pool.',
+      },
+      'use-case-recipes': {
+        eyebrow: 'Use-case Recipes',
+        title: 'Start from the problem you need to solve.',
+        sub: 'Complete workflows for support, operations, research, meetings, safety, and other concrete outcomes.',
+      },
+      orchestration: {
+        eyebrow: 'Orchestration',
+        title: 'Choose how the work should flow.',
+        sub: 'Reusable coordination patterns for parallel work, handoffs, consensus, dependencies, and cross-model reasoning.',
+      },
+      'production-controls': {
+        eyebrow: 'Production Controls',
+        title: 'Put boundaries around the run.',
+        sub: 'Add schemas, retries, evaluation, budgets, tool gates, plan replay, and observability before a workflow reaches production.',
+      },
+      'connect-your-stack': {
+        eyebrow: 'Connect Your Stack',
+        title: 'Embed OMA in the systems you already use.',
+        sub: 'Connect servers, MCP tools, memory, AI SDK applications, external coding agents, and tracing infrastructure.',
+      },
     },
-    integrations: {
-      eyebrow: 'Integrations',
-      title: 'Works with your stack.',
-      sub: 'A library, not a platform — it composes with the protocols, servers, and frameworks already in your backend.',
-      reference: 'Reference integrations',
-      apps: 'Apps · clone and run',
-      vendor: 'Vendor integrations',
+    modelsProviders: {
+      eyebrow: 'Models / Providers',
+      title: 'Run the same team across your model stack.',
+      sub: 'A compact directory of provider adapters, OpenAI-compatible endpoints, and local-model setups from the catalog.',
+      local: 'local',
+      compatible: 'compatible',
     },
-    buildingBlocks: {
-      eyebrow: 'Building blocks',
-      title: 'Primitives, patterns, and providers.',
-      sub: "The lower-level pieces the cookbook composes — start here if you're learning the API or comparing models.",
-      basics: 'Basics · start here',
-      patterns: 'Patterns',
-      providers: 'Providers · one example per model',
+    unavailable: {
+      title: 'The synchronized catalog is unavailable.',
+      desc: 'The committed snapshot failed validation, so this page will not silently show a partial or hand-maintained list.',
     },
-    production: {
-      title: 'Production examples',
-      desc: 'End-to-end, production-grade use cases — a higher bar, with tests and pinned models. See the contribution criteria to add one.',
-      link: 'production/ on GitHub',
-    },
-    footPre: "Generated at build time from the repo's ",
-    footCode: 'packages/core/examples',
-    footPost: ' tree, so it always matches the source. ',
+    footPre: 'Generated from the validated catalog at the pinned ',
+    footCode: 'Framework commit',
+    footPost: '; all catalog entries are included exactly once. ',
     browseAll: 'Browse all on GitHub',
     // Per-recipe detail page (/examples/<slug>/). Chrome only — the recipe title,
     // description, source, and run commands are English on every locale (parsed
     // from the upstream file, like the index blurbs).
     detail: {
       backToIndex: '← All examples',
-      categories: { cookbook: 'Cookbook', basics: 'Basics', patterns: 'Pattern', apps: 'App' },
+      goals: {
+        'start-here': 'Start Here',
+        'use-case-recipes': 'Use-case Recipe',
+        orchestration: 'Orchestration',
+        'production-controls': 'Production Control',
+        'connect-your-stack': 'Connect Your Stack',
+      },
+      exampleLabel: 'Example',
       apisUsed: 'OMA APIs',
       linesLabel: 'lines',
       runTitle: 'Run it',
@@ -356,10 +378,10 @@ export const en = {
       providerNote: 'OMA is provider-agnostic — this example is written for the key above, but you can run it on OpenAI, Gemini, Groq and others.',
       providerLink: 'All providers',
       sourceTitle: 'Full source',
-      sourceNote: "The complete example, refreshed from the repo's main branch.",
+      sourceNote: 'The complete example, synchronized from the pinned Framework commit.',
       viewOnGithub: 'View & edit on GitHub',
       relatedTitle: 'Related examples',
-      relatedNote: 'More recipes in the same category.',
+      relatedNote: 'More examples for the same goal.',
       learnTitle: 'Learn the concepts',
       learnQuickStart: 'Quick Start',
       learnDocs: 'Documentation',

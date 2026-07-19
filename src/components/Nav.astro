@@ -21,14 +21,13 @@ const { current = 'home', starsK, locale = 'en', path } = Astro.props;
 const t = useTranslations(locale);
 const L = (p: string) => localizePath(p, locale);
 
-// A small cross-category set of verified workflows. This is deliberately not
-// the whole Cookbook: full apps such as Express customer support are use cases
-// too, and the exhaustive inventory remains on /examples.
+// The catalog's first featured use-case recipes. The exhaustive goal-grouped
+// inventory remains on /examples; no separate slug list is maintained here.
 const useCases = getFeaturedUseCases();
 const useCaseDetails = detailSlugs();
-const ucTitle = (e: { name: string; title: string }) => t.examples.entries[e.name]?.title ?? e.title;
-const ucHref = (e: { name: string; href: string }) => useCaseDetails.has(e.name) ? L(`/examples/${e.name}/`) : e.href;
-const ucExternal = (e: { name: string }) => !useCaseDetails.has(e.name);
+const ucTitle = (e: { id: string; title: string }) => t.examples.entries[e.id]?.title ?? e.title;
+const ucHref = (e: { id: string; href: string }) => useCaseDetails.has(e.id) ? L(`/examples/${e.id}/`) : e.href;
+const ucExternal = (e: { id: string }) => !useCaseDetails.has(e.id);
 const pick = (o: Loc) => o[locale];
 ---
 
