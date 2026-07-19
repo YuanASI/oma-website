@@ -48,7 +48,28 @@ const t = useTranslations(locale).enterpriseDialog;
       </section>
 
       <aside class="enterprise-contact" aria-labelledby="enterprise-contact-title">
-        <div class="enterprise-panel-label">{t.contactEyebrow}</div>
+        <div class="enterprise-contact-head">
+          <div class="enterprise-panel-label" id="enterprise-contact-title">{t.contactEyebrow}</div>
+          <button
+            type="button"
+            class="enterprise-copy"
+            data-enterprise-copy
+            data-copy-value={t.wechatId}
+            data-copy-label={t.copy}
+            data-copied-label={t.copied}
+            data-failed-label={t.copyFailed}
+            aria-label={`${t.copy}: ${t.wechatId}`}
+          >
+            <span class="enterprise-copy-id">
+              <code>{t.wechatId}</code>
+              <svg class="enterprise-copy-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <rect x="6.5" y="6.5" width="9" height="10" rx="1.5" />
+                <path d="M13.5 6.5V5A1.5 1.5 0 0 0 12 3.5H5A1.5 1.5 0 0 0 3.5 5v8A1.5 1.5 0 0 0 5 14.5h1.5" />
+              </svg>
+            </span>
+            <span class="enterprise-copy-label" data-enterprise-copy-label>{t.copy}</span>
+          </button>
+        </div>
         <div class="enterprise-qr-frame">
           <span class="enterprise-qr-corner enterprise-qr-corner--tl" aria-hidden="true"></span>
           <span class="enterprise-qr-corner enterprise-qr-corner--br" aria-hidden="true"></span>
@@ -61,23 +82,7 @@ const t = useTranslations(locale).enterpriseDialog;
             decoding="async"
           />
         </div>
-        <h3 id="enterprise-contact-title">{t.contactTitle}</h3>
         <p class="enterprise-contact-note">{t.contactNote}</p>
-        <div class="enterprise-wechat-row">
-          <div>
-            <span>{t.wechatLabel}</span>
-            <code>{t.wechatId}</code>
-          </div>
-          <button
-            type="button"
-            class="enterprise-copy"
-            data-enterprise-copy
-            data-copy-value={t.wechatId}
-            data-copy-label={t.copy}
-            data-copied-label={t.copied}
-            data-failed-label={t.copyFailed}
-          >{t.copy}</button>
-        </div>
         <span class="enterprise-copy-feedback" data-enterprise-copy-feedback aria-live="polite"></span>
       </aside>
     </div>
@@ -91,6 +96,7 @@ const t = useTranslations(locale).enterpriseDialog;
     const triggers = document.querySelectorAll<HTMLElement>('[data-enterprise-trigger]');
     const closeButton = dialog.querySelector<HTMLButtonElement>('[data-enterprise-close]');
     const copyButton = dialog.querySelector<HTMLButtonElement>('[data-enterprise-copy]');
+    const copyLabelElement = dialog.querySelector<HTMLElement>('[data-enterprise-copy-label]');
     const copyFeedback = dialog.querySelector<HTMLElement>('[data-enterprise-copy-feedback]');
     let opener: HTMLElement | null = null;
     let previousBodyOverflow = '';
@@ -157,7 +163,7 @@ const t = useTranslations(locale).enterpriseDialog;
 
     copyButton?.addEventListener('click', async () => {
       const value = copyButton.dataset.copyValue ?? '';
-      const copyLabel = copyButton.dataset.copyLabel ?? '';
+      const defaultLabel = copyButton.dataset.copyLabel ?? '';
       const copiedLabel = copyButton.dataset.copiedLabel ?? '';
       const failedLabel = copyButton.dataset.failedLabel ?? '';
       let copied = false;
@@ -174,13 +180,17 @@ const t = useTranslations(locale).enterpriseDialog;
       }
 
       const message = copied ? copiedLabel : failedLabel;
-      copyButton.textContent = message;
+      if (copyLabelElement) copyLabelElement.textContent = message;
       copyButton.classList.toggle('is-copied', copied);
+      copyButton.classList.toggle('is-failed', !copied);
+      copyButton.setAttribute('aria-label', message);
       if (copyFeedback) copyFeedback.textContent = message;
       window.clearTimeout(copyResetTimer);
       copyResetTimer = window.setTimeout(() => {
-        copyButton.textContent = copyLabel;
+        if (copyLabelElement) copyLabelElement.textContent = defaultLabel;
         copyButton.classList.remove('is-copied');
+        copyButton.classList.remove('is-failed');
+        copyButton.setAttribute('aria-label', `${defaultLabel}: ${value}`);
         if (copyFeedback) copyFeedback.textContent = '';
       }, 2200);
     });
@@ -229,8 +239,7 @@ const t = useTranslations(locale).enterpriseDialog;
 
   .enterprise-dialog-eyebrow,
   .enterprise-panel-label,
-  .enterprise-service-code,
-  .enterprise-wechat-row span {
+  .enterprise-service-code {
     font-family: var(--font-mono);
     text-transform: uppercase;
     letter-spacing: var(--tracking-label);
@@ -318,8 +327,7 @@ const t = useTranslations(locale).enterpriseDialog;
     font-weight: 600;
   }
 
-  .enterprise-service h3,
-  .enterprise-contact h3 {
+  .enterprise-service h3 {
     margin: 0;
     color: var(--oma-fg-0);
     font-family: var(--font-sans);
@@ -340,6 +348,15 @@ const t = useTranslations(locale).enterpriseDialog;
     padding-left: 28px;
     border-left: 1px solid var(--border-default);
   }
+
+  .enterprise-contact-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .enterprise-contact-head .enterprise-panel-label { margin: 0; }
 
   .enterprise-qr-frame {
     position: relative;
@@ -363,42 +380,23 @@ const t = useTranslations(locale).enterpriseDialog;
   .enterprise-qr-corner--tl { top: -5px; left: -5px; border-top: 2px solid; border-left: 2px solid; }
   .enterprise-qr-corner--br { right: -5px; bottom: -5px; border-right: 2px solid; border-bottom: 2px solid; }
 
-  .enterprise-contact h3 { font-size: 16px; text-wrap: balance; }
-
   .enterprise-contact-note {
-    margin: 8px 0 16px;
+    margin: 12px 0 0;
     color: var(--oma-fg-2);
     font-size: 12.5px;
     line-height: 1.55;
-  }
-
-  .enterprise-wechat-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 12px;
-    background: var(--oma-bg-2);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-sm);
-  }
-  .enterprise-wechat-row > div { min-width: 0; }
-  .enterprise-wechat-row span {
-    display: block;
-    margin-bottom: 4px;
-    color: var(--oma-fg-3);
-    font-size: 9px;
-  }
-  .enterprise-wechat-row code {
-    color: var(--oma-fg-0);
-    font-family: var(--font-mono);
-    font-size: 13px;
+    text-align: center;
   }
 
   .enterprise-copy {
+    position: relative;
+    display: grid;
+    place-items: center;
     flex: none;
-    min-height: 36px;
-    padding: 0 11px;
+    width: 150px;
+    min-height: 34px;
+    padding: 0 12px;
+    overflow: hidden;
     color: var(--oma-accent);
     background: var(--oma-accent-soft);
     border: 1px solid var(--oma-accent-line);
@@ -407,18 +405,47 @@ const t = useTranslations(locale).enterpriseDialog;
     font-size: 11px;
     font-weight: 600;
     cursor: pointer;
-    transition: color var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out);
+    transition: color var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
   }
+  .enterprise-copy-id,
+  .enterprise-copy-label {
+    grid-area: 1 / 1;
+    transition: opacity var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+  }
+  .enterprise-copy-id {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .enterprise-copy-id code {
+    color: inherit;
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .enterprise-copy-icon { width: 15px; height: 15px; }
+  .enterprise-copy-label { opacity: 0; transform: translateY(4px); }
+  .enterprise-copy:hover .enterprise-copy-id,
+  .enterprise-copy:focus-visible .enterprise-copy-id,
+  .enterprise-copy.is-copied .enterprise-copy-id,
+  .enterprise-copy.is-failed .enterprise-copy-id { opacity: 0; transform: translateY(-4px); }
+  .enterprise-copy:hover .enterprise-copy-label,
+  .enterprise-copy:focus-visible .enterprise-copy-label,
+  .enterprise-copy.is-copied .enterprise-copy-label,
+  .enterprise-copy.is-failed .enterprise-copy-label { opacity: 1; transform: translateY(0); }
   .enterprise-copy:hover,
-  .enterprise-copy.is-copied { color: var(--oma-accent-fg); background: var(--oma-accent); }
+  .enterprise-copy:focus-visible,
+  .enterprise-copy.is-copied { color: var(--oma-accent-fg); background: var(--oma-accent); border-color: var(--oma-accent); }
+  .enterprise-copy.is-failed { color: var(--oma-danger); background: var(--oma-bg-2); border-color: var(--oma-danger); }
 
   .enterprise-copy-feedback {
-    display: block;
-    min-height: 16px;
-    margin-top: 6px;
-    color: var(--oma-fg-2);
-    font-family: var(--font-mono);
-    font-size: 10px;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   .enterprise-dialog-close:focus-visible,
@@ -450,8 +477,7 @@ const t = useTranslations(locale).enterpriseDialog;
 
   @media (max-width: 420px) {
     .enterprise-service { grid-template-columns: 42px minmax(0, 1fr); gap: 10px; }
-    .enterprise-wechat-row { align-items: stretch; flex-direction: column; }
-    .enterprise-copy { width: 100%; }
+    .enterprise-copy { width: 144px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
