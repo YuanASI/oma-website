@@ -1,0 +1,73 @@
+---
+// Add the existing locale-aware enterprise pathway beside Starlight's social
+// links. Starlight renders SocialIcons in both the desktop header and the
+// mobile-menu footer, so this single override keeps both entry points aligned.
+import Default from '@astrojs/starlight/components/SocialIcons.astro';
+import EnterpriseLink from './EnterpriseLink.astro';
+import { useTranslations, type Locale } from '../i18n';
+
+const locale: Locale = Astro.locals.starlightRoute.lang === 'zh-CN' ? 'zh' : 'en';
+const t = useTranslations(locale);
+---
+
+<span class="docs-enterprise-wrap">
+  <EnterpriseLink class="docs-enterprise-link" locale={locale}>
+    <span>{t.nav.forCompanies}</span>
+    {locale === 'en' && <span class="docs-enterprise-ext" aria-hidden="true">↗</span>}
+  </EnterpriseLink>
+</span>
+<Default><slot /></Default>
+
+<style>
+  .docs-enterprise-wrap {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .docs-enterprise-wrap :global(.docs-enterprise-link) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    min-height: 2rem;
+    padding: 0 0.7rem;
+    color: var(--sl-color-text-accent);
+    background: transparent;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: var(--sl-text-xs);
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out),
+      background var(--duration-fast) var(--ease-out);
+  }
+
+  /* EnterpriseLink removes native button chrome for Chinese triggers. Restore
+     the same documented control surface used by the English anchor. */
+  .docs-enterprise-wrap :global(button.docs-enterprise-link.enterprise-trigger) {
+    padding: 0 0.7rem;
+    background: transparent;
+    border: 1px solid var(--sl-color-gray-5);
+  }
+
+  .docs-enterprise-wrap :global(.docs-enterprise-link:hover) {
+    color: var(--sl-color-white);
+    background: var(--oma-bg-2);
+    border-color: var(--oma-accent-line);
+  }
+
+  .docs-enterprise-wrap :global(.docs-enterprise-link:focus-visible) {
+    outline: 2px solid var(--sl-color-accent);
+    outline-offset: 3px;
+  }
+
+  .docs-enterprise-ext {
+    color: var(--sl-color-gray-3);
+    font-size: 0.68rem;
+  }
+</style>

@@ -140,9 +140,15 @@ export default defineConfig({
 				zh: { label: '简体中文', lang: 'zh-CN' },
 				// ja: { label: '日本語', lang: 'ja' },  // future: this line + docs/ja/
 			},
-			// Override Starlight's default <head>: it emits og:* + twitter:card but
-			// no social-card image and no JSON-LD. StarlightHead adds both for docs.
-			components: { Head: './src/components/StarlightHead.astro' },
+			// Keep docs chrome aligned with the custom pages. StarlightHead adds the
+			// missing social image + JSON-LD; SocialIcons adds the locale-aware
+			// enterprise pathway to desktop and mobile navigation; Footer mounts one
+			// shared Chinese contact dialog after both triggers have rendered.
+			components: {
+				Head: './src/components/StarlightHead.astro',
+				SocialIcons: './src/components/StarlightSocialIcons.astro',
+				Footer: './src/components/StarlightFooter.astro',
+			},
 			// Code blocks use the OMA syntax palette (blue/emerald/amber/muted) to
 			// match the landing CodeBlock. `themes` carries only the token hues
 			// (see src/styles/code-theme.mjs); `useStarlightUiThemeColors: true`
