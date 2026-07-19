@@ -74,9 +74,9 @@ export const zh: UiDict = {
     },
     hero: {
       eyebrow: 'TypeScript 多智能体框架',
-      h1: '从目标到任务 DAG，',
-      h1Accent: '自动完成。',
-      meta: ['3 个运行时依赖', '任意模型', '随处运行'],
+      h1: '只描述目标，',
+      h1Accent: '不画任务图。',
+      meta: ['3 个运行时依赖', '任意模型', '离线或气隙'],
       quickStart: '快速开始',
       ioInput: '输入 · team.ts',
       ioGoal: '目标',
@@ -88,7 +88,6 @@ export const zh: UiDict = {
       expandTasks: '其余 {count} 个任务 · 展开完整 DAG',
       runReal: '真实',
       runTasks: '个任务',
-      enterprise: { pre: '在为公司做选型？', link: '企业交付与支持' },
     },
     copy: '复制',
     copied: '✓ 已复制',
@@ -104,13 +103,14 @@ export const zh: UiDict = {
       { n: '03', t: '工具与 MCP，默认拒绝', d: '智能体只拥有被授予的工具。Model Context Protocol 服务器在同样的按需授权约定下，把外部系统暴露给智能体。' },
       { n: '04', t: '流式与结构化输出', d: '在 DAG 逐步填充时流式输出 token 和节点状态变化，或在运行结束时取回一个带类型、经 schema 校验的对象。' },
       { n: '05', t: '跨提供方推理', d: '一份 thinking 配置，映射到 Anthropic 的 thinking、Gemini 的 thinkingConfig 和 OpenAI 的 reasoning_effort。推理以事件形式流式输出，开启后还能在切换提供方时保留。' },
+      { n: '06', t: '把编码 CLI 当作智能体运行', d: '通过 Agent Client Protocol（ACP），外部编码智能体——包括 Claude Code——作为 OMA 智能体加入团队，而调度、共享记忆与预算仍由协调器掌管。' },
     ],
     oneCall: { title: '一次调用', body: '整个 DAG 解析完成时 runTeam() 才返回。无需手工接线节点，也没有调度器要维护。' },
     capsLinks: { threeWays: 'runAgent · runTeam · runTasks：三种运行方式', archFlow: '查看架构与 runTeam() 流程' },
     sectionReliability: {
       eyebrow: '掌控',
       title: '控制权在你手里。',
-      sub: '三层控制，全在 API 里：给智能体的动作把关，约束时间与花费，再检查或恢复运行。',
+      sub: '在非确定性的智能体外面裹一层确定性控制——三层，全在 API 里。',
     },
     reliability: [
       {
@@ -119,10 +119,11 @@ export const zh: UiDict = {
         ref: '/guides/orchestration-controls/',
         refLabel: '编排控制',
         parts: [
-          '在任何智能体运行前先审视计划。用 ', { c: 'onPlanReady' },
-          '，再用 ', { c: 'onApproval' },
-          ' 逐轮审批。用 ', { c: 'onToolCall' },
-          ' 在输入校验后、工具执行前为每次调用把关，再用循环检测叫停开始原地打转的智能体。',
+          '用 ', { c: 'onPlanReady' },
+          ' 预览计划、', { c: 'onApproval' },
+          ' 逐轮审批、', { c: 'onToolCall' },
+          ' 为每次工具调用把关。', { c: 'runConsensus' },
+          ' 加一道第二智能体校验；循环检测叫停原地打转的智能体。',
         ],
       },
       {
@@ -132,11 +133,10 @@ export const zh: UiDict = {
         refLabel: '模型路由',
         parts: [
           '用 ', { c: 'modelRouting' },
-          ' 把规划交给旗舰模型、把叶子任务交给便宜模型。用 ', { c: 'maxTokenBudget' },
+          ' 把规划交给旗舰模型、叶子任务交给便宜模型。用 ', { c: 'maxTokenBudget' },
           ' 和 ', { c: 'maxCostBudget' },
           ' + ', { c: 'estimateCost' },
-          ' 在 token 或估算美元边界停止后续调用；', { c: 'callTimeoutMs' },
-          ' 约束每次模型调用，任务重试则会跳过已知无法恢复的错误。',
+          ' 给花费封一个 token 或美元上限。',
         ],
       },
       {
@@ -145,9 +145,10 @@ export const zh: UiDict = {
         ref: '/reference/observability/',
         refLabel: '可观测性',
         parts: [
-          '用 ', { c: 'createOtelTraceSink' },
-          ' 把 TraceRecord v2 span 发给由应用持有的 OpenTelemetry provider，或在运行后打开离线 Run Viewer（', { c: 'oma run --dashboard' },
-          '）。检查点从最后一个已完成任务之后恢复；被打断的任务会重新开始，遥测脱敏仍是尽力而为。',
+          '用 ', { c: 'createPlanArtifact' },
+          ' 冻结一份已审过的计划，再用 ', { c: 'runFromPlan' },
+          ' 重放。运行后打开离线 Run Viewer（', { c: 'oma run --dashboard' },
+          '）；检查点从最后一个已完成任务之后恢复。',
         ],
       },
     ],
@@ -156,6 +157,43 @@ export const zh: UiDict = {
       obsLink: '可观测性',
       imgAlt: '离线 Run Viewer 正在回放一次已完成的团队运行：任务 DAG，标注每个节点的承担者、状态、token 拆解，以及智能体输出日志。',
     },
+    sectionEnvironment: {
+      eyebrow: '你的运行环境',
+      title: '跑在你自己的环境里。',
+      sub: '本地、离线，或气隙——用你自己的凭证，工具默认拒绝，只有三个运行时依赖。无需托管服务，无需云。',
+    },
+    environment: [
+      {
+        tag: '你的基础设施',
+        t: '跑在数据所在的地方',
+        ref: '/reference/providers/',
+        refLabel: '本地与自托管模型',
+        parts: [
+          '本地、离线，或气隙运行 OMA——跑在你自己的服务器、用你自己的凭证。用 ', { c: 'baseURL' },
+          ' 指向一个本地端点，整次运行就都在离线状态：没有要接入的托管 OMA 服务，也无需云。',
+        ],
+      },
+      {
+        tag: '最小权限',
+        t: '默认锁死',
+        ref: '/reference/tool-configuration/',
+        refLabel: '工具与沙箱',
+        parts: [
+          '内置工具默认拒绝——智能体只拿到你授予的那些，文件系统工具限定在配置的 ', { c: 'cwd' },
+          ' 内。密钥会从 trace、shell 输出和 Viewer 载荷中脱敏，尽力而为。',
+        ],
+      },
+      {
+        tag: '轻量',
+        t: '轻到能塞进封闭内网',
+        ref: '/guides/production-checklist/',
+        refLabel: '生产清单',
+        parts: [
+          'core 只装三个运行时依赖——', { c: '@anthropic-ai/sdk' }, '、', { c: 'openai' }, ' 和 ', { c: 'zod' },
+          '。没有守护进程，没有 sidecar；其余每个 SDK 都是惰性加载、按需可选的 peer。',
+        ],
+      },
+    ],
     sectionEvidence: {
       eyebrow: '场景 · 技术栈 · 采用证据',
       title: '先看适用场景，再看真实证据。',

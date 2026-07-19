@@ -1,53 +1,53 @@
 {
-  "capturedAt": "2026-07-16T17:01:15.289Z",
-  "runId": "a22eae61-d0cf-455d-9447-558a12472b0c",
-  "scenario": "shipping-escalation",
+  "capturedAt": "2026-07-19T10:10:45.679Z",
+  "runId": "8806ba39-4116-4200-8b52-5886df08ff67",
+  "scenario": "security-analysis",
   "locale": "zh",
-  "goal": "处理这张升级客服工单。\n\n工单 #12345：客户两周前下单，承运商物流六天没有更新，商品要在本周末的活动中使用。\n\n现有证据：订单已付款、打包，并在 13 天前交给承运商；最后一次扫描是六天前的“运输中”；尚未补发或退款；客户此前没有配送索赔记录。\n\n适用政策：物流连续五天未更新时，客服在确认客户身份与收货地址后，可以提供补发或退款。不得承诺承运商尚未确认的送达日期。\n\n请协作完成四项交付：\n1. 判断工单类别与紧急程度。\n2. 只调查相关的业务领域。\n3. 应用给定政策并列出必要核验。\n4. 起草有事实依据的客户回复与内部交接备注。",
+  "goal": "审查这个服务的安全漏洞，并产出一份分级报告。\n\n证据——一个小型 Node.js/Express 服务：\n\nFILE: src/server.ts\napp.get('/admin/users', (req, res) =>\n  res.json(db.query(\"SELECT * FROM users WHERE name = '\" + req.query.name + \"'\")))\n\nFILE: .env.example\nADMIN_API_KEY=[REDACTED generic-secret]\n\n依赖清单：express ^4.17.0；启动脚本运行 src/server.js。\n密钥信号：.env.example:1 generic-secret。\n\n请协作完成四项交付：\n1. 审查攻击面：认证、暴露的端点与信任边界。\n2. 审查数据安全：注入、密钥处理与敏感数据。\n3. 审查供应链：依赖、配置与部署。\n4. 综合出一份去重、按严重程度分级的安全报告。",
   "provider": "deepseek",
   "model": "deepseek-v4-flash",
   "success": true,
-  "wallMs": 32960,
+  "wallMs": 38338,
   "totalTokenUsage": {
-    "input_tokens": 3171,
-    "output_tokens": 3009
+    "input_tokens": 3768,
+    "output_tokens": 4521
   },
   "tasks": [
     {
-      "id": "f0b3169a-7b87-47f2-ab35-32824252802a",
-      "title": "判断工单类别与紧急程度",
-      "assignee": "triage-specialist",
+      "id": "0d76a630-04b4-4b04-8441-9a5e34e87789",
+      "title": "攻击面审查：认证、暴露端点与信任边界",
+      "assignee": "attack-surface-reviewer",
       "status": "completed",
       "dependsOn": [],
-      "durationMs": 1768
+      "durationMs": 5230
     },
     {
-      "id": "4c6b5470-8553-4d7d-b82e-4d763d5b3ec3",
-      "title": "调查物流与订单证据",
-      "assignee": "order-specialist",
+      "id": "c97a394c-61ad-448a-a763-3de9c680b735",
+      "title": "数据安全审查：注入、密钥处理与敏感数据",
+      "assignee": "data-security-reviewer",
       "status": "completed",
       "dependsOn": [],
-      "durationMs": 5451
+      "durationMs": 2723
     },
     {
-      "id": "7b0236a0-8753-49d4-a3e4-d3eedbafacf0",
-      "title": "应用给定政策并列出必要核验",
-      "assignee": "policy-specialist",
+      "id": "11c36ba6-564f-4270-aa6b-43627c256cb5",
+      "title": "供应链审查：依赖、配置与部署",
+      "assignee": "supply-chain-reviewer",
       "status": "completed",
       "dependsOn": [],
-      "durationMs": 1394
+      "durationMs": 4645
     },
     {
-      "id": "f0183742-7204-4fd0-a4c8-5de34b279fbb",
-      "title": "起草最终客户回复与内部交接备注",
-      "assignee": "response-specialist",
+      "id": "2784ca92-830e-46fc-9f9e-cf5d8983faa9",
+      "title": "综合报告：去重并按严重程度分级",
+      "assignee": "synthesizer",
       "status": "completed",
       "dependsOn": [
-        "f0b3169a-7b87-47f2-ab35-32824252802a",
-        "4c6b5470-8553-4d7d-b82e-4d763d5b3ec3",
-        "7b0236a0-8753-49d4-a3e4-d3eedbafacf0"
+        "0d76a630-04b4-4b04-8441-9a5e34e87789",
+        "c97a394c-61ad-448a-a763-3de9c680b735",
+        "11c36ba6-564f-4270-aa6b-43627c256cb5"
       ],
-      "durationMs": 8795
+      "durationMs": 9733
     }
   ]
 }

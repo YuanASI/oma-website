@@ -1,53 +1,53 @@
 {
-  "capturedAt": "2026-07-16T17:00:42.227Z",
-  "runId": "ba792750-554c-4f4a-a149-0cf20a75145d",
-  "scenario": "shipping-escalation",
+  "capturedAt": "2026-07-19T10:06:44.608Z",
+  "runId": "ff05dd0f-36e7-4c89-af5c-26f9fd133405",
+  "scenario": "security-analysis",
   "locale": "en",
-  "goal": "Resolve this escalated customer-support ticket.\n\nTicket #12345: The customer ordered two weeks ago. Carrier tracking has not moved for six days, and the item is needed for an event this weekend.\n\nAvailable evidence: the order was paid, packed, and handed to the carrier 13 days ago; the last scan was \"in transit\" six days ago; no replacement or refund has been issued; the customer has no prior delivery claims.\n\nApplicable policy: after five days without carrier movement, support may offer a replacement or refund after confirming identity and delivery address. Never promise an unconfirmed delivery date.\n\nComplete four coordinated deliverables:\n1. Classify the ticket and urgency.\n2. Investigate only the relevant operational domain.\n3. Apply the supplied policy and identify required checks.\n4. Draft a grounded customer reply with internal handoff notes.",
+  "goal": "Review this service for security vulnerabilities and produce a triaged report.\n\nEvidence — a small Node.js/Express service:\n\nFILE: src/server.ts\napp.get('/admin/users', (req, res) =>\n  res.json(db.query(\"SELECT * FROM users WHERE name = '\" + req.query.name + \"'\")))\n\nFILE: .env.example\nADMIN_API_KEY=[REDACTED generic-secret]\n\nDependency manifest: express ^4.17.0; the start script runs src/server.js.\nSecret signal: .env.example:1 generic-secret.\n\nComplete four coordinated deliverables:\n1. Review the attack surface: auth, exposed endpoints, and trust boundaries.\n2. Review data security: injection, secret handling, and sensitive data.\n3. Review the supply chain: dependencies, configuration, and deployment.\n4. Synthesize a deduplicated, severity-ranked security report.",
   "provider": "deepseek",
   "model": "deepseek-v4-flash",
   "success": true,
-  "wallMs": 30610,
+  "wallMs": 35956,
   "totalTokenUsage": {
-    "input_tokens": 3106,
-    "output_tokens": 3219
+    "input_tokens": 5610,
+    "output_tokens": 5176
   },
   "tasks": [
     {
-      "id": "c2e09514-c2fe-4168-95b9-118ba20fe808",
-      "title": "Classify ticket and urgency",
-      "assignee": "triage-specialist",
+      "id": "4be5c70b-7576-4d1b-b248-895a983e1357",
+      "title": "Attack Surface Review",
+      "assignee": "attack-surface-reviewer",
       "status": "completed",
       "dependsOn": [],
-      "durationMs": 1973
+      "durationMs": 5158
     },
     {
-      "id": "4a5336b8-9203-4777-aa00-4e4afd32895d",
-      "title": "Investigate shipping and order evidence",
-      "assignee": "order-specialist",
+      "id": "a3e8c689-5ea9-454b-8c22-86bd9d174070",
+      "title": "Data Security Review",
+      "assignee": "data-security-reviewer",
       "status": "completed",
       "dependsOn": [],
-      "durationMs": 5070
+      "durationMs": 6829
     },
     {
-      "id": "56f0cea0-b4ef-4af2-826d-60638c608e66",
-      "title": "Apply policy and identify required checks",
-      "assignee": "policy-specialist",
+      "id": "eec506da-a3b1-4c7f-8aeb-e15ecf2d1664",
+      "title": "Supply Chain Review",
+      "assignee": "supply-chain-reviewer",
       "status": "completed",
       "dependsOn": [],
-      "durationMs": 2216
+      "durationMs": 5613
     },
     {
-      "id": "04acb569-51dc-4866-a840-3e6fc0083a4c",
-      "title": "Draft grounded customer reply with handoff notes",
-      "assignee": "response-specialist",
+      "id": "4f36bf14-a06a-4d18-ba0d-d2fe722115ae",
+      "title": "Synthesize Security Report",
+      "assignee": "synthesizer",
       "status": "completed",
       "dependsOn": [
-        "c2e09514-c2fe-4168-95b9-118ba20fe808",
-        "4a5336b8-9203-4777-aa00-4e4afd32895d",
-        "56f0cea0-b4ef-4af2-826d-60638c608e66"
+        "4be5c70b-7576-4d1b-b248-895a983e1357",
+        "a3e8c689-5ea9-454b-8c22-86bd9d174070",
+        "eec506da-a3b1-4c7f-8aeb-e15ecf2d1664"
       ],
-      "durationMs": 8822
+      "durationMs": 9787
     }
   ]
 }
