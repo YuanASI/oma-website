@@ -224,6 +224,8 @@ export default defineConfig({
 					translations: { 'zh-CN': '可靠运行' },
 					items: [
 						{ label: 'Observability', slug: 'reference/observability', translations: { 'zh-CN': '可观测性' } },
+						{ label: 'Observability migration', slug: 'reference/observability-migration', translations: { 'zh-CN': '可观测性迁移' } },
+						{ label: 'Observability performance', slug: 'reference/observability-performance', translations: { 'zh-CN': '可观测性性能' } },
 						{ label: 'Checkpoint & resume', slug: 'reference/checkpoint', translations: { 'zh-CN': '检查点与恢复' } },
 						{ label: 'Context management', slug: 'reference/context-management', translations: { 'zh-CN': '上下文管理' } },
 						{ label: 'Evaluation', slug: 'reference/evaluation', translations: { 'zh-CN': '评估' } },

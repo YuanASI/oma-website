@@ -49,8 +49,16 @@
     "translatedAt": "2026-06-25"
   },
   "reference/observability": {
-    "enBodySha256": "a2dedcbcb8373e64a731e9ea81db7e4647635c89519acfef4d05172ec4e23774",
-    "translatedAt": "2026-07-18"
+    "enBodySha256": "da9b5b553a1a940486f8d898809e57c5390f7a48ad627f30247322eb841ad12f",
+    "translatedAt": "2026-07-19"
+  },
+  "reference/observability-migration": {
+    "enBodySha256": "c38fd01a4013b3ba38e85c1dab56768e9cecee93c3726764d5fe9fe749d743e8",
+    "translatedAt": "2026-07-19"
+  },
+  "reference/observability-performance": {
+    "enBodySha256": "1ba6d380fa3f88c77d1230423a215c23536c176f983a7bda85e4e7de4fa0fb4e",
+    "translatedAt": "2026-07-19"
   },
   "reference/plan-replay": {
     "enBodySha256": "f3f0db45e920738de97dfc846e11a4112e4c71119065586763ae15acd3b64ca3",
