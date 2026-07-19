@@ -1,28 +1,27 @@
 // scripts/check-reference-drift.mjs — READ-ONLY translation-drift detector.
 //
-// The Reference docs (src/content/docs/reference) are vendored from the
-// framework repo and re-synced weekly by sync-reference-docs.mjs, which
-// refreshes each English body in place. Their Chinese translations live in
-// src/content/docs/zh/reference and are NOT touched by that sync (the PR's
-// add-paths is scoped to the English tree) — so when an English body moves, the
-// zh copy silently goes stale and may render wrong information.
+// English docs are the source of truth. Their Chinese translations mirror the
+// same relative paths under src/content/docs/zh, but an English-only edit can
+// silently leave the translated page stale. Reference docs are especially
+// exposed because the weekly framework sync refreshes their English bodies.
 //
-// This flags that. It runs in .github/workflows/sync-reference.yml AFTER the
-// sync (English bodies already reflect the latest upstream) and writes
-// reference-drift-report.md; the workflow posts that file as a PR comment when
-// it is non-empty. It NEVER mutates docs or the manifest, and ALWAYS exits 0 —
-// drift is a signal, not a build failure.
+// This flags that. It runs in ordinary CI and in sync-reference.yml AFTER the
+// weekly sync (when English bodies already reflect the latest upstream). It
+// writes reference-drift-report.md; the sync workflow posts that file as a PR
+// comment when it is non-empty. It NEVER mutates docs or the manifest, and
+// ALWAYS exits 0 — drift is a signal, not a build failure.
 //
-// Anchor: scripts/reference-translation-manifest.json records, per slug, the
+// Anchor: scripts/reference-translation-manifest.json records, per doc slug, the
 // sha256 of the English body each zh page was translated from (stamped by
 // update-translation-manifest.mjs). We re-hash the current English body and
 // compare. Same hash → current; different → stale.
 import { readFileSync, existsSync, writeFileSync, readdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { join } from 'node:path';
+import { extname, join } from 'node:path';
 
-const REFDIR = 'src/content/docs/reference';
-const ZHDIR = 'src/content/docs/zh/reference';
+const DOCS_ROOT = 'src/content/docs';
+const ZH_ROOT = join(DOCS_ROOT, 'zh');
+const SECTIONS = ['getting-started', 'guides', 'reference'];
 const MANIFEST = 'scripts/reference-translation-manifest.json';
 const REPORT = 'reference-drift-report.md';
 
@@ -31,15 +30,15 @@ const REPORT = 'reference-drift-report.md';
 const bodyOf = (md) => md.replace(/^---\n[\s\S]*?\n---\n/, '');
 const sha256 = (s) => createHash('sha256').update(s).digest('hex');
 
-// Recursively list reference slugs from the English tree (handles providers/…).
-const listSlugs = (dir, prefix = '') =>
+// Recursively list Markdown/MDX paths (nested Reference sections are allowed).
+const listDocs = (dir, prefix = '') =>
   !existsSync(dir)
     ? []
     : readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
         e.isDirectory()
-          ? listSlugs(join(dir, e.name), `${prefix}${e.name}/`)
-          : e.name.endsWith('.md')
-            ? [`${prefix}${e.name.replace(/\.md$/, '')}`]
+          ? listDocs(join(dir, e.name), `${prefix}${e.name}/`)
+          : /\.mdx?$/.test(e.name)
+            ? [`${prefix}${e.name}`]
             : [],
       );
 
@@ -47,22 +46,27 @@ const manifest = existsSync(MANIFEST) ? JSON.parse(readFileSync(MANIFEST, 'utf8'
 const stale = [];
 const untracked = [];
 
-for (const name of listSlugs(REFDIR)) {
-  const slug = `reference/${name}`;
-  if (!existsSync(join(ZHDIR, `${name}.md`))) continue; // not translated → silent (Starlight falls back)
-  const enHash = sha256(bodyOf(readFileSync(join(REFDIR, `${name}.md`), 'utf8')));
-  const rec = manifest[slug];
-  if (!rec) untracked.push(slug);                       // zh exists, no baseline yet
-  else if (rec.enBodySha256 !== enHash) stale.push({ slug, since: rec.translatedAt });
+for (const section of SECTIONS) {
+  for (const relativePath of listDocs(join(DOCS_ROOT, section))) {
+    const sourcePath = join(DOCS_ROOT, section, relativePath);
+    const translatedPath = join(ZH_ROOT, section, relativePath);
+    if (!existsSync(translatedPath)) continue; // untranslated → Starlight falls back
+
+    const slug = `${section}/${relativePath.slice(0, -extname(relativePath).length)}`;
+    const enHash = sha256(bodyOf(readFileSync(sourcePath, 'utf8')));
+    const rec = manifest[slug];
+    if (!rec) untracked.push(slug); // zh exists, no baseline yet
+    else if (rec.enBodySha256 !== enHash) stale.push({ slug, since: rec.translatedAt });
+  }
 }
 
 let report = '';
 if (stale.length || untracked.length) {
   report += '### ⚠️ Translation drift detected\n\n';
   if (stale.length) {
-    report += 'These English Reference pages changed since their Chinese translation was last synced — the `zh/` copy is now **stale**:\n\n';
+    report += 'These English docs changed since their Chinese translation was last synced — the `zh/` copy is now **stale**:\n\n';
     for (const s of stale) report += `- \`${s.slug}\` — zh last translated ${s.since}\n`;
-    report += '\nRe-translate the matching `src/content/docs/zh/reference/…` page, then run `node scripts/update-translation-manifest.mjs <slug>` to clear the flag.\n';
+    report += '\nRe-translate the matching `src/content/docs/zh/…` page, then run `node scripts/update-translation-manifest.mjs <slug>` to clear the flag.\n';
   }
   if (untracked.length) {
     if (stale.length) report += '\n';

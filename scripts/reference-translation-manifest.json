@@ -1,5 +1,25 @@
 {
-  "_comment": "Translation drift anchor for the vendored Reference docs. Maps each `reference/<slug>` to the sha256 of the English BODY (front-matter stripped) its zh translation was made from, plus the date. Written by scripts/update-translation-manifest.mjs; read by scripts/check-reference-drift.mjs to flag stale zh translations in the weekly sync PR. Empty until the first reference page is translated. See TRANSLATING.md.",
+  "_comment": "Translation drift anchor for Getting Started, Guides, and vendored Reference docs. Maps each `<section>/<slug>` to the sha256 of the English BODY (front-matter stripped) its zh translation was made from, plus the date. Written by scripts/update-translation-manifest.mjs; read by scripts/check-reference-drift.mjs in ordinary CI and the weekly Reference sync. See TRANSLATING.md.",
+  "getting-started/introduction": {
+    "enBodySha256": "4cb4be84eccb14a3d74f4e8c5a99ae4950d94f1189be56112efba2120014ee27",
+    "translatedAt": "2026-07-19"
+  },
+  "getting-started/quick-start": {
+    "enBodySha256": "a9898d4253170254b6ac2743eaff79eb317d05b7ea75cad111673a84c0ec2095",
+    "translatedAt": "2026-07-19"
+  },
+  "getting-started/three-ways-to-run": {
+    "enBodySha256": "1bf737c1aa7bedc6973ace5f8fc0ccdb4a242e641843b933ff56eaa865b5091c",
+    "translatedAt": "2026-07-19"
+  },
+  "guides/orchestration-controls": {
+    "enBodySha256": "6994a49603a6d6c37b945c7b7fa0fe1822d7c28c8d7c7029c7129469b3e11522",
+    "translatedAt": "2026-07-19"
+  },
+  "guides/production-checklist": {
+    "enBodySha256": "69caa0d4e30fc6b1b7edf7415ab4806b25eaa3af7cdbfb89c175061a0a387585",
+    "translatedAt": "2026-07-19"
+  },
   "reference/checkpoint": {
     "enBodySha256": "502b3cc134f34b96cc23d065571a71023cac7ff98e9ecc31d8139b38906c2352",
     "translatedAt": "2026-07-18"
