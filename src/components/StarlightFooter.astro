@@ -1,0 +1,13 @@
+---
+// Mount the shared Chinese enterprise dialog once, after Starlight has rendered
+// both desktop and mobile enterprise triggers. The default docs footer remains
+// unchanged; the dialog itself lives in EnterpriseContactDialog.astro.
+import Default from '@astrojs/starlight/components/Footer.astro';
+import EnterpriseContactDialog from './EnterpriseContactDialog.astro';
+import type { Locale } from '../i18n';
+
+const locale: Locale = Astro.locals.starlightRoute.lang === 'zh-CN' ? 'zh' : 'en';
+---
+
+<Default><slot /></Default>
+{locale === 'zh' && <EnterpriseContactDialog locale={locale} />}

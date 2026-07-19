@@ -1,6 +1,7 @@
 ---
-// Shared Chinese enterprise-contact dialog. It is mounted once by BaseLayout;
-// every locale-aware EnterpriseLink button targets this single instance.
+// Shared Chinese enterprise-contact dialog. It is mounted once by BaseLayout on
+// custom pages and once by StarlightFooter on docs pages; every locale-aware
+// EnterpriseLink button on that page targets the single instance.
 import { useTranslations, type Locale } from '../i18n';
 
 interface Props {
@@ -111,6 +112,12 @@ const t = useTranslations(locale).enterpriseDialog;
         toggle.setAttribute('aria-expanded', 'false');
       }
       document.body.style.overflow = '';
+
+      // Starlight uses a custom element for its mobile docs drawer. Triggering
+      // its own button preserves its aria/body-scroll state before the modal
+      // takes focus, matching the custom-page mobile navigation behavior above.
+      const starlightMenu = document.querySelector<HTMLElement>('starlight-menu-button[aria-expanded="true"]');
+      starlightMenu?.querySelector<HTMLButtonElement>('button')?.click();
     };
 
     const openDialog = (trigger: HTMLElement) => {
