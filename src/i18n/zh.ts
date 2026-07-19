@@ -57,6 +57,26 @@ export const zh: UiDict = {
     button: '企业服务',
   },
 
+  enterpriseDialog: {
+    eyebrow: '直接联系',
+    title: '把 Open Multi-Agent 用进真实业务',
+    body: '联系框架作者本人，帮你梳理 AI 落地目标、让 AI 真正与业务结合',
+    servicesLabel: '可提供的工程服务',
+    services: [
+      { code: 'S-01', title: 'AI Agent 定制开发', body: '业务梳理、Agent 设计、Prompt 评估、生产部署、私有化与持续支持。' },
+      { code: 'S-02', title: '多智能体系统集成', body: '多 Agent 架构编排、RAG、CRM / ERP / API 对接、性能与稳定性调优。' },
+      { code: 'S-03', title: '企业 AI 咨询', body: 'AI 场景评估、技术选型、POC、ROI 估算与落地路线规划。' },
+    ],
+    contactEyebrow: '本人微信',
+    contactNote: '添加时建议备注：公司名称 + 需求',
+    qrAlt: 'open-multi-agent 作者 JackChen 的个人微信二维码',
+    wechatId: 'JackChen_co',
+    copy: '复制微信号',
+    copied: '已复制',
+    copyFailed: '复制失败',
+    closeAria: '关闭企业服务联系弹窗',
+  },
+
   taskStatus: {
     done: '完成',
     running: '运行中',
