@@ -92,9 +92,12 @@ ASCII diagram, and internal links. Match its style.
 ## Reference pages have a drift guard — update it after translating
 
 The Reference section (`reference/**`) is **vendored** from the framework repo
-and re-synced weekly (`.github/workflows/sync-reference.yml`). After you
-translate or re-translate a reference page, record the English baseline it was
-translated from, so the drift checker knows the translation is current:
+and re-synced weekly (`.github/workflows/sync-reference.yml`). The sync discovers
+top-level upstream Markdown files, skips only the explicit exclusion set, and
+fails when a new page or directory needs an integration decision; it never
+silently creates an untranslated page. After you translate or re-translate a
+reference page, record the English baseline it was translated from, so the drift
+checker knows the translation is current:
 
 ```
 node scripts/update-translation-manifest.mjs reference/<slug>

@@ -38,6 +38,13 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Capture local-vs-upstream body drift before the sync refreshes the local
+      # files. Any comparison failure is fatal; body differences are reported.
+      - name: Check upstream Reference drift
+        run: node scripts/check-upstream-drift.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Sync Reference docs from framework main
         run: node scripts/sync-reference-docs.mjs
         env:
@@ -45,8 +52,11 @@ jobs:
           # doesn't hit the unauthenticated rate limit. Raw doc fetches need no auth.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Validate the synced docs before proposing them, so a broken upstream
-      # change fails the run instead of opening a red PR.
+      # Validate the scripts, sidebar parity, and synced docs before proposing
+      # them, so a broken upstream change fails instead of opening a red PR.
+      - name: Validate checks
+        run: pnpm check
+
       - name: Validate build
         run: pnpm build
         env:
@@ -81,25 +91,32 @@ jobs:
             - Curated front-matter (`title` + `description`) is preserved; only the
               bodies and links are refreshed.
             - The build was validated in this run before the PR was opened.
-            - New upstream docs are **not** auto-added — check the run log; they
-              need a sidebar slot (`astro.config.mjs`) and a red-line review.
+            - Sync coverage is discovered from upstream with an explicit
+              exclusion set. New docs or directories fail the workflow until a
+              reviewer integrates or excludes them; they are never auto-added.
+            - The PR remains human-reviewed and is never auto-merged.
 
             Review the diff before merging. Re-run anytime via **Actions →
             Sync Reference docs → Run workflow**.
 
-      # If the sync opened a PR and drift was found, surface it as a PR comment so
-      # the reviewer knows which zh/ translations to refresh. Posted by SYNC_PAT
-      # (the PR author). No PR (no English change) → the step is skipped.
-      - name: Comment translation drift on the PR
+      # If the sync opened a PR, surface pre-sync upstream drift and translation
+      # drift as review context. Posted by SYNC_PAT (the PR author).
+      - name: Comment drift reports on the PR
         if: steps.cpr.outputs.pull-request-number != ''
         env:
           GH_TOKEN: ${{ secrets.SYNC_PAT }}
           PR_NUMBER: ${{ steps.cpr.outputs.pull-request-number }}
           REPO: ${{ github.repository }}
         run: |
+          if [ -s upstream-drift-report.md ]; then
+            gh pr comment "$PR_NUMBER" -R "$REPO" --body-file upstream-drift-report.md
+            echo "Posted upstream drift comment to PR #$PR_NUMBER."
+          else
+            echo "No upstream drift to report."
+          fi
           if [ -s reference-drift-report.md ]; then
             gh pr comment "$PR_NUMBER" -R "$REPO" --body-file reference-drift-report.md
-            echo "Posted drift comment to PR #$PR_NUMBER."
+            echo "Posted translation drift comment to PR #$PR_NUMBER."
           else
             echo "No translation drift to report."
           fi
