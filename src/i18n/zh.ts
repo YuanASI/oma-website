@@ -70,15 +70,14 @@ export const zh: UiDict = {
   landing: {
     seo: {
       title: 'Open Multi-Agent：TypeScript 多智能体框架',
-      description: 'TypeScript 原生的多智能体框架：给一个目标，自动分工的智能体团队并行完成——跑在你自己的环境里，云端或完全离线均可。',
+      description: 'TypeScript 原生的多智能体框架：给一个目标，自动分工的智能体团队并行完成，跑在你自己的环境里，云端或完全离线均可。',
     },
     hero: {
       eyebrow: 'TypeScript 多智能体框架',
       h1: '自动分工的智能体团队，',
       h1Accent: '跑在你自己的环境里。',
-      sub: '给一个目标，它自动拆任务、并行执行、汇总出一个结果。云端与本地开源模型同队混用，可以完全不上云。',
+      sub: '给一个目标，它自动拆任务、并行执行、汇总出一个结果。云端或本地模型同队，可以完全不上云。',
       meta: ['3 个运行时依赖', '任意模型同队混用', 'MIT 许可'],
-      proof: '驱动着 WordPress 安全分析平台与纯离线的本地模型栈 · GitHub ★ {stars}',
       quickStart: '快速开始',
       ioInput: '输入 · team.ts',
       ioGoal: '目标',
@@ -105,14 +104,14 @@ export const zh: UiDict = {
       { n: '03', t: '工具与 MCP，默认拒绝', d: '智能体只拥有被授予的工具。Model Context Protocol 服务器在同样的按需授权约定下，把外部系统暴露给智能体。' },
       { n: '04', t: '流式与结构化输出', d: '在 DAG 逐步填充时流式输出 token 和节点状态变化，或在运行结束时取回一个带类型、经 schema 校验的对象。' },
       { n: '05', t: '跨提供方推理', d: '一份 thinking 配置，映射到 Anthropic 的 thinking、Gemini 的 thinkingConfig 和 OpenAI 的 reasoning_effort。推理以事件形式流式输出，开启后还能在切换提供方时保留。' },
-      { n: '06', t: '把编码 CLI 当作智能体运行', d: '通过 Agent Client Protocol（ACP），外部编码智能体——包括 Claude Code——作为 OMA 智能体加入团队，而调度、共享记忆与预算仍由协调器掌管。' },
+      { n: '06', t: '把编码 CLI 当作智能体运行', d: '通过 Agent Client Protocol（ACP），外部编码智能体（包括 Claude Code）作为 OMA 智能体加入团队，而调度、共享记忆与预算仍由协调器掌管。' },
     ],
     oneCall: { title: '一次调用', body: '整个 DAG 解析完成时 runTeam() 才返回。无需手工接线节点，也没有调度器要维护。' },
     capsLinks: { threeWays: 'runAgent · runTeam · runTasks：三种运行方式', archFlow: '查看架构与 runTeam() 流程' },
     sectionReliability: {
       eyebrow: '掌控',
       title: '控制权在你手里。',
-      sub: '在非确定性的智能体外面裹一层确定性控制——三层，全在 API 里。',
+      sub: '在非确定性的智能体外面裹一层确定性控制：三层，全在 API 里。',
     },
     reliability: [
       {
@@ -162,7 +161,7 @@ export const zh: UiDict = {
     sectionEnvironment: {
       eyebrow: '你的运行环境',
       title: '跑在你自己的环境里。',
-      sub: '本地、离线，或气隙——用你自己的凭证，工具默认拒绝，只有三个运行时依赖。无需托管服务，无需云。',
+      sub: '本地、离线，或气隙运行，用你自己的凭证，工具默认拒绝，只有三个运行时依赖。无需托管服务，无需云。',
     },
     environment: [
       {
@@ -171,7 +170,7 @@ export const zh: UiDict = {
         ref: '/reference/providers/',
         refLabel: '本地与自托管模型',
         parts: [
-          '本地、离线，或气隙运行 OMA——跑在你自己的服务器、用你自己的凭证。用 ', { c: 'baseURL' },
+          '本地、离线，或气隙运行 OMA，跑在你自己的服务器、用你自己的凭证。用 ', { c: 'baseURL' },
           ' 指向一个本地端点，整次运行就都在离线状态：没有要接入的托管 OMA 服务，也无需云。',
         ],
       },
@@ -181,7 +180,7 @@ export const zh: UiDict = {
         ref: '/reference/tool-configuration/',
         refLabel: '工具与沙箱',
         parts: [
-          '内置工具默认拒绝——智能体只拿到你授予的那些，文件系统工具限定在配置的 ', { c: 'cwd' },
+          '内置工具默认拒绝：智能体只拿到你授予的那些，文件系统工具限定在配置的 ', { c: 'cwd' },
           ' 内。密钥会从 trace、shell 输出和 Viewer 载荷中脱敏，尽力而为。',
         ],
       },
@@ -191,14 +190,14 @@ export const zh: UiDict = {
         ref: '/guides/production-checklist/',
         refLabel: '生产清单',
         parts: [
-          'core 只装三个运行时依赖——', { c: '@anthropic-ai/sdk' }, '、', { c: 'openai' }, ' 和 ', { c: 'zod' },
+          'core 只装三个运行时依赖：', { c: '@anthropic-ai/sdk' }, '、', { c: 'openai' }, ' 和 ', { c: 'zod' },
           '。没有守护进程，没有 sidecar；其余每个 SDK 都是惰性加载、按需可选的 peer。',
         ],
       },
     ],
     sectionEvidence: {
       eyebrow: '场景 · 技术栈 · 采用证据',
-      title: '先看适用场景，再看真实证据。',
+      title: '它适合哪些场景，又有谁在用。',
       sub: '从工作流出发，确认它能嵌入你的后端，再直接查看实时采用数据和开源生态项目。',
       fullShowcase: '浏览完整案例',
     },
@@ -254,7 +253,7 @@ export const zh: UiDict = {
     ctaFinal: {
       eyebrow: '开始上手',
       title1: '一条命令，跑起你的第一支团队。',
-      title2: '在你自己的机器上——无需注册，无需云。',
+      title2: '就在你的机器上，无需注册，无需云。',
       quickStart: '快速开始',
       aiSdk: '在用 Vercel AI SDK？OMA 可直接驱动 60+ AI SDK 提供方',
     },

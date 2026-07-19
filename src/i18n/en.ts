@@ -86,15 +86,14 @@ export const en = {
   landing: {
     seo: {
       title: 'Open Multi-Agent — TypeScript AI Agent framework',
-      description: 'TypeScript-native AI agent framework: one goal in, a self-organizing agent team plans and runs it in parallel — in your environment, cloud or fully offline.',
+      description: 'TypeScript-native AI agent framework: one goal in, a self-organizing agent team plans and runs it in parallel, in your environment, cloud or fully offline.',
     },
     hero: {
       eyebrow: 'TypeScript AI Agent framework',
       h1: 'A self-organizing agent team, ',
       h1Accent: 'in an environment you control.',
-      sub: 'Hand it one goal — it plans the tasks, runs specialists in parallel, and merges one result. Frontier cloud models and local open models on the same team, offline or air-gapped included.',
+      sub: 'Hand it one goal. It plans the tasks, runs specialists in parallel, and merges one result. Cloud or local models, offline included.',
       meta: ['3 runtime deps', 'any model, one team', 'MIT license'],
-      proof: 'Powers a WordPress security analysis platform and fully-offline local-model stacks · ★ {stars} on GitHub',
       quickStart: 'Quick Start',
       ioInput: 'input · team.ts',
       ioGoal: 'goal',
@@ -109,7 +108,7 @@ export const en = {
     },
     copy: 'copy',
     copied: '✓ copied',
-    copyFailed: 'Copy failed — select and copy manually.',
+    copyFailed: 'Copy failed. Select and copy manually.',
     sectionCapabilities: {
       eyebrow: 'How it works',
       title: 'An agent runtime, not a graph builder.',
@@ -121,14 +120,14 @@ export const en = {
       { n: '03', t: 'Tools and MCP, default-deny', d: 'An agent gets only the tools it is granted. Model Context Protocol servers expose external systems under the same opt-in contract.' },
       { n: '04', t: 'Streaming and structured output', d: 'Stream tokens and node-state transitions as the DAG fills, or await a typed, schema-validated object when the run completes.' },
       { n: '05', t: 'Cross-provider reasoning', d: 'One thinking config maps to Anthropic thinking, Gemini thinkingConfig, and OpenAI reasoning_effort. Reasoning streams as events, and can be preserved across a provider switch when you opt in.' },
-      { n: '06', t: 'Run coding CLIs as agents', d: 'Over the Agent Client Protocol (ACP), external coding agents — Claude Code included — join a team as OMA agents while the coordinator keeps scheduling, shared memory, and budgets.' },
+      { n: '06', t: 'Run coding CLIs as agents', d: 'Over the Agent Client Protocol (ACP), external coding agents (Claude Code included) join a team as OMA agents while the coordinator keeps scheduling, shared memory, and budgets.' },
     ],
-    oneCall: { title: 'One call', body: 'runTeam() returns when the whole DAG resolves — no manual node wiring, no scheduler to maintain.' },
-    capsLinks: { threeWays: 'runAgent · runTeam · runTasks — three ways to run', archFlow: 'See the architecture and runTeam() flow' },
+    oneCall: { title: 'One call', body: 'runTeam() returns when the whole DAG resolves. No manual node wiring, no scheduler to maintain.' },
+    capsLinks: { threeWays: 'runAgent · runTeam · runTasks: three ways to run', archFlow: 'See the architecture and runTeam() flow' },
     sectionReliability: {
       eyebrow: 'Control',
       title: 'You hold the controls.',
-      sub: 'Deterministic control around non-deterministic agents — three layers, all in the API.',
+      sub: 'Deterministic control around non-deterministic agents: three layers, all in the API.',
     },
     reliability: [
       {
@@ -171,14 +170,14 @@ export const en = {
       },
     ],
     dashboard: {
-      caption: 'And when something does slip, the offline Run Viewer can replay the completed run — the task DAG, per-node assignee and status, token breakdown, and the agent output log.',
+      caption: 'And when something does slip, the offline Run Viewer can replay the completed run: the task DAG, per-node assignee and status, token breakdown, and the agent output log.',
       obsLink: 'Observability',
       imgAlt: 'Offline Run Viewer replaying a completed team run: the task DAG with per-node assignee, status, token breakdown, and the agent output log.',
     },
     sectionEnvironment: {
       eyebrow: 'Your environment',
       title: 'Runs in your environment.',
-      sub: 'Local, offline, or air-gapped — on your own credentials, with tools locked down by default and three runtime dependencies. No hosted service, no cloud required.',
+      sub: 'Local, offline, or air-gapped, on your own credentials, with tools locked down by default and three runtime dependencies. No hosted service, no cloud required.',
     },
     environment: [
       {
@@ -187,7 +186,7 @@ export const en = {
         ref: '/reference/providers/',
         refLabel: 'local & self-hosted models',
         parts: [
-          'Run OMA local, offline, or air-gapped — on your own servers and your own credentials. Point it at a local endpoint with ', { c: 'baseURL' },
+          'Run OMA local, offline, or air-gapped, on your own servers and your own credentials. Point it at a local endpoint with ', { c: 'baseURL' },
           ' and a whole run stays offline: no hosted OMA service to adopt, no cloud required.',
         ],
       },
@@ -197,7 +196,7 @@ export const en = {
         ref: '/reference/tool-configuration/',
         refLabel: 'tools & sandbox',
         parts: [
-          'Built-in tools are default-deny — an agent gets only what you grant, and filesystem tools stay inside the configured ', { c: 'cwd' },
+          'Built-in tools are default-deny: an agent gets only what you grant, and filesystem tools stay inside the configured ', { c: 'cwd' },
           '. Secrets are redacted from traces, shell output, and Viewer payloads on a best-effort path.',
         ],
       },
@@ -207,14 +206,14 @@ export const en = {
         ref: '/guides/production-checklist/',
         refLabel: 'production checklist',
         parts: [
-          'Core installs three runtime dependencies — ', { c: '@anthropic-ai/sdk' }, ', ', { c: 'openai' }, ', and ', { c: 'zod' },
+          'Core installs three runtime dependencies: ', { c: '@anthropic-ai/sdk' }, ', ', { c: 'openai' }, ', and ', { c: 'zod' },
           '. No daemon, no sidecar; every other SDK is a lazy-loaded, opt-in peer.',
         ],
       },
     ],
     sectionEvidence: {
       eyebrow: 'Scenarios · stack · adoption',
-      title: 'Where OMA fits — and the proof behind it.',
+      title: 'Where OMA fits, and what runs on it.',
       sub: 'Start with a workflow, verify it fits your backend, then inspect live adoption and open-source projects without leaving the page.',
       fullShowcase: 'browse the full showcase',
     },
@@ -233,11 +232,11 @@ export const en = {
       title: 'Works with your stack.',
     },
     stack: [
-      { name: 'Providers', note: 'Anthropic, Gemini, OpenAI, Bedrock, Azure, DeepSeek — or any OpenAI-compatible endpoint', count: '13 built-in' },
+      { name: 'Providers', note: 'Anthropic, Gemini, OpenAI, Bedrock, Azure, DeepSeek, or any OpenAI-compatible endpoint', count: '13 built-in' },
       { name: 'MCP', note: 'Connect Model Context Protocol servers as tools', count: 'native' },
       { name: 'Vercel AI SDK', note: 'Bridge to 60+ AI SDK providers and hosts', count: 'compatible' },
       { name: 'Express', note: 'Mount a fixed runTasks() pipeline behind a route handler', count: 'drop-in' },
-      { name: 'Any Node.js', note: 'No daemon, no sidecar — three runtime deps', count: 'Node 18+' },
+      { name: 'Any Node.js', note: 'No daemon, no sidecar, three runtime deps', count: 'Node 18+' },
     ],
     sectionProof: {
       eyebrow: 'Adoption',
@@ -248,18 +247,18 @@ export const en = {
     sectionFaq: {
       eyebrow: 'FAQ',
       title: 'How the runtime behaves.',
-      sub: 'Straight answers to the questions that come up most — the full reference lives in the docs.',
+      sub: 'Straight answers to the questions that come up most. The full reference lives in the docs.',
       viewAll: 'view all questions',
     },
     faqs: [
       { q: 'How does the coordinator turn a goal into a DAG?', a: 'A coordinator agent plans the work: it breaks the goal into discrete tasks, infers dependencies between them, and emits a directed acyclic graph. Independent nodes run concurrently; dependent nodes wait on their inputs. Pass planOnly to inspect the DAG before any agent executes.' },
-      { q: 'Can agents in one team use different model providers?', a: 'Yes. Each agent declares its own model, so a single team can mix a frontier cloud model, a self-hosted endpoint, and a local Ollama instance. The coordinator routes each task to the agent — and therefore the model — assigned to it.' },
+      { q: 'Can agents in one team use different model providers?', a: 'Yes. Each agent declares its own model, so a single team can mix a frontier cloud model, a self-hosted endpoint, and a local Ollama instance. The coordinator routes each task to the agent, and therefore the model, assigned to it.' },
       { q: 'How do tools get exposed to an agent?', a: 'Default-deny. An agent only has the tools it explicitly lists in its tools array; everything else is unavailable. External systems are connected through MCP servers under the same opt-in contract.' },
       { q: 'What happens when a node fails?', a: 'A failed node is retried under its task policy when the error may be transient. Budget exhaustion, malformed input, deliberate aborts, and non-retryable client errors skip pointless retries. Persistent failures surface on the node with FAILED state and an error, downstream dependents are held, and independent branches can continue.' },
       { q: 'How do I keep a multi-agent run from going off the rails?', a: 'Layered controls, all opt-in. onPlanReady hands you the decomposed plan to inspect before any agent runs, and onApproval gates each round; return false and the remaining tasks are skipped. runConsensus adds a proposer→judge check that a second agent must accept, and loop detection halts an agent that keeps repeating the same tool call or output.' },
       { q: 'How do I cap what a run costs?', a: 'Use maxCostBudget with estimateCost. Your estimator owns the per-model USD price table; OMA accumulates that estimate across the run and stops issuing further calls once the cap is crossed. The check happens at turn and task boundaries, so it can overshoot by one model turn rather than stopping mid-call. maxTokenBudget provides the parallel cumulative-token ceiling, and modelRouting can put cheaper models on leaf tasks.' },
       { q: 'Does it stream, or only return at the end?', a: 'Both. You can stream tokens and node-state transitions as the DAG fills, or simply await runTeam() for a typed, schema-validated result object once the graph resolves.' },
-      { q: "How does open-multi-agent relate to Claude Code's dynamic workflows?", a: "They make the same bet — the model plans the work at runtime instead of you wiring a fixed graph. Claude's dynamic workflows run inside Claude Code, where Claude writes its own orchestration scripts and fans out parallel subagents in a session. open-multi-agent embeds that same goal-to-DAG idea in your own Node.js backend as an MIT library, on any provider, with the plan kept as inspectable, replayable data. The two also compose: over ACP an open-multi-agent team can run Claude Code itself as one of its agents." },
+      { q: "How does open-multi-agent relate to Claude Code's dynamic workflows?", a: "They make the same bet: the model plans the work at runtime instead of you wiring a fixed graph. Claude's dynamic workflows run inside Claude Code, where Claude writes its own orchestration scripts and fans out parallel subagents in a session. open-multi-agent embeds that same goal-to-DAG idea in your own Node.js backend as an MIT library, on any provider, with the plan kept as inspectable, replayable data. The two also compose: over ACP an open-multi-agent team can run Claude Code itself as one of its agents." },
     ],
     endorse: {
       eyebrow: 'mentioned',
@@ -267,12 +266,12 @@ export const en = {
       // would misrepresent it).
       quote: 'A brilliant TypeScript-native multi-agent orchestration framework.',
       cite: 'GithubAwesome · 58K subscribers · GitHub Trending Monthly #6',
-      imgAlt: "Watch on YouTube — GithubAwesome's GitHub Trending Monthly #6, paused on the open-multi-agent GitHub repository (6k stars).",
+      imgAlt: "Watch on YouTube: GithubAwesome's GitHub Trending Monthly #6, paused on the open-multi-agent GitHub repository (6k stars).",
     },
     ctaFinal: {
       eyebrow: 'get started',
       title1: 'Your first team, one command away.',
-      title2: 'On your machine — no signup, no cloud required.',
+      title2: 'On your machine. No signup, no cloud.',
       quickStart: 'Quick Start',
       aiSdk: 'Already on Vercel AI SDK? OMA drives 60+ AI SDK providers',
     },
