@@ -291,13 +291,14 @@ export const zh: UiDict = {
     },
     openExample: '打开示例',
     moreInGoal: '这个目标下的更多示例',
+    advancedComposition: '进阶组合',
     formats: { script: '脚本', 'multi-file': '多文件', app: '应用' },
     levels: { beginner: '入门', intermediate: '进阶', advanced: '高级' },
     goals: {
       'start-here': {
         eyebrow: '从这里开始',
-        title: '先掌握四种运行方式。',
-        sub: '从单个 Agent 开始，再进入协调器规划的团队、显式任务 DAG，或混合模型池。',
+        title: '先掌握三种运行方式。',
+        sub: '掌握单个 Agent、协调器规划的团队和显式任务 DAG，再进阶组合混合模型池。',
       },
       'use-case-recipes': {
         eyebrow: '场景实例',

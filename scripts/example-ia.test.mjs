@@ -53,13 +53,21 @@ test('featuredOrder is stable within each goal and unfeatured entries remain dis
 test('primary grids stay balanced without hiding overflow entries', async () => {
   const { inventory } = await snapshots();
   const groups = new Map(getGoalGroups(inventory.entries).map((group) => [group.goal, group]));
+  const startGroup = groups.get('start-here');
   const useCaseGroup = groups.get('use-case-recipes');
   const stackGroup = groups.get('connect-your-stack');
+  assert.ok(startGroup);
   assert.ok(useCaseGroup);
   assert.ok(stackGroup);
+  const start = splitGoalEntries(startGroup);
   const useCases = splitGoalEntries(useCaseGroup);
   const stack = splitGoalEntries(stackGroup);
 
+  assert.deepEqual(
+    start.primary.map((entry) => entry.id),
+    ['single-agent', 'team-collaboration', 'task-pipeline'],
+  );
+  assert.deepEqual(start.remaining.map((entry) => entry.id), ['multi-model-team']);
   assert.deepEqual(
     useCases.primary.map((entry) => entry.id),
     ['adaptive-customer-support', 'contract-review-dag', 'incident-postmortem-dag'],
@@ -106,8 +114,9 @@ test('UI keeps public routes and legacy share anchors while using bilingual goal
   }
   assert.match(detailPage, /\/examples\/\$\{detail\.name\}\//);
   assert.match(page, /\/examples\/\$\{e\.id\}\//);
-  assert.match(en, /Learn the four ways to run\./);
-  assert.match(zh, /先掌握四种运行方式。/);
+  assert.match(en, /Learn the three ways to run\./);
+  assert.match(zh, /先掌握三种运行方式。/);
+  assert.match(zh, /advancedComposition: '进阶组合'/);
   assert.match(zh, /'adaptive-customer-support': \{ title: '自适应客服'/);
 });
 

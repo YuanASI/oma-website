@@ -32,6 +32,7 @@ export interface ExampleGoalGroup {
 }
 
 export const PRIMARY_EXAMPLE_LIMITS: Partial<Record<ExampleGoal, number>> = {
+  'start-here': 3,
   'use-case-recipes': 3,
   'connect-your-stack': 3,
 };

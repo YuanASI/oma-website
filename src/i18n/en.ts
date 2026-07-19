@@ -312,13 +312,14 @@ export const en = {
     },
     openExample: 'open example',
     moreInGoal: 'More in this goal',
+    advancedComposition: 'Advanced composition',
     formats: { script: 'Script', 'multi-file': 'Multi-file', app: 'App' },
     levels: { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced' },
     goals: {
       'start-here': {
         eyebrow: 'Start Here',
-        title: 'Learn the four ways to run.',
-        sub: 'Begin with one agent, then move to a coordinator-planned team, an explicit task DAG, or a mixed-model pool.',
+        title: 'Learn the three ways to run.',
+        sub: 'Master one agent, coordinator-planned teams, and explicit task DAGs, then compose a mixed-model pool.',
       },
       'use-case-recipes': {
         eyebrow: 'Use-case Recipes',

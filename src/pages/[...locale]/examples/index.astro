@@ -149,7 +149,7 @@ const jsonLd = {
 
                 {more.length > 0 && (
                   <div class="ex-group">
-                    <div class="ex-subhead">{ex_t.moreInGoal}</div>
+                    <div class="ex-subhead">{group.goal === 'start-here' ? ex_t.advancedComposition : ex_t.moreInGoal}</div>
                     <div class="ex-list">
                       {more.map((entry) => (
                         <a class="ex-row" href={hrefFor(entry)} target={isExternal(entry) ? '_blank' : undefined} rel={isExternal(entry) ? 'noreferrer' : undefined}>
