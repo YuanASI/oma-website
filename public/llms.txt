@@ -16,7 +16,9 @@ Open Multi-Agent (OMA) is a goal-driven agent runtime for TypeScript backends. I
 - **Tools and MCP, default-deny**: an agent gets only the tools it is granted. Model Context Protocol servers expose external systems under the same opt-in contract.
 - **Streaming and structured output**: stream tokens and node-state transitions as the DAG fills, or await a typed, schema-validated object when the run completes.
 - **Cross-provider reasoning**: one thinking config maps to Anthropic thinking, Gemini thinkingConfig, and OpenAI reasoning_effort. Reasoning streams as events, and can be preserved across a provider switch when you opt in.
-- **You hold the controls**: inspect the plan before any agent runs (onPlanReady / onApproval gates), verify with a proposer-to-judge pass (runConsensus) and loop detection, cap spend with modelRouting and a hard maxTokenBudget ceiling, and inspect any run with onTrace spans, a self-contained HTML dashboard, and checkpoint/resume.
+- **You hold the controls**: inspect the plan before any agent runs (`onPlanReady` / `onApproval` gates), verify with a proposer-to-judge pass (`runConsensus`) and loop detection, and cap usage with `maxTokenBudget` or `maxCostBudget` + the application-owned `estimateCost`. Budget checks happen at turn and task boundaries, so a run can cross a ceiling by up to one model turn.
+- **Inspect, persist, and export runs**: TraceRecord v2 sinks can feed `InMemoryTraceStore`, the persistent single-process `FileTraceStore`, or the optional first-party `createOtelTraceSink()` bridge to an application-owned OpenTelemetry provider. The offline Run Viewer remains available for local inspection; telemetry redaction is best-effort.
+- **External agents and evaluation**: run a local process or an ACP coding agent as a member of the same task DAG, and measure completed runs with versioned EvalSets, scorers, CI gates, and best-effort production sampling through `@open-multi-agent/core/eval`.
 
 ## Docs
 
@@ -24,6 +26,7 @@ Open Multi-Agent (OMA) is a goal-driven agent runtime for TypeScript backends. I
 - [Quick Start](https://open-multi-agent.com/getting-started/quick-start/): scaffold a project with npm create oma-app, or install the core package and run your first auto-orchestrated team.
 - [Three Ways to Run](https://open-multi-agent.com/getting-started/three-ways-to-run/): runAgent, runTeam, and runTasks — plus plan preview, plan replay, and consensus verification.
 - [Orchestration Controls](https://open-multi-agent.com/guides/orchestration-controls/): team context injection, approval gates, cancellation, coordinator config, and fan-out.
+- [Control costs and budgets](https://open-multi-agent.com/guides/cost-budget-control/): bound a run with maxTokenBudget or maxCostBudget and a caller-owned estimateCost function.
 - [Production Checklist](https://open-multi-agent.com/guides/production-checklist/): token budget, timeouts, retries, tool-output limits, loop detection, tracing, and tool grants.
 - [Architecture](https://open-multi-agent.com/architecture/): how OMA works — the architecture and the runTeam() execution flow, from a goal to a task DAG to a synthesized result.
 
@@ -31,12 +34,17 @@ Open Multi-Agent (OMA) is a goal-driven agent runtime for TypeScript backends. I
 
 - [Providers](https://open-multi-agent.com/reference/providers/): configure hosted, cloud, and local model providers — built-in shortcuts, OpenAI-compatible endpoints, env vars, and local tool-calling.
 - [Tool configuration](https://open-multi-agent.com/reference/tool-configuration/): grant built-in tools (default-deny), presets and allowlists, the filesystem sandbox, custom tools, and MCP.
-- [Observability](https://open-multi-agent.com/reference/observability/): onProgress events, onTrace spans, and the static post-run dashboard.
+- [Observability](https://open-multi-agent.com/reference/observability/): TraceRecord v2 sinks, TraceStore implementations, optional OpenTelemetry export, and the offline post-run Run Viewer.
+- [Observability migration](https://open-multi-agent.com/reference/observability-migration/): move from onTrace to sinks, stores, and OpenTelemetry in reversible stages without changing runtime results.
+- [Observability performance](https://open-multi-agent.com/reference/observability-performance/): reproducible performance budgets, benchmark method, and the current release snapshot.
 - [Shared memory](https://open-multi-agent.com/reference/shared-memory/): a namespaced key-value store shared across a team, in-process or via a custom MemoryStore backend.
 - [Checkpoint & resume](https://open-multi-agent.com/reference/checkpoint/): opt-in per-run snapshots over any MemoryStore — persist task progress and resume after a crash, abort, or restart with restore().
+- [Plan preview & replay](https://open-multi-agent.com/reference/plan-replay/): freeze a reviewed task DAG with createPlanArtifact and execute it later with runFromPlan without calling the coordinator again.
 - [Context management](https://open-multi-agent.com/reference/context-management/): keep long runs under the token ceiling with context strategies, tool-result compression, and cross-provider reasoning.
 - [Consensus](https://open-multi-agent.com/reference/consensus/): runConsensus proposer-to-judge verification, the per-task verify hook, and the shared token-budget invariant.
 - [Model routing](https://open-multi-agent.com/reference/model-routing/): opt-in deterministic policy that routes orchestration phases to different models by phase, agent, task role, priority, or leaf.
+- [External agents](https://open-multi-agent.com/reference/external-agents/): run local processes or ACP coding agents inside an OMA task DAG, with explicit permission, usage, and lifecycle boundaries.
+- [Evaluation](https://open-multi-agent.com/reference/evaluation/): version EvalSets and scorers, persist results, gate CI, and sample completed production runs without changing business results.
 - [CLI](https://open-multi-agent.com/reference/cli/): the JSON-first oma binary for shell and CI — commands, config files, output, and exit codes.
 
 ## Solutions
@@ -54,6 +62,8 @@ Use-case guides — the common shapes teams build with OMA, each with runnable T
 
 Per-provider setup — one env var and a model name to run a team on each. Hub: [Integrations](https://open-multi-agent.com/integrations/).
 
+- [OpenTelemetry](https://open-multi-agent.com/integrations/opentelemetry/): map TraceRecord v2 spans through the optional createOtelTraceSink() adapter to a tracer or provider owned by your application.
+- [External agents (ACP)](https://open-multi-agent.com/integrations/external-agents/): put Claude Code or another external coding agent inside the task DAG; permission prompts do not make the subprocess an OMA filesystem sandbox.
 - [Anthropic Claude](https://open-multi-agent.com/integrations/anthropic/): Claude via the native Anthropic SDK — set ANTHROPIC_API_KEY and name the model.
 - [OpenAI GPT](https://open-multi-agent.com/integrations/openai/): GPT models via the OpenAI API — the default provider, one env var away.
 - [Google Gemini](https://open-multi-agent.com/integrations/gemini/): Gemini via the native Google GenAI SDK — one extra install, one env var.
@@ -78,10 +88,10 @@ Per-provider setup — one env var and a model name to run a team on each. Hub: 
 
 Honest, sourced comparisons against the main multi-agent frameworks — language, orchestration model, runtime dependencies, token-budget control, and observability, with a fair account of when the other tool is the better choice. Hub: [Compare](https://open-multi-agent.com/compare/).
 
-- [open-multi-agent vs LangGraph](https://open-multi-agent.com/compare/langgraph/): goal-first task-DAG decomposition vs a declarative state graph; TypeScript-native with 3 dependencies and a hard token-budget cap vs LangGraph's deeper persistence and time-travel ecosystem.
+- [open-multi-agent vs LangGraph](https://open-multi-agent.com/compare/langgraph/): goal-first task-DAG decomposition vs a declarative state graph; TypeScript-native with 3 dependencies and run-level token or estimated-cost ceilings vs LangGraph's deeper persistence and time-travel ecosystem.
 - [open-multi-agent vs CrewAI](https://open-multi-agent.com/compare/crewai/): a lean 3-dependency TypeScript runtime vs a batteries-included Python framework of role-based crews; comparable orchestration surface, the choice is the language stack.
 - [open-multi-agent vs AutoGen](https://open-multi-agent.com/compare/autogen/): goal-driven TypeScript orchestration vs conversation-driven Python agents (AutoGen is now in maintenance mode, superseded by the Microsoft Agent Framework).
-- [open-multi-agent vs the OpenAI Agents SDK](https://open-multi-agent.com/compare/openai-agents-sdk/): provider-neutral, goal-driven orchestration with a hard token budget vs a lightweight, handoffs-based SDK with best-in-class built-in tracing.
+- [open-multi-agent vs the OpenAI Agents SDK](https://open-multi-agent.com/compare/openai-agents-sdk/): provider-neutral, goal-driven orchestration with run-level token or estimated-cost ceilings vs a lightweight, handoffs-based SDK with best-in-class built-in tracing.
 - [open-multi-agent vs Mastra](https://open-multi-agent.com/compare/mastra/): a lean 3-dependency goal-driven runtime vs a batteries-included TypeScript framework (workflows, memory, RAG, evals; ~32 core deps built on the Vercel AI SDK).
 - [open-multi-agent vs the Vercel AI SDK](https://open-multi-agent.com/compare/vercel-ai-sdk/): different layers — the AI SDK is a lean single-agent toolkit (3 deps); OMA is goal-driven multi-agent orchestration on top, and can run over the AI SDK.
 - [open-multi-agent vs VoltAgent](https://open-multi-agent.com/compare/voltagent/): a lean 3-dependency core vs an observability-first framework with a bundled OpenTelemetry stack and supervisor/sub-agent networks (~44 core deps).

@@ -61,6 +61,17 @@ fills, or await a typed, schema-validated object when the run completes.
 `thinkingConfig`, and OpenAI `reasoning_effort`. Reasoning streams as events, and can be
 preserved across a provider switch when you opt in.
 
+**External agents.** A team member can use a local `process` backend or an Agent Client
+Protocol (`acp`) backend instead of a model. It joins the same task DAG, shared memory,
+failure propagation, and result shape as an LLM-backed agent. The subprocess still owns
+its own tools and local permissions; ACP permission prompts are not an OMA filesystem or
+OS sandbox.
+
+**Evaluation.** The `@open-multi-agent/core/eval` subpath runs versioned EvalSets and
+scorers, persists EvalRecords, produces CI GateVerdicts, and can sample completed
+production runs on a best-effort basis. Evaluation observes completed results and never
+changes the business result.
+
 ## You hold the controls
 
 Handing real work to autonomous agents raises three fair questions — do they run off the
@@ -70,14 +81,21 @@ rails, burn the budget, or fail where you can't see it? Each one has an answer i
 approve each round with `onApproval`. A proposer→judge pass (`runConsensus`) has one agent
 check another's output, and loop detection halts an agent that starts repeating itself.
 
-**Control spend.** Route planning to a flagship model and the leaf tasks to cheap ones with
-`modelRouting`. `maxTokenBudget` caps a run's spend — cross it and the orchestrator stops
-issuing calls instead of running up the bill.
+**Control spend.** Route planning to a flagship model and leaf tasks to cheaper models
+with `modelRouting`. `maxTokenBudget` caps cumulative input + output tokens;
+`maxCostBudget` uses an application-owned `estimateCost` function so your own model and
+provider price table stays authoritative. Both are circuit breakers checked after usage
+is reported at turn and task boundaries, so a run can cross a configured ceiling by up
+to one model turn. Provider invoices remain the source of truth for billed cost.
 
-**Inspect, replay, resume.** Stream every LLM and tool call to your tracing stack with
-`onTrace`, or open a self-contained HTML dashboard after the run (`oma run --dashboard`).
-Checkpoints resume a crashed run from its last completed task, and secrets are redacted
-from traces and dashboards on a best-effort basis.
+**Inspect, replay, resume.** Existing `onTrace` callbacks remain supported. TraceRecord v2
+sinks can write to `InMemoryTraceStore`, the persistent single-process `FileTraceStore`,
+or the optional `createOtelTraceSink()` bridge in `@open-multi-agent/otel`; the application
+owns the OpenTelemetry provider lifecycle. Open the offline Run Viewer after a run
+(`oma run --dashboard`), freeze a reviewed plan with `createPlanArtifact()` and execute it
+with `runFromPlan()`, or resume a crashed run from its last completed task. Prompt,
+completion, tool payload, credential, and reasoning filtering is best-effort, so apply
+your own sink policy before export.
 
 ## What you can build
 
@@ -108,12 +126,14 @@ in your backend.
 - **Providers** — Anthropic, Gemini, OpenAI, Bedrock, Azure, DeepSeek, and more — or any OpenAI-compatible endpoint (13 built-in).
 - **MCP** — connect Model Context Protocol servers as tools (native).
 - **Vercel AI SDK** — bridge to 60+ AI SDK providers and hosts (compatible).
+- **OpenTelemetry** — map TraceRecord v2 through the optional `@open-multi-agent/otel` adapter to an application-owned provider.
+- **External agents** — run a local process or ACP coding agent as a first-class member of the same task DAG.
 - **Express** — mount runTeam() behind a route handler (drop-in).
 - **Any Node.js** — no daemon, no sidecar; three runtime deps (Node 18+).
 
-Per-provider setup guides live at https://open-multi-agent.com/integrations/ (Anthropic,
-OpenAI, Gemini, DeepSeek, AWS Bedrock, Azure OpenAI, Ollama, and any OpenAI-compatible
-endpoint).
+Integration guides live at https://open-multi-agent.com/integrations/ (OpenTelemetry,
+external agents over ACP, Anthropic, OpenAI, Gemini, DeepSeek, AWS Bedrock, Azure OpenAI,
+Ollama, and any OpenAI-compatible endpoint).
 
 ## Common use cases
 
@@ -157,10 +177,11 @@ skipped. runConsensus adds a proposer→judge check that a second agent must acc
 detection halts an agent that keeps repeating the same tool call or output.
 
 **How do I cap what a run costs?**
-Two levers. modelRouting sends planning and synthesis to a flagship model while leaf tasks
-run on a cheaper one, so you pay frontier rates only where they matter. maxTokenBudget is a
-hard ceiling on cumulative tokens: cross it and the orchestrator stops issuing calls and
-skips the remaining tasks instead of running up the bill.
+Use `maxCostBudget` with `estimateCost`; the estimator owns the per-model price table.
+OMA accumulates the estimate across the run and stops issuing further calls after the cap
+is crossed. Checks happen at turn and task boundaries, so the run can exceed the ceiling
+by one model turn. `maxTokenBudget` provides the parallel cumulative-token ceiling, and
+`modelRouting` can put cheaper models on leaf tasks.
 
 **Does it stream, or only return at the end?**
 Both. You can stream tokens and node-state transitions as the DAG fills, or simply await
@@ -176,7 +197,7 @@ open-multi-agent team can run Claude Code itself as one of its agents.
 
 ## How it compares
 
-Honest, sourced comparisons live at https://open-multi-agent.com/compare/. The through-line: OMA is goal-first (you describe the outcome; the coordinator builds the task DAG at runtime), TypeScript-native, three runtime dependencies, and it enforces a hard `maxTokenBudget` that aborts a run before it overspends. Most of the thirteen frameworks below cap steps or turns rather than tokens; Pydantic AI's `UsageLimits` is the notable exception, with a token-usage limit of its own.
+Honest, sourced comparisons live at https://open-multi-agent.com/compare/. The through-line: OMA is goal-first (you describe the outcome; the coordinator builds the task DAG at runtime), TypeScript-native, three runtime dependencies, and it provides run-level token or estimated-cost circuit breakers through `maxTokenBudget` and `maxCostBudget` + `estimateCost`. Checks happen at turn and task boundaries and may cross the configured ceiling by one model turn. Most of the thirteen frameworks below cap steps or turns rather than tokens; Pydantic AI's `UsageLimits` is the notable exception, with a token-usage limit of its own.
 
 - vs LangGraph — graph-first vs goal-first. LangGraph compiles a declarative state graph you define; OMA decomposes a goal at runtime. LangGraph's TypeScript port is GA and its persistence + time-travel ecosystem is deeper; OMA is leaner (3 deps) and goal-driven. https://open-multi-agent.com/compare/langgraph/
 - vs CrewAI — Python vs TypeScript. CrewAI is a mature, batteries-included framework of role-based crews (~30 dependencies); OMA is a lean TypeScript runtime (3 deps). Comparable orchestration surface; the choice is the language stack. https://open-multi-agent.com/compare/crewai/
@@ -184,11 +205,11 @@ Honest, sourced comparisons live at https://open-multi-agent.com/compare/. The t
 - vs the OpenAI Agents SDK — handoffs vs decomposition. The Agents SDK is lightweight with best-in-class built-in tracing, strongest when you build on OpenAI; OMA is provider-neutral and decomposes a goal into a task DAG. https://open-multi-agent.com/compare/openai-agents-sdk/
 - vs Mastra — lean core vs batteries-included. Mastra bundles agents + graph-based workflows + memory + RAG + evals (~32 core deps, built on the Vercel AI SDK); OMA keeps a 3-dep goal-driven core. https://open-multi-agent.com/compare/mastra/
 - vs the Vercel AI SDK — different layers. The AI SDK is a lean, provider-neutral single-agent toolkit (3 deps, stopWhen); OMA is the multi-agent orchestration layer above it and can run on top of the AI SDK. https://open-multi-agent.com/compare/vercel-ai-sdk/
-- vs VoltAgent — observability-first vs lean. VoltAgent bundles a full OpenTelemetry stack and supervisor/sub-agent networks (~44 core deps); OMA is 3 deps and forwards its own onTrace spans. https://open-multi-agent.com/compare/voltagent/
+- vs VoltAgent — observability-first vs lean. VoltAgent bundles a full OpenTelemetry stack and supervisor/sub-agent networks (~44 core deps); OMA keeps a 3-dependency core and offers TraceStore plus an optional first-party OpenTelemetry adapter. https://open-multi-agent.com/compare/voltagent/
 - vs Inngest AgentKit — deterministic routing vs runtime decomposition. AgentKit routes an agent network with state-based logic on Inngest (durable, replayable); OMA decomposes a goal into a task DAG at runtime with no orchestration service. https://open-multi-agent.com/compare/inngest-agentkit/
 - vs LangChain — focused runtime vs broad ecosystem. LangChain is the framework + integration ecosystem (chains, AgentExecutor); its multi-agent orchestration is LangGraph. OMA is a lean, goal-driven, 3-dep TypeScript runtime. https://open-multi-agent.com/compare/langchain/
 - vs LlamaIndex — orchestration-first vs retrieval-first. LlamaIndex centers on RAG over your data (~29 core deps) with agent workflows on top; OMA centers on orchestration and leaves retrieval to you. https://open-multi-agent.com/compare/llamaindex/
-- vs Pydantic AI — different language + shape. Pydantic AI is type-safe, Python-native, with strong Logfire/OpenTelemetry and a token-usage limit (UsageLimits); OMA is TypeScript-native goal-driven orchestration whose maxTokenBudget aborts the whole DAG run. https://open-multi-agent.com/compare/pydantic-ai/
+- vs Pydantic AI — different language + shape. Pydantic AI is type-safe, Python-native, with strong Logfire/OpenTelemetry and a token-usage limit (UsageLimits); OMA is TypeScript-native goal-driven orchestration whose maxTokenBudget applies across the whole DAG run. https://open-multi-agent.com/compare/pydantic-ai/
 - vs Google ADK — code-first workflow agents vs runtime decomposition. ADK composes Sequential/Parallel/Loop agents (Gemini-first, ~24 deps incl. a web stack); OMA decomposes a goal at runtime, provider-neutral, 3 deps. https://open-multi-agent.com/compare/google-adk/
 - vs Semantic Kernel — .NET/Azure vs Node/TypeScript. SK is Microsoft's C#-first enterprise SDK (converging with AutoGen into the Microsoft Agent Framework); OMA is a lean TypeScript-native goal-driven runtime. https://open-multi-agent.com/compare/semantic-kernel/
 
@@ -203,6 +224,7 @@ Getting started:
 
 Guides:
 - Orchestration Controls: https://open-multi-agent.com/guides/orchestration-controls/
+- Control costs and budgets: https://open-multi-agent.com/guides/cost-budget-control/
 - Production Checklist: https://open-multi-agent.com/guides/production-checklist/
 - Architecture: https://open-multi-agent.com/architecture/
 
@@ -210,11 +232,16 @@ Reference:
 - Providers: https://open-multi-agent.com/reference/providers/
 - Tool configuration: https://open-multi-agent.com/reference/tool-configuration/
 - Observability: https://open-multi-agent.com/reference/observability/
+- Observability migration: https://open-multi-agent.com/reference/observability-migration/
+- Observability performance: https://open-multi-agent.com/reference/observability-performance/
 - Shared memory: https://open-multi-agent.com/reference/shared-memory/
 - Checkpoint & resume: https://open-multi-agent.com/reference/checkpoint/
+- Plan preview & replay: https://open-multi-agent.com/reference/plan-replay/
 - Context management: https://open-multi-agent.com/reference/context-management/
 - Consensus: https://open-multi-agent.com/reference/consensus/
 - Model routing: https://open-multi-agent.com/reference/model-routing/
+- External agents: https://open-multi-agent.com/reference/external-agents/
+- Evaluation: https://open-multi-agent.com/reference/evaluation/
 - CLI: https://open-multi-agent.com/reference/cli/
 
 ## Blog
