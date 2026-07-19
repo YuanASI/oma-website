@@ -198,6 +198,9 @@ a { color: inherit; }
   margin: 18px 0 0; max-width: 46ch; font-size: 16px; line-height: 1.62;
   color: var(--oma-fg-2);
 }
+/* zh sub is two sentences forced onto their own lines with <br />; drop the
+   ch cap so the longer first clause holds one line in the hero column. */
+:root[lang='zh-CN'] .hero-sub { max-width: none; }
 /* One-line capability meta (replaces the heavier bordered fact-strip box). */
 .hero-meta {
   margin: 22px 0 0; font-family: var(--font-mono); font-size: 13px;
