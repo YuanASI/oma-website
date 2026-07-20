@@ -125,6 +125,7 @@ export const en = {
       sub: 'Hand it one goal. It plans the tasks, runs specialists in parallel, and merges one result. Cloud or local models, offline included.',
       meta: ['3 runtime deps', 'any model, one team', 'MIT license'],
       quickStart: 'Quick Start',
+      demoNote: 'First demo: no API key or model request.',
       ioInput: 'input · team.ts',
       ioGoal: 'goal',
       capturedGoal: 'captured goal',
@@ -157,7 +158,7 @@ export const en = {
     sectionReliability: {
       eyebrow: 'Control',
       title: 'You hold the controls.',
-      sub: 'Deterministic control around non-deterministic agents: three layers, all in the API.',
+      sub: 'Deterministic controls and measurable quality around non-deterministic agents.',
     },
     reliability: [
       {
@@ -199,10 +200,27 @@ export const en = {
         ],
       },
     ],
+    evaluation: {
+      tag: 'evaluation',
+      title: 'Measure quality before and after deployment.',
+      parts: [
+        'Version ', { c: 'EvalSet' }, ' fixtures and ', { c: 'Scorer' },
+        ' logic, run regressions with ', { c: 'runEvalSet()' },
+        ', and enforce the result in CI with ', { c: 'oma eval gate' }, '.',
+      ],
+      note: 'Online sampling is opt-in and never changes the business result. Scorer failures remain scorer_error instead of becoming zero scores.',
+      steps: [
+        { label: 'version', value: 'EvalSet + Scorer' },
+        { label: 'run', value: 'reports + aggregates' },
+        { label: 'gate', value: 'GateVerdict + CLI' },
+      ],
+      ref: '/reference/evaluation/',
+      refLabel: 'evaluation reference',
+    },
     dashboard: {
-      caption: 'And when something does slip, the offline Run Viewer can replay the completed run: the task DAG, per-node assignee and status, token breakdown, and the agent output log.',
+      caption: 'And when something does slip, the offline Run Viewer replays the completed run: the task DAG, per-task assignee, model and provider, token and cost rollups, tool-call count, and safe evidence details.',
       obsLink: 'Observability',
-      imgAlt: 'Offline Run Viewer replaying a completed team run: the task DAG with per-node assignee, status, token breakdown, and the agent output log.',
+      imgAlt: 'Offline Run Viewer replaying a completed team run with its task DAG and per-task assignee, model, provider, token, cost, tool-call, and status details.',
     },
     sectionEnvironment: {
       eyebrow: 'Your environment',

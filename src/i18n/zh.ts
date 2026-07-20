@@ -106,6 +106,7 @@ export const zh: UiDict = {
       sub: '给一个目标，它自动拆任务、并行执行、汇总出一个结果。<br />云端或本地模型同队，可以完全不上云。',
       meta: ['3 个运行时依赖', '任意模型同队混用', 'MIT 许可'],
       quickStart: '快速开始',
+      demoNote: '首次 Demo：无需 API Key，也不会请求模型。',
       ioInput: '输入 · team.ts',
       ioGoal: '目标',
       capturedGoal: '真实运行目标',
@@ -138,7 +139,7 @@ export const zh: UiDict = {
     sectionReliability: {
       eyebrow: '掌控',
       title: '控制权在你手里。',
-      sub: '在非确定性的智能体外面裹一层确定性控制：三层，全在 API 里。',
+      sub: '在非确定性的智能体外面，加上确定性控制与可度量的质量。',
     },
     reliability: [
       {
@@ -180,10 +181,27 @@ export const zh: UiDict = {
         ],
       },
     ],
+    evaluation: {
+      tag: '评估',
+      title: '在部署前后，量出质量变化。',
+      parts: [
+        '为 ', { c: 'EvalSet' }, ' 数据集和 ', { c: 'Scorer' },
+        ' 逻辑做版本管理，用 ', { c: 'runEvalSet()' },
+        ' 跑回归，再用 ', { c: 'oma eval gate' }, ' 在 CI 中执行结果。',
+      ],
+      note: '线上采样需要显式开启，且不会改变业务结果。Scorer 失败会保留为 scorer_error，不会被算成零分。',
+      steps: [
+        { label: '版本', value: 'EvalSet + Scorer' },
+        { label: '运行', value: '报告 + 聚合指标' },
+        { label: '闸门', value: 'GateVerdict + CLI' },
+      ],
+      ref: '/reference/evaluation/',
+      refLabel: '评估参考',
+    },
     dashboard: {
-      caption: '而当真的出岔子时，离线 Run Viewer 可以回放已完成的运行。你可以查看任务 DAG、每个节点的承担者与状态、token 拆解，以及智能体的输出日志。',
+      caption: '而当真的出岔子时，离线 Run Viewer 可以回放已完成的运行：任务 DAG，以及每个任务的承担者、模型与提供方、token 与成本汇总、工具调用次数和安全证据详情。',
       obsLink: '可观测性',
-      imgAlt: '离线 Run Viewer 正在回放一次已完成的团队运行：任务 DAG，标注每个节点的承担者、状态、token 拆解，以及智能体输出日志。',
+      imgAlt: '离线 Run Viewer 正在回放一次已完成的团队运行，展示任务 DAG，以及每个任务的承担者、模型、提供方、token、成本、工具调用与状态详情。',
     },
     sectionEnvironment: {
       eyebrow: '你的运行环境',

@@ -260,6 +260,10 @@ a { color: inherit; }
   font-family: var(--font-mono); font-size: 11px; line-height: 1.4;
   color: var(--oma-danger);
 }
+.cmd-note {
+  font-family: var(--font-mono); font-size: 11px; line-height: 1.45;
+  color: var(--oma-fg-2); letter-spacing: 0.01em;
+}
 .cmd.copied + .copy-feedback { color: var(--oma-accent); }
 /* bg-3 is dark-first (a raised well on near-black); in light mode it inverts to the
    darkest warm surface and reads as a muddy tan for a standalone CTA — drop to bg-1. */
@@ -512,6 +516,65 @@ a { color: inherit; }
 }
 .rel-foot { margin-top: auto; padding-top: 18px; }
 
+/* Evaluation reads as one quality pipeline rather than a fourth generic card:
+   version the fixture and scorer, run the evidence, then apply the gate. */
+.eval-band {
+  position: relative; overflow: hidden;
+  display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(420px, 0.92fr);
+  gap: 32px; align-items: center; margin-top: 16px; padding: 26px;
+  border: 1px solid var(--oma-border-1); border-radius: var(--radius-md);
+  background: var(--oma-bg-1); box-shadow: var(--shadow-accent-glow);
+}
+.eval-band-copy { min-width: 0; }
+.eval-tag {
+  display: inline-flex; align-items: center; gap: 8px; margin-bottom: 10px;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--oma-accent);
+}
+.eval-pulse {
+  width: 7px; height: 7px; border-radius: 50%; background: currentColor;
+  box-shadow: 0 0 0 4px var(--oma-accent-soft);
+}
+.eval-band h3 {
+  margin: 0; max-width: 640px; font-size: 22px; line-height: 1.2;
+  letter-spacing: -0.025em; color: var(--oma-fg-0);
+}
+.eval-desc, .eval-note { max-width: 720px; color: var(--oma-fg-1); }
+.eval-desc { margin: 12px 0 0; font-size: 14px; line-height: 1.7; }
+.eval-desc code {
+  font-family: var(--font-mono); font-size: 12.5px; white-space: nowrap;
+  padding: 1px 5px; border: 1px solid var(--border-default);
+  border-radius: var(--radius-xs); background: var(--oma-bg-2); color: var(--code-string);
+}
+.eval-note { margin: 9px 0 15px; font-size: 12px; line-height: 1.6; color: var(--oma-fg-2); }
+.eval-flow {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0; padding: 0; list-style: none;
+  border: 1px solid var(--border-default); border-radius: var(--radius-md);
+  background: var(--oma-bg-2); overflow: hidden;
+}
+.eval-flow li {
+  position: relative; display: grid; align-content: start; gap: 7px;
+  min-width: 0; min-height: 124px; padding: 15px;
+  border-left: 1px solid var(--border-default);
+}
+.eval-flow li:first-child { border-left: 0; }
+.eval-flow li:not(:last-child)::after {
+  content: '→'; position: absolute; z-index: 1; top: 17px; right: -8px;
+  display: grid; place-items: center; width: 16px; height: 16px;
+  background: var(--oma-bg-2); color: var(--oma-accent);
+  font-family: var(--font-mono); font-size: 11px;
+}
+.eval-step-num, .eval-step-label {
+  font-family: var(--font-mono); text-transform: uppercase;
+}
+.eval-step-num { font-size: 10px; color: var(--oma-accent); }
+.eval-step-label { font-size: 10px; letter-spacing: 0.08em; color: var(--oma-fg-2); }
+.eval-flow code {
+  font-family: var(--font-mono); font-size: 12px; line-height: 1.5;
+  white-space: normal; overflow-wrap: anywhere; color: var(--oma-fg-0);
+}
+
 /* ── Post-run dashboard shot (in the production section) ── */
 .dashboard-shot { margin: 32px 0 0; }
 .dashboard-shot img,
@@ -652,7 +715,12 @@ a { color: inherit; }
 }
 .cta-final-title--zh .cta-final-title-line { white-space: nowrap; }
 .cta-actions { display: flex; flex-direction: column; align-items: center; gap: 22px; margin-top: 40px; }
-.cta-alt { font-size: 13.5px; }
+.cta-actions .cmd-wrap { justify-items: center; }
+.cta-actions .cmd-note { text-align: center; }
+.cta-alt {
+  max-width: 100%; justify-content: center;
+  font-size: 13.5px; line-height: 1.5; text-align: center; white-space: normal;
+}
 
 /* ── Footer ── */
 .footer { border-top: 1px solid var(--border-subtle); padding: 40px 0; }
@@ -735,6 +803,7 @@ a { color: inherit; }
   .section { padding: 72px 0; }
   .hero { padding: 44px 0 64px; }
   .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+  .eval-band { grid-template-columns: 1fr; }
   .dag-desktop { display: none; }
   .dag-mobile {
     display: block; margin: 0;
@@ -767,6 +836,7 @@ a { color: inherit; }
   .stat:nth-child(2) { border-right: none; }
   .stat { border-bottom: 1px solid var(--border-subtle); }
   .cases-grid, .build-grid, .rel-grid { grid-template-columns: 1fr; }
+  .eval-flow li { min-height: 108px; }
   .stack-grid { grid-template-columns: repeat(2, 1fr); }
   .evidence-block-head { grid-template-columns: 1fr; align-items: start; gap: 10px; }
   .stack-strip { grid-template-columns: repeat(2, 1fr); }
@@ -776,6 +846,11 @@ a { color: inherit; }
   .container { padding: 0 20px; }
   .section { padding: 60px 0; }
   .section-title { font-size: 32px; }
+  .eval-band { padding: 22px 18px; }
+  .eval-flow { grid-template-columns: 1fr; }
+  .eval-flow li { min-height: 0; }
+  .eval-flow li + li { border-left: 0; border-top: 1px solid var(--border-default); }
+  .eval-flow li:not(:last-child)::after { content: '↓'; top: auto; right: 17px; bottom: -8px; }
   /* Collapse the GitHub pill to an icon-only square (like the theme toggle) so
      the brand wordmark keeps its single line on narrow screens. */
   .nav-github { width: 44px; padding: 0; justify-content: center; }
@@ -806,7 +881,9 @@ a { color: inherit; }
   .build-desc, .case-desc { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
   .build-desc { -webkit-line-clamp: 3; }
   .evidence-proof .case-desc { -webkit-line-clamp: 3; }
-  .cmd { width: 100%; justify-content: space-between; }
+  .cmd { width: 100%; min-width: 0; max-width: 100%; justify-content: space-between; }
+  .cmd .prompt { flex: none; }
+  .cmd .text { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
   .cmd-wrap { width: 100%; }
   .cap-code-wrap .text-link { white-space: normal; line-height: 1.5; }
   .hero-cta { gap: 18px; }

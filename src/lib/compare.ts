@@ -6,8 +6,8 @@
 // July 2026 against a PRIMARY source; the framework's own pyproject.toml /
 // package.json (dependency counts), its docs (paradigm, budget, tracing), and
 // the PyPI/npm registry (latest version, license); not from memory. OMA's
-// column was verified against open-multi-agent core v1.11.0 source + docs and
-// the first-party optional @open-multi-agent/otel v0.1.0 package. The
+// column was verified against open-multi-agent core v1.12.1 source + docs and
+// the compatible first-party optional @open-multi-agent/otel v0.1.0 package. The
 // whole point of these pages is the fair "when the other tool is the better
 // choice" paragraph, so the competitor gets genuine credit and nothing is
 // rounded up. Where a value would be a guess, it is stated qualitatively, never
