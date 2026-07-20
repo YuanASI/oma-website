@@ -15,7 +15,7 @@ import Footer from '../../../components/Footer.astro';
 import EnterpriseCta from '../../../components/EnterpriseCta.astro';
 import EnterpriseHeadCta from '../../../components/EnterpriseHeadCta.astro';
 import { ghStats } from '../../../lib/site';
-import { AXES, COMPARISONS, type Comparison, type Loc } from '../../../lib/compare';
+import { AXES, COMPARISONS, OMA_CAPABILITIES, type Comparison, type Loc } from '../../../lib/compare';
 import { locales, defaultLocale, toLocale, useTranslations, localizePath, type Locale } from '../../../i18n';
 
 export function getStaticPaths() {
@@ -116,11 +116,30 @@ const jsonLd = {
       </div>
     </section>
 
+    <!-- OMA's verified runtime surface, shared across every comparison. -->
+    <section class="section compare-capabilities-section">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow"><span class="idx">02</span> {t.page.capabilities.eyebrow}</div>
+          <h2 class="section-title">{t.page.capabilities.title}</h2>
+          <p class="section-sub">{t.page.capabilities.lede}</p>
+        </div>
+        <div class="compare-capabilities-grid">
+          {OMA_CAPABILITIES.map((capability) => (
+            <article class="compare-capability-card">
+              <h3>{pick(capability.title)}</h3>
+              <p set:html={pick(capability.body)} />
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
     <!-- How they differ -->
     <section class="section compare-prose-section">
       <div class="container container--narrow">
         <div class="section-head">
-          <div class="eyebrow"><span class="idx">02</span> {t.page.howDiffer.eyebrow}</div>
+          <div class="eyebrow"><span class="idx">03</span> {t.page.howDiffer.eyebrow}</div>
           <h2 class="section-title">{t.page.howDiffer.title}</h2>
         </div>
         <p class="compare-prose" set:html={pick(comp.howDiffer)} />
@@ -228,6 +247,29 @@ const jsonLd = {
   .compare-matrix .col-oma { background: var(--oma-accent-soft); color: var(--oma-fg-1); }
   .compare-matrix thead th.col-oma { color: var(--oma-accent); }
 
+  /* Verified OMA runtime surface. */
+  .compare-capabilities-section { padding-top: 48px; }
+  .compare-capabilities-section .section-sub { max-width: 760px; }
+  .compare-capabilities-grid {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px; margin-top: 22px;
+  }
+  .compare-capability-card {
+    border: 1px solid var(--oma-accent-line); border-radius: var(--radius-md);
+    background: var(--oma-accent-soft); padding: 18px;
+  }
+  .compare-capability-card h3 {
+    margin: 0 0 8px; font-size: 15px; line-height: 1.4; color: var(--oma-fg-1);
+  }
+  .compare-capability-card p {
+    margin: 0; font-size: 13.5px; line-height: 1.65; color: var(--oma-fg-2);
+  }
+  .compare-capability-card :global(code) {
+    font-family: var(--font-mono); font-size: 0.86em;
+    background: var(--oma-bg-3); padding: 1px 4px; border-radius: var(--radius-xs);
+    color: var(--oma-fg-1);
+  }
+
   /* Narrative sections. */
   .compare-prose-section { padding-top: 40px; }
   .compare-prose {
@@ -265,5 +307,9 @@ const jsonLd = {
   @media (max-width: 720px) {
     .compare-take { grid-template-columns: 1fr; }
     .compare-verdict { grid-template-columns: 1fr; gap: 16px; }
+    .compare-capabilities-grid { grid-template-columns: 1fr; }
+  }
+  @media (min-width: 721px) and (max-width: 960px) {
+    .compare-capabilities-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 </style>

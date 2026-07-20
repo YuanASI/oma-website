@@ -506,27 +506,32 @@ export const en = {
   compare: {
     seo: {
       title: 'open-multi-agent vs LangGraph, CrewAI, Mastra, LangChain, Pydantic AI & more',
-      description: 'Honest, sourced comparisons of open-multi-agent against the main AI Agent frameworks — language, orchestration model, dependencies, budget control, and observability, and when to pick each.',
+      description: 'Sourced comparisons of open-multi-agent against the main AI Agent frameworks, including orchestration, deterministic controls, recovery, budgets, observability, and fit.',
     },
     hero: {
       eyebrow: 'compare',
       title: 'How open-multi-agent compares.',
-      lede: 'Choosing an AI Agent framework? Here is an honest, side-by-side look at open-multi-agent against the main alternatives — the dimensions that actually decide it, and a fair account of when the other tool is the better call.',
+      lede: 'Compare the actual runtime surface, not a one-line category label. Each page covers how the systems orchestrate work, what controls OMA provides, and where each option fits.',
     },
     hub: {
       pickThem: 'Pick {name} if',
       pickUs: 'Pick open-multi-agent if',
       view: 'Full comparison',
       moreTitle: 'More comparisons',
-      moreLede: 'The same full side-by-side treatment, for frameworks and adjacent tools — single-agent toolkits, RAG stacks, cloud-vendor SDKs.',
+      moreLede: 'The same full comparison for frameworks and adjacent tools, including single-agent toolkits, RAG stacks, and cloud-vendor SDKs.',
     },
     page: {
       eyebrow: 'comparison',
       vsTitle: 'open-multi-agent vs {name}',
-      seoTitle: 'open-multi-agent vs {name} — an honest comparison',
+      seoTitle: 'open-multi-agent vs {name}: a sourced comparison',
       matrix: { eyebrow: 'at a glance', title: 'Side by side.', dimension: 'Dimension', oma: 'open-multi-agent' },
+      capabilities: {
+        eyebrow: 'actual capabilities',
+        title: 'What open-multi-agent includes.',
+        lede: 'OMA is more than goal decomposition and a small dependency count. These are current framework capabilities documented in the project README.',
+      },
       howDiffer: { eyebrow: 'mechanism', title: 'How they differ.' },
-      whenThemTitle: 'When {name} is the better choice',
+      whenThemTitle: 'Where {name} fits',
       whenUsTitle: 'Where open-multi-agent fits',
       repoLink: '{name} on GitHub',
       seeAlso: 'Compare with another framework',
