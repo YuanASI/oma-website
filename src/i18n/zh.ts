@@ -616,27 +616,32 @@ export const zh: UiDict = {
   compare: {
     seo: {
       title: 'open-multi-agent 对比 LangGraph、CrewAI、Mastra、LangChain、Pydantic AI 等',
-      description: '把 open-multi-agent 与主流多智能体框架做诚实、可溯源的对比——语言、编排范式、依赖、预算控制与可观测性，以及各自何时更合适。',
+      description: '把 open-multi-agent 与主流多智能体框架做可溯源的对比，覆盖编排、确定性控制、恢复、预算、可观测性与适用场景。',
     },
     hero: {
       eyebrow: '对比',
       title: 'open-multi-agent 怎么比。',
-      lede: '在选多智能体框架？这里把 open-multi-agent 与主要备选方案并排、诚实地摆一摆——用真正决定选择的维度，以及一份「对方何时更合适」的坦诚说明。',
+      lede: '比较真实的运行时能力，而不是一句分类标签。每一页都说明系统如何编排工作、OMA 提供哪些控制，以及各自适合什么场景。',
     },
     hub: {
       pickThem: '选 {name}，如果',
       pickUs: '选 open-multi-agent，如果',
       view: '完整对比',
       moreTitle: '更多对比',
-      moreLede: '同样规格的完整对比，覆盖其余框架与相邻工具——单智能体工具包、RAG 栈、云厂商 SDK。',
+      moreLede: '同样规格的完整对比，覆盖其余框架与相邻工具，包括单智能体工具包、RAG 栈与云厂商 SDK。',
     },
     page: {
       eyebrow: '对比',
       vsTitle: 'open-multi-agent 对比 {name}',
-      seoTitle: 'open-multi-agent 对比 {name} —— 一份诚实的评测',
+      seoTitle: 'open-multi-agent 对比 {name}：一份可溯源的评测',
       matrix: { eyebrow: '速览', title: '并排来看。', dimension: '维度', oma: 'open-multi-agent' },
+      capabilities: {
+        eyebrow: '真实能力',
+        title: 'open-multi-agent 实际包含什么。',
+        lede: 'OMA 不只是目标拆解与少量依赖。以下均为项目 README 已记录的当前框架能力。',
+      },
       howDiffer: { eyebrow: '机制', title: '它们差在哪。' },
-      whenThemTitle: '什么情况下 {name} 更合适',
+      whenThemTitle: '{name} 适合什么',
       whenUsTitle: 'open-multi-agent 适合什么',
       repoLink: '{name} 的 GitHub',
       seeAlso: '对比另一个框架',
