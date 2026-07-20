@@ -644,9 +644,18 @@ export const en = {
     hero: {
       eyebrow: 'integrations',
       title: 'Connect the runtime.',
-      lede: 'Add model providers and optional runtime adapters without changing the goal-to-DAG orchestration at the center. Mix models in one team; export traces through infrastructure your application owns.',
+      lede: 'Extend the orchestration core with observability and external execution, then choose where your agents make model calls.',
     },
-    hub: { view: 'Set it up' },
+    hub: {
+      runtimeEyebrow: 'runtime capabilities',
+      runtimeTitle: 'Extend the runtime.',
+      runtimeLede: 'Connect cross-cutting capabilities without changing the goal-to-DAG orchestration at the center.',
+      runtimeCount: 'integrations',
+      providersEyebrow: 'model access',
+      providersTitle: 'Choose a model provider.',
+      providersLede: 'Use one provider across the team or mix models per agent while keeping the same orchestration contract.',
+      providersCount: 'providers',
+    },
     page: {
       eyebrow: 'integration',
       backToHub: 'All integrations',

@@ -13,8 +13,12 @@ import type { Loc } from './compare';
 
 export type Integration = {
   slug: string;
+  /** Hub grouping: cross-cutting runtime capability or model access. */
+  kind: 'runtime' | 'provider';
   /** Display name, kept verbatim in every locale. */
   name: string;
+  /** Compact, scannable qualifier shown on the integration hub card. */
+  hubLabel: Loc;
   /** Target search terms — English, invariant. */
   keywords: string[];
   seoDescription: Loc;
@@ -51,7 +55,9 @@ const HEAD = `import { OpenMultiAgent, type AgentConfig } from '@open-multi-agen
 export const INTEGRATIONS: Integration[] = [
   {
     slug: 'opentelemetry',
+    kind: 'runtime',
     name: 'OpenTelemetry',
+    hubLabel: { en: 'Observability', zh: '可观测性' },
     keywords: ['open multi agent opentelemetry', 'typescript multi agent tracing', 'open telemetry ai agents', 'open multi agent run viewer'],
     seoDescription: {
       en: 'Export open-multi-agent TraceRecord v2 spans to an application-owned OpenTelemetry provider with @open-multi-agent/otel, while keeping the three-dependency core and an offline Run Viewer.',
@@ -104,7 +110,9 @@ try {
   },
   {
     slug: 'external-agents',
+    kind: 'runtime',
     name: 'External agents (ACP)',
+    hubLabel: { en: 'External execution', zh: '外部执行' },
     keywords: [
       'claude code multi agent',
       'agent client protocol typescript',
@@ -255,7 +263,9 @@ console.log(result.success, result.totalTokenUsage)`,
   },
   {
     slug: 'anthropic',
+    kind: 'provider',
     name: 'Anthropic (Claude)',
+    hubLabel: { en: 'Native SDK', zh: '原生 SDK' },
     keywords: ['open-multi-agent anthropic', 'claude multi-agent typescript', 'anthropic agent orchestration', 'claude agent team node'],
     seoDescription: {
       en: 'Run a multi-agent team on Anthropic Claude in TypeScript with open-multi-agent — set ANTHROPIC_API_KEY, name the model, and mix Claude with other providers in one team.',
@@ -277,7 +287,9 @@ ${RUN}`,
   },
   {
     slug: 'openai',
+    kind: 'provider',
     name: 'OpenAI (GPT)',
+    hubLabel: { en: 'Default provider', zh: '默认提供方' },
     keywords: ['open-multi-agent openai', 'gpt multi-agent typescript', 'openai agent orchestration', 'gpt agent team node'],
     seoDescription: {
       en: 'Run a multi-agent team on OpenAI GPT models in TypeScript with open-multi-agent — set OPENAI_API_KEY and orchestrate a goal into a parallel task DAG.',
@@ -299,7 +311,9 @@ ${RUN}`,
   },
   {
     slug: 'gemini',
+    kind: 'provider',
     name: 'Google Gemini',
+    hubLabel: { en: 'Optional SDK', zh: '可选 SDK' },
     keywords: ['open-multi-agent gemini', 'gemini multi-agent typescript', 'google gemini agent orchestration', 'gemini agent team node'],
     seoDescription: {
       en: 'Run a multi-agent team on Google Gemini in TypeScript with open-multi-agent — set GEMINI_API_KEY, install @google/genai, and name the model.',
@@ -321,7 +335,9 @@ ${RUN}`,
   },
   {
     slug: 'deepseek',
+    kind: 'provider',
     name: 'DeepSeek',
+    hubLabel: { en: 'Built-in', zh: '内置提供方' },
     keywords: ['open-multi-agent deepseek', 'deepseek multi-agent typescript', 'deepseek agent orchestration', 'deepseek agent team node'],
     seoDescription: {
       en: 'Run a multi-agent team on DeepSeek in TypeScript with open-multi-agent — a built-in, OpenAI-compatible provider; set DEEPSEEK_API_KEY and name the model.',
@@ -343,7 +359,9 @@ ${RUN}`,
   },
   {
     slug: 'bedrock',
+    kind: 'provider',
     name: 'AWS Bedrock',
+    hubLabel: { en: 'AWS credentials', zh: 'AWS 凭据链' },
     keywords: ['open-multi-agent bedrock', 'aws bedrock multi-agent typescript', 'bedrock agent orchestration', 'bedrock claude agent team'],
     seoDescription: {
       en: 'Run a multi-agent team on AWS Bedrock in TypeScript with open-multi-agent — no API key (AWS credential chain), install the Bedrock runtime SDK, and name a Bedrock model.',
@@ -369,7 +387,9 @@ ${RUN}`,
   },
   {
     slug: 'azure-openai',
+    kind: 'provider',
     name: 'Azure OpenAI',
+    hubLabel: { en: 'Managed endpoint', zh: '托管端点' },
     keywords: ['open-multi-agent azure openai', 'azure openai multi-agent typescript', 'azure agent orchestration', 'azure openai agent team'],
     seoDescription: {
       en: 'Run a multi-agent team on Azure OpenAI in TypeScript with open-multi-agent — set AZURE_OPENAI_API_KEY and AZURE_OPENAI_ENDPOINT and name your deployment model.',
@@ -392,7 +412,9 @@ ${RUN}`,
   },
   {
     slug: 'ollama',
+    kind: 'provider',
     name: 'Ollama (local)',
+    hubLabel: { en: 'Local · No key', zh: '本地 · 无需密钥' },
     keywords: ['open-multi-agent ollama', 'ollama multi-agent typescript', 'local llm agent team', 'private agents ollama'],
     seoDescription: {
       en: 'Run a fully local multi-agent team on Ollama in TypeScript with open-multi-agent — no API key, just point the base URL at your local Ollama server.',
@@ -418,7 +440,9 @@ ${RUN}`,
   },
   {
     slug: 'openai-compatible',
+    kind: 'provider',
     name: 'OpenAI-compatible endpoints',
+    hubLabel: { en: 'Custom endpoint', zh: '自定义端点' },
     keywords: ['openai compatible agent framework', 'groq openrouter vllm agents', 'custom llm endpoint typescript', 'litellm multi-agent'],
     seoDescription: {
       en: 'Point open-multi-agent at any OpenAI-compatible endpoint in TypeScript — Groq, OpenRouter, vLLM, LM Studio, LiteLLM, and more — with provider: openai and a baseURL.',

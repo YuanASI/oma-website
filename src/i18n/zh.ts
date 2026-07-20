@@ -747,9 +747,18 @@ export const zh: UiDict = {
     hero: {
       eyebrow: '集成',
       title: '把运行时接进来。',
-      lede: '接入模型提供方与可选运行时适配器，核心的目标到任务 DAG 编排保持不变。一个团队里可以混用模型，trace 则导出到由你的应用持有的基础设施。',
+      lede: '先为编排核心接入可观测性或外部执行能力，再选择智能体调用模型的位置。',
     },
-    hub: { view: '去配置' },
+    hub: {
+      runtimeEyebrow: '运行时能力',
+      runtimeTitle: '扩展运行时。',
+      runtimeLede: '接入横切整个运行过程的能力，核心的目标到任务 DAG 编排保持不变。',
+      runtimeCount: '个集成',
+      providersEyebrow: '模型接入',
+      providersTitle: '选择模型提供方。',
+      providersLede: '整个团队可以共用一个提供方，也可以按智能体混用模型，编排契约保持一致。',
+      providersCount: '个提供方',
+    },
     page: {
       eyebrow: '集成',
       backToHub: '全部集成',
