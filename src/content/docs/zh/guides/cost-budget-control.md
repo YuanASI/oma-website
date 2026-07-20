@@ -7,13 +7,13 @@ OMA 提供两种运行级模型用量护栏：
 
 | 护栏 | 适用场景 | 计量内容 |
 |---|---|---|
-| `maxTokenBudget` | token 上限已经够用，或拿不到价格 | 累计输入 + 输出 token |
+| `maxTokenBudget` | token 上限即已足够，或无法获取定价 | 累计输入 + 输出 token |
 | `maxCostBudget` + `estimateCost` | 不同模型或提供方的价格不同 | 根据每次 LLM 结果估算的、由调用方定义的成本 |
 
 两者都属于 `OrchestratorConfig`。运行预算包含由编排器管理的协调器、工作者、综合、逐任务验证和委派智能体用量。`AgentConfig.maxTokenBudget` 可以进一步收紧单个智能体，但不能放宽编排器预算。
 
 :::caution[这是熔断器，不是计费表]
-预算会在模型报告用量后，于 turn 与任务边界接受检查。一次运行最多可能比设定上限多用一个模型 turn，因此 `maxCostBudget` 不是精确到分的硬停。提供方账单仍是实际计费的事实来源。
+预算会在模型报告用量后，于 turn 与任务边界接受检查。一次运行最多可能比设定上限多用一个模型 turn，因此 `maxCostBudget` 并非精确到分的硬性停止。提供方账单仍是实际计费的事实来源。
 :::
 
 ## 先设 token 上限
@@ -99,8 +99,8 @@ if (result.status?.code === 'budget_exhausted') {
 - 对价格表做版本管理，并在提供方定价或合同变化时更新。
 - 实际模型没有价格时应直接失败，不要把未知成本当成零。
 - 当 token 与预估成本任一项都能独立保护运行时，同时设置两种上限。
-- 对 `budget_exceeded` 告警，并在应用日志中带上运行标识。
+- 对 `budget_exceeded` 告警，并在应用日志中包含运行标识。
 - 在预算测试中覆盖协调器、工作者、综合、验证和委派智能体路径。
 - 上限是近似值：正在执行的模型 turn 必须完成后才能得知其用量。
 
-其他上线前应接好的控制项见[生产清单](/zh/guides/production-checklist/)。
+其他上线前需要配置好的控制项，见[生产清单](/zh/guides/production-checklist/)。

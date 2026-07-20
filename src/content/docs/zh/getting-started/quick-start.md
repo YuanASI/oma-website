@@ -1,6 +1,6 @@
 ---
 title: 快速开始
-description: "无需 API Key，大约五分钟跑通一个真实的 OMA 任务 DAG，然后把 Starter 切换到真实模型。"
+description: "无需 API Key，约五分钟即可运行一个真实的 OMA 任务 DAG，然后将 Starter 切换到真实模型。"
 ---
 
 :::tip[你将完成什么]
@@ -96,7 +96,7 @@ npm create oma-app@latest my-oma -- --no-install
 npm create oma-app@latest my-oma -- --no-run
 ```
 
-从 `@jackchen_me/open-multi-agent` 迁移？该包已弃用，请改装 `@open-multi-agent/core`。
+从 `@jackchen_me/open-multi-agent` 迁移？该包已弃用，请改为安装 `@open-multi-agent/core`。
 
 ## 接下来去哪里
 
