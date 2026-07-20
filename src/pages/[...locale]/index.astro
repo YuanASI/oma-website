@@ -336,7 +336,7 @@ const jsonLd = {
         </div>
       </section>
 
-      <!-- ── 4. Adoption proof: repo data, three projects, one attributed quote ── -->
+      <!-- ── 4. Adoption proof: repo data and three projects ── -->
       <section class="section home-section proof-section" id="proof">
         <div class="container">
           <div class="section-head section-head-row proof-head">
@@ -372,11 +372,25 @@ const jsonLd = {
               </a>
             ))}
           </div>
-          <a class="proof-quote" href="https://www.youtube.com/watch?v=2cdpYJzPXWE&t=331s" target="_blank" rel="noreferrer">
-            <blockquote>{l.endorse.quote}</blockquote>
-            <span class="proof-quote-cite">{l.endorse.cite}</span>
-            <span class="proof-quote-action">{l.sectionProof.watchMention} →</span>
-          </a>
+        </div>
+      </section>
+
+      <!-- ── 4b. Endorsement (third-party pull-quote + clickable clip still) ── -->
+      <section class="section endorse">
+        <div class="container">
+          <div class="endorse-grid">
+            <div class="endorse-text">
+              <div class="eyebrow"><span class="idx">//</span> {l.endorse.eyebrow}</div>
+              <figure class="pullquote">
+                <blockquote cite="https://www.youtube.com/watch?v=2cdpYJzPXWE&t=331s">{l.endorse.quote}</blockquote>
+                <figcaption class="pullquote-cite">{l.endorse.cite}</figcaption>
+              </figure>
+            </div>
+            <a class="endorse-clip" href="https://www.youtube.com/watch?v=2cdpYJzPXWE&t=331s" target="_blank" rel="noreferrer">
+              <img src="/featured-githubawesome.jpg" width="1280" height="720" loading="lazy" decoding="async" alt={l.endorse.imgAlt} />
+              <span class="endorse-play" aria-hidden="true"></span>
+            </a>
+          </div>
         </div>
       </section>
 
