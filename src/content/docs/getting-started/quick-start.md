@@ -5,13 +5,34 @@ description: "Scaffold a project with npm create oma-app, or install the core pa
 
 Requires Node.js >= 18.
 
-The fastest way to see a multi-agent run — scaffold a project and start it in one command:
+The fastest way to see OMA schedule a multi-agent run is the interactive scaffolder:
 
 ```bash
 npm create oma-app@latest
 ```
 
-The first run shows the coordinator decompose one goal into a multi-agent DAG, then opens a dashboard of the run. To add the library to an existing project instead:
+It asks for a project name, starter, and runtime, installs the generated project,
+then runs a deterministic local demo. The demo reads no API key and makes no
+model request: scripted model responses drive the real OMA scheduler,
+aggregation, report writers, and offline Run Viewer. Its Markdown, JSON, and
+HTML outputs explicitly identify the model responses as simulated.
+
+Installing the generated project still downloads packages from npm. To control
+what the scaffolder does after writing the files:
+
+```bash
+# Write the project only; do not install dependencies or run the demo.
+npm create oma-app@latest my-oma -- --no-install
+
+# Install dependencies, but do not run the demo.
+npm create oma-app@latest my-oma -- --no-run
+```
+
+For a real cloud-model run, copy the generated `.env.example` to `.env`, add
+your credentials, and run `npm run dev`. An Ollama project uses your local
+Ollama service instead and needs no cloud API key.
+
+To add the library to an existing project instead:
 
 ```bash
 npm install @open-multi-agent/core

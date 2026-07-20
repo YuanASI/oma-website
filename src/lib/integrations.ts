@@ -73,7 +73,7 @@ export const INTEGRATIONS: Integration[] = [
 import { OpenMultiAgent, type AgentConfig } from '@open-multi-agent/core'
 import { createOtelTraceSink } from '@open-multi-agent/otel'
 
-// npm install @open-multi-agent/core@^1.11.0 @open-multi-agent/otel@^0.1.0
+// npm install @open-multi-agent/core@^1.12.1 @open-multi-agent/otel@^0.1.0
 // npm install @opentelemetry/api @opentelemetry/sdk-trace-base
 // Set OPENAI_API_KEY in the environment for the demo team.
 const exporter = new InMemorySpanExporter()
@@ -100,8 +100,8 @@ try {
   await provider.shutdown()
 }`,
     body: {
-      en: '<code>@open-multi-agent/otel</code> is the optional first-party bridge for core v1.11.0 TraceRecord v2. <code>createOtelTraceSink()</code> maps one OMA span lifecycle to OpenTelemetry spans, including stable run IDs, task and tool relationships, token counts, cost metadata, retry fields, and compatible <code>gen_ai.*</code> attributes. Your application supplies and owns the tracer or provider; the adapter never installs a global provider and does not shut down a shared provider unless you explicitly opt in. The in-memory exporter above keeps the example runnable without a collector—replace it with the SDK and exporter your application already uses. Prompt, completion, tool payload, credential, and reasoning content are filtered by the adapter by default; treat all telemetry redaction as best-effort and apply your own sink policy before export.',
-      zh: '<code>@open-multi-agent/otel</code> 是面向 core v1.11.0 TraceRecord v2 的可选一方桥接包。<code>createOtelTraceSink()</code> 把 OMA 的每段 span 生命周期映射为 OpenTelemetry span，保留稳定的运行 ID、任务与工具关系、token 计数、成本元数据、重试字段，以及兼容的 <code>gen_ai.*</code> 属性。tracer 或 provider 由你的应用提供并持有；适配器不会安装全局 provider，也不会关闭共享 provider，除非你显式开启。上面的内存 exporter 让示例无需 collector 也能运行——生产中请换成应用已经使用的 SDK 与 exporter。适配器默认过滤 prompt、completion、工具 payload、凭据与推理内容；所有遥测脱敏仍应视为尽力而为，导出前还要应用你自己的 sink 策略。',
+      en: '<code>@open-multi-agent/otel@0.1.0</code> is the optional first-party bridge for TraceRecord v2, introduced in core v1.11.0 and compatible with core v1.12.1. <code>createOtelTraceSink()</code> maps one OMA span lifecycle to OpenTelemetry spans, including stable run IDs, task and tool relationships, token counts, cost metadata, retry fields, and compatible <code>gen_ai.*</code> attributes. Your application supplies and owns the tracer or provider; the adapter never installs a global provider and does not shut down a shared provider unless you explicitly opt in. The in-memory exporter above keeps the example runnable without a collector; replace it with the SDK and exporter your application already uses. Prompt, completion, tool payload, credential, and reasoning content are filtered by the adapter by default; treat all telemetry redaction as best-effort and apply your own sink policy before export.',
+      zh: '<code>@open-multi-agent/otel@0.1.0</code> 是 TraceRecord v2 的可选一方桥接包；该契约在 core v1.11.0 引入，并兼容 core v1.12.1。<code>createOtelTraceSink()</code> 把 OMA 的每段 span 生命周期映射为 OpenTelemetry span，保留稳定的运行 ID、任务与工具关系、token 计数、成本元数据、重试字段，以及兼容的 <code>gen_ai.*</code> 属性。tracer 或 provider 由你的应用提供并持有；适配器不会安装全局 provider，也不会关闭共享 provider，除非你显式开启。上面的内存 exporter 让示例无需 collector 也能运行；生产中请换成应用已经使用的 SDK 与 exporter。适配器默认过滤 prompt、completion、工具 payload、凭据与推理内容；所有遥测脱敏仍应视为尽力而为，导出前还要应用你自己的 sink 策略。',
     },
     links: [
       { href: '/reference/observability/', label: { en: 'Observability lifecycle and Run Viewer', zh: '可观测性生命周期与 Run Viewer' } },
