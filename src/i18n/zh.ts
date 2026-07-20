@@ -11,6 +11,7 @@ export const zh: UiDict = {
     capabilities: '能力',
     docs: '文档',
     useCases: '应用场景',
+    whyOma: '为什么选择 OMA',
     architecture: '架构',
     examples: '示例',
     showcase: '案例',
@@ -29,6 +30,10 @@ export const zh: UiDict = {
       observability: { title: '可观测性', desc: 'TraceStore、Run Viewer 与 OpenTelemetry' },
       reliability: { title: '可靠性与控制', desc: '预算、审批、重试、超时与检查点' },
       allIntegrations: '全部集成',
+    },
+    whyOmaDesc: {
+      compare: '与主流多智能体框架逐项对比',
+      showcase: '真实项目、团队与采用案例',
     },
     useCasesCols: { solutions: '解决方案', examples: '示例' },
     viewAllSolutions: '全部解决方案',

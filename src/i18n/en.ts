@@ -12,11 +12,13 @@ export const en = {
   nav: {
     brandAria: 'Open Multi-Agent — home',
     // Top-level nav labels. `capabilities` exposes the framework's build and
-    // production surfaces; `useCases` fronts catalog-featured examples; docs,
-    // comparison, blog, and the enterprise pathway stay directly reachable.
+    // production surfaces; `useCases` fronts catalog-featured examples; `whyOma`
+    // groups selection and adoption proof; docs, blog, and the enterprise pathway
+    // stay directly reachable.
     capabilities: 'Capabilities',
     docs: 'Docs',
     useCases: 'Use Cases',
+    whyOma: 'Why OMA',
     architecture: 'Architecture',
     examples: 'Examples',
     showcase: 'Showcase',
@@ -37,6 +39,10 @@ export const en = {
       observability: { title: 'Observability', desc: 'TraceStore, Run Viewer, and OpenTelemetry' },
       reliability: { title: 'Reliability & control', desc: 'Budgets, approvals, retries, timeouts, and checkpoints' },
       allIntegrations: 'All integrations',
+    },
+    whyOmaDesc: {
+      compare: 'See how OMA differs from other agent frameworks',
+      showcase: 'Real projects and teams building with OMA',
     },
     // Use Cases dropdown column headers + the left column's "view all" link
     // (the right column reuses examples.detail.browseAll).

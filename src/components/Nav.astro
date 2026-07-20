@@ -30,6 +30,7 @@ const ucHref = (e: { id: string; href: string }) => useCaseDetails.has(e.id) ? L
 const ucExternal = (e: { id: string }) => !useCaseDetails.has(e.id);
 const pick = (o: Loc) => o[locale];
 const capabilitiesCurrent = current === 'architecture' || current === 'integrations';
+const whyOmaCurrent = current === 'compare' || current === 'showcase';
 ---
 
 <nav class="nav">
@@ -109,8 +110,20 @@ const capabilitiesCurrent = current === 'architecture' || current === 'integrati
           </div>
         </div>
       </div>
+      <div class="nav-item">
+        <button type="button" class={`nav-menu-btn${whyOmaCurrent ? ' is-current' : ''}`} aria-haspopup="true" aria-expanded="false" aria-controls="why-oma-menu">{t.nav.whyOma} <span class="nav-menu-caret">▾</span></button>
+        <div class="nav-menu" id="why-oma-menu">
+          <a class="nav-menu-link nav-menu-link--page" href={L('/compare/')} aria-current={current === 'compare' ? 'page' : undefined}>
+            <span class="pkg">{t.nav.compare}</span>
+            <span class="desc">{t.nav.whyOmaDesc.compare}</span>
+          </a>
+          <a class="nav-menu-link nav-menu-link--page" href={L('/showcase/')} aria-current={current === 'showcase' ? 'page' : undefined}>
+            <span class="pkg">{t.nav.showcase}</span>
+            <span class="desc">{t.nav.whyOmaDesc.showcase}</span>
+          </a>
+        </div>
+      </div>
       <a class="nav-link" href={L('/getting-started/introduction/')} aria-current={current === 'docs' ? 'page' : undefined}>{t.nav.docs}</a>
-      <a class="nav-link" href={L('/compare/')} aria-current={current === 'compare' ? 'page' : undefined}>{t.nav.compare}</a>
       <a class="nav-link" href={L('/blog/')} aria-current={current === 'blog' ? 'page' : undefined}>{t.nav.blog}</a>
       <EnterpriseLink class="nav-link nav-link--ext" locale={locale}>
         {t.nav.forCompanies} {locale === 'en' && <span class="ext" aria-hidden="true">↗</span>}
