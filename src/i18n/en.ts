@@ -119,11 +119,10 @@ export const en = {
       description: 'TypeScript-native AI agent framework: one goal in, a self-organizing agent team plans and runs it in parallel, in your environment, cloud or fully offline.',
     },
     hero: {
-      eyebrow: 'TypeScript AI Agent framework',
+      eyebrow: 'For TypeScript teams · AI Agent framework',
       h1: 'A self-organizing agent team, ',
       h1Accent: 'in an environment you control.',
-      sub: 'Hand it one goal. It plans the tasks, runs specialists in parallel, and merges one result. Cloud or local models, offline included.',
-      meta: ['3 runtime deps', 'any model, one team', 'MIT license'],
+      meta: ['cloud + local models', 'MIT license'],
       quickStart: 'Quick Start',
       demoNote: 'First demo: no API key or model request.',
       ioInput: 'input · team.ts',
@@ -140,6 +139,44 @@ export const en = {
     copy: 'copy',
     copied: '✓ copied',
     copyFailed: 'Copy failed. Select and copy manually.',
+    sectionWhy: {
+      eyebrow: 'Why OMA',
+      title: 'The shortest path from a goal to a controlled run.',
+      sub: 'Start with the outcome, keep control of execution, and run it where your data already lives.',
+    },
+    why: [
+      {
+        tag: 'goal → DAG',
+        title: 'Give it a goal, not a graph.',
+        desc: 'The coordinator decomposes the outcome into dependent tasks, runs independent work in parallel, and merges one result. You can inspect the plan before anything executes.',
+        proof: 'runTeam() · planOnly · inspectable DAG',
+        ref: '/architecture/',
+        refLabel: 'See the runtime flow',
+      },
+      {
+        tag: 'control → evidence',
+        title: 'Put guardrails around every run.',
+        desc: 'Approve plans and tool calls, cap tokens or estimated cost, run evaluation gates, then replay or resume with evidence when a result needs review.',
+        proof: 'onPlanReady · maxCostBudget · EvalSet',
+        ref: '/guides/orchestration-controls/',
+        refLabel: 'Review the controls',
+      },
+      {
+        tag: 'your environment',
+        title: 'Run where your data already lives.',
+        desc: 'Use cloud providers, a local endpoint, or an air-gapped deployment on your credentials. Tools are default-deny, and core has only three runtime dependencies.',
+        proof: 'offline · default-deny tools · 3 runtime deps',
+        ref: '/guides/production-checklist/',
+        refLabel: 'Open the production checklist',
+      },
+    ],
+    whyViewer: {
+      eyebrow: 'Run evidence',
+      title: 'Inspect what happened after every run.',
+      body: 'The offline Run Viewer turns a completed run into reviewable evidence, without sending it to a hosted OMA service.',
+      points: ['Task DAG and assignees', 'Model, provider, token, and cost rollups', 'Tool calls, status, and safe evidence details'],
+      link: 'Open the observability reference',
+    },
     sectionCapabilities: {
       eyebrow: 'How it works',
       title: 'An agent runtime, not a graph builder.',
@@ -268,7 +305,9 @@ export const en = {
     sectionBuild: {
       eyebrow: 'Use cases',
       title: 'Three workflows, three explicit orchestration choices.',
+      sub: 'Start from the outcome you need, then open a runnable recipe with the orchestration choice made explicit.',
       seeCode: 'see code',
+      viewAll: 'browse all examples',
     },
     builds: {
       'adaptive-customer-support': { primitive: 'goal-driven · runTeam()', scenario: 'support · escalation', title: 'Adaptive customer support', desc: 'A coordinator selects the specialists needed for a shipping or billing escalation, then synthesizes their evidence.', outcome: 'A grounded response shaped around the actual support goal.' },
@@ -289,7 +328,9 @@ export const en = {
     sectionProof: {
       eyebrow: 'Adoption',
       title: 'Open source, live from the repo.',
+      sub: 'Repository signals and real projects, kept compact enough to verify without turning the homepage into a catalog.',
       liveTag: 'live · synced from registry',
+      watchMention: 'watch the mention',
       stats: { stars: 'stars', forks: 'forks', contributors: 'contributors', latestRelease: 'latest release', license: 'license' },
     },
     sectionFaq: {
@@ -318,8 +359,8 @@ export const en = {
     },
     ctaFinal: {
       eyebrow: 'get started',
-      title1: 'Your first team, one command away.',
-      title2: 'On your machine. No signup, no cloud.',
+      title1: 'Your first team. One command.',
+      title2: 'Run locally. No signup.',
       quickStart: 'Quick Start',
       aiSdk: 'Already on Vercel AI SDK? OMA drives 60+ AI SDK providers',
     },
