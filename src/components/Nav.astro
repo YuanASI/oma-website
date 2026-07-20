@@ -29,6 +29,7 @@ const ucTitle = (e: { id: string; title: string }) => t.examples.entries[e.id]?.
 const ucHref = (e: { id: string; href: string }) => useCaseDetails.has(e.id) ? L(`/examples/${e.id}/`) : e.href;
 const ucExternal = (e: { id: string }) => !useCaseDetails.has(e.id);
 const pick = (o: Loc) => o[locale];
+const capabilitiesCurrent = current === 'architecture' || current === 'integrations';
 ---
 
 <nav class="nav">
@@ -40,24 +41,45 @@ const pick = (o: Loc) => o[locale];
     </a>
     <div class="nav-links" id="primary-navigation">
       <div class="nav-item">
-        <button type="button" class="nav-menu-btn" aria-haspopup="true" aria-expanded="false" aria-controls="product-menu">{t.nav.product} <span class="nav-menu-caret">▾</span></button>
-        <div class="nav-menu" id="product-menu">
-          <a class="nav-menu-link nav-menu-link--page" href={L('/architecture/')} aria-current={current === 'architecture' ? 'page' : undefined}>
-            <span class="pkg">{t.nav.architecture}</span>
-            <span class="desc">{t.nav.menuDesc.architecture}</span>
-          </a>
-          <a class="nav-menu-link nav-menu-link--page" href={L('/compare/')} aria-current={current === 'compare' ? 'page' : undefined}>
-            <span class="pkg">{t.nav.compare}</span>
-            <span class="desc">{t.nav.menuDesc.compare}</span>
-          </a>
-          <a class="nav-menu-link nav-menu-link--page" href={L('/integrations/')} aria-current={current === 'integrations' ? 'page' : undefined}>
-            <span class="pkg">{t.nav.integrations}</span>
-            <span class="desc">{t.nav.menuDesc.integrations}</span>
-          </a>
-          <a class="nav-menu-link nav-menu-link--page nav-menu-link--group" href={L('/showcase/')} aria-current={current === 'showcase' ? 'page' : undefined}>
-            <span class="pkg">{t.nav.showcase}</span>
-            <span class="desc">{t.nav.menuDesc.showcase}</span>
-          </a>
+        <button type="button" class={`nav-menu-btn${capabilitiesCurrent ? ' is-current' : ''}`} aria-haspopup="true" aria-expanded="false" aria-controls="capabilities-menu">{t.nav.capabilities} <span class="nav-menu-caret">▾</span></button>
+        <div class="nav-menu nav-menu--cols nav-menu--capabilities" id="capabilities-menu">
+          <div class="nav-col">
+            <div class="nav-col-head">{t.nav.capabilityCols.build}</div>
+            <a class="nav-menu-link nav-menu-link--page" href={L('/getting-started/three-ways-to-run/')}>
+              <span class="pkg">{t.nav.capabilityMenu.orchestration.title}</span>
+              <span class="desc">{t.nav.capabilityMenu.orchestration.desc}</span>
+            </a>
+            <a class="nav-menu-link nav-menu-link--page" href={L('/reference/providers/')}>
+              <span class="pkg">{t.nav.capabilityMenu.models.title}</span>
+              <span class="desc">{t.nav.capabilityMenu.models.desc}</span>
+            </a>
+            <a class="nav-menu-link nav-menu-link--page" href={L('/reference/tool-configuration/')}>
+              <span class="pkg">{t.nav.capabilityMenu.tools.title}</span>
+              <span class="desc">{t.nav.capabilityMenu.tools.desc}</span>
+            </a>
+            <a class="nav-menu-link nav-menu-link--page" href={L('/integrations/external-agents/')}>
+              <span class="pkg">{t.nav.capabilityMenu.externalAgents.title}</span>
+              <span class="desc">{t.nav.capabilityMenu.externalAgents.desc}</span>
+            </a>
+            <a class="nav-menu-link nav-menu-link--page nav-menu-link--all" href={L('/integrations/')}>
+              <span class="pkg">{t.nav.capabilityMenu.allIntegrations} →</span>
+            </a>
+          </div>
+          <div class="nav-col">
+            <div class="nav-col-head">{t.nav.capabilityCols.operate}</div>
+            <a class="nav-menu-link nav-menu-link--page" href={L('/reference/evaluation/')}>
+              <span class="pkg">{t.nav.capabilityMenu.evaluation.title}</span>
+              <span class="desc">{t.nav.capabilityMenu.evaluation.desc}</span>
+            </a>
+            <a class="nav-menu-link nav-menu-link--page" href={L('/reference/observability/')}>
+              <span class="pkg">{t.nav.capabilityMenu.observability.title}</span>
+              <span class="desc">{t.nav.capabilityMenu.observability.desc}</span>
+            </a>
+            <a class="nav-menu-link nav-menu-link--page" href={L('/guides/production-checklist/')}>
+              <span class="pkg">{t.nav.capabilityMenu.reliability.title}</span>
+              <span class="desc">{t.nav.capabilityMenu.reliability.desc}</span>
+            </a>
+          </div>
         </div>
       </div>
       <div class="nav-item">
@@ -88,6 +110,7 @@ const pick = (o: Loc) => o[locale];
         </div>
       </div>
       <a class="nav-link" href={L('/getting-started/introduction/')} aria-current={current === 'docs' ? 'page' : undefined}>{t.nav.docs}</a>
+      <a class="nav-link" href={L('/compare/')} aria-current={current === 'compare' ? 'page' : undefined}>{t.nav.compare}</a>
       <a class="nav-link" href={L('/blog/')} aria-current={current === 'blog' ? 'page' : undefined}>{t.nav.blog}</a>
       <EnterpriseLink class="nav-link nav-link--ext" locale={locale}>
         {t.nav.forCompanies} {locale === 'en' && <span class="ext" aria-hidden="true">↗</span>}
@@ -167,6 +190,11 @@ const pick = (o: Loc) => o[locale];
      the in-page contact dialog and therefore intentionally has no marker. */
   .nav-link--ext .ext { color: var(--oma-fg-3); font-size: 11px; margin-left: 1px; }
 
+  /* Capability and Use Cases dropdowns share the same two-column shell. The
+     capability menu keeps product surfaces grouped by build vs operate instead
+     of mixing architecture, selection content, integrations, and social proof. */
+  .nav-menu--capabilities .nav-col { min-width: 264px; }
+
   /* Use Cases dropdown: the button reads active on any /examples or /solutions
      page. Two columns — Solutions (capability shapes → /solutions/*) and Examples
      (featured workflows → /examples/*) — each a list of compact rows (label only)
@@ -184,8 +212,7 @@ const pick = (o: Loc) => o[locale];
   .nav-menu-link--all { margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--border-subtle); }
   .nav-menu-link--all .pkg { color: var(--oma-accent); }
 
-  /* Showcase sits at the foot of the Product menu as its own ecosystem group —
-     third-party adoption proof, set apart from the four evaluate-the-framework
-     pages above it. Divider reuses the Use Cases "all" separator. */
-  .nav-menu-link--group { margin-top: 4px; border-top: 1px solid var(--border-subtle); }
+  @media (max-width: 1200px) {
+    .nav-links.open .nav-menu--capabilities .nav-col { min-width: 0; }
+  }
 </style>

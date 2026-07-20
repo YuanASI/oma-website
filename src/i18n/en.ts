@@ -11,11 +11,10 @@
 export const en = {
   nav: {
     brandAria: 'Open Multi-Agent — home',
-    // Top-level nav labels. `product` fronts the evaluate-the-framework pages
-    // (architecture/compare/solutions/integrations) plus Showcase (third-party
-    // adoption proof) at its foot; `useCases` fronts catalog-featured examples;
-    // `docs` and `blog` are their own top-level tabs.
-    product: 'Product',
+    // Top-level nav labels. `capabilities` exposes the framework's build and
+    // production surfaces; `useCases` fronts catalog-featured examples; docs,
+    // comparison, blog, and the enterprise pathway stay directly reachable.
+    capabilities: 'Capabilities',
     docs: 'Docs',
     useCases: 'Use Cases',
     architecture: 'Architecture',
@@ -28,14 +27,16 @@ export const en = {
     // Top-level link (not a dropdown) to YuanASI's paid delivery — the enterprise
     // pathway lifted out of the footer. External, so it renders with an ↗ marker.
     forCompanies: 'For Companies',
-    menuDesc: {
-      architecture: 'How OMA works, diagrammed',
-      examples: 'Runnable recipes from the repo',
-      compare: 'vs LangGraph, CrewAI, AutoGen & more',
-      showcase: 'Projects built with OMA',
-      blog: 'Notes on AI Agent orchestration',
-      solutions: 'AI Agent use cases in TypeScript',
-      integrations: 'OpenTelemetry, Anthropic, OpenAI & more',
+    capabilityCols: { build: 'Build', operate: 'Operate reliably' },
+    capabilityMenu: {
+      orchestration: { title: 'Orchestration', desc: 'Goal-to-DAG teams and explicit task graphs' },
+      models: { title: 'Models & providers', desc: '13 built-in, local, and OpenAI-compatible options' },
+      tools: { title: 'Tools & MCP', desc: 'Default-deny tools and external systems' },
+      externalAgents: { title: 'External agents', desc: 'Run Claude Code and other CLIs over ACP' },
+      evaluation: { title: 'Evaluation', desc: 'EvalSets, scorers, reports, and CI quality gates' },
+      observability: { title: 'Observability', desc: 'TraceStore, Run Viewer, and OpenTelemetry' },
+      reliability: { title: 'Reliability & control', desc: 'Budgets, approvals, retries, timeouts, and checkpoints' },
+      allIntegrations: 'All integrations',
     },
     // Use Cases dropdown column headers + the left column's "view all" link
     // (the right column reuses examples.detail.browseAll).

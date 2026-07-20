@@ -8,7 +8,7 @@ import type { UiDict } from './en';
 export const zh: UiDict = {
   nav: {
     brandAria: 'Open Multi-Agent 首页',
-    product: '产品',
+    capabilities: '能力',
     docs: '文档',
     useCases: '应用场景',
     architecture: '架构',
@@ -19,14 +19,16 @@ export const zh: UiDict = {
     solutions: '用例',
     integrations: '集成',
     forCompanies: '企业服务',
-    menuDesc: {
-      architecture: 'OMA 工作原理图解',
-      examples: '仓库里可直接运行的实例',
-      compare: '对比 LangGraph、CrewAI、AutoGen 等',
-      showcase: '用 OMA 构建的项目',
-      blog: '多智能体编排笔记',
-      solutions: 'TypeScript 多智能体用例',
-      integrations: 'OpenTelemetry、Anthropic、OpenAI 等',
+    capabilityCols: { build: '构建', operate: '可靠运行' },
+    capabilityMenu: {
+      orchestration: { title: '多智能体编排', desc: '从目标自动规划任务 DAG，也支持显式任务图' },
+      models: { title: '模型与提供方', desc: '13 个内置、本地及 OpenAI 兼容选项' },
+      tools: { title: '工具与 MCP', desc: '默认拒绝的工具权限与外部系统接入' },
+      externalAgents: { title: '外部智能体', desc: '通过 ACP 接入 Claude Code 等 CLI' },
+      evaluation: { title: '评估', desc: 'EvalSet、Scorer、报告与 CI 质量闸门' },
+      observability: { title: '可观测性', desc: 'TraceStore、Run Viewer 与 OpenTelemetry' },
+      reliability: { title: '可靠性与控制', desc: '预算、审批、重试、超时与检查点' },
+      allIntegrations: '全部集成',
     },
     useCasesCols: { solutions: '解决方案', examples: '示例' },
     viewAllSolutions: '全部解决方案',
