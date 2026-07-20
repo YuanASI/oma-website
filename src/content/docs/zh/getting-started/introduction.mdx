@@ -1,76 +1,79 @@
 ---
 title: 简介
-description: "open-multi-agent 是什么，以及它的能力地图。"
+description: "了解 open-multi-agent 能做什么、目标驱动编排如何工作，以及什么时候适合使用它。"
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-`open-multi-agent` 是面向 TypeScript 后端的多智能体编排框架。给它一个目标，协调器智能体会把目标拆解成任务 DAG、并行执行相互独立的任务，并综合出一个带类型、经 schema 校验的结果。三个运行时依赖，可嵌入任意 Node.js 后端。
+`open-multi-agent` 是面向 Node.js 后端的 TypeScript 原生编排框架。它让不同专长的智能体组成一支团队：面对非简单目标，`runTeam()` 可以把结果要求拆成任务 DAG，并行执行相互独立的工作，再汇总各项结果。
 
-:::tip[让工程师描述目标，而不是流程图。]
-图优先的框架要求你预先枚举每一个节点和每一条边。`open-multi-agent` 是目标优先的：你描述想要的结果，协调器在运行时构建任务 DAG，于是编排会随目标自适应，而不是为某一个目标手工接线。
+:::tip[从目标出发，而不是先画流程图]
+描述团队要实现什么，OMA 可以在运行时决定如何分工。如果任务很简单，或者任务图已经确定，也可以选择更轻量或更明确的运行方式。
 :::
 
-正在做框架选型？请前往[对比页](/zh/compare/)，查看 OMA 与 LangGraph、CrewAI、AutoGen 和 OpenAI Agents SDK 的对比。
-
-## 你能做什么
+## OMA 适合你吗？
 
 <CardGrid>
-  <Card title="配置模型与工具" icon="setting">
-    [模型提供方](/zh/reference/providers/) · [工具配置](/zh/reference/tool-configuration/) · [外部智能体](/zh/reference/external-agents/)
+  <Card title="适合使用 OMA" icon="approve-check">
+    - 一个目标需要多种专业角色协作。
+    - 部分工作可以并行执行。
+    - 执行步骤会随输入变化。
+    - 希望把编排直接嵌入现有 Node.js 后端。
   </Card>
-  <Card title="控制编排" icon="random">
-    [共识](/zh/reference/consensus/) · [模型路由](/zh/reference/model-routing/) · [计划预览与重放](/zh/reference/plan-replay/) · [共享内存](/zh/reference/shared-memory/)
-  </Card>
-  <Card title="可靠运行" icon="approve-check">
-    [可观测性](/zh/reference/observability/) · [检查点与恢复](/zh/reference/checkpoint/) · [上下文管理](/zh/reference/context-management/) · [评估](/zh/reference/evaluation/)
-  </Card>
-  <Card title="接口" icon="laptop">
-    [CLI](/zh/reference/cli/)
+  <Card title="保持简单会更合适" icon="laptop">
+    - 调用一次模型就能解决任务。
+    - 每一步和每次跳转都必须固定。
+    - 只需要模型 SDK 或聊天界面。
+    - 不希望承担额外的规划调用成本。
   </Card>
 </CardGrid>
 
-## 工作原理
+## 一次运行分成四步
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  OpenMultiAgent (Orchestrator)                                  │
-│                                                                 │
-│  createTeam()  runTeam()  runTasks()  runAgent()  getStatus()   │
-└──────────────────────┬──────────────────────────────────────────┘
-                       │
-            ┌──────────▼──────────┐
-            │  Team               │
-            │  - AgentConfig[]    │
-            │  - MessageBus       │
-            │  - TaskQueue        │
-            │  - SharedMemory     │
-            └──────────┬──────────┘
-                       │
-         ┌─────────────┴─────────────┐
-         │                           │
-┌────────▼──────────┐    ┌───────────▼───────────┐
-│  AgentPool        │    │  TaskQueue             │
-│  - Semaphore      │    │  - dependency graph    │
-│  - runParallel()  │    │  - auto unblock        │
-└────────┬──────────┘    │  - cascade failure     │
-         │               └───────────────────────┘
-┌────────▼──────────┐
-│  Agent            │
-│  - run()          │    ┌────────────────────────┐
-│  - prompt()       │───►│  LLMAdapter            │
-│  - stream()       │    │  - 13 built-in         │
-└────────┬──────────┘    │    providers           │
-         │               │  - OpenAI-compatible   │
-         │               │  - AI SDK bridge       │
-         │               └────────────────────────┘
-┌────────▼──────────┐
-│  AgentRunner      │    ┌──────────────────────┐
-│  - conversation   │───►│  ToolRegistry        │
-│    loop           │    │  - defineTool()      │
-│  - tool dispatch  │    │  - 6 built-in tools  │
-└───────────────────┘    │  + delegate (opt-in) │
-                         └──────────────────────┘
-```
+1. **目标**——应用提供期望结果和一组可用智能体。
+2. **规划**——面对非简单的 `runTeam()` 目标，协调器生成任务、依赖关系和分派；简单目标可能直接交给一个智能体。
+3. **执行**——调度器在依赖完成后解锁任务，并行运行互不依赖的工作。
+4. **结果**——`runTeam()` 汇总各任务输出；如果为智能体配置 `outputSchema`，单个智能体也可以返回经过 schema 校验的结构化数据。
 
-[快速开始](/zh/getting-started/quick-start/)会把这套流程端到端跑一遍；[三种运行方式](/zh/getting-started/three-ways-to-run/)讲解何时该用 `runAgent`、`runTeam` 或 `runTasks`。
+[架构页](/zh/architecture/)展示了这条流程背后的运行时组件。
+
+## 四个核心概念
+
+<CardGrid>
+  <Card title="智能体（Agent）" icon="laptop">
+    一个明确的角色，包含模型、指令和显式授权的工具。
+  </Card>
+  <Card title="团队（Team）" icon="random">
+    一次目标可调用的智能体集合，可以选择共享内存。
+  </Card>
+  <Card title="任务（Task）" icon="setting">
+    带负责人和可选依赖关系的一项工作。
+  </Card>
+  <Card title="编排器（Orchestrator）" icon="approve-check">
+    创建团队、调度工作并返回运行结果的 API。
+  </Card>
+</CardGrid>
+
+## 你可以配置什么
+
+<CardGrid>
+  <Card title="模型与工具" icon="setting">
+    混用托管或本地[模型提供方](/zh/reference/providers/)，按最小权限授予[工具](/zh/reference/tool-configuration/)，并接入[外部智能体](/zh/reference/external-agents/)。
+  </Card>
+  <Card title="编排方式" icon="random">
+    选择自动规划或显式任务图，并按需要增加[共识验证](/zh/reference/consensus/)、[模型路由](/zh/reference/model-routing/)或[计划重放](/zh/reference/plan-replay/)。
+  </Card>
+  <Card title="可靠运行" icon="approve-check">
+    用[可观测性](/zh/reference/observability/)追踪运行，用[检查点](/zh/reference/checkpoint/)恢复任务，管理[上下文](/zh/reference/context-management/)，再通过[评估](/zh/reference/evaluation/)衡量质量。
+  </Card>
+</CardGrid>
+
+## 选择起步方式
+
+- 一个智能体处理一项明确任务：使用 `runAgent()`。
+- 知道目标，但不想维护任务图：从 `runTeam()` 开始。
+- 任务图和分派必须明确：使用 `runTasks()`。
+
+[快速开始](/zh/getting-started/quick-start/)会带你在大约五分钟内完成一次免 Key 运行；然后通过[选择运行方式](/zh/getting-started/three-ways-to-run/)详细了解三者的取舍。
+
+仍在比较框架？可以在[对比页](/zh/compare/)查看 OMA 与 LangGraph、CrewAI、AutoGen 和 OpenAI Agents SDK 的差异。

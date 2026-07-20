@@ -195,7 +195,7 @@ export default defineConfig({
 					items: [
 						{ label: 'Introduction', slug: 'getting-started/introduction', translations: { 'zh-CN': '简介' } },
 						{ label: 'Quick Start', slug: 'getting-started/quick-start', translations: { 'zh-CN': '快速开始' } },
-						{ label: 'Three Ways to Run', slug: 'getting-started/three-ways-to-run', translations: { 'zh-CN': '三种运行方式' } },
+						{ label: 'Choose a Run Mode', slug: 'getting-started/three-ways-to-run', translations: { 'zh-CN': '选择运行方式' } },
 					],
 				},
 				{
