@@ -313,6 +313,7 @@ export const en = {
     openExample: 'open example',
     moreInGoal: 'More in this goal',
     advancedComposition: 'Advanced composition',
+    goalNav: { label: 'Browse by goal', examples: 'examples' },
     formats: { script: 'Script', 'multi-file': 'Multi-file', app: 'App' },
     levels: { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced' },
     goals: {

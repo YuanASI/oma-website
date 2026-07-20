@@ -112,6 +112,39 @@ const jsonLd = {
       </div>
     </header>
 
+    {ex && (
+      <nav class="ex-goal-nav" aria-label={ex_t.goalNav.label}>
+        <div class="container">
+          <div class="ex-goal-nav-label">{ex_t.goalNav.label}</div>
+          <div class="ex-goal-nav-grid">
+            {goalGroups.map((group, groupIndex) => {
+              const label = ex_t.goals[group.goal].eyebrow;
+              return (
+                <a
+                  class="ex-goal-nav-link"
+                  href={`#${group.goal}`}
+                  aria-label={`${label}: ${group.entries.length} ${ex_t.goalNav.examples}`}
+                >
+                  <span class="idx">{String(groupIndex + 1).padStart(2, '0')}</span>
+                  <span class="label">{label}</span>
+                  <span class="count">{group.entries.length}</span>
+                </a>
+              );
+            })}
+            <a
+              class="ex-goal-nav-link"
+              href="#models-providers"
+              aria-label={`${ex_t.modelsProviders.eyebrow}: ${modelsProviders.length} ${ex_t.goalNav.examples}`}
+            >
+              <span class="idx">06</span>
+              <span class="label">{ex_t.modelsProviders.eyebrow}</span>
+              <span class="count">{modelsProviders.length}</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    )}
+
     {ex ? (
       <Fragment>
         {goalGroups.map((group, groupIndex) => {
@@ -221,7 +254,33 @@ const jsonLd = {
   .ex-lede { font-size: 17px; line-height: 1.6; color: var(--oma-fg-1); margin: 18px 0 0; max-width: 680px; }
   .ex-first { padding-top: 56px; }
   .legacy-anchor { display: block; position: relative; top: -84px; height: 0; visibility: hidden; }
+  section[id] { scroll-margin-top: 84px; }
   .section-sub { max-width: 660px; }
+
+  .ex-goal-nav { padding-top: 36px; }
+  .ex-goal-nav-label {
+    color: var(--oma-fg-2); font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: .06em; text-transform: uppercase;
+  }
+  .ex-goal-nav-grid {
+    display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin-top: 10px;
+  }
+  .ex-goal-nav-link {
+    display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px;
+    min-height: 48px; padding: 9px 11px; border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm); color: var(--oma-fg-1); text-decoration: none;
+    transition: border-color var(--duration-base) var(--ease-out), background var(--duration-base) var(--ease-out);
+  }
+  .ex-goal-nav-link:hover { border-color: var(--border-strong); background: var(--oma-bg-1); }
+  .ex-goal-nav-link:focus-visible { outline: 2px solid var(--oma-accent); outline-offset: 3px; }
+  .ex-goal-nav-link .idx, .ex-goal-nav-link .count {
+    color: var(--oma-fg-3); font-family: var(--font-mono); font-size: 10.5px;
+  }
+  .ex-goal-nav-link .label {
+    overflow: hidden; color: var(--oma-fg-0); font-size: 12.5px; font-weight: 500;
+    line-height: 1.3; text-overflow: ellipsis;
+  }
+  .ex-goal-nav-link:hover .label { color: var(--oma-accent); }
 
   .ex-featured-grid { margin-top: 28px; }
   .ex-card-meta {
@@ -284,11 +343,13 @@ const jsonLd = {
   .ex-empty p { margin: 8px 0 16px; color: var(--oma-fg-1); }
 
   @media (max-width: 900px) {
+    .ex-goal-nav-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .ex-provider-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .ex-row { grid-template-columns: minmax(170px, .8fr) minmax(220px, 1.4fr) auto; }
     .ex-row .meta { display: none; }
   }
   @media (max-width: 640px) {
+    .ex-goal-nav-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .ex-row { grid-template-columns: minmax(0, 1fr) auto; gap: 5px 12px; padding: 14px 4px; }
     .ex-row .desc { grid-column: 1 / -1; }
     .ex-row .arr { grid-column: 2; grid-row: 1; }
