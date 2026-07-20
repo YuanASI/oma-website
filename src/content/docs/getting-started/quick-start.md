@@ -1,104 +1,105 @@
 ---
 title: Quick Start
-description: "Scaffold a project with npm create oma-app, or install the core package and run your first auto-orchestrated team."
+description: "Run a real OMA task DAG in about five minutes with no API key, then switch the starter to a real model."
 ---
 
-Requires Node.js >= 18.
+:::tip[What you will finish]
+You will scaffold a project, exercise the real OMA scheduler with scripted model responses, and open the generated Markdown, JSON, and HTML reports. The first run needs no API key and makes no model request.
+:::
 
-The fastest way to see OMA schedule a multi-agent run is the interactive scaffolder:
+## Before you start
+
+- Node.js 18 or newer
+- npm access to download the generated project's dependencies
+- About five minutes
+
+You do **not** need a provider account or API key for the first run.
+
+## 1. Create a starter
 
 ```bash
-npm create oma-app@latest
+npm create oma-app@latest my-oma
 ```
 
-It asks for a project name, starter, and runtime, installs the generated project,
-then runs a deterministic local demo. The demo reads no API key and makes no
-model request: scripted model responses drive the real OMA scheduler,
-aggregation, report writers, and offline Run Viewer. Its Markdown, JSON, and
-HTML outputs explicitly identify the model responses as simulated.
+The interactive scaffolder asks for a starter and runtime. For the clearest introduction to scheduling, choose **Multi-agent DAG Demo**. The PR Review and Security Analysis starters show the same runtime in more opinionated workflows.
 
-Installing the generated project still downloads packages from npm. To control
-what the scaffolder does after writing the files:
+## 2. Let the no-key demo run
+
+The interactive command installs dependencies and runs `npm run demo` automatically. Scripted model responses drive the real task scheduler, parallel execution, aggregation, report writers, and offline Run Viewer.
+
+The demo does not read a provider credential or make a model request. Installing the project still downloads packages from npm, and every generated report identifies the model responses as simulated.
+
+To run the same demo again:
 
 ```bash
-# Write the project only; do not install dependencies or run the demo.
+cd my-oma
+npm run demo
+```
+
+## 3. Check the result
+
+A successful run gives you three views of the same execution:
+
+- **Terminal progress** shows tasks starting, completing, and unblocking after their dependencies.
+- **Markdown and JSON reports** under `reports/` make the result easy to read or process.
+- **The HTML report** opens the offline Run Viewer, where you can inspect the executed task DAG and task-level evidence.
+
+At this point you have exercised real OMA orchestration. Only the model responses were scripted.
+
+## 4. Switch to a real model
+
+For a cloud or OpenAI-compatible starter:
+
+```bash
+cp .env.example .env
+# Add your credential and model configuration to .env, then:
+npm run dev
+```
+
+An Ollama starter uses your local Ollama service instead and needs no cloud API key. The scaffolder never downloads a model for you. See [Providers](/reference/providers/) for environment variables, compatible endpoints, and local tool-calling guidance.
+
+## Add OMA to an existing project
+
+If you already have a TypeScript backend, install the library directly:
+
+```bash
+npm install @open-multi-agent/core
+```
+
+Then define a small team and give it a goal:
+
+```typescript
+import { OpenMultiAgent, type AgentConfig } from '@open-multi-agent/core'
+
+const model = process.env.OMA_MODEL ?? 'gpt-5.4'
+const agents: AgentConfig[] = [
+  { name: 'researcher', model, systemPrompt: 'Find the important facts.' },
+  { name: 'writer', model, systemPrompt: 'Turn the facts into a concise brief.' },
+]
+
+const oma = new OpenMultiAgent({ defaultProvider: 'openai', defaultModel: model })
+const team = oma.createTeam('brief-team', { name: 'brief-team', agents })
+const result = await oma.runTeam(team, 'Produce a launch brief for our new API.')
+
+console.log(result.success)
+```
+
+Built-in tools are default-deny. Grant only the tools each agent needs; see [Tool configuration](/reference/tool-configuration/) before adding filesystem or shell access.
+
+## Control what the scaffolder runs
+
+```bash
+# Write files only; do not install dependencies or run the demo.
 npm create oma-app@latest my-oma -- --no-install
 
 # Install dependencies, but do not run the demo.
 npm create oma-app@latest my-oma -- --no-run
 ```
 
-For a real cloud-model run, copy the generated `.env.example` to `.env`, add
-your credentials, and run `npm run dev`. An Ollama project uses your local
-Ollama service instead and needs no cloud API key.
+Migrating from `@jackchen_me/open-multi-agent`? That package is deprecated; install `@open-multi-agent/core` instead.
 
-To add the library to an existing project instead:
+## Where next
 
-```bash
-npm install @open-multi-agent/core
-```
-
-*Migrating from `@jackchen_me/open-multi-agent`? That package is deprecated; install `@open-multi-agent/core` instead.*
-
-```typescript
-import { OpenMultiAgent, type AgentConfig } from '@open-multi-agent/core'
-
-// Works with any OpenAI-compatible provider. Set OPENAI_API_KEY for OpenAI, or
-// set OPENAI_BASE_URL + OMA_MODEL for Groq, DeepSeek, Ollama, etc.
-const model = process.env.OMA_MODEL ?? 'gpt-5.4'
-
-// Built-in tools are opt-in (default-deny): each agent gets only the tools it
-// lists in `tools` (or a `toolPreset`). List neither and the agent gets none.
-const agents: AgentConfig[] = [
-  { name: 'architect', model, systemPrompt: 'Design clean API contracts.', tools: ['file_write'] },
-  { name: 'developer', model, systemPrompt: 'Implement runnable TypeScript.', tools: ['bash', 'file_read', 'file_write', 'file_edit'] },
-  { name: 'reviewer', model, systemPrompt: 'Review correctness and security.', tools: ['file_read', 'grep'] },
-]
-
-const orchestrator = new OpenMultiAgent({
-  defaultProvider: 'openai',
-  defaultModel: model,
-  defaultBaseURL: process.env.OPENAI_BASE_URL, // unset = OpenAI
-  onProgress: (event) => console.log(event.type, event.task ?? event.agent ?? ''),
-})
-
-const team = orchestrator.createTeam('api-team', { name: 'api-team', agents, sharedMemory: true })
-
-// Built-in filesystem tools default to a `<cwd>/.agent-workspace` sandbox.
-const result = await orchestrator.runTeam(
-  team,
-  `Create a REST API for a todo list in ${process.cwd()}/.agent-workspace/todo-api/`,
-)
-
-console.log(result.success, result.totalTokenUsage.output_tokens)
-```
-
-## Run an example locally
-
-```bash
-git clone https://github.com/open-multi-agent/open-multi-agent && cd open-multi-agent
-npm install
-export OPENAI_API_KEY=sk-...
-npx tsx packages/core/examples/basics/team-collaboration.ts
-```
-
-Three agents collaborate on a REST API while `onProgress` streams the coordinator's task DAG:
-
-```
-agent_start coordinator
-task_start design-api
-task_complete design-api
-task_start implement-handlers
-task_start scaffold-tests         // independent tasks run in parallel
-task_complete scaffold-tests
-task_complete implement-handlers
-task_start review-code            // unblocked after implementation
-task_complete review-code
-agent_complete coordinator        // synthesizes final result
-Success: true
-Tokens: 12847 output tokens
-```
-
-Local models via Ollama need no API key. For hosted providers (`OPENAI_API_KEY`, `GEMINI_API_KEY`, etc.) and local tool-calling, see [Providers](/reference/providers/).
-
-Next: [Three Ways to Run](/getting-started/three-ways-to-run/) covers single agents, auto-orchestrated teams, and explicit pipelines.
+- [Choose a Run Mode](/getting-started/three-ways-to-run/) to decide between `runAgent()`, `runTeam()`, and `runTasks()`.
+- [Examples](/examples/) for complete workflows you can run or adapt.
+- [Providers](/reference/providers/) to configure hosted, OpenAI-compatible, or local models.

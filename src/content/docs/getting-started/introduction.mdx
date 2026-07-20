@@ -1,76 +1,79 @@
 ---
 title: Introduction
-description: "What open-multi-agent is and a map of what it can do."
+description: "Understand what open-multi-agent does, how goal-first orchestration works, and when to use it."
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-`open-multi-agent` is a multi-agent orchestration framework for TypeScript backends. Give it a goal; a coordinator agent decomposes it into a task DAG, parallelizes independents, and synthesizes a typed, schema-validated result. Three runtime dependencies, drops into any Node.js backend.
+`open-multi-agent` is a TypeScript-native orchestration framework for Node.js backends. It lets specialist agents work as one team: for a non-trivial goal, `runTeam()` can turn the outcome into a task DAG, run independent work in parallel, and synthesize the results.
 
-:::tip[Your engineers describe the goal, not the graph.]
-Graph-first frameworks make you enumerate every node and edge up front. `open-multi-agent` is goal-first: you describe the outcome and the coordinator builds the task DAG at runtime, so the orchestration adapts to the goal instead of being hand-wired for one.
+:::tip[Start with the outcome, not a workflow diagram]
+Describe what the team should achieve. OMA can decide how to divide the work at runtime. If the task is simple or the graph is already known, you can choose a lighter or more explicit run mode instead.
 :::
 
-Choosing between frameworks? See the [comparison pages](/compare/) for OMA vs. LangGraph, CrewAI, AutoGen, and the OpenAI Agents SDK.
-
-## What you can do
+## Is OMA a fit?
 
 <CardGrid>
-  <Card title="Configure models & tools" icon="setting">
-    [Providers](/reference/providers/) · [Tool configuration](/reference/tool-configuration/) · [External agents](/reference/external-agents/)
+  <Card title="Use OMA when" icon="approve-check">
+    - A goal benefits from different specialist roles.
+    - Some work can run in parallel.
+    - The steps may change with the input.
+    - You want orchestration inside an existing Node.js backend.
   </Card>
-  <Card title="Control orchestration" icon="random">
-    [Consensus](/reference/consensus/) · [Model routing](/reference/model-routing/) · [Plan preview & replay](/reference/plan-replay/) · [Shared memory](/reference/shared-memory/)
-  </Card>
-  <Card title="Operate reliably" icon="approve-check">
-    [Observability](/reference/observability/) · [Checkpoint & resume](/reference/checkpoint/) · [Context management](/reference/context-management/) · [Evaluation](/reference/evaluation/)
-  </Card>
-  <Card title="Interfaces" icon="laptop">
-    [CLI](/reference/cli/)
+  <Card title="Keep it simpler when" icon="laptop">
+    - One model call already solves the task.
+    - Every step and transition must stay fixed.
+    - You only need a provider SDK or chat UI.
+    - You do not want the cost of an extra planning call.
   </Card>
 </CardGrid>
 
-## How it works
+## One run in four steps
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  OpenMultiAgent (Orchestrator)                                  │
-│                                                                 │
-│  createTeam()  runTeam()  runTasks()  runAgent()  getStatus()   │
-└──────────────────────┬──────────────────────────────────────────┘
-                       │
-            ┌──────────▼──────────┐
-            │  Team               │
-            │  - AgentConfig[]    │
-            │  - MessageBus       │
-            │  - TaskQueue        │
-            │  - SharedMemory     │
-            └──────────┬──────────┘
-                       │
-         ┌─────────────┴─────────────┐
-         │                           │
-┌────────▼──────────┐    ┌───────────▼───────────┐
-│  AgentPool        │    │  TaskQueue             │
-│  - Semaphore      │    │  - dependency graph    │
-│  - runParallel()  │    │  - auto unblock        │
-└────────┬──────────┘    │  - cascade failure     │
-         │               └───────────────────────┘
-┌────────▼──────────┐
-│  Agent            │
-│  - run()          │    ┌────────────────────────┐
-│  - prompt()       │───►│  LLMAdapter            │
-│  - stream()       │    │  - 13 built-in         │
-└────────┬──────────┘    │    providers           │
-         │               │  - OpenAI-compatible   │
-         │               │  - AI SDK bridge       │
-         │               └────────────────────────┘
-┌────────▼──────────┐
-│  AgentRunner      │    ┌──────────────────────┐
-│  - conversation   │───►│  ToolRegistry        │
-│    loop           │    │  - defineTool()      │
-│  - tool dispatch  │    │  - 6 built-in tools  │
-└───────────────────┘    │  + delegate (opt-in) │
-                         └──────────────────────┘
-```
+1. **Goal** — your application supplies an outcome and a team of agents.
+2. **Plan** — for a non-trivial `runTeam()` goal, the coordinator creates tasks, dependencies, and assignments. A simple goal may go directly to one agent.
+3. **Execute** — the scheduler unblocks tasks as their dependencies finish and runs independent tasks in parallel.
+4. **Result** — `runTeam()` synthesizes the task outputs. Individual agents can also return schema-validated structured data when you configure an `outputSchema`.
 
-The [Quick Start](/getting-started/quick-start/) runs this end to end; [Three Ways to Run](/getting-started/three-ways-to-run/) covers when to reach for `runAgent`, `runTeam`, or `runTasks`.
+The [architecture page](/architecture/) shows the runtime components behind this flow.
+
+## Four core concepts
+
+<CardGrid>
+  <Card title="Agent" icon="laptop">
+    A role with a model, instructions, and an explicit set of tools.
+  </Card>
+  <Card title="Team" icon="random">
+    The agents available for one goal, with optional shared memory.
+  </Card>
+  <Card title="Task" icon="setting">
+    A unit of work with an assignee and optional dependencies.
+  </Card>
+  <Card title="Orchestrator" icon="approve-check">
+    The API that creates teams, schedules work, and returns run results.
+  </Card>
+</CardGrid>
+
+## What you can configure
+
+<CardGrid>
+  <Card title="Models & tools" icon="setting">
+    Mix hosted or local [providers](/reference/providers/), grant least-privilege [tools](/reference/tool-configuration/), and connect [external agents](/reference/external-agents/).
+  </Card>
+  <Card title="Orchestration" icon="random">
+    Choose automatic planning or an explicit graph, then add [consensus](/reference/consensus/), [model routing](/reference/model-routing/), or [plan replay](/reference/plan-replay/) when needed.
+  </Card>
+  <Card title="Reliable operation" icon="approve-check">
+    Trace runs with [observability](/reference/observability/), recover with [checkpoints](/reference/checkpoint/), control [context](/reference/context-management/), and measure quality with [evaluation](/reference/evaluation/).
+  </Card>
+</CardGrid>
+
+## Choose a starting mode
+
+- Use `runAgent()` for one agent and one focused task.
+- Start with `runTeam()` when you know the goal but do not want to maintain the task graph.
+- Use `runTasks()` when the graph and assignments must be explicit.
+
+The [Quick Start](/getting-started/quick-start/) gives you a no-key first run in about five minutes. Then [Choose a Run Mode](/getting-started/three-ways-to-run/) explains the tradeoffs in detail.
+
+Still comparing frameworks? See OMA alongside LangGraph, CrewAI, AutoGen, and the OpenAI Agents SDK on the [comparison pages](/compare/).
