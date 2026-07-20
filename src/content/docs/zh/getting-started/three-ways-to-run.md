@@ -1,6 +1,6 @@
 ---
 title: 选择运行方式
-description: "根据由谁负责规划、任务图需要多可预测，以及是否需要汇总结果，在 runAgent、runTeam 和 runTasks 之间做选择。"
+description: "根据由谁负责规划、任务图需要多高的可预测性，以及是否需要汇总结果，在 runAgent、runTeam 和 runTasks 之间做选择。"
 ---
 
 :::tip[快速判断]

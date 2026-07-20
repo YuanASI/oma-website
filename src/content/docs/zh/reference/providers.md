@@ -3,7 +3,7 @@ title: "模型提供方"
 description: "配置托管、云端与本地的模型提供方——内置快捷方式、OpenAI 兼容端点、环境变量与本地工具调用。"
 ---
 
-`open-multi-agent` 在托管、云端与本地提供方之间保持智能体配置的形态一致。改 `provider`、`model` 和相应的凭据；团队定义的其余部分保持不变。
+`open-multi-agent` 在托管、云端与本地提供方之间保持智能体配置的形态一致。更改 `provider`、`model` 和相应的凭据；团队定义的其余部分保持不变。
 
 ```typescript
 const agent = {
@@ -16,9 +16,9 @@ const agent = {
 
 ## 内置提供方快捷方式
 
-框架为下列每一个都内置了接好线的提供方名。设置 `provider` 和对应环境变量，适配器会处理好端点。
+框架为下列每一个都内置了对应的提供方名。设置 `provider` 和对应环境变量，适配器即会处理端点。
 
-> 在底层，Anthropic、Gemini 和 Bedrock 使用各自专用的 API。其余内置快捷方式是对 OpenAI 兼容端点的预配置封装；与下方 OpenAI 兼容表格相同的线路格式，只是 `baseURL` 已经替你填好。
+> 在底层，Anthropic、Gemini 和 Bedrock 使用各自专用的 API。其余内置快捷方式是对 OpenAI 兼容端点的预配置封装；与下方 OpenAI 兼容表格相同的线路格式，只是 `baseURL` 已预先配置好。
 
 | Provider | Config | Env var | Example model | Notes |
 |----------|--------|---------|---------------|-------|
@@ -40,7 +40,7 @@ const agent = {
 
 ## OpenAI 兼容提供方
 
-当一个服务端讲 OpenAI Chat Completions 时，不需要任何捆绑的快捷方式。使用 `provider: 'openai'` 并把 `baseURL` 指向该服务。
+当一个服务端支持 OpenAI Chat Completions 时，不需要任何捆绑的快捷方式。使用 `provider: 'openai'` 并把 `baseURL` 指向该服务。
 
 | Service | Config | Env var | Example model | Notes |
 |---------|--------|---------|---------------|-------|
@@ -57,7 +57,7 @@ const agent = {
 | Moonshot AI (Kimi) | `provider: 'openai'` + `baseURL: 'https://api.moonshot.ai/v1'` | `MOONSHOT_API_KEY` | `kimi-k2.5` | 见 [`providers/moonshot`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/moonshot.ts)。 |
 | LiteLLM (proxy) | `provider: 'openai'` + `baseURL: 'http://localhost:4000/v1'` + `apiKey` | `LITELLM_API_KEY`（若代理启用了鉴权） | 代理上的任意模型 | [LiteLLM](https://github.com/BerriAI/litellm) 把 100+ 提供方（OpenAI、Anthropic、Azure、Bedrock、Vertex 等）统一到一个 OpenAI 兼容端点之后。运行 `litellm --config config.yaml` 并把 `baseURL` 指向该代理。 |
 
-其它服务只要实现了 OpenAI Chat Completions API，也能以同样方式接入，但这里未把它们列为已验证的提供方。对于密钥不是 `OPENAI_API_KEY` 的服务，通过 `apiKey` 显式传入；否则 `openai` 适配器会回退到 `OPENAI_API_KEY`。
+其他服务只要实现了 OpenAI Chat Completions API，也能以同样方式接入，但这里未把它们列为已验证的提供方。对于密钥不是 `OPENAI_API_KEY` 的服务，通过 `apiKey` 显式传入；否则 `openai` 适配器会回退到 `OPENAI_API_KEY`。
 
 ## Vercel AI SDK（可选）
 
@@ -126,10 +126,10 @@ const localAgent = {
 }
 ```
 
-在消费级硬件上高度量化的 MoE 模型，在默认采样下可能陷入重复循环或臆造工具调用 schema。`AgentConfig` 暴露了 `topK`、`minP`、`frequencyPenalty`、`presencePenalty`、`parallelToolCalls` 和 `extraBody`，用于服务端专属的旋钮，如 vLLM 的 `repetition_penalty`。完整配置见 [`providers/local-quantized`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/local-quantized.ts)。
+在消费级硬件上高度量化的 MoE 模型，在默认采样下可能陷入重复循环或臆造工具调用 schema。`AgentConfig` 暴露了 `topK`、`minP`、`frequencyPenalty`、`presencePenalty`、`parallelToolCalls` 和 `extraBody`，用于服务端专属的参数，如 vLLM 的 `repetition_penalty`。完整配置见 [`providers/local-quantized`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/providers/local-quantized.ts)。
 
 ## 故障排查
 
-- 模型不调用工具？确认它出现在 Ollama 的 [Tools category](https://ollama.com/search?c=tools) 里。
-- 在用 Ollama？用 `ollama update` 更新到最新版本。
+- 模型不调用工具？确认它出现在 Ollama 的 [Tools category](https://ollama.com/search?c=tools) 中。
+- 正在使用 Ollama？用 `ollama update` 更新到最新版本。
 - 代理干扰本地服务端？使用 `no_proxy=localhost`。
