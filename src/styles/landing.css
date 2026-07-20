@@ -143,6 +143,7 @@ a { color: inherit; }
 .cmd:focus-visible,
 .text-link:focus-visible,
 .btn-primary:focus-visible,
+.proof-quote:focus-visible,
 .faq-q:focus-visible,
 .artifact-goal summary:focus-visible,
 .dag-mobile summary:focus-visible {
@@ -722,6 +723,93 @@ a { color: inherit; }
   font-size: 13.5px; line-height: 1.5; text-align: center; white-space: normal;
 }
 
+/* ── Compact homepage information architecture ── */
+.section-head-row {
+  max-width: none; display: flex; align-items: flex-end;
+  justify-content: space-between; gap: 40px;
+}
+.section-head-row > div { min-width: 0; max-width: 760px; }
+.section-head-link { flex: none; margin-bottom: 4px; }
+
+.why-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.why-card { display: flex; flex-direction: column; min-width: 0; }
+.why-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.why-num, .why-tag {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.why-num { color: var(--oma-accent); }
+.why-tag { color: var(--oma-fg-2); }
+.why-title {
+  color: var(--oma-fg-0); font-size: 20px; font-weight: 600;
+  line-height: 1.2; letter-spacing: -0.02em;
+}
+.why-desc { margin: 12px 0 0; color: var(--oma-fg-1); font-size: 14px; line-height: 1.62; }
+.why-proof {
+  display: block; width: fit-content; max-width: 100%; margin-top: 18px;
+  padding: 6px 8px; border: 1px solid var(--border-default);
+  border-radius: var(--radius-xs); background: var(--oma-bg-2);
+  color: var(--code-string); font-family: var(--font-mono); font-size: 11px;
+  line-height: 1.5; white-space: normal; overflow-wrap: anywhere;
+}
+.why-foot { margin-top: auto; padding-top: 20px; }
+
+.why-viewer {
+  display: grid; grid-template-columns: minmax(280px, 0.72fr) minmax(0, 1.28fr);
+  gap: 34px; align-items: center; margin: 20px 0 0; padding: 26px;
+  border: 1px solid var(--oma-border-1); border-radius: var(--radius-lg);
+  background: var(--oma-bg-1); box-shadow: var(--shadow-accent-glow);
+}
+.why-viewer-copy { min-width: 0; }
+.why-viewer-copy h3 {
+  margin: 6px 0 0; color: var(--oma-fg-0); font-size: 25px;
+  line-height: 1.18; letter-spacing: -0.025em; text-wrap: balance;
+}
+.why-viewer-copy > p { margin: 14px 0 0; color: var(--oma-fg-1); font-size: 14px; line-height: 1.62; }
+.why-viewer-copy ul { display: grid; gap: 8px; margin: 16px 0 20px; padding: 0; list-style: none; }
+.why-viewer-copy li {
+  position: relative; padding-left: 18px; color: var(--oma-fg-1);
+  font-family: var(--font-mono); font-size: 11.5px; line-height: 1.5;
+}
+.why-viewer-copy li::before { content: '▸'; position: absolute; left: 0; color: var(--oma-accent); }
+.why-viewer-media { min-width: 0; }
+.why-viewer-media img,
+.why-viewer-media video {
+  display: block; width: 100%; height: auto; aspect-ratio: 16 / 9;
+  border: 1px solid var(--border-default); border-radius: var(--radius-md);
+  background: var(--oma-bg-2); box-shadow: var(--shadow-sm);
+}
+
+.proof-section .proof-head { align-items: flex-end; margin-bottom: 32px; }
+.proof-cases { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.proof-quote {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center; gap: 24px; margin-top: 16px; padding: 20px 22px;
+  color: inherit; text-decoration: none; border: 1px solid var(--border-default);
+  border-radius: var(--radius-md); background: var(--oma-bg-1);
+  transition: border-color var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
+}
+.proof-quote:hover { border-color: var(--oma-accent-line); box-shadow: var(--shadow-accent-glow); }
+.proof-quote blockquote {
+  margin: 0; color: var(--oma-fg-0); font-size: 17px;
+  font-weight: 600; line-height: 1.4; letter-spacing: -0.01em;
+}
+.proof-quote blockquote::before { content: '\201C'; color: var(--oma-accent); }
+.proof-quote blockquote::after { content: '\201D'; color: var(--oma-accent); }
+.proof-quote-cite, .proof-quote-action {
+  font-family: var(--font-mono); font-size: 10.5px;
+  line-height: 1.45; letter-spacing: 0.04em;
+}
+.proof-quote-cite { max-width: 250px; color: var(--oma-fg-2); }
+.proof-quote-action { color: var(--oma-accent); white-space: nowrap; }
+
+/* The final block has one visually primary route. The command remains a
+   secondary, copyable shortcut for visitors who are already convinced. */
+.cta-final { padding: 60px 0; }
+.cta-actions { gap: 18px; margin-top: 30px; }
+.cta-actions > .btn-primary { min-width: 180px; justify-content: center; }
+.cta-actions .cmd { background: transparent; box-shadow: none; }
+
 /* ── Footer ── */
 .footer { border-top: 1px solid var(--border-subtle); padding: 40px 0; }
 .footer-inner { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
@@ -803,6 +891,10 @@ a { color: inherit; }
   .section { padding: 72px 0; }
   .hero { padding: 44px 0 64px; }
   .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+  .section-head-row { align-items: flex-start; flex-direction: column; gap: 20px; }
+  .section-head-link { margin-bottom: 0; }
+  .why-grid { grid-template-columns: 1fr; }
+  .why-viewer { grid-template-columns: 1fr; }
   .eval-band { grid-template-columns: 1fr; }
   .dag-desktop { display: none; }
   .dag-mobile {
@@ -841,11 +933,16 @@ a { color: inherit; }
   .evidence-block-head { grid-template-columns: 1fr; align-items: start; gap: 10px; }
   .stack-strip { grid-template-columns: repeat(2, 1fr); }
   .proof-actions { align-items: flex-start; }
+  .proof-quote { grid-template-columns: 1fr; gap: 10px; }
+  .proof-quote-cite { max-width: none; }
 }
 @media (max-width: 640px) {
   .container { padding: 0 20px; }
   .section { padding: 60px 0; }
   .section-title { font-size: 32px; }
+  .why-viewer { gap: 24px; padding: 20px 18px; }
+  .why-viewer-copy h3 { font-size: 23px; }
+  .proof-quote { padding: 18px; }
   .eval-band { padding: 22px 18px; }
   .eval-flow { grid-template-columns: 1fr; }
   .eval-flow li { min-height: 0; }
@@ -889,6 +986,7 @@ a { color: inherit; }
   .hero-cta { gap: 18px; }
   .hero-cta-primary { width: 100%; justify-content: center; }
   .proof-head { gap: 16px; }
+  .cta-actions > .btn-primary { width: 100%; }
   .io-panel, .cap-code-wrap { min-width: 0; }
 }
 @media (max-width: 520px) {

@@ -15,8 +15,6 @@ import '../../styles/landing.css';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Badge from '../../components/ds/Badge.astro';
 import Card from '../../components/ds/Card.astro';
-import CodeBlock from '../../components/ds/CodeBlock.astro';
-import Callout from '../../components/ds/Callout.astro';
 import TaskNode from '../../components/ds/TaskNode.astro';
 import heroRunEn from '../../data/hero-run.json';
 import Nav from '../../components/Nav.astro';
@@ -78,29 +76,10 @@ const heroDur = (ms: number | null) => (ms == null ? null : (ms / 1000).toFixed(
 const heroNodeId = (id: string) => '#' + id.slice(0, 8);
 const heroWallS = Math.round(heroRun.wallMs / 1000);
 
-// ── Capabilities code (current public API — verified against the repo). ──
-const TEAM_CODE = `const model = process.env.OMA_MODEL ?? 'gpt-5.4-mini'
-const oma = new OpenMultiAgent({ defaultProvider: 'openai', defaultModel: model })
-const agents: AgentConfig[] = [
-  { name: 'attack-surface-reviewer', model },
-  { name: 'data-security-reviewer', model },
-  { name: 'supply-chain-reviewer', model },
-  { name: 'synthesizer', model },
-]
-
-const team = oma.createTeam('security-analysis-team', { agents })
-const result = await oma.runTeam(team, \`Review this service for vulnerabilities:
-1. Review the attack surface
-2. Review data security (injection, secrets)
-3. Review the supply chain
-4. Synthesize a severity-ranked report\`)`;
-
 // ── Production proof uses the three "Built with OMA" apps from the shared
-//    showcase list (temodar-agent, PR-Copilot, StuFlow) plus the Engram
-//    integration, on top of the named practitioner spotlight. The full inventory
-//    remains on /showcase; localized copy is still keyed by package name. ──
-const CASES = SHOWCASE.filter((c) => ['temodar-agent', 'PR-Copilot', 'StuFlow', 'Engram'].includes(c.pkg));
-const proofSpotlight = SHOWCASE.find((c) => c.kind === 'practitioner');
+//    showcase list. The full inventory, integrations, and practitioner spotlight
+//    remain on /showcase; the homepage keeps only three representative projects. ──
+const CASES = SHOWCASE.filter((c) => ['temodar-agent', 'PR-Copilot', 'StuFlow'].includes(c.pkg));
 const scEntries = t.showcase.entries;
 const caseTr = (c: (typeof SHOWCASE)[number]) => scEntries[c.pkg] ?? { desc: c.desc, tag: c.tag, status: c.status };
 
@@ -108,13 +87,7 @@ const caseTr = (c: (typeof SHOWCASE)[number]) => scEntries[c.pkg] ?? { desc: c.d
 // renders it via `l`. Every API name / code identifier inside the copy stays
 // verbatim (see src/i18n/en.ts; the reliability surface is verified against
 // open-multi-agent core v1.12.1 and @open-multi-agent/otel v0.1.0).
-const CAPS = [l.caps[0], l.caps[1], l.caps[5], l.caps[3]].map((c, i) => ({
-  ...c,
-  n: String(i + 1).padStart(2, '0'),
-}));
-const RELIABILITY = l.reliability;
-const EVALUATION = l.evaluation;
-const ENVIRONMENT = l.environment;
+const WHY = l.why;
 
 // The first three featured Use-case Recipes come from catalog featuredOrder.
 // URLs resolve from the synchronized inventory; localized editorial copy stays
@@ -133,11 +106,10 @@ const BUILDS = getFeaturedUseCases().flatMap((example) => {
   }];
 });
 
-const STACK = l.stack;
 // Keep the visible set focused on runtime decisions not already answered by the
 // capability cards. In particular, the cost answer must surface maxCostBudget;
 // model mixing is already covered in capability 02 and the stack section.
-const FAQS = [l.faqs[0], l.faqs[3], l.faqs[4], l.faqs[5]];
+const FAQS = [l.faqs[0], l.faqs[3], l.faqs[5]];
 
 const title = l.seo.title;
 const description = l.seo.description;
@@ -208,9 +180,9 @@ const jsonLd = {
             <p class="hero-sub" set:html={l.hero.sub}></p>
             <div class="hero-meta"><b>{l.hero.meta[0]}</b><span class="sep">·</span><b>{l.hero.meta[1]}</b><span class="sep">·</span><b>{l.hero.meta[2]}</b></div>
             <div class="hero-cta">
-              <a class="btn-primary hero-cta-primary" href={L('/getting-started/quick-start/')}><span>{l.hero.quickStart}</span><span class="arrow" aria-hidden="true">→</span></a>
+              <a class="btn-primary hero-cta-primary" href={L('/getting-started/quick-start/')} data-landing-event="quick-start-hero"><span>{l.hero.quickStart}</span><span class="arrow" aria-hidden="true">→</span></a>
               <div class="cmd-wrap">
-                <button type="button" class="cmd" data-cmd="npm create oma-app@latest my-oma" data-copied={l.copied} data-failed={l.copyFailed}>
+                <button type="button" class="cmd" data-cmd="npm create oma-app@latest my-oma" data-copied={l.copied} data-failed={l.copyFailed} data-landing-event="copy-command-hero">
                   <span class="sr-only">{l.copy} </span><span class="prompt">$</span><span class="text">npm create oma-app@latest my-oma</span><span class="copy" aria-hidden="true" title={l.copy}><svg class="copy-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="check-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>
                 </button>
                 <span class="copy-feedback" aria-live="polite"></span>
@@ -289,228 +261,146 @@ const jsonLd = {
         </div>
       </header>
 
-      <!-- ── 2. Built for production (reliability / control narrative) ── -->
+      <!-- ── 2. Why OMA: the former control, environment, and capability
+           sections condensed into one decision-oriented block. ── -->
       <section class="section home-section" id="reliability">
         <div class="container">
           <div class="section-head">
-            <div class="eyebrow"><span class="idx">01</span> {l.sectionReliability.eyebrow}</div>
-            <h2 class="section-title">{l.sectionReliability.title}</h2>
-            <p class="section-sub">{l.sectionReliability.sub}</p>
+            <div class="eyebrow"><span class="idx">01</span> {l.sectionWhy.eyebrow}</div>
+            <h2 class="section-title">{l.sectionWhy.title}</h2>
+            <p class="section-sub">{l.sectionWhy.sub}</p>
           </div>
-          <div class="rel-grid">
-            {RELIABILITY.map((c) => (
-              <Card padding="lg" class="rel-card">
-                <div class="rel-tag">{c.tag}</div>
-                <div class="rel-title">{c.t}</div>
-                <p class="rel-desc">{c.parts.map((p) => (typeof p === 'string' ? p : <code>{p.c}</code>))}</p>
-                <div class="rel-foot"><a class="text-link" href={L(c.ref)}><span>{c.refLabel}</span><span class="arrow">→</span></a></div>
+          <span id="capabilities" class="anchor-target" aria-hidden="true"></span>
+          <span id="environment" class="anchor-target" aria-hidden="true"></span>
+          <span id="stack" class="anchor-target" aria-hidden="true"></span>
+          <div class="why-grid">
+            {WHY.map((item, index) => (
+              <Card padding="lg" class="why-card">
+                <div class="why-card-top">
+                  <span class="why-num">{String(index + 1).padStart(2, '0')}</span>
+                  <span class="why-tag">{item.tag}</span>
+                </div>
+                <div class="why-title">{item.title}</div>
+                <p class="why-desc">{item.desc}</p>
+                <code class="why-proof">{item.proof}</code>
+                <div class="why-foot"><a class="text-link" href={L(item.ref)}><span>{item.refLabel}</span><span class="arrow">→</span></a></div>
               </Card>
             ))}
           </div>
-          <aside class="eval-band" aria-labelledby="evaluation-title">
-            <div class="eval-band-copy">
-              <div class="eval-tag"><span class="eval-pulse" aria-hidden="true"></span>{EVALUATION.tag}</div>
-              <h3 id="evaluation-title">{EVALUATION.title}</h3>
-              <p class="eval-desc">{EVALUATION.parts.map((p) => (typeof p === 'string' ? p : <code>{p.c}</code>))}</p>
-              <p class="eval-note">{EVALUATION.note}</p>
-              <a class="text-link" href={L(EVALUATION.ref)}><span>{EVALUATION.refLabel}</span><span class="arrow">→</span></a>
+          <figure class="why-viewer">
+            <figcaption class="why-viewer-copy">
+              <div class="evidence-label">{l.whyViewer.eyebrow}</div>
+              <h3>{l.whyViewer.title}</h3>
+              <p>{l.whyViewer.body}</p>
+              <ul>
+                {l.whyViewer.points.map((point) => <li>{point}</li>)}
+              </ul>
+              <a class="text-link" href={L('/reference/observability/')}><span>{l.whyViewer.link}</span><span class="arrow">→</span></a>
+            </figcaption>
+            <div class="why-viewer-media">
+              {/* The web-optimized MP4 is transcoded from the real Run Viewer
+                  capture in public/demo-dashboard.gif. Lazy loading keeps it
+                  outside the hero's critical path. */}
+              <video width="1600" height="900" autoplay muted loop playsinline preload="none" aria-label={l.dashboard.imgAlt} data-lazy-video>
+                <source data-src="/demo-dashboard.mp4" type="video/mp4" />
+              </video>
+              <noscript><img src="/demo-dashboard.gif" width="1600" height="900" loading="lazy" decoding="async" alt={l.dashboard.imgAlt} /></noscript>
             </div>
-            <ol class="eval-flow" aria-label={EVALUATION.title}>
-              {EVALUATION.steps.map((step, index) => (
-                <li>
-                  <span class="eval-step-num">{String(index + 1).padStart(2, '0')}</span>
-                  <span class="eval-step-label">{step.label}</span>
-                  <code>{step.value}</code>
-                </li>
-              ))}
-            </ol>
-          </aside>
-          <figure class="dashboard-shot">
-            {/* The web-optimized MP4 is transcoded from the real Run Viewer capture
-                in public/demo-dashboard.gif. Sources carry data-src and the
-                lazy-video script below swaps them in near the viewport, so the video
-                never competes with above-the-fold loading. <noscript> keeps the GIF
-                for no-JS visitors. */}
-            <video width="1600" height="900" autoplay muted loop playsinline preload="none" aria-label={l.dashboard.imgAlt} data-lazy-video>
-              <source data-src="/demo-dashboard.mp4" type="video/mp4" />
-            </video>
-            <noscript><img src="/demo-dashboard.gif" width="1600" height="900" loading="lazy" decoding="async" alt={l.dashboard.imgAlt} /></noscript>
-            <figcaption>{l.dashboard.caption} <a class="text-link" href={L('/reference/observability/')}><span>{l.dashboard.obsLink}</span><span class="arrow">→</span></a></figcaption>
           </figure>
         </div>
       </section>
 
-      <!-- ── 3. Runs in your environment (data-sovereignty narrative) ── -->
-      <section class="section home-section" id="environment">
+      <!-- ── 3. Representative workflows ── -->
+      <section class="section home-section" id="build">
         <div class="container">
-          <div class="section-head">
-            <div class="eyebrow"><span class="idx">02</span> {l.sectionEnvironment.eyebrow}</div>
-            <h2 class="section-title">{l.sectionEnvironment.title}</h2>
-            <p class="section-sub">{l.sectionEnvironment.sub}</p>
+          <div class="section-head section-head-row">
+            <div>
+              <div class="eyebrow"><span class="idx">02</span> {l.sectionBuild.eyebrow}</div>
+              <h2 class="section-title">{l.sectionBuild.title}</h2>
+              <p class="section-sub">{l.sectionBuild.sub}</p>
+            </div>
+            <a class="text-link section-head-link" href={L('/examples/')}><span>{l.sectionBuild.viewAll}</span><span class="arrow">→</span></a>
           </div>
-          <div class="rel-grid">
-            {ENVIRONMENT.map((c) => (
-              <Card padding="lg" class="rel-card">
-                <div class="rel-tag">{c.tag}</div>
-                <div class="rel-title">{c.t}</div>
-                <p class="rel-desc">{c.parts.map((p) => (typeof p === 'string' ? p : <code>{p.c}</code>))}</p>
-                <div class="rel-foot"><a class="text-link" href={L(c.ref)}><span>{c.refLabel}</span><span class="arrow">→</span></a></div>
-              </Card>
+          <div class="build-grid">
+            {BUILDS.map((b) => (
+              <a class="case-link" href={b.code} target={b.external ? '_blank' : undefined} rel={b.external ? 'noreferrer' : undefined} style="text-decoration:none;">
+                <Card padding="md" interactive class="build-card">
+                  <div class="build-kicker"><span>{b.scenario}</span><code>{b.primitive}</code></div>
+                  <div class="build-title">{b.title}</div>
+                  <p class="build-desc">{b.desc}</p>
+                  <div class="build-outcome"><span class="arrow">▸</span><span>{b.outcome}</span></div>
+                  <div class="build-foot"><span class="text-link"><span>{l.sectionBuild.seeCode}</span><span class="arrow">→</span></span></div>
+                </Card>
+              </a>
             ))}
           </div>
         </div>
       </section>
 
-      <!-- ── 4. Capabilities ── -->
-      <section class="section home-section" id="capabilities">
+      <!-- ── 4. Adoption proof: repo data, three projects, one attributed quote ── -->
+      <section class="section home-section proof-section" id="proof">
         <div class="container">
-          <div class="section-head">
-            <div class="eyebrow"><span class="idx">03</span> {l.sectionCapabilities.eyebrow}</div>
-            <h2 class="section-title">{l.sectionCapabilities.title}</h2>
-            <p class="section-sub">{l.sectionCapabilities.sub}</p>
-          </div>
-          <div class="cap-grid">
-            <div class="cap-list">
-              {CAPS.map((c) => (
-                <div class="cap-item">
-                  <div class="cap-item-head"><span class="cap-num">{c.n}</span><span class="cap-title">{c.t}</span></div>
-                  <p class="cap-desc">{c.d}</p>
-                </div>
-              ))}
+          <div class="section-head section-head-row proof-head">
+            <div>
+              <div class="eyebrow"><span class="idx">03</span> {l.sectionProof.eyebrow}</div>
+              <h2 class="section-title">{l.sectionProof.title}</h2>
+              <p class="section-sub">{l.sectionProof.sub}</p>
             </div>
-            <div class="cap-code-wrap">
-              <CodeBlock lang="ts" title="team.ts" code={TEAM_CODE} copyLabel={l.copy} copiedLabel={l.copied} copyFailedLabel={l.copyFailed} />
-              <div style="margin-top:var(--space-4);">
-                <Callout tone="accent" title={l.oneCall.title}>{l.oneCall.body}</Callout>
-                <div style="margin-top:var(--space-4);display:grid;gap:10px;justify-items:start;">
-                  <a class="text-link" href={L('/getting-started/three-ways-to-run/')}><span>{l.capsLinks.threeWays}</span><span class="arrow">→</span></a>
-                  <a class="text-link" href={L('/architecture/')}><span>{l.capsLinks.archFlow}</span><span class="arrow">→</span></a>
-                </div>
-              </div>
+            <div class="proof-actions">
+              <div class="live-tag"><span class="live-dot"></span> {l.sectionProof.liveTag}</div>
+              <a class="text-link" href={L('/showcase/')}><span>{l.sectionEvidence.fullShowcase}</span><span class="arrow">→</span></a>
             </div>
           </div>
-        </div>
-      </section>
-
-      <!-- ── 4. Scenarios, stack, and adoption evidence ── -->
-      <section class="section home-section evidence" id="build">
-        <div class="container">
-          <div class="section-head evidence-intro">
-            <div class="eyebrow"><span class="idx">04</span> {l.sectionEvidence.eyebrow}</div>
-            <h2 class="section-title">{l.sectionEvidence.title}</h2>
-            <p class="section-sub">{l.sectionEvidence.sub}</p>
+          <div class="stats-row">
+            <div class="stat"><div class="stat-val"><span class="unit">★ </span><span data-count={stats.stars} data-live="stars">{fmt(stats.stars)}</span></div><div class="stat-key">{l.sectionProof.stats.stars}</div></div>
+            <div class="stat"><div class="stat-val"><span data-count={stats.forks} data-live="forks">{fmt(stats.forks)}</span></div><div class="stat-key">{l.sectionProof.stats.forks}</div></div>
+            <div class="stat"><div class="stat-val"><span data-count={stats.contributors}>{fmt(stats.contributors)}</span></div><div class="stat-key">{l.sectionProof.stats.contributors}</div></div>
+            <div class="stat"><a href={REPO + '/releases'} target="_blank" rel="noreferrer" style="color:inherit;text-decoration:none;"><div class="stat-val">{stats.latestRelease}</div><div class="stat-key">{l.sectionProof.stats.latestRelease}</div></a></div>
+            <div class="stat"><div class="stat-val">MIT</div><div class="stat-key">{l.sectionProof.stats.license}</div></div>
           </div>
-
-          <div class="evidence-block evidence-workflows">
-            <div class="evidence-block-head">
-              <div>
-                <div class="evidence-label">{l.sectionBuild.eyebrow}</div>
-                <h3>{l.sectionBuild.title}</h3>
-              </div>
-            </div>
-            <div class="build-grid">
-              {BUILDS.map((b) => (
-                <a class="case-link" href={b.code} target={b.external ? '_blank' : undefined} rel={b.external ? 'noreferrer' : undefined} style="text-decoration:none;">
-                  <Card padding="md" interactive class="build-card">
-                    <div class="build-kicker"><span>{b.scenario}</span><code>{b.primitive}</code></div>
-                    <div class="build-title">{b.title}</div>
-                    <p class="build-desc">{b.desc}</p>
-                    <div class="build-outcome"><span class="arrow">▸</span><span>{b.outcome}</span></div>
-                    <div class="build-foot"><span class="text-link"><span>{l.sectionBuild.seeCode}</span><span class="arrow">→</span></span></div>
-                  </Card>
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <span id="stack" class="anchor-target" aria-hidden="true"></span>
-          <div class="evidence-block evidence-stack">
-            <div class="evidence-block-head evidence-block-head--inline">
-              <div>
-                <div class="evidence-label">{l.sectionStack.eyebrow}</div>
-                <h3>{l.sectionStack.title}</h3>
-              </div>
-            </div>
-            <div class="stack-strip">
-              {STACK.map((s) => (
-                <div class="stack-chip" title={s.note}>
-                  <span class="stack-name">{s.name}</span>
-                  <span class="stack-count">{s.count}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <span id="proof" class="anchor-target" aria-hidden="true"></span>
-          <div class="evidence-block evidence-proof">
-            <div class="proof-head">
-              <div class="evidence-block-head">
-                <div>
-                  <div class="evidence-label">{l.sectionProof.eyebrow}</div>
-                  <h3>{l.sectionProof.title}</h3>
-                </div>
-              </div>
-              <div class="proof-actions">
-                <div class="live-tag"><span class="live-dot"></span> {l.sectionProof.liveTag}</div>
-                <a class="text-link" href={L('/showcase/')}><span>{l.sectionEvidence.fullShowcase}</span><span class="arrow">→</span></a>
-              </div>
-            </div>
-            <div class="stats-row">
-              <div class="stat"><div class="stat-val"><span class="unit">★ </span><span data-count={stats.stars} data-live="stars">{fmt(stats.stars)}</span></div><div class="stat-key">{l.sectionProof.stats.stars}</div></div>
-              <div class="stat"><div class="stat-val"><span data-count={stats.forks} data-live="forks">{fmt(stats.forks)}</span></div><div class="stat-key">{l.sectionProof.stats.forks}</div></div>
-              <div class="stat"><div class="stat-val"><span data-count={stats.contributors}>{fmt(stats.contributors)}</span></div><div class="stat-key">{l.sectionProof.stats.contributors}</div></div>
-              <div class="stat"><a href={REPO + '/releases'} target="_blank" rel="noreferrer" style="color:inherit;text-decoration:none;"><div class="stat-val">{stats.latestRelease}</div><div class="stat-key">{l.sectionProof.stats.latestRelease}</div></a></div>
-              <div class="stat"><div class="stat-val">MIT</div><div class="stat-key">{l.sectionProof.stats.license}</div></div>
-            </div>
-            {proofSpotlight && (
-              <a class="case-link case-spotlight" href={proofSpotlight.href} target="_blank" rel="noreferrer" style="text-decoration:none;">
-                <Card padding="lg" interactive>
-                  <div class="spotlight-kicker">{t.showcase.spotlight.eyebrow}</div>
-                  <div class="case-pkg">{proofSpotlight.pkg}<span class="case-by-inline">{proofSpotlight.by}</span></div>
-                  <p class="case-desc">{caseTr(proofSpotlight).desc}</p>
-                  <p class="spotlight-contrib">{caseTr(proofSpotlight).status}</p>
+          <div class="cases-grid proof-cases">
+            {CASES.map((c) => (
+              <a class="case-link" href={c.href} target="_blank" rel="noreferrer" style="text-decoration:none;">
+                <Card padding="md" interactive>
+                  <div class="case-pkg">{c.pkg}</div>
+                  <div class="case-by">{c.by}</div>
+                  <p class="case-desc">{caseTr(c).desc}</p>
+                  <div class="case-foot">
+                    <Badge tone={c.tone}>{caseTr(c).tag}</Badge>
+                    <span class="case-dep">{caseTr(c).status}</span>
+                  </div>
                 </Card>
               </a>
-            )}
-            <div class="cases-grid evidence-cases">
-              {CASES.map((c) => (
-                <a class="case-link" href={c.href} target="_blank" rel="noreferrer" style="text-decoration:none;">
-                  <Card padding="md" interactive>
-                    <div class="case-pkg">{c.pkg}</div>
-                    <div class="case-by">{c.by}</div>
-                    <p class="case-desc">{caseTr(c).desc}</p>
-                    <div class="case-foot">
-                      <Badge tone={c.tone}>{caseTr(c).tag}</Badge>
-                      <span class="case-dep">{caseTr(c).status}</span>
-                    </div>
-                  </Card>
-                </a>
-              ))}
-            </div>
+            ))}
           </div>
+          <a class="proof-quote" href="https://www.youtube.com/watch?v=2cdpYJzPXWE&t=331s" target="_blank" rel="noreferrer">
+            <blockquote>{l.endorse.quote}</blockquote>
+            <span class="proof-quote-cite">{l.endorse.cite}</span>
+            <span class="proof-quote-action">{l.sectionProof.watchMention} →</span>
+          </a>
         </div>
       </section>
 
-      <!-- ── 7. FAQ ── -->
+      <!-- ── 5. FAQ ── -->
       <section class="section home-section" id="faq">
         <div class="container">
           <div class="faq-grid">
             <div class="section-head faq-head">
-              <div class="eyebrow"><span class="idx">05</span> {l.sectionFaq.eyebrow}</div>
+              <div class="eyebrow"><span class="idx">04</span> {l.sectionFaq.eyebrow}</div>
               <h2 class="section-title">{l.sectionFaq.title}</h2>
               <p class="section-sub">{l.sectionFaq.sub}</p>
               <div class="faq-head-foot">
                 <a class="text-link" href={REPO + '#how-is-this-different-from-x'} target="_blank" rel="noreferrer"><span>{l.sectionFaq.viewAll}</span><span class="arrow">→</span></a>
-                <EnterpriseLink class="btn-primary" locale={locale}><span>{t.enterpriseCta.button}</span><span class="arrow" aria-hidden="true">→</span></EnterpriseLink>
+                <span data-landing-event="enterprise-faq"><EnterpriseLink class="text-link" locale={locale}><span>{t.enterpriseCta.button}</span><span class="arrow" aria-hidden="true">→</span></EnterpriseLink></span>
               </div>
             </div>
             <div class="faq-list">
               {FAQS.map((f, i) => (
-                <div class={`faq-item${i === 0 ? ' open' : ''}`}>
-                  <button type="button" class="faq-q" id={`faq-trigger-${i}`} aria-expanded={i === 0 ? 'true' : 'false'} aria-controls={`faq-panel-${i}`}>
+                <div class="faq-item">
+                  <button type="button" class="faq-q" id={`faq-trigger-${i}`} aria-expanded="false" aria-controls={`faq-panel-${i}`}>
                     <span>{f.q}</span><span class="faq-icon" aria-hidden="true">+</span>
                   </button>
-                  <div class="faq-a" id={`faq-panel-${i}`} role="region" aria-labelledby={`faq-trigger-${i}`} aria-hidden={i === 0 ? 'false' : 'true'}><div class="faq-a-inner">{f.a}</div></div>
+                  <div class="faq-a" id={`faq-panel-${i}`} role="region" aria-labelledby={`faq-trigger-${i}`} aria-hidden="true"><div class="faq-a-inner">{f.a}</div></div>
                 </div>
               ))}
             </div>
@@ -518,43 +408,23 @@ const jsonLd = {
         </div>
       </section>
 
-      <!-- ── 7b. Endorsement (third-party pull-quote + clickable clip still) ── -->
-      <section class="section endorse">
-        <div class="container">
-          <div class="endorse-grid">
-            <div class="endorse-text">
-              <div class="eyebrow"><span class="idx">//</span> {l.endorse.eyebrow}</div>
-              <figure class="pullquote">
-                <blockquote cite="https://www.youtube.com/watch?v=2cdpYJzPXWE&t=331s">{l.endorse.quote}</blockquote>
-                <figcaption class="pullquote-cite">{l.endorse.cite}</figcaption>
-              </figure>
-            </div>
-            <a class="endorse-clip" href="https://www.youtube.com/watch?v=2cdpYJzPXWE&t=331s" target="_blank" rel="noreferrer">
-              <img src="/featured-githubawesome.jpg" width="1280" height="720" loading="lazy" decoding="async" alt={l.endorse.imgAlt} />
-              <span class="endorse-play" aria-hidden="true"></span>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- ── 8. Final CTA ── -->
+      <!-- ── 6. Final CTA ── -->
       <section class="section" id="start">
         <div class="container cta-final">
-          <div class="eyebrow" style="justify-content:center;"><span class="idx">//</span> {l.ctaFinal.eyebrow}</div>
+          <div class="eyebrow" style="justify-content:center;"><span class="idx">05</span> {l.ctaFinal.eyebrow}</div>
           <h2 class:list={['cta-final-title', { 'cta-final-title--zh': locale === 'zh' }]}>
             <span class="cta-final-title-line">{l.ctaFinal.title1}</span>
             <span class="cta-final-title-line">{l.ctaFinal.title2}</span>
           </h2>
           <div class="cta-actions">
+            <a class="btn-primary" href={L('/getting-started/quick-start/')} data-landing-event="quick-start-final"><span>{l.ctaFinal.quickStart}</span><span class="arrow" aria-hidden="true">→</span></a>
             <div class="cmd-wrap">
-              <button type="button" class="cmd" data-cmd="npm create oma-app@latest my-oma" data-copied={l.copied} data-failed={l.copyFailed}>
+              <button type="button" class="cmd" data-cmd="npm create oma-app@latest my-oma" data-copied={l.copied} data-failed={l.copyFailed} data-landing-event="copy-command-final">
                 <span class="sr-only">{l.copy} </span><span class="prompt">$</span><span class="text">npm create oma-app@latest my-oma</span><span class="copy" aria-hidden="true" title={l.copy}><svg class="copy-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="check-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>
               </button>
               <span class="copy-feedback" aria-live="polite"></span>
               <span class="cmd-note">{l.hero.demoNote}</span>
             </div>
-            <a class="text-link" href={L('/getting-started/quick-start/')}><span>{l.ctaFinal.quickStart}</span><span class="arrow">→</span></a>
-            <a class="text-link cta-alt" href={L('/reference/providers/')}><span>{l.ctaFinal.aiSdk}</span><span class="arrow">→</span></a>
           </div>
         </div>
       </section>
@@ -578,6 +448,22 @@ const jsonLd = {
         if (document.readyState === 'complete') fn();
         else addEventListener('load', () => fn(), { once: true });
       };
+
+      // Counterscale's current browser API records pageviews only. Keep CTA
+      // measurement on the existing Baidu event channel and expose a DOM event
+      // so another first-party collector can subscribe later without changing
+      // the markup again.
+      document.addEventListener('click', (event) => {
+        const target = event.target instanceof Element
+          ? event.target.closest<HTMLElement>('[data-landing-event]')
+          : null;
+        const name = target?.dataset.landingEvent;
+        if (!name) return;
+        const detail = { name, locale: document.documentElement.lang || 'en' };
+        window.dispatchEvent(new CustomEvent('oma:landing-event', { detail }));
+        const baiduQueue = (window as typeof window & { _hmt?: unknown[][] })._hmt;
+        baiduQueue?.push(['_trackEvent', 'landing', name, detail.locale]);
+      });
 
       type LiveCounts = { stars: number; forks: number };
       let resolveLive: (v: LiveCounts | null) => void;

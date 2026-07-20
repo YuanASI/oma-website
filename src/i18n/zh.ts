@@ -100,7 +100,7 @@ export const zh: UiDict = {
       description: 'TypeScript 原生的多智能体框架：给一个目标，自动分工的智能体团队并行完成，跑在你自己的环境里，云端或完全离线均可。',
     },
     hero: {
-      eyebrow: 'TypeScript 多智能体框架',
+      eyebrow: '为 TypeScript 团队打造 · 多智能体框架',
       h1: '自动分工的智能体团队，',
       h1Accent: '跑在你自己的环境里。',
       sub: '给一个目标，它自动拆任务、并行执行、汇总出一个结果。<br />云端或本地模型同队，可以完全不上云。',
@@ -121,6 +121,44 @@ export const zh: UiDict = {
     copy: '复制',
     copied: '✓ 已复制',
     copyFailed: '复制失败，请手动选择并复制。',
+    sectionWhy: {
+      eyebrow: '为什么选 OMA',
+      title: '从目标直达一次可控运行。',
+      sub: '从结果出发，执行过程由你掌控，并跑在数据所在的环境里。',
+    },
+    why: [
+      {
+        tag: '目标 → DAG',
+        title: '给它目标，不用先画图。',
+        desc: '协调器把结果拆成带依赖的任务，并行运行独立工作，再综合成一个结果。任何执行开始前，你都可以先审视计划。',
+        proof: 'runTeam() · planOnly · 可检视 DAG',
+        ref: '/architecture/',
+        refLabel: '查看运行时流程',
+      },
+      {
+        tag: '控制 → 证据',
+        title: '给每次运行加上护栏。',
+        desc: '审批计划与工具调用，给 token 或预估成本封顶，用评估闸门把关，需要复查时再带着证据回放或恢复。',
+        proof: 'onPlanReady · maxCostBudget · EvalSet',
+        ref: '/guides/orchestration-controls/',
+        refLabel: '查看编排控制',
+      },
+      {
+        tag: '你的环境',
+        title: '跑在数据所在的地方。',
+        desc: '用你自己的凭证，连接云端提供方、本地端点或气隔环境。工具默认拒绝，core 只有三个运行时依赖。',
+        proof: '离线 · 工具默认拒绝 · 3 个运行时依赖',
+        ref: '/guides/production-checklist/',
+        refLabel: '打开生产清单',
+      },
+    ],
+    whyViewer: {
+      eyebrow: '运行证据',
+      title: '每次运行后，都能查清发生了什么。',
+      body: '离线 Run Viewer 把一次已完成的运行变成可复查的证据，无需上传到托管的 OMA 服务。',
+      points: ['任务 DAG 与承担者', '模型、提供方、token 与成本汇总', '工具调用、状态与安全证据详情'],
+      link: '打开可观测性参考',
+    },
     sectionCapabilities: {
       eyebrow: '工作原理',
       title: '一个智能体运行时，不是图构建器。',
@@ -249,7 +287,9 @@ export const zh: UiDict = {
     sectionBuild: {
       eyebrow: '应用场景',
       title: '三个工作流，三种明确的编排选择。',
+      sub: '先从你要的结果出发，再打开一个已明确编排选择、可直接运行的示例。',
       seeCode: '查看代码',
+      viewAll: '浏览全部示例',
     },
     builds: {
       'adaptive-customer-support': { primitive: '目标驱动 · runTeam()', scenario: '客服 · 升级处理', title: '自适应客服', desc: '协调器根据物流或账单升级问题选择所需的专职 Agent，再综合各自证据。', outcome: '围绕实际客服目标形成一份有依据的回复。' },
@@ -270,7 +310,9 @@ export const zh: UiDict = {
     sectionProof: {
       eyebrow: '采用情况',
       title: '开源，数字实时来自仓库。',
+      sub: '仓库信号与真实项目集中放在一屏，方便核验，但不把首页变成目录。',
       liveTag: '实时 · 同步自 registry',
+      watchMention: '观看提及片段',
       stats: { stars: 'Star', forks: 'Fork', contributors: '贡献者', latestRelease: '最新版本', license: '许可证' },
     },
     sectionFaq: {
