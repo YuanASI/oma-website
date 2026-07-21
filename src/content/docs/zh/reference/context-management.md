@@ -3,7 +3,7 @@ title: "上下文管理"
 description: "用上下文策略、工具结果压缩与跨提供方推理，让长时运行始终待在 token 上限之下。"
 ---
 
-长时运行的智能体很快就会触到输入 token 上限。在 `AgentConfig` 上设置 `contextStrategy`，控制对话在变长时如何收缩：
+长时运行的智能体很快就会触及输入 token 上限。在 `AgentConfig` 上设置 `contextStrategy`，控制对话在变长时如何收缩：
 
 ```typescript
 const agent: AgentConfig = {
@@ -19,14 +19,14 @@ const agent: AgentConfig = {
 
 | Strategy | 何时选用 |
 |----------|----------------------|
-| `sliding-window` | 最省。保留最近 N 轮，其余丢弃。 |
-| `summarize` | 把旧轮次发给一个摘要模型；用摘要替换原始内容。 |
+| `sliding-window` | 开销最低。保留最近 N 轮，其余丢弃。 |
+| `summarize` | 把旧轮次发送给一个摘要模型；用摘要替换原始内容。 |
 | `compact` | 基于规则：截断大段 assistant 文本和工具结果，最近轮次原样保留。不额外调用 LLM。 |
 | `custom` | 提供你自己的 `compress(messages, estimatedTokens)` 函数。 |
 
 ## 压缩工具结果
 
-工具输出会跨轮次留在对话历史里，哪怕智能体已经据此行动过。在长时运行中，这会吃掉相当大一块上下文预算。
+工具输出会跨轮次留在对话历史中，即便智能体已经据此行动过。在长时运行中，这会占用相当大一部分上下文预算。
 
 `compressToolResults` 会在每次新的 LLM 调用前，把已消费的工具结果（即后面跟着一条 assistant 回复的那些）替换成一个简短标记：
 
@@ -103,6 +103,6 @@ const agent: AgentConfig = {
 **说明：**
 - 默认禁用，以免静默膨胀 prompt token。
 - 默认开启的截断（`compressReasoningText`）在长链式思考上是强制的安全措施；只在调试时才关闭。
-- 某些本地 OpenAI 兼容模型可能把 `<thinking>` 文本回吐进自己的 assistant 回复里，这可能触发循环检测器。失败模式与缓解办法见 [`examples/patterns/cross-provider-reasoning.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/cross-provider-reasoning.ts)。
+- 某些本地 OpenAI 兼容模型可能把 `<thinking>` 文本重新输出到自己的 assistant 回复中，这可能触发循环检测器。失败模式与缓解办法见 [`examples/patterns/cross-provider-reasoning.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/cross-provider-reasoning.ts)。
 - Bedrock 的 `capabilities.echoesReasoning === 'own-issued'`：带签名的推理块（`reasoningContent.reasoningText.signature`）和脱敏块（`reasoningContent.redactedContent`）在 `chat()` 和 `stream()` 上都能原生往返，入站提取与出站序列化两侧皆然（见 #223）。
 - `'tool-use-only'`（DeepSeek V4）是唯一一种**无需**用户启用 `preserveReasoningAsText` 就能做同提供方回传的能力——它在内部被强制开启，因为 DeepSeek API 要求如此。
