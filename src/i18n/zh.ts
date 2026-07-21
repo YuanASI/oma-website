@@ -103,6 +103,7 @@ export const zh: UiDict = {
       eyebrow: '为 TypeScript 团队打造 · 多智能体框架',
       h1: '自动分工的智能体团队，',
       h1Accent: '跑在你自己的环境里。',
+      subtitle: '给个目标它自己拆解执行，或者你自己定义任务。<br />同一套 API，两种都行。',
       meta: ['端云模型混用', 'MIT 许可'],
       quickStart: '快速开始',
       demoNote: '首次 Demo：无需 API Key，也不会请求模型。',

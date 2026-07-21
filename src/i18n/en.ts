@@ -122,6 +122,7 @@ export const en = {
       eyebrow: 'For TypeScript teams · AI Agent framework',
       h1: 'A self-organizing agent team, ',
       h1Accent: 'in an environment you control.',
+      subtitle: 'Give it a goal, or give it the task graph. Same API.',
       meta: ['cloud + local models', 'MIT license'],
       quickStart: 'Quick Start',
       demoNote: 'First demo: no API key or model request.',
