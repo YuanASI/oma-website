@@ -96,4 +96,15 @@
    tables are untouched; add new CJK locales (e.g. ja) to the selector when added. */
 html[lang='zh-CN'] .sl-markdown-content table :is(th, td):first-child {
   min-width: 8em;
+  /* Ceiling so a code-heavy first column (e.g. the 参考 scorer factory column)
+     wraps and yields width to the last column instead of hogging it. */
+  max-width: 20em;
+}
+
+/* Long inline-code identifiers in table cells (e.g.
+   costBudgetScorer({ maxTokens?, maxCostAmount? })) otherwise refuse to break
+   under table-layout:auto, forcing their column wide and squeezing the last
+   column. Let them wrap so description columns keep a readable width. en + zh. */
+.sl-markdown-content table :is(th, td) code {
+  overflow-wrap: anywhere;
 }
