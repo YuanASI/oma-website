@@ -7,7 +7,7 @@ description: "对一次 runTeam 运行的细粒度控制：团队上下文注入
 
 ## 注入团队上下文
 
-把目标、团队名册以及这个 worker 的角色前置到每个 worker 的 prompt——帮助 worker 保持对齐，也让多步运行更容易调试。默认关闭；不开启时 worker prompt 保持逐字节不变。
+把目标、团队名册以及该 worker 的角色前置到每个 worker 的 prompt——帮助 worker 保持对齐，也让多步运行更容易调试。默认关闭；不开启时 worker prompt 保持逐字节不变。
 
 ```ts
 await orchestrator.runTeam(team, goal, { revealCoordinator: true })
@@ -15,7 +15,7 @@ await orchestrator.runTeam(team, goal, { revealCoordinator: true })
 
 ## 运行前先审批
 
-在任何智能体执行之前先审视协调器的计划，并在每一轮任务之间再审视一次。这些挂在编排器上。返回 `false` 即中止；剩余任务标记为 `skipped`。
+在任何智能体执行之前先审视协调器的计划，并在每一轮任务之间再审视一次。这些配置在编排器上。返回 `false` 即中止；剩余任务标记为 `skipped`。
 
 ```ts
 const orchestrator = new OpenMultiAgent({
