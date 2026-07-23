@@ -109,15 +109,15 @@ If a Reference page is incorrect, fix it in the [framework repository](https://g
 
 ## License
 
-This repository is source-available for noncommercial use; it is not licensed
-as Open Source under the OSI definition.
+Except for the clearly identified exceptions below, the original work in this
+repository is open source under the [Apache License 2.0](LICENSE).
 
-- Software, scripts, configuration, workflows, and site templates:
-  [PolyForm Noncommercial 1.0.0](LICENSE)
-- Original writing and media: [CC BY-NC 4.0](CONTENT-LICENSE.md)
-- Synchronized framework Reference documentation only:
+- Website code, scripts, configuration, workflows, original documentation,
+  site copy, and original media: [Apache License 2.0](LICENSE)
+- Blog prose and original non-code media under `src/content/blog/**`:
+  Copyright (c) 2026 Jack Chen. All rights reserved. Code examples and excerpts
+  remain Apache-2.0. See [Content license boundaries](CONTENT-LICENSE.md).
+- Synchronized framework Reference documentation:
   [MIT License](REFERENCE-LICENSE.md)
 
-Commercial use of the code or original content is not permitted without a
-separate written license from YuanASI. Third-party materials and trademarks
-remain subject to their own terms.
+Third-party materials and trademarks remain subject to their own terms.
