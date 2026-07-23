@@ -1,7 +1,7 @@
 {
   "name": "oma-website",
   "private": true,
-  "license": "PolyForm-Noncommercial-1.0.0",
+  "license": "Apache-2.0",
   "type": "module",
   "version": "0.0.1",
   "scripts": {

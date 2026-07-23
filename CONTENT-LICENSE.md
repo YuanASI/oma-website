@@ -1,31 +1,36 @@
-# Noncommercial content license
+# Content license boundaries
 
-Except where a file or this document states otherwise, the original content in
-this repository is licensed under the
-[Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/4.0/)
-(CC BY-NC 4.0).
+The Apache License 2.0 in `LICENSE` applies to the original code,
+documentation, site copy, and media in this repository, except for the
+following expressly excluded material.
 
-This covers, without limitation:
+## Blog posts
 
-- blog posts and translations under `src/content/blog/`;
-- original guides, editorial copy, and translations under `src/content/docs/`;
-- screenshots, videos, social cards, illustrations, and other original media
-  under `public/` and `src/assets/`;
-- product copy, brand language, and other non-software creative material.
+Copyright (c) 2026 Jack Chen. All rights reserved.
 
-You may share and adapt these materials only for noncommercial purposes, with
-appropriate attribution and the other notices required by CC BY-NC 4.0. No
-permission for commercial use is granted. Contact `support@yuanasi.com` to
-request a separate commercial license.
+The prose and original non-code media in blog posts and their translations
+under `src/content/blog/**` are not licensed under the Apache License 2.0. No
+permission to reproduce, adapt, republish, or distribute that reserved content
+is granted by this repository except as required by applicable law or
+separately authorized in writing by the copyright owner.
 
-## Exceptions and reserved rights
+Code examples and code excerpts contained within those blog posts are licensed
+under the Apache License 2.0 in `LICENSE`, unless an excerpt expressly states
+another license.
 
-- The synchronized framework reference documentation under
-  `src/content/docs/reference/**` and `src/content/docs/zh/reference/**` is
-  licensed under the MIT License described in `REFERENCE-LICENSE.md`, not under
-  CC BY-NC 4.0.
-- Third-party materials remain subject to their own licenses and attribution
-  requirements. This document cannot grant rights that YuanASI does not own.
-- No trademark rights are granted. The YuanASI and Open Multi-Agent names,
-  logos, and other source identifiers may not be used to imply endorsement or
-  affiliation.
+## MIT-licensed reference documentation
+
+The synchronized framework reference documentation under
+`src/content/docs/reference/**` and `src/content/docs/zh/reference/**` remains
+licensed under the MIT License described in `REFERENCE-LICENSE.md`, not under
+the Apache License 2.0.
+
+## Third-party rights and trademarks
+
+Third-party materials remain subject to their own licenses and attribution
+requirements. This repository cannot grant rights that its contributors do
+not own.
+
+The Apache License 2.0 does not grant trademark rights. The YuanASI and Open
+Multi-Agent names, logos, and other source identifiers may not be used to
+imply endorsement or affiliation.

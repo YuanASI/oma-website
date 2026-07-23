@@ -1,0 +1,10 @@
+Open Multi-Agent Website
+Copyright 2026 YuanASI contributors
+
+This product includes synchronized Open Multi-Agent framework reference
+documentation licensed under the MIT License. See REFERENCE-LICENSE.md.
+
+Blog prose and original non-code media under src/content/blog/ are separately
+copyrighted by Jack Chen and are excluded from the Apache License 2.0. Code
+examples and excerpts in those posts remain under the Apache License 2.0. See
+CONTENT-LICENSE.md.
