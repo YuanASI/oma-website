@@ -37,7 +37,7 @@ export const AXES: Axis[] = [
   {
     key: 'paradigm',
     label: { en: 'Orchestration model', zh: '编排范式' },
-    oma: { en: 'Three modes: one agent, an explicit task DAG, or a goal decomposed by the coordinator at runtime', zh: '三种模式：单智能体、显式任务 DAG，或由协调器在运行时拆解目标' },
+    oma: { en: 'Three modes: one agent, an explicit task DAG, or a goal the coordinator decomposes at runtime — previewable and replayable as a plan artifact', zh: '三种模式：单智能体、显式任务 DAG，或由协调器在运行时拆解目标——计划可预览、可作为工件重放' },
   },
   {
     key: 'deps',
@@ -47,31 +47,32 @@ export const AXES: Axis[] = [
   {
     key: 'mixedModel',
     label: { en: 'Mixed-model teams', zh: '模型混编' },
-    oma: { en: 'Yes; each agent can use its own cloud or local model in one team', zh: '支持，同一个团队里的每个智能体都可使用各自的云端或本地模型' },
+    oma: { en: 'Yes; each agent runs its own cloud or local model in one team; model routing can send planning to a flagship model and leaves to a cheap one', zh: '支持，同一团队里每个智能体都可用各自的云端或本地模型；模型路由还能把规划交给旗舰模型、把叶子任务交给廉价模型' },
   },
   {
     key: 'budget',
     label: { en: 'Run-budget control', zh: '运行预算控制' },
-    oma: { en: 'Token and estimated-USD ceilings through maxTokenBudget, or maxCostBudget with your estimateCost price table', zh: '通过 maxTokenBudget 设置 token 上限，或通过 maxCostBudget 与应用自有的 estimateCost 价格表设置估算美元上限' },
+    oma: { en: 'Hard token and estimated-USD ceilings — maxTokenBudget, or maxCostBudget with your estimateCost table — that abort the run before it overspends', zh: '硬性 token 与估算美元上限——maxTokenBudget，或配合应用自有 estimateCost 价格表的 maxCostBudget——在超支前中止运行' },
   },
   {
     key: 'observability',
     label: { en: 'Observability', zh: '可观测性' },
-    oma: { en: 'TraceRecord v2 + TraceStore, an optional first-party OTel adapter, and an offline post-run Run Viewer', zh: 'TraceRecord v2 + TraceStore、可选的一方 OTel 适配器，以及离线的运行后 Run Viewer' },
+    oma: { en: 'TraceRecord v2 + TraceStore, stable run identity, an optional first-party OTel adapter, and an offline post-run Run Viewer — no hosted service required', zh: 'TraceRecord v2 + TraceStore、稳定运行标识、可选的一方 OTel 适配器，以及离线的运行后 Run Viewer——无需任何托管服务' },
   },
 ];
 
 export type OmaCapability = { title: Loc; body: Loc };
 
-// Shared OMA capability baseline, verified against the framework README and
-// packages/core/README.md. Every comparison page renders this list so OMA is
-// represented by its actual runtime surface, not only by the six matrix axes.
+// Shared OMA capability baseline, verified against the framework README,
+// packages/core/README.md, and the v1.12.1 reference docs. Every comparison page
+// renders this list so OMA is represented by its actual runtime surface, not
+// only by the six matrix axes.
 export const OMA_CAPABILITIES: OmaCapability[] = [
   {
     title: { en: 'Dynamic and explicit orchestration', zh: '动态编排与显式编排' },
     body: {
-      en: '<code>runTeam()</code> builds a task DAG from a goal. <code>runTasks()</code> runs a graph you define, and <code>runAgent()</code> covers the single-agent case.',
-      zh: '<code>runTeam()</code> 从目标生成任务 DAG，<code>runTasks()</code> 运行你定义的任务图，<code>runAgent()</code> 则覆盖单智能体场景。',
+      en: '<code>runTeam()</code> builds a task DAG from a goal and runs independent tasks in parallel; <code>runTasks()</code> runs a graph you define; <code>runAgent()</code> covers the single-agent case. Preview a plan without executing it (<code>planOnly</code>), freeze it as a <code>PlanArtifact</code>, and replay it later with <code>runFromPlan</code> — the plan is reviewable, version-controllable data.',
+      zh: '<code>runTeam()</code> 从目标生成任务 DAG 并并行运行相互独立的任务，<code>runTasks()</code> 运行你定义的任务图，<code>runAgent()</code> 覆盖单智能体场景。计划可先预览不执行（<code>planOnly</code>）、冻结为 <code>PlanArtifact</code>，之后用 <code>runFromPlan</code> 重放——它是可审阅、可纳入版本管理的数据。',
     },
   },
   {
@@ -91,22 +92,22 @@ export const OMA_CAPABILITIES: OmaCapability[] = [
   {
     title: { en: 'Production controls', zh: '生产控制' },
     body: {
-      en: 'Bound work with turn, token, estimated-cost, timeout, context, and loop controls. Tools are default-deny, and trace payloads redact secrets by default.',
-      zh: '通过轮次、token、估算成本、超时、上下文与循环控制限制工作量。工具默认拒绝授权，链路数据默认脱敏敏感信息。',
+      en: 'Bound each run with turn, token, estimated-cost, timeout, context, and loop limits — <code>maxTokenBudget</code> and <code>maxCostBudget</code> abort before overspend. Route planning to a flagship model and leaf work to a cheap one with <code>modelRouting</code>. Built-in tools are default-deny, and trace payloads redact detected secrets on a best-effort basis.',
+      zh: '用轮次、token、估算成本、超时、上下文与循环上限约束每次运行——<code>maxTokenBudget</code> 与 <code>maxCostBudget</code> 会在超支前中止。用 <code>modelRouting</code> 把规划交给旗舰模型、把叶子任务交给廉价模型。内置工具默认拒绝授权，链路数据以尽力而为方式脱敏检测到的敏感信息。',
     },
   },
   {
     title: { en: 'Your environment and your models', zh: '你的环境与模型' },
     body: {
-      en: 'Run in your Node.js backend, locally, offline, or air-gapped. Mix cloud and local models, connect MCP tools, and bring external agents through ACP or process backends.',
-      zh: '运行在你自己的 Node.js 后端、本地、离线或气隙环境中。同一团队可混用云端与本地模型，并可接入 MCP 工具及 ACP 或进程后端的外部智能体。',
+      en: 'Run in your own Node.js backend — locally, offline, or air-gapped, on your own credentials, with no hosted service. Mix cloud and local models in one team, connect MCP tools, and bring external agents in through ACP or process backends.',
+      zh: '运行在你自己的 Node.js 后端——本地、离线或气隙环境，用你自己的凭证，无需任何托管服务。同一团队可混用云端与本地模型，接入 MCP 工具，并通过 ACP 或进程后端引入外部智能体。',
     },
   },
   {
     title: { en: 'Inspect, trace, and evaluate', zh: '检查、追踪与评估' },
     body: {
-      en: 'Stable run identity, TraceStore, and the offline DAG and Waterfall Viewer work without a hosted service. An optional OTel adapter and EvalSets connect runs to production telemetry and CI gates.',
-      zh: '稳定运行标识、TraceStore，以及离线 DAG 与 Waterfall Viewer 均不依赖托管服务。可选 OTel 适配器与 EvalSet 可把运行接入生产遥测和 CI 门禁。',
+      en: 'Stable run identity, TraceStore, and the offline DAG and Waterfall Viewer work with no hosted service. Score quality offline with versioned <code>EvalSets</code> (<code>defineScorer</code> → <code>runEvalSet</code> → <code>GateVerdict</code>) to gate CI, and connect runs to production telemetry through an optional first-party OTel adapter.',
+      zh: '稳定运行标识、TraceStore，以及离线 DAG 与 Waterfall Viewer 均无需托管服务。用版本化的 <code>EvalSets</code>（<code>defineScorer</code> → <code>runEvalSet</code> → <code>GateVerdict</code>）离线为质量打分、把关 CI，并通过可选的一方 OTel 适配器把运行接入生产遥测。',
     },
   },
 ];
