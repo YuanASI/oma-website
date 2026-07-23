@@ -323,43 +323,44 @@ export const COMPARISONS: Comparison[] = [
   {
     slug: 'mastra',
     name: 'Mastra',
+    tier: 'primary',
     repo: 'https://github.com/mastra-ai/mastra',
     keywords: ['mastra alternative', 'mastra vs open multi agent', 'mastra typescript agent framework', 'lean mastra alternative'],
     seoDescription: {
-      en: 'open-multi-agent vs Mastra: a lean 3-dependency goal-driven runtime versus a batteries-included TypeScript framework with workflows, memory, RAG, and evals. An honest, sourced comparison; and when each is the right call.',
-      zh: 'open-multi-agent 对比 Mastra：精简到 3 个依赖、目标驱动的运行时，对上开箱即全、带 workflow / 记忆 / RAG / evals 的 TypeScript 框架。一份诚实、可溯源的对比，以及各自何时更合适。',
+      en: 'open-multi-agent vs Mastra: a lean, 3-dependency, goal-driven runtime versus a batteries-included TypeScript framework whose workflows you wire by hand. An honest, sourced comparison of dependency weight, orchestration model, and run-budget control; and when each is the right call.',
+      zh: 'open-multi-agent 对比 Mastra：精简、3 个依赖、目标驱动的运行时，对上一个开箱即全、workflow 需你手工接线的 TypeScript 框架。就依赖体量、编排范式与运行预算控制做一份诚实、可溯源的对比，以及各自何时更合适。',
     },
     lede: {
       en: 'Both are TypeScript-native and actively developed; the real difference is surface area. Mastra is a batteries-included framework; open-multi-agent is a lean, goal-driven core.',
       zh: '两者都是 TypeScript 原生、都在积极开发，真正的差别在覆盖面。Mastra 是开箱即全的框架，open-multi-agent 是一个精简、目标驱动的内核。',
     },
     chooseThem: {
-      en: 'You want an all-in-one TypeScript framework; graph-based workflows, built-in memory and RAG, evals, a dev playground; in one package.',
-      zh: '你想要一个 all-in-one 的 TypeScript 框架，图式 workflow、内置记忆与 RAG、evals、一个开发调试台，一站备齐。',
+      en: 'You want an all-in-one framework and will author the workflow graph yourself and carry a larger dependency surface to get memory, RAG, evals, and a studio bundled in.',
+      zh: '你想要一个 all-in-one 框架，并愿意自己编写 workflow 图、背上更大的依赖面，以换取内置的记忆、RAG、evals 与调试台。',
     },
     chooseUs: {
-      en: 'You want a small core (three dependencies), goal-driven decomposition instead of hand-built workflow graphs, and a hard token-budget cap.',
-      zh: '你想要一个小内核（三个依赖）、用目标驱动的拆解代替手搭 workflow 图，以及一道硬性 token 预算上限。',
+      en: 'You want a small core (three dependencies) that runs in your own environment — offline or air-gapped, on your own credentials — with goal-driven decomposition instead of hand-built workflow graphs and a hard spend cap.',
+      zh: '你想要一个小内核（三个依赖），跑在你自己的环境里——离线或气隙、用你自己的凭证——用目标驱动的拆解代替手搭 workflow 图，并带一道硬性花费上限。',
     },
     them: {
-      language: { en: 'TypeScript-native; runs on Node.js', zh: 'TypeScript 原生；运行于 Node.js' },
-      paradigm: { en: 'Agents plus graph-based workflows (.then / .branch / suspend), with built-in memory, RAG, and evals', zh: '智能体，加上图式 workflow（.then / .branch / suspend），内置记忆、RAG 与 evals' },
+      language: { en: 'TypeScript-native; requires Node.js 22.13+', zh: 'TypeScript 原生；要求 Node.js 22.13+' },
+      paradigm: { en: 'Agents plus graph-based workflows you author by hand (.then / .branch / suspend); memory, RAG, and evals bundled; a separate beta Harness (AgentController) for interactive apps', zh: '智能体，加上需你手工编写的图式 workflow（.then / .branch / suspend）；内置记忆、RAG 与 evals；另有一个独立的 beta Harness（AgentController）用于交互应用' },
       deps: { en: '~32 direct in @mastra/core; built on the Vercel AI SDK provider layer', zh: '@mastra/core 约 32 个直接依赖；构建于 Vercel AI SDK 的提供方层之上' },
-      mixedModel: { en: 'Yes; per-agent model via the AI SDK model interface', zh: '支持，通过 AI SDK 的模型接口按智能体设模型' },
+      mixedModel: { en: 'Yes; per-agent model via its "provider/model" router, layered on the Vercel AI SDK provider set', zh: '支持，按智能体经其 "provider/model" 路由设模型，叠在 Vercel AI SDK 提供方层之上' },
       budget: { en: 'No hard token cap; maxSteps limits agent steps', zh: '无硬性 token 上限，maxSteps 限制智能体步数' },
-      observability: { en: 'OpenTelemetry tracing, plus a local dev playground for inspecting runs', zh: 'OpenTelemetry 链路追踪，外加一个本地开发调试台用于查看运行' },
+      observability: { en: 'OpenTelemetry-based tracing with auto-derived metrics and the Mastra Studio dashboard', zh: '基于 OpenTelemetry 的链路追踪，自动提取指标，配 Mastra Studio 仪表盘' },
     },
     howDiffer: {
-      en: 'Mastra bundles the whole design surface; <em>agents</em>, graph-based <em>workflows</em> you compose with <code>.then()</code>/<code>.branch()</code>, plus memory, RAG, and evals; into one framework. open-multi-agent keeps the core small and hands a coordinator a goal, which it decomposes into a task DAG <em>at runtime</em> and auto-parallelizes. Mastra is built on the Vercel AI SDK provider layer and carries ~32 direct dependencies in its core; OMA carries three, with extra providers and MCP loaded only when you opt in.',
-      zh: 'Mastra 把整个设计面，<em>智能体</em>、用 <code>.then()</code>/<code>.branch()</code> 组合的图式 <em>workflow</em>，加上记忆、RAG 与 evals，都打包进一个框架。open-multi-agent 则把内核做小，把目标交给协调器，由它<em>在运行时</em>拆解成任务 DAG 并自动并行。Mastra 构建于 Vercel AI SDK 提供方层之上，内核约 32 个直接依赖；OMA 是三个，额外提供方与 MCP 仅在按需时加载。',
+      en: 'Mastra bundles the whole surface; <em>agents</em>, graph-based <em>workflows</em> you wire by hand with <code>.then()</code>/<code>.branch()</code>, memory, RAG, and evals; into one framework, with a separate beta <em>Harness</em> (AgentController) for interactive apps. That breadth is the cost: ~32 direct dependencies in the core (atop the Vercel AI SDK provider layer), Node 22.13+, and workflow durability that leans on a storage backend and a running server to resume. open-multi-agent keeps the core to three dependencies and hands a coordinator a goal, which it decomposes into a task DAG <em>at runtime</em> and auto-parallelizes — so the plan is generated, reviewable data you can freeze and replay, not a graph you wire by hand. Its checkpoints resume completed tasks over any <code>MemoryStore</code> with no durable-execution backend, and its evaluation, tracing, and offline Run Viewer need no hosted service.',
+      zh: 'Mastra 把整个面都打包进一个框架；<em>智能体</em>、需你用 <code>.then()</code>/<code>.branch()</code> 手工接线的图式 <em>workflow</em>、记忆、RAG 与 evals；另有一个独立的 beta <em>Harness</em>（AgentController）用于交互应用。这份“全”是有代价的：内核约 32 个直接依赖（叠在 Vercel AI SDK 提供方层之上）、要求 Node 22.13+，且 workflow 的持久性要靠一个存储后端与一个常驻 server 才能恢复。open-multi-agent 把内核控制在三个依赖，把目标交给协调器，由它<em>在运行时</em>拆解成任务 DAG 并自动并行——于是计划是生成出来、可审阅可重放的数据，而非你手工接线的图。它的检查点在任意 <code>MemoryStore</code> 上恢复已完成任务、无需持久化执行后端，而 evaluation、链路追踪与离线 Run Viewer 也都无需一个托管服务。',
     },
     whenThem: {
-      en: 'Mastra fits when you want one TypeScript stack that includes graph-based workflows with suspend and resume, human-in-the-loop controls, memory, RAG, evals, and a development playground. You author the workflow steps explicitly.',
-      zh: '当你需要一套 TypeScript 技术栈，同时包含可暂停与恢复的图式 workflow、人工介入控制、记忆、RAG、evals 与开发调试台时，Mastra 合适。工作流步骤由你显式编写。',
+      en: 'Mastra fits when you want a batteries-included stack and are willing to author the workflow graph yourself: bundled memory, RAG, evals, and a studio, with suspend/resume durability if you run the storage and server it needs. Its dedicated Harness (still beta) targets interactive, multi-mode agent apps rather than task orchestration.',
+      zh: '当你想要一套开箱即全的技术栈、并愿意自己编写 workflow 图时，Mastra 合适：内置记忆、RAG、evals 与调试台，若你愿意运行它所需的存储与 server，还能获得挂起/恢复的持久性。它专门的 Harness（仍是 beta）面向的是交互式、多模式的智能体应用，而非任务编排。',
     },
     whenUs: {
-      en: 'open-multi-agent fits when you want to stay lean and let the plan be built for you. The coordinator decomposes a goal into a task DAG at runtime, so you describe the outcome instead of wiring a workflow graph; the core is three dependencies; and <code>maxTokenBudget</code> gives a hard spend ceiling that aborts the run; a guardrail Mastra doesn’t offer at the token level.',
-      zh: 'open-multi-agent 适合你想保持精简、并让计划替你生成的场景。协调器在运行时把目标拆解成任务 DAG，于是你描述结果、而非接线 workflow 图；内核只有三个依赖；<code>maxTokenBudget</code> 给出一道会中止运行的硬性花费上限，这是 Mastra 在 token 层面没有提供的护栏。',
+      en: 'open-multi-agent fits when you want the plan built for you and the whole run kept in your environment. The coordinator turns a goal into a task DAG at runtime, and that plan is inspectable, replayable data (<code>planOnly</code> → <code>createPlanArtifact</code> → <code>runFromPlan</code>), not a workflow graph you hand-author. It stays three dependencies on Node.js 18+, hard-caps spend with <code>maxTokenBudget</code> (or <code>maxCostBudget</code>) where Mastra has no token-level cap, and can route planning to a flagship model and leaf work to a cheap one. Evaluation, tracing, and an offline Run Viewer need no hosted service, so it runs fully offline or air-gapped, on your own credentials.',
+      zh: 'open-multi-agent 适合你想要计划替你生成、且整个运行留在你自己环境里的场景。协调器在运行时把目标拆成任务 DAG，而这份计划是可检查、可重放的数据（<code>planOnly</code> → <code>createPlanArtifact</code> → <code>runFromPlan</code>），而非你手工编写的 workflow 图。它保持三个依赖、跑在 Node.js 18+ 上，用 <code>maxTokenBudget</code>（或 <code>maxCostBudget</code>）在超支前硬性中止运行——这是 Mastra 在 token 层面没有的护栏，并且可以把规划交给旗舰模型、把叶子任务交给廉价模型。evaluation、链路追踪与离线 Run Viewer 全都无需托管服务，于是它能完全离线或气隙运行，用你自己的凭证。',
     },
   },
   {
@@ -535,7 +536,6 @@ export const COMPARISONS: Comparison[] = [
   {
     slug: 'llamaindex',
     name: 'LlamaIndex',
-    tier: 'primary',
     repo: 'https://github.com/run-llama/llama_index',
     keywords: ['llamaindex alternative', 'llamaindex vs open multi agent', 'llamaindex agent workflow alternative', 'rag agent framework'],
     seoDescription: {
