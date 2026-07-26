@@ -96,11 +96,11 @@ export const zh: UiDict = {
 
   landing: {
     seo: {
-      title: 'Open Multi-Agent：TypeScript 多智能体框架',
-      description: 'TypeScript 原生的多智能体框架：给一个目标，自动分工的智能体团队并行完成，跑在你自己的环境里，云端或完全离线均可。',
+      title: 'Open Multi-Agent：开源 TypeScript 多智能体框架',
+      description: '开源、TypeScript 原生的多智能体框架：给一个目标，自动分工的智能体团队并行完成，跑在你自己的环境里，云端或完全离线均可。',
     },
     hero: {
-      eyebrow: '为 TypeScript 团队打造 · 多智能体框架',
+      eyebrow: '开源多智能体框架，TypeScript 原生',
       h1: '自动分工的智能体团队，',
       h1Accent: '跑在你自己的环境里。',
       subtitle: '给个目标它自己拆解执行，或者你自己定义任务。<br />同一套 API，两种都行。',
