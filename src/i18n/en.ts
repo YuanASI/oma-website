@@ -115,11 +115,11 @@ export const en = {
 
   landing: {
     seo: {
-      title: 'Open Multi-Agent — TypeScript AI Agent framework',
-      description: 'TypeScript-native AI agent framework: one goal in, a self-organizing agent team plans and runs it in parallel, in your environment, cloud or fully offline.',
+      title: 'Open Multi-Agent: open-source TypeScript AI Agent framework',
+      description: 'Open-source, TypeScript-native AI agent framework: one goal in, a self-organizing agent team plans and runs it in parallel, in your environment, cloud or fully offline.',
     },
     hero: {
-      eyebrow: 'For TypeScript teams · AI Agent framework',
+      eyebrow: 'open-source AI Agent framework, TypeScript-native',
       h1: 'A self-organizing agent team, ',
       h1Accent: 'in an environment you control.',
       subtitle: 'Give it a goal, or give it the task graph. Same API.',
