@@ -15,16 +15,15 @@ import Footer from '../../../components/Footer.astro';
 import EnterpriseCta from '../../../components/EnterpriseCta.astro';
 import EnterpriseHeadCta from '../../../components/EnterpriseHeadCta.astro';
 import { ghStats } from '../../../lib/site';
-import { COMPARISONS, type Loc } from '../../../lib/compare';
+import { COMPARISONS, OMA_CAPABILITIES, type Loc } from '../../../lib/compare';
 import { localeStaticPaths, toLocale, useTranslations, localizePath } from '../../../i18n';
 
 export function getStaticPaths() { return localeStaticPaths(); }
 const locale = toLocale(Astro.params.locale);
 const t = useTranslations(locale).compare;
 // Kept out of COMPARISONS on purpose: Claude dynamic workflows is a feature of
-// Claude Code, not a framework alternative. It gets its own "in context" band
-// at the top of the hub — first thing under the hero, above the competitor
-// tiers — linking to /compare/claude-dynamic-workflows/.
+// Claude Code, not a framework alternative. It remains related reading below
+// the framework comparisons instead of leading the product story.
 const dw = useTranslations(locale).dynamicWorkflows.hubCard;
 const L = (p: string) => localizePath(p, locale);
 const pick = (o: Loc) => o[locale];
@@ -75,17 +74,18 @@ const jsonLd = {
           <EnterpriseHeadCta locale={locale} />
         </div>
 
-        <!-- In context: Claude dynamic workflows. Same bet (the model plans the
-             work), different form factor — described, not pitched as an
-             "alternative", so it leads the hub without joining either comparison
-             tier. The dashed band marks it as a different kind of thing. -->
-        <a class="compare-context-band" href={L('/compare/claude-dynamic-workflows/')}>
-          <div class="compare-context-head">
-            <div class="compare-context-label">{dw.label}</div>
-            <div class="compare-context-name">{dw.name}</div>
+        <a class="oma-baseline" href={L('/capabilities/')}>
+          <div>
+            <div class="compare-context-label">{t.baseline.eyebrow}</div>
+            <div class="oma-baseline-title">{t.baseline.title}</div>
+            <p>{t.baseline.body}</p>
           </div>
-          <p class="compare-context-blurb">{dw.blurb}</p>
-          <span class="compare-context-cta">{dw.cta} <span class="arrow">→</span></span>
+          <div class="oma-baseline-points">
+            {OMA_CAPABILITIES.slice(0, 3).map((capability) => (
+              <span>{pick(capability.title)}</span>
+            ))}
+          </div>
+          <span class="compare-context-cta">{t.baseline.cta} <span class="arrow">→</span></span>
         </a>
 
         <div class="compare-hub-grid">
@@ -121,6 +121,15 @@ const jsonLd = {
             ))}
           </div>
         </div>
+
+        <a class="compare-context-band" href={L('/compare/claude-dynamic-workflows/')}>
+          <div class="compare-context-head">
+            <div class="compare-context-label">{dw.label}</div>
+            <div class="compare-context-name">{dw.name}</div>
+          </div>
+          <p class="compare-context-blurb">{dw.blurb}</p>
+          <span class="compare-context-cta">{dw.cta} <span class="arrow">→</span></span>
+        </a>
       </div>
     </section>
 
@@ -131,6 +140,18 @@ const jsonLd = {
 
 <style>
   .compare-hub-hero { padding-top: 72px; }
+
+  .oma-baseline {
+    display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(220px, 0.8fr) auto;
+    gap: 28px; align-items: center; margin: -8px 0 40px; padding: 24px;
+    border: 1px solid var(--oma-accent-line); border-radius: var(--radius-md);
+    background: var(--oma-accent-soft); color: var(--oma-fg-1); text-decoration: none;
+  }
+  .oma-baseline-title { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+  .oma-baseline p { margin: 7px 0 0; font-size: 13.5px; line-height: 1.6; color: var(--oma-fg-2); }
+  .oma-baseline-points { display: grid; gap: 8px; }
+  .oma-baseline-points span { font-family: var(--font-mono); font-size: 11px; color: var(--oma-fg-2); }
+  .oma-baseline-points span::before { content: '✓'; color: var(--oma-accent); margin-right: 8px; }
 
   /* Featured tier — the head-to-head frameworks, two generous cards per row. */
   .compare-hub-grid {
@@ -194,7 +215,7 @@ const jsonLd = {
     display: flex; align-items: center; gap: 28px;
     border: 1px dashed var(--oma-border-2); border-radius: var(--radius-md);
     padding: 20px 24px; text-decoration: none; color: var(--oma-fg-1);
-    margin: -8px 0 40px;
+    margin: 56px 0 0;
     transition: background var(--duration-base) var(--ease-out), border-color var(--duration-base) var(--ease-out);
   }
   .compare-context-band:hover { background: var(--oma-bg-1); }
@@ -211,6 +232,7 @@ const jsonLd = {
     display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
   }
   @media (max-width: 860px) {
+    .oma-baseline { grid-template-columns: 1fr; gap: 16px; }
     .compare-context-band { flex-direction: column; align-items: flex-start; gap: 12px; }
     .compare-context-head { max-width: none; }
   }

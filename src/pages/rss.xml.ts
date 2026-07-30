@@ -13,7 +13,7 @@ export async function GET(context: APIContext) {
   return rss({
     title: 'Open Multi-Agent — Blog',
     description:
-      'Writing on TypeScript multi-agent orchestration: goal-driven task DAGs, mixed-model teams, long-term memory, and lessons from the agent-framework ecosystem.',
+      'Writing on TypeScript multi-agent orchestration: goal-driven task DAGs, mixed-model teams, durable shared state, and lessons from the agent-framework ecosystem.',
     site: context.site ?? 'https://open-multi-agent.com',
     items: posts.map((post) => ({
       title: post.data.title,

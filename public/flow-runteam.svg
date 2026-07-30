@@ -24,8 +24,8 @@
           </g>
           <g font-family="JetBrains Mono, monospace" font-size="13" fill="#F5F2EB" font-weight="500" letter-spacing="-0.5">
             <text x="100" y="74">Goal in</text>
-            <text x="320" y="74">Decompose</text>
-            <text x="640" y="74">Fan out + run</text>
+            <text x="320" y="74">Route + plan</text>
+            <text x="640" y="74">Schedule + run</text>
             <text x="1050" y="74">Result out</text>
           </g>
 
@@ -61,8 +61,8 @@
           <!-- ====== PHASE 2: DECOMPOSE ====== -->
           <!-- Decomposer / Team box (concrete node — dark fill + bone stroke, matches architecture.svg) -->
           <rect x="320" y="290" width="180" height="120" rx="6" fill="#131210" stroke="#F5F2EB" stroke-width="1.5"/>
-          <text x="410" y="320" font-family="JetBrains Mono, monospace" font-size="10" fill="#A09A8E" letter-spacing="1.5" text-anchor="middle">TEAM · COORDINATOR</text>
-          <text x="410" y="345" font-family="JetBrains Mono, monospace" font-size="14" fill="#F5F2EB" font-weight="500" text-anchor="middle">decompose</text>
+          <text x="410" y="320" font-family="JetBrains Mono, monospace" font-size="10" fill="#A09A8E" letter-spacing="1.5" text-anchor="middle">ROUTER · GOVERNANCE</text>
+          <text x="410" y="345" font-family="JetBrains Mono, monospace" font-size="14" fill="#F5F2EB" font-weight="500" text-anchor="middle">single or team</text>
           <text x="410" y="362" font-family="JetBrains Mono, monospace" font-size="14" fill="#F5F2EB" font-weight="500" text-anchor="middle">→ Task DAG</text>
           <text x="410" y="385" font-family="Geist, sans-serif" font-size="10" fill="#726C62" font-style="italic" text-anchor="middle">4 tasks · 2 layers</text>
 
@@ -124,15 +124,14 @@
 
           <!-- ====== PHASE 4: RESULT OUT ====== -->
           <rect x="1020" y="290" width="200" height="120" rx="6" fill="#131210" stroke="#10B981" stroke-width="1.5"/>
-          <text x="1120" y="320" font-family="JetBrains Mono, monospace" font-size="11" fill="#10B981" letter-spacing="2" text-anchor="middle">RESULT</text>
-          <text x="1120" y="350" font-family="JetBrains Mono, monospace" font-size="14" fill="#F5F2EB" font-weight="500" text-anchor="middle">{</text>
-          <text x="1120" y="370" font-family="JetBrains Mono, monospace" font-size="11" fill="#A09A8E" text-anchor="middle">  success, tasks, agentResults</text>
-          <text x="1120" y="385" font-family="JetBrains Mono, monospace" font-size="11" fill="#A09A8E" text-anchor="middle">  totalTokenUsage</text>
-          <text x="1120" y="400" font-family="JetBrains Mono, monospace" font-size="14" fill="#F5F2EB" font-weight="500" text-anchor="middle">}</text>
+          <text x="1120" y="320" font-family="JetBrains Mono, monospace" font-size="11" fill="#10B981" letter-spacing="2" text-anchor="middle">RESULT + RECEIPT</text>
+          <text x="1120" y="348" font-family="JetBrains Mono, monospace" font-size="10" fill="#A09A8E" text-anchor="middle">mode · routingDecision</text>
+          <text x="1120" y="368" font-family="JetBrains Mono, monospace" font-size="10" fill="#A09A8E" text-anchor="middle">taskResults · rolesExecuted</text>
+          <text x="1120" y="388" font-family="JetBrains Mono, monospace" font-size="10" fill="#A09A8E" text-anchor="middle">dependencyEdges · usage</text>
 
           <!-- Footer signature -->
           <line x1="60" y1="660" x2="1220" y2="660" stroke="#1F1D1A" stroke-width="1"/>
           <text x="60" y="688" font-family="JetBrains Mono, monospace" font-size="11" fill="#726C62" letter-spacing="2">OPEN-MULTI-AGENT · runTeam() FLOW</text>
-          <text x="1220" y="688" font-family="JetBrains Mono, monospace" font-size="11" fill="#10B981" letter-spacing="2" text-anchor="end">v1.8.0</text>
+          <text x="1220" y="688" font-family="JetBrains Mono, monospace" font-size="11" fill="#10B981" letter-spacing="2" text-anchor="end">v1.13.0</text>
 
         </svg>

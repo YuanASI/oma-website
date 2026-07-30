@@ -85,8 +85,8 @@ const caseTr = (c: (typeof SHOWCASE)[number]) => scEntries[c.pkg] ?? { desc: c.d
 
 // Section copy lives in the per-locale dictionary (src/i18n); the markup below
 // renders it via `l`. Every API name / code identifier inside the copy stays
-// verbatim (see src/i18n/en.ts; the reliability surface is verified against
-// open-multi-agent core v1.12.1 and @open-multi-agent/otel v0.1.0).
+// verbatim. The runtime surface is pinned to the public core v1.13.0 release;
+// main-only adaptive recovery and semantic routing stay out until published.
 const WHY = l.why;
 
 // The first three featured Use-case Recipes come from catalog featuredOrder.
@@ -178,7 +178,7 @@ const jsonLd = {
             <div class="eyebrow"><span class="idx">//</span> {l.hero.eyebrow}</div>
             <h1>{l.hero.h1}<span class="accent">{l.hero.h1Accent}</span></h1>
             <p class="hero-sub" set:html={l.hero.subtitle}></p>
-            <div class="hero-meta"><b>{l.hero.meta[0]}</b><span class="sep">·</span><b>{l.hero.meta[1]}</b></div>
+            <div class="hero-audience">{l.hero.audience}</div>
             <div class="hero-cta">
               <a class="btn-primary hero-cta-primary" href={L('/getting-started/quick-start/')} data-landing-event="quick-start-hero"><span>{l.hero.quickStart}</span><span class="arrow" aria-hidden="true">→</span></a>
               <div class="cmd-wrap">
@@ -189,10 +189,28 @@ const jsonLd = {
                 <span class="cmd-note">{l.hero.demoNote}</span>
               </div>
             </div>
+            <div class="hero-trust" aria-label={l.hero.trust.stars}>
+              <a href={REPO} target="_blank" rel="noreferrer"><b>★ {fmt(stats.stars)}</b><span>{l.hero.trust.stars}</span></a>
+              <a href={REPO + '/releases'} target="_blank" rel="noreferrer"><b>{stats.latestRelease}</b><span>{l.hero.trust.release}</span></a>
+              <span><b>MIT</b><span>{l.hero.trust.license}</span></span>
+              <span><b>0</b><span>{l.hero.trust.signup}</span></span>
+            </div>
           </div>
           <div>
             <div class="io-panel">
               <div class="io-cap"><span>team.ts · goal</span><span style="color:var(--oma-accent);">{l.hero.ioGoal}</span></div>
+              <div class="runtime-path">
+                <div class="runtime-path-label">{l.hero.runtime.eyebrow}</div>
+                <div class="runtime-path-steps">
+                  <span><small>{l.hero.runtime.mode}</small><b>{l.hero.runtime.modeValue}</b></span>
+                  <i>→</i>
+                  <span><small>{l.hero.runtime.route}</small><b>{l.hero.runtime.routeValue}</b></span>
+                  <i>→</i>
+                  <span><small>{l.hero.runtime.schedule}</small><b>{l.hero.runtime.scheduleValue}</b></span>
+                  <i>→</i>
+                  <span><small>{l.hero.runtime.evidence}</small><b>{l.hero.runtime.evidenceValue}</b></span>
+                </div>
+              </div>
               <details class="artifact-goal">
                 <summary>
                   <span class="artifact-goal-head">

@@ -21,7 +21,7 @@
           <rect x="420" y="180" width="440" height="80" rx="6" fill="#131210" stroke="#F5F2EB" stroke-width="1.5"/>
           <text x="450" y="212" font-family="JetBrains Mono" font-size="11" fill="#A09A8E" letter-spacing="2">COORDINATION</text>
           <text x="450" y="240" font-family="JetBrains Mono" font-size="20" fill="#F5F2EB" font-weight="500">Team</text>
-          <text x="840" y="212" font-family="JetBrains Mono" font-size="11" fill="#726C62" text-anchor="end">bus · queue · memory</text>
+          <text x="840" y="212" font-family="JetBrains Mono" font-size="11" fill="#726C62" text-anchor="end">route · govern · plan</text>
 
           <line x1="540" y1="260" x2="540" y2="300" stroke="#A09A8E" stroke-width="1.5" marker-end="url(#arrow2)"/>
           <line x1="740" y1="260" x2="740" y2="300" stroke="#A09A8E" stroke-width="1.5" marker-end="url(#arrow2)"/>
@@ -32,8 +32,8 @@
           <text x="440" y="354" font-family="JetBrains Mono" font-size="16" fill="#F5F2EB" font-weight="500">AgentPool</text>
 
           <rect x="660" y="300" width="200" height="80" rx="6" fill="#131210" stroke="#F5F2EB" stroke-width="1.5"/>
-          <text x="680" y="328" font-family="JetBrains Mono" font-size="10" fill="#A09A8E" letter-spacing="1.5">SCHEDULING</text>
-          <text x="680" y="354" font-family="JetBrains Mono" font-size="16" fill="#F5F2EB" font-weight="500">TaskQueue</text>
+          <text x="680" y="328" font-family="JetBrains Mono" font-size="10" fill="#A09A8E" letter-spacing="1.5">EVENT SCHEDULING</text>
+          <text x="680" y="354" font-family="JetBrains Mono" font-size="16" fill="#F5F2EB" font-weight="500">Ready → dispatch</text>
 
           <line x1="540" y1="380" x2="540" y2="420" stroke="#A09A8E" stroke-width="1.5" marker-end="url(#arrow2)"/>
 
@@ -56,18 +56,18 @@
           <rect x="240" y="560" width="280" height="100" rx="6" fill="#131210" stroke="#F5F2EB" stroke-width="1.5"/>
           <text x="260" y="588" font-family="JetBrains Mono" font-size="10" fill="#A09A8E" letter-spacing="1.5">LOOP</text>
           <text x="260" y="616" font-family="JetBrains Mono" font-size="16" fill="#F5F2EB" font-weight="500">AgentRunner</text>
-          <text x="260" y="640" font-family="JetBrains Mono" font-size="10" fill="#726C62">conversation loop · tool dispatch</text>
+          <text x="260" y="640" font-family="JetBrains Mono" font-size="10" fill="#726C62">model loop · tool gate · result</text>
 
           <line x1="520" y1="610" x2="560" y2="610" stroke="#A09A8E" stroke-width="1.5" marker-end="url(#arrow2)"/>
 
           <rect x="560" y="560" width="280" height="100" rx="6" fill="#131210" stroke="#A09A8E" stroke-width="1.5" stroke-dasharray="4 3"/>
           <text x="580" y="588" font-family="JetBrains Mono" font-size="10" fill="#A09A8E" letter-spacing="1.5">INTERFACE</text>
           <text x="580" y="616" font-family="JetBrains Mono" font-size="16" fill="#F5F2EB" font-weight="500">ToolRegistry</text>
-          <text x="580" y="640" font-family="JetBrains Mono" font-size="10" fill="#726C62">defineTool() · 6 built-in tools</text>
+          <text x="580" y="640" font-family="JetBrains Mono" font-size="10" fill="#726C62">default-deny · consequential · MCP</text>
 
           <!-- footer -->
           <line x1="80" y1="710" x2="1200" y2="710" stroke="#1F1D1A" stroke-width="1"/>
           <text x="80" y="735" font-family="JetBrains Mono" font-size="11" fill="#726C62" letter-spacing="2">OPEN-MULTI-AGENT · COMPACT</text>
-          <text x="1200" y="735" font-family="JetBrains Mono" font-size="11" fill="#10B981" letter-spacing="2" text-anchor="end">v1.8.0</text>
-          <text x="80" y="758" font-family="JetBrains Mono" font-size="10" fill="#5A5751" letter-spacing="2">SUMMARIZED · ALL LOAD-BEARING RELATIONSHIPS PRESERVED</text>
+          <text x="1200" y="735" font-family="JetBrains Mono" font-size="11" fill="#10B981" letter-spacing="2" text-anchor="end">v1.13.0</text>
+          <text x="80" y="758" font-family="JetBrains Mono" font-size="10" fill="#5A5751" letter-spacing="2">ROUTING · GOVERNANCE · SCHEDULING · EXECUTION · RECEIPT</text>
         </svg>

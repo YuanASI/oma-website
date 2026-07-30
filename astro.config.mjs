@@ -69,12 +69,18 @@ function serializeSitemap(item) {
 		changefreq = 'weekly';
 		const lastmod = blogLastmod.get(path);
 		if (lastmod) item.lastmod = lastmod;
+	} else if (p === '/capabilities/') {
+		priority = 0.9;
+		changefreq = 'weekly';
 	} else if (/^\/(compare|solutions|integrations)\/$/.test(p)) {
 		priority = 0.8;
 		changefreq = 'weekly';
-	} else if (/^\/(compare|solutions|integrations)\/[^/]+\/$/.test(p)) {
+	} else if (/^\/(solutions|integrations)\/[^/]+\/$/.test(p)) {
 		priority = 0.7;
 		changefreq = 'weekly';
+	} else if (/^\/compare\/[^/]+\/$/.test(p)) {
+		priority = 0.55;
+		changefreq = 'monthly';
 	} else if (/^\/(examples|showcase|architecture)\/$/.test(p)) {
 		priority = 0.6;
 		changefreq = 'monthly';
@@ -216,12 +222,14 @@ export default defineConfig({
 						{ label: 'External agents', slug: 'reference/external-agents', translations: { 'zh-CN': '外部智能体' } },
 					],
 				},
-				{
-					label: 'Control orchestration',
-					translations: { 'zh-CN': '控制编排' },
-					items: [
-						{ label: 'Consensus', slug: 'reference/consensus', translations: { 'zh-CN': '共识' } },
-						{ label: 'Model routing', slug: 'reference/model-routing', translations: { 'zh-CN': '模型路由' } },
+					{
+						label: 'Control orchestration',
+						translations: { 'zh-CN': '控制编排' },
+						items: [
+							{ label: 'Execution routing', slug: 'reference/execution-routing', translations: { 'zh-CN': '执行路由' } },
+							{ label: 'Task scheduling', slug: 'reference/task-scheduling', translations: { 'zh-CN': '任务调度' } },
+							{ label: 'Consensus', slug: 'reference/consensus', translations: { 'zh-CN': '共识' } },
+							{ label: 'Model routing', slug: 'reference/model-routing', translations: { 'zh-CN': '模型路由' } },
 						{ label: 'Plan preview & replay', slug: 'reference/plan-replay', translations: { 'zh-CN': '计划预览与重放' } },
 						{ label: 'Shared memory', slug: 'reference/shared-memory', translations: { 'zh-CN': '共享内存' } },
 					],

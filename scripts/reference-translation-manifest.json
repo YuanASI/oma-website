@@ -1,64 +1,68 @@
 {
   "_comment": "Translation drift anchor for Getting Started, Guides, and vendored Reference docs. Maps each `<section>/<slug>` to the sha256 of the English BODY (front-matter stripped) its zh translation was made from, plus the date. Written by scripts/update-translation-manifest.mjs; read by scripts/check-reference-drift.mjs in ordinary CI and the weekly Reference sync. See TRANSLATING.md.",
   "getting-started/introduction": {
-    "enBodySha256": "4cb4be84eccb14a3d74f4e8c5a99ae4950d94f1189be56112efba2120014ee27",
-    "translatedAt": "2026-07-19"
+    "enBodySha256": "0618584e75190c5ee4272113fb5867ee6426e2650b0b150aa9e8a31ebf6fbcb0",
+    "translatedAt": "2026-07-30"
   },
   "getting-started/quick-start": {
-    "enBodySha256": "6cf4b589a954bb8cb6f55907369c48c0563e731d04b4ad7171062bbc5f4707e3",
-    "translatedAt": "2026-07-20"
+    "enBodySha256": "e2b884548c25c6b454b55838f15a30796ab8c1d798ca60f5b4c20b5b56c9ec5d",
+    "translatedAt": "2026-07-30"
   },
   "getting-started/three-ways-to-run": {
-    "enBodySha256": "1bf737c1aa7bedc6973ace5f8fc0ccdb4a242e641843b933ff56eaa865b5091c",
-    "translatedAt": "2026-07-19"
+    "enBodySha256": "e1b702f376507115dac5cb5be21c8f0b3a4f16b26adaece70f470e18be752deb",
+    "translatedAt": "2026-07-30"
   },
   "guides/cost-budget-control": {
     "enBodySha256": "ad2c390f15939783d548db29905f10c723481fdfcf8b60b02d0a80643a7d99e6",
     "translatedAt": "2026-07-19"
   },
   "guides/orchestration-controls": {
-    "enBodySha256": "6994a49603a6d6c37b945c7b7fa0fe1822d7c28c8d7c7029c7129469b3e11522",
-    "translatedAt": "2026-07-19"
+    "enBodySha256": "f492e7797e0bfb5dd3887cab6351691f3f05767929e7b62705b0952126a7719c",
+    "translatedAt": "2026-07-30"
   },
   "guides/production-checklist": {
-    "enBodySha256": "29ef3db8693fd1d2a82e0a7e3fede17cd712f6b26eb7d3d4939f50d0721c6e68",
-    "translatedAt": "2026-07-19"
+    "enBodySha256": "ec5ef5affb57bd77dd8e1b542adf3db7a942529973b854aa40b4a8a5ef56cc7c",
+    "translatedAt": "2026-07-30"
   },
   "reference/checkpoint": {
-    "enBodySha256": "502b3cc134f34b96cc23d065571a71023cac7ff98e9ecc31d8139b38906c2352",
-    "translatedAt": "2026-07-18"
+    "enBodySha256": "3d49baace901cd51761cc03c98585a495bb97d1ba82166cbd285093a8e3d8113",
+    "translatedAt": "2026-07-30"
   },
   "reference/cli": {
-    "enBodySha256": "38e8aac4f23b4cc6425f97fb8b219f8cdac8240a6580034e2fba1e04c5ab98ef",
-    "translatedAt": "2026-07-19"
+    "enBodySha256": "cdbabaf696b0fbb7874c609e7628f5ba54612b59f8f8bc3c8b6e117b1db9231c",
+    "translatedAt": "2026-07-30"
   },
   "reference/consensus": {
     "enBodySha256": "3aebc5b0d0264b05c55c3995b89221d396eb37a6b8ae9c4cbb66e65f8c35feb1",
     "translatedAt": "2026-07-18"
   },
   "reference/context-management": {
-    "enBodySha256": "fd6c8e98e6d116ad96719fdc5179e4cbad0e48afe9f01c59da8aec7667eb9dda",
-    "translatedAt": "2026-07-18"
+    "enBodySha256": "f115f1d4648139b9c1d82487e190f076b67b0df234634fbe09c594968e4d418e",
+    "translatedAt": "2026-07-30"
   },
   "reference/evaluation": {
-    "enBodySha256": "c2f966e55f9b50293d768b8589e34fab4349cea6937e4de2eebfdc484b03e226",
-    "translatedAt": "2026-07-19"
+    "enBodySha256": "52b6f858cbfe51ed16a264ce60d2f287914354c0780581f3458b82f4a0411848",
+    "translatedAt": "2026-07-30"
+  },
+  "reference/execution-routing": {
+    "enBodySha256": "d3037dd5f0fbb9d34b56a38e6641a6297c3871077edaab21ecefb4c3f23ff172",
+    "translatedAt": "2026-07-30"
   },
   "reference/external-agents": {
-    "enBodySha256": "15bbf7bcb86cad2acd0a185d5a9fa3de02464fbbdc9b0b9c98b5326c2500e791",
-    "translatedAt": "2026-07-18"
+    "enBodySha256": "8429fe050ad68a5a2e29e20e28be288159df47629fbc8e0cdbf70d819c5cadf3",
+    "translatedAt": "2026-07-30"
   },
   "reference/model-routing": {
-    "enBodySha256": "9950a3ae3971f3e73fe2629bf4ae84dd78a22e9d5e0d3507c533e1364093ed7f",
-    "translatedAt": "2026-06-25"
+    "enBodySha256": "3b12e21f7b81c66f51e303a7e1cfb68e40564c319c1437092bea249affa59aeb",
+    "translatedAt": "2026-07-30"
   },
   "reference/observability": {
-    "enBodySha256": "da9b5b553a1a940486f8d898809e57c5390f7a48ad627f30247322eb841ad12f",
-    "translatedAt": "2026-07-19"
+    "enBodySha256": "046f5d7a7bdc64b4fc6739d63f92a622cf3170f4b3b5047fc83f86d0adb2b360",
+    "translatedAt": "2026-07-30"
   },
   "reference/observability-migration": {
-    "enBodySha256": "c38fd01a4013b3ba38e85c1dab56768e9cecee93c3726764d5fe9fe749d743e8",
-    "translatedAt": "2026-07-19"
+    "enBodySha256": "dc4d46a2cc3ffc7c02242bec0216f927feb3ba6894ae9d06bdd9b4bcbeb944f3",
+    "translatedAt": "2026-07-30"
   },
   "reference/observability-performance": {
     "enBodySha256": "1ba6d380fa3f88c77d1230423a215c23536c176f983a7bda85e4e7de4fa0fb4e",
@@ -69,15 +73,19 @@
     "translatedAt": "2026-07-18"
   },
   "reference/providers": {
-    "enBodySha256": "7ac41001dd7c5713c47a283c80050604721cbd714139b168849566852b706254",
-    "translatedAt": "2026-07-19"
+    "enBodySha256": "8933d9fbb4ca9ee35bc288e620ebf3927551fd10fb71938baa6c41c8a021cfb4",
+    "translatedAt": "2026-07-30"
   },
   "reference/shared-memory": {
     "enBodySha256": "16cec06d3a1045c8dbc37c756fb195feb946b35c06ddae3d83bd5613dcc341eb",
     "translatedAt": "2026-07-18"
   },
+  "reference/task-scheduling": {
+    "enBodySha256": "3cb84893750336494685001a26bfec3577211de7accbe45423758483dc4556af",
+    "translatedAt": "2026-07-30"
+  },
   "reference/tool-configuration": {
-    "enBodySha256": "4dd9eeb69200d0e4cc8ab874328ad1d9ef112c763ba61d63c2a77b073ee66fde",
-    "translatedAt": "2026-07-18"
+    "enBodySha256": "a3e1d6801be53e5f7097f5a62f0a61e5d3eb39db39a485dc0f392aa5b6c99ae3",
+    "translatedAt": "2026-07-30"
   }
 }

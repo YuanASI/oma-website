@@ -94,8 +94,8 @@ export const SOLUTIONS: Solution[] = [
       zh: '手工接线节点与边，在工作形态不变时行得通——一旦多出一个子任务、换个顺序、加一条依赖，你改的就是图、而非目标。那套编排是为某一个问题搭的，而不是随每个问题自适应。',
     },
     approach: {
-      en: 'You pass a goal to <code>runTeam()</code>. A coordinator agent decomposes it into a task DAG <em>at runtime</em>, runs the independent nodes in parallel, and synthesizes a typed result. The plan adapts to each goal instead of being drawn once; you stay in control with hooks (plan-ready / approval gates) and a hard <code>maxTokenBudget</code> that aborts before overspending.',
-      zh: '你把一个目标传给 <code>runTeam()</code>。一个协调器智能体<em>在运行时</em>把它拆解成任务 DAG，并行跑相互独立的节点，并综合出一个带类型的结果。计划随每个目标自适应，而非一次画定；你用 hook（计划就绪 / 审批闸）与一道会在超支前中止的硬性 <code>maxTokenBudget</code> 保持掌控。',
+      en: 'You pass a goal to <code>runTeam()</code>. A coordinator agent decomposes it into a task DAG <em>at runtime</em>, runs the independent nodes in parallel, and synthesizes a typed result. The plan adapts to each goal instead of being drawn once; explicit routing, plan/task/tool approval gates, and a run-level <code>maxTokenBudget</code> checked between calls keep the execution bounded.',
+      zh: '你把一个目标传给 <code>runTeam()</code>。一个协调器智能体<em>在运行时</em>把它拆解成任务 DAG，并行跑相互独立的节点，并综合出一个带类型的结果。计划随每个目标自适应，而非一次画定；显式路由、计划 / 任务 / 工具审批，以及在调用之间检查的运行级 <code>maxTokenBudget</code> 共同约束执行。',
     },
     whenFits: {
       en: 'This fits when the orchestration topology isn’t fixed — you’d rather describe the outcome than maintain a graph. If the topology is known and you want to lay it out explicitly, an explicit-graph framework is the more natural fit.',
@@ -170,29 +170,29 @@ export const SOLUTIONS: Solution[] = [
     slug: 'agent-memory',
     keywords: ['agent long-term memory typescript', 'agent memory store', 'cross-run agent memory', 'persistent agent state'],
     seoDescription: {
-      en: 'Give your TypeScript agents long-term memory: open-multi-agent’s MemoryStore interface persists state across runs, so a team can recall what an earlier run learned.',
-      zh: '给你的 TypeScript 智能体长期记忆：open-multi-agent 的 MemoryStore 接口跨运行持久化状态，让团队能回忆起上一次运行学到的东西。',
+      en: 'Persist namespaced shared state for TypeScript agent teams with MemoryStore, and connect a separate semantic-memory layer when you need retrieval across sessions.',
+      zh: '用 MemoryStore 为 TypeScript 智能体团队持久化带命名空间的共享状态；需要跨会话语义召回时，再接入独立的语义记忆层。',
     },
-    navLabel: { en: 'Long-term memory', zh: '长期记忆' },
+    navLabel: { en: 'Durable shared memory', zh: '持久共享内存' },
     title: {
-      en: 'Give agents long-term memory',
-      zh: '给智能体长期记忆',
+      en: 'Persist shared state across runs',
+      zh: '跨运行持久化共享状态',
     },
     lede: {
-      en: 'A team that forgets everything between runs starts from zero each time. A MemoryStore lets it carry knowledge forward.',
-      zh: '一个运行之间全忘光的团队，每次都从零开始。MemoryStore 让它把知识带向下一次。',
+      en: 'MemoryStore is a namespaced key-value persistence primitive. Use it for durable shared state; add a retrieval layer when you need semantic long-term memory.',
+      zh: 'MemoryStore 是带命名空间的键值持久化原语。它适合持久共享状态；需要语义长期记忆时，还要增加召回层。',
     },
     problem: {
-      en: 'Within a run, agents share context; across runs, most frameworks forget. If yesterday’s run learned something useful, today’s can’t reach it without you bolting on your own persistence.',
-      zh: '在一次运行内，智能体共享上下文；跨运行，多数框架就忘了。如果昨天的运行学到了有用的东西，今天的运行够不着它——除非你自己接上一套持久化。',
+      en: 'In-memory coordination disappears with the process. Some workflows only need durable keys and checkpoints; assistants that recall facts or user context need a separate semantic extraction and retrieval system.',
+      zh: '进程结束后，内存中的协作状态随之消失。有些工作流只需要持久键值与检查点；要让助手召回事实或用户上下文，则需要独立的语义抽取与检索系统。',
     },
     approach: {
-      en: 'open-multi-agent exposes a <code>MemoryStore</code> interface: back it with any store you like and the team reads and writes cross-run memory through it. The same interface underpins checkpoint/resume, so a crashed run can restore completed tasks and pick up where it left off — recovery is task-grained, over whatever store you plug in.',
-      zh: 'open-multi-agent 暴露一个 <code>MemoryStore</code> 接口：用你喜欢的任意存储来支撑它，团队就通过它读写跨运行记忆。同一个接口也支撑检查点/恢复，于是崩溃的运行能恢复已完成的任务、从断点接着跑——恢复是按任务粒度的，跑在你接入的任意存储之上。',
+      en: 'open-multi-agent exposes a <code>MemoryStore</code> interface whose keys are namespaced by agent. Use <code>FileStore</code> or a custom Redis/Postgres adapter for durable state. The same interface underpins checkpoint restore at completed task boundaries. For semantic recall, connect a system such as TencentDB Agent Memory or your own retrieval layer; OMA does not infer, embed, rank, or govern memories for you.',
+      zh: 'open-multi-agent 暴露一个 <code>MemoryStore</code> 接口，键按智能体命名空间隔离。用 <code>FileStore</code> 或自定义 Redis / Postgres 适配器持久化状态；同一个接口也支撑从已完成任务边界恢复检查点。需要语义召回时，请接入 TencentDB Agent Memory 等系统或你自己的检索层；OMA 不会替你推断、向量化、排序或治理记忆。',
     },
     whenFits: {
-      en: 'This fits when a team should improve or stay consistent across sessions — recalling prior decisions, accumulated facts, or user context. If every run is genuinely independent, in-run shared context is enough.',
-      zh: '当一个团队应当跨会话变得更好或保持一致——回忆先前的决策、积累的事实、或用户上下文时，这种形态很合适。如果每次运行真正相互独立，运行内的共享上下文就够了。',
+      en: 'Use MemoryStore directly for durable workflow state, checkpoints, caches, and caller-defined records. Add semantic memory only when the product must extract and retrieve meaning across sessions. If every run is independent, in-run shared context is enough.',
+      zh: '持久工作流状态、检查点、缓存与调用方自定义记录可直接使用 MemoryStore。只有产品必须跨会话抽取并召回语义时，才增加语义记忆系统。如果每次运行彼此独立，运行内共享上下文已经足够。',
     },
     blogSlug: 'agent-long-term-memory-tencentdb',
     related: ['langgraph', 'autogen'],

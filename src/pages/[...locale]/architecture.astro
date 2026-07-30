@@ -3,9 +3,8 @@
 // and the runTeam() execution flow (Batch 6B) from the OMA brand spec, rendered
 // as the dedicated page the spec's deployment guide calls for ("/architecture
 // embed architecture.svg"). The diagrams are vendored into public/ from the
-// design system; their hardcoded "v1.2.0 / 9 implementations" labels were
-// corrected against the framework at v1.8.0 (6 built-in tools is unchanged; the
-// provider count is neutralized to "multiple" per the no-hardcoded-numbers rule).
+// design system and updated to the released v1.13.0 runtime surface: execution
+// routing, declared governance, event-driven dispatch, task results, and receipts.
 import '@fontsource-variable/geist';
 import '@fontsource-variable/jetbrains-mono';
 import '../../styles/tokens.css';
@@ -89,11 +88,32 @@ const jsonLd = {
       </div>
     </section>
 
-    <!-- ── 2. runTeam() flow (Batch 6B) ── -->
+    <!-- ── 2. Control loop ── -->
+    <section class="section control-section">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow"><span class="idx">02</span> {ar.control.eyebrow}</div>
+          <h2 class="section-title">{ar.control.title}</h2>
+          <p class="section-sub">{ar.control.sub}</p>
+        </div>
+        <div class="control-grid">
+          {ar.control.items.map((item) => (
+            <a class="control-card" href={L(item.href)}>
+              <span class="control-tag">{item.tag}</span>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+              <span class="arrow">→</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 3. runTeam() flow (Batch 6B) ── -->
     <section class="section">
       <div class="container">
         <div class="section-head">
-          <div class="eyebrow"><span class="idx">02</span> {ar.execution.eyebrow}</div>
+          <div class="eyebrow"><span class="idx">03</span> {ar.execution.eyebrow}</div>
           <h2 class="section-title" set:html={ar.execution.titleHtml}></h2>
           <p class="section-sub">{ar.execution.sub}</p>
         </div>
@@ -163,8 +183,29 @@ const jsonLd = {
   }
   .legend-d { font-size: 14px; line-height: 1.55; color: var(--text-body); }
 
+  .control-section { border-block: 1px solid var(--border-subtle); background: var(--oma-bg-1); }
+  .control-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); }
+  .control-card {
+    display: flex; flex-direction: column; min-height: 210px; padding: var(--space-5);
+    border: 1px solid var(--border-default); border-radius: var(--radius-md);
+    background: var(--oma-bg-0); color: var(--text-strong); text-decoration: none;
+  }
+  .control-card:hover { border-color: var(--oma-accent-line); }
+  .control-tag {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--oma-accent);
+  }
+  .control-card h3 { margin: 28px 0 8px; font-size: 17px; }
+  .control-card p { margin: 0; font-size: 13.5px; line-height: 1.6; color: var(--text-body); }
+  .control-card .arrow { margin-top: auto; padding-top: var(--space-4); color: var(--oma-accent); }
+
   @media (max-width: 720px) {
     .legend { grid-template-columns: 1fr; gap: var(--space-3); }
     .legend-k { min-width: 0; }
+    .control-grid { grid-template-columns: 1fr; }
+    .control-card { min-height: 0; }
+  }
+  @media (min-width: 721px) and (max-width: 1020px) {
+    .control-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 </style>

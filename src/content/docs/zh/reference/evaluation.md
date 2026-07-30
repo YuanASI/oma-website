@@ -459,6 +459,51 @@ GitHub Actions 作业可以保留两种机器可读报告，同时让闸门控�
     path: eval-results/**/report.junit.xml
 ```
 
+## 路由稳定性回归 EvalSet
+
+固定的 `run-team-routing-stability@1.0.0` EvalSet 位于
+`packages/core/tests/fixtures/eval/routing-stability-set.json`，用来衡量
+`runTeam()` 的等价目标在 prompt 长度或语言变化后，是否保持相同执行拓扑。每个 family
+包含一个短英文版本、一个超过当前简单目标边界的详细英文版本，以及一份中文翻译。
+治理 family 的每个变体都携带相同 `governanceIntent: 'required'`、`requiredRoles`
+与 `requiredOrder`；普通 family 不带声明。
+
+测试向每个 worker 与 Coordinator 注入同一个确定性 `LLMAdapter`。所有模型调用返回
+相同固定文本，其中包括有效的双角色计划，因此无需网络与 API Key。同一 family 中只有
+目标文本变化。拓扑通过 `buildExecutionReceipt(result)` 与 `result.tasks` 短路标记
+测量，只包括：
+
+- `single-short-circuit` 或任务图；
+- 实际执行的 worker 角色；
+- 跨角色依赖边。
+
+模型输出、生成的任务 ID、时间、token 用量与调度开始顺序全部排除。对 `n` 个变体，
+flip rate 是规范拓扑不同的无序变体对数量除以 `n * (n - 1) / 2`。长度不变性比较
+fixture 的短 / 长英文对；语言不变性比较显式配对的英文 / 中文变体。
+
+`packages/core/tests/fixtures/eval/routing-stability-gate.json` 只对
+`governance` 标签应用三条绝对阈值：路由稳定性、长度不变性、语言不变性都必须为
+`1`（零 flip）。Scorer 与 target error 上限都为零。Vitest 先生成完整报告，再对
+`governance` 过滤后的运行执行 Gate，因此普通目标得分与健康度不会影响判决。现有 CI
+的 `npm test` 会阻止声明式路由因目标语言或长度而变化。负向对照会注入一个假的声明式
+路由器，把中文变体压成单角色，并断言路由稳定性与语言不变性阈值同时失败。
+
+普通自动路由只监测、不设闸。引入时的快照为：
+
+| Family | Pair flips | Flip rate | 长度不变 | 语言不变 |
+|---|---:|---:|---:|---:|
+| 声明式转账 | 0 / 3 | 0% | 100% | 100% |
+| 声明式密钥轮换 | 0 / 3 | 0% | 100% | 100% |
+| **声明式治理总计** | **0 / 6** | **0%** | **100%** | **100%** |
+| 未声明 DNS | 2 / 3 | 66.7% | 0% | 0% |
+| 未声明数据库比较 | 2 / 3 | 66.7% | 0% | 100% |
+| **未声明普通目标总计** | **4 / 6** | **66.7%** | **0%** | **50%** |
+
+未声明普通路由的目标是 pair flip 不超过 5%，长度不匹配不超过 5%（长度不变性至少
+95%）。当前快照明显未达标，因此刻意不阻断 CI：自动路由的语言 / 长度中立性是已知
+未解决项，改变其分类行为不属于这个 EvalSet 的范围。只有在审查过有意的测量变化后，
+才更新固定语料版本与文档快照。
+
 ## 内存评估指标
 
 `MemoryExtractionSample` 和 `MemoryRetrievalSample` 是未来内存 scorer 的实验性输入形状；此版本不新增内存运行时，也不提供自动内存写入器。以下指标可以用现有规则 scorer 或 judge scorer 实现：
