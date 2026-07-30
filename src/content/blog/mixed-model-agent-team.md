@@ -3,6 +3,18 @@ title: "How to Run a Mixed-Model AI Agent Team in TypeScript?"
 description: "A practical walkthrough from a single-model team baseline to a mixed-provider production setup with live cost and latency monitoring, using open-multi-agent, the TypeScript-ecosystem answer to CrewAI."
 pubDate: 2026-05-16
 tags: ["typescript","agents","ai","opensource"]
+contentType: engineering
+useCases: ["model routing", "cost-tiered pipelines"]
+industries: []
+evidence:
+  kind: verified-run
+  note: "Includes measured token and latency observations from the described model mix; provider pricing remains a dated snapshot rather than a durable claim."
+related:
+  solutions: ["mixed-model-teams"]
+  examples: ["multi-model-team", "cost-tiered-pipeline"]
+  integrations: ["anthropic", "openai-compatible"]
+  comparisons: ["crewai"]
+featured: false
 devtoUrl: "https://dev.to/jackchenme/how-to-run-a-mixed-model-ai-agent-team-in-typescript-1569"
 readingMinutes: 16
 ---

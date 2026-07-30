@@ -3,6 +3,18 @@ title: "Give Your TypeScript AI Agents Long-Term Memory with TencentDB-Agent-Mem
 description: "Wiring open-multi-agent's MemoryStore to TencentDB-Agent-Memory through its Hermes Gateway: a measured cross-run memory loop, and two upstream gotchas that decide whether anything gets stored."
 pubDate: 2026-06-15
 tags: ["typescript","ai","llm","tutorial"]
+contentType: engineering
+useCases: ["cross-run memory", "returning assistants"]
+industries: ["customer support", "knowledge work"]
+evidence:
+  kind: verified-run
+  note: "Measured two separate runs against TencentDB-Agent-Memory; the article distinguishes observed adapter behavior from broader production claims."
+related:
+  solutions: ["agent-memory"]
+  examples: ["with-tencentdb-memory"]
+  integrations: ["openai-compatible"]
+  comparisons: ["langgraph"]
+featured: false
 devtoUrl: "https://dev.to/jackchenme/give-your-typescript-ai-agents-long-term-memory-with-tencentdb-agent-memory-elm"
 readingMinutes: 7
 ---

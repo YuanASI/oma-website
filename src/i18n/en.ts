@@ -539,19 +539,68 @@ export const en = {
 
   blog: {
     seo: {
-      title: 'Blog — Open Multi-Agent',
+      title: 'Multi-agent application playbooks, field notes, and framework guides',
       description:
-        'Writing on TypeScript AI Agent orchestration: goal-driven task DAGs, mixed-model teams, long-term memory, and lessons from the agent-framework ecosystem.',
+        'Runnable multi-agent application playbooks, field notes from real workflow design, and evidence-backed framework decisions for TypeScript teams.',
     },
     eyebrow: 'Blog',
-    title: 'Notes on AI Agent orchestration.',
-    // Index lede. The inline link renders only when `ledeLink` is set: the en
-    // index points at dev.to ("Cross-posted from dev.to"); the zh index drops it
-    // (translations aren't cross-posted) by leaving ledeLink/ledePost empty.
-    ledePre:
-      'Deep dives on goal-driven task DAGs, mixed-model teams, and the TypeScript agent ecosystem. Cross-posted from ',
-    ledeLink: 'dev.to',
-    ledePost: '.',
+    title: 'Multi-agent systems for real work.',
+    lede: 'Runnable application playbooks, field notes from workflow design, and evidence-backed framework decisions for TypeScript teams.',
+    sections: {
+      application: {
+        index: '01',
+        eyebrow: 'Applications',
+        title: 'Start with the work, not the framework.',
+        lede: 'Concrete inputs, handoffs, deliverables, and limits — with a runnable example behind every playbook.',
+      },
+      fieldNote: {
+        index: '02',
+        eyebrow: 'Field notes',
+        title: 'What the workflow evidence keeps showing.',
+        lede: 'Observed patterns with their scope made explicit: prototypes stay prototypes, public projects stay attributable, and unknowns stay visible.',
+      },
+      decisionGuide: {
+        index: '03',
+        eyebrow: 'Decision guides',
+        title: 'Choose by workflow, not by hype.',
+        lede: 'Source-backed comparisons that explain who each approach fits, including when open-multi-agent is not the right choice.',
+      },
+      archive: {
+        index: '04',
+        eyebrow: 'Engineering & releases',
+        title: 'The technical archive.',
+        lede: 'Mechanism deep dives, integrations, ecosystem analysis, and product updates.',
+      },
+    },
+    contentTypes: {
+      application: 'Application',
+      fieldNote: 'Field note',
+      decisionGuide: 'Decision guide',
+      engineering: 'Engineering',
+      release: 'Release',
+    },
+    evidence: {
+      label: 'Evidence',
+      kinds: {
+        runnableDemo: 'Runnable demo',
+        verifiedRun: 'Verified run',
+        publicProject: 'Public project',
+        fieldObservation: 'Field observation',
+        sourceBackedComparison: 'Source-backed comparison',
+        technicalAnalysis: 'Technical analysis',
+        releaseNote: 'Release note',
+      },
+    },
+    related: {
+      eyebrow: 'Keep going',
+      title: 'From scenario to implementation.',
+      lede: 'Read the product fit, run the exact workflow, and connect it to the stack you already use.',
+      solutions: 'Solution',
+      examples: 'Runnable example',
+      integrations: 'Integration',
+      comparisons: 'Comparison',
+      open: 'Open',
+    },
     minRead: 'min read',
     allPosts: '← All posts',
     // en posts show "Originally published on dev.to"; zh translations show the

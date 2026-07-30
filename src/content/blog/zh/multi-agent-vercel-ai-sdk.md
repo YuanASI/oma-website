@@ -3,6 +3,18 @@ title: "给 Vercel AI SDK 应用加上多智能体编排"
 description: "给现有的 Vercel AI SDK 应用加上多智能体编排：AI SDK 负责流式输出 token、对接模型，open-multi-agent 的 runTeam() 负责拆解目标、协调各个智能体——两者共用同一个 Next.js API 路由。"
 pubDate: 2026-04-15
 tags: ["ai","nextjs","webdev","typescript"]
+contentType: engineering
+useCases: ["流式智能体应用", "Next.js 编排"]
+industries: ["软件产品"]
+evidence:
+  kind: runnable-demo
+  note: "架构由文中链接的 Next.js 示例支撑；它证明两层可以组合，不代表生产规模。"
+related:
+  solutions: ["vercel-ai-sdk-orchestration"]
+  examples: ["with-vercel-ai-sdk"]
+  integrations: ["openai", "openai-compatible"]
+  comparisons: ["vercel-ai-sdk"]
+featured: false
 readingMinutes: 7
 ---
 我最近撞了堵墙。手上有个能跑的 AI SDK 应用——`streamText`、`useChat`，一整套都在——然后我需要它做一件单个智能体做不到的事：让一个智能体研究某个主题，再把研究结果交给第二个智能体来写作。

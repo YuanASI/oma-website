@@ -3,6 +3,18 @@ title: "Open Multi-Agent v1.12.1：评估、离线检查与零 Key 首次运行"
 description: "v1.12.1 带来版本化 EvalSet、Scorer、CI 闸门、线上采样、更完整的离线运行检查、单次运行 metadata，以及无需 API Key 的确定性 create-oma-app Demo。"
 pubDate: 2026-07-20
 tags: ["release","evaluation","typescript"]
+contentType: release
+useCases: ["智能体评估", "离线检查"]
+industries: []
+evidence:
+  kind: release-note
+  note: "描述已发布的 v1.12.1 能力与随附的零 Key Demo。"
+related:
+  solutions: []
+  examples: ["eval-offline-regression", "observability-v2"]
+  integrations: ["opentelemetry"]
+  comparisons: []
+featured: false
 readingMinutes: 5
 ---
 

@@ -3,6 +3,18 @@ title: "5 walls multi-agent frameworks hit: receipts from Mastra's year of .netw
 description: "Mastra spent a year migrating .network() to the Supervisor pattern. 5 engineering walls hit (context, routing, observability, nesting, performance), 18 GitHub issues as receipts. What it means for TypeScript multi-agent framework development."
 pubDate: 2026-05-21
 tags: ["mastra","typescript","agents","opensource"]
+contentType: decision-guide
+useCases: ["production architecture", "framework evaluation"]
+industries: []
+evidence:
+  kind: source-backed-comparison
+  note: "The argument is grounded in the linked Mastra announcements and GitHub issues; it does not claim that the sampled failures represent every deployment."
+related:
+  solutions: ["goal-driven-orchestration"]
+  examples: ["trace-observability", "plan-replay"]
+  integrations: ["opentelemetry"]
+  comparisons: ["mastra"]
+featured: false
 devtoUrl: "https://dev.to/jackchenme/5-walls-multi-agent-frameworks-hit-receipts-from-mastras-year-of-network-to-supervisor-3am3"
 readingMinutes: 13
 ---

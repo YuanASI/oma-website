@@ -3,6 +3,18 @@ title: "从转录稿到带类型的待办项：用 TypeScript 跑三个并行智
 description: "多数会议纪要工具把摘要、待办项、情绪分析全塞进一个 LLM 提示里。这里有个更干净的 TypeScript 写法：三个专职智能体并行跑，其中两个返回带类型的 Zod 输出，再由一个聚合器把它们合并成一份报告。"
 pubDate: 2026-06-24
 tags: ["typescript","ai","agents","opensource"]
+contentType: application
+useCases: ["会议跟进", "待办抽取"]
+industries: ["知识工作"]
+evidence:
+  kind: verified-run
+  note: "工作流使用合成的工程会议转录运行；耗时与类型化结果来自该次运行，并非生产部署数据。"
+related:
+  solutions: ["parallel-llm-calls"]
+  examples: ["meeting-summarizer"]
+  integrations: ["anthropic", "openai-compatible"]
+  comparisons: []
+featured: false
 readingMinutes: 8
 ---
 ## 你的会议纪要工具，正在一个提示里悄悄干三份活

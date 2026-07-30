@@ -11,6 +11,8 @@ import '../../../styles/landing.css';
 import '../../../styles/blog.css';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Badge from '../../../components/ds/Badge.astro';
+import BlogRelated from '../../../components/BlogRelated.astro';
+import EnterpriseCta from '../../../components/EnterpriseCta.astro';
 import Nav from '../../../components/Nav.astro';
 import Footer from '../../../components/Footer.astro';
 import { ghStats } from '../../../lib/site';
@@ -42,6 +44,22 @@ const stats = await ghStats();
 const starsK = (stats.stars / 1000).toFixed(1) + 'k';
 const fmtDate = (d: Date) =>
   d.toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+const contentTypeLabels = {
+  application: bt.contentTypes.application,
+  'field-note': bt.contentTypes.fieldNote,
+  'decision-guide': bt.contentTypes.decisionGuide,
+  engineering: bt.contentTypes.engineering,
+  release: bt.contentTypes.release,
+};
+const evidenceKindLabels = {
+  'runnable-demo': bt.evidence.kinds.runnableDemo,
+  'verified-run': bt.evidence.kinds.verifiedRun,
+  'public-project': bt.evidence.kinds.publicProject,
+  'field-observation': bt.evidence.kinds.fieldObservation,
+  'source-backed-comparison': bt.evidence.kinds.sourceBackedComparison,
+  'technical-analysis': bt.evidence.kinds.technicalAnalysis,
+  'release-note': bt.evidence.kinds.releaseNote,
+};
 
 const title = `${post.data.title} — Open Multi-Agent`;
 const description = post.data.description;
@@ -65,7 +83,8 @@ const jsonLd = {
   url: canonical,
   mainEntityOfPage: canonical,
   image: ogImage,
-  keywords: post.data.tags.join(', '),
+  keywords: [...post.data.tags, ...post.data.useCases, ...post.data.industries].join(', '),
+  articleSection: contentTypeLabels[post.data.contentType],
   author: { '@type': 'Person', name: 'Jack Chen', url: 'https://dev.to/jackchenme' },
   publisher: {
     '@type': 'Organization',
@@ -103,12 +122,22 @@ const jsonLd = {
           </div>
           <h1>{post.data.title}</h1>
           <div class="blog-card-tags">
+            <Badge tone="accent">{contentTypeLabels[post.data.contentType]}</Badge>
+            {[...post.data.industries, ...post.data.useCases].map((tag) => <Badge tone="info">{tag}</Badge>)}
             {post.data.tags.map((tag) => <Badge tone="neutral">{tag}</Badge>)}
+          </div>
+          <div class="blog-evidence-note">
+            <div>
+              <span>{bt.evidence.label}</span>
+              <strong>{evidenceKindLabels[post.data.evidence.kind]}</strong>
+            </div>
+            <p>{post.data.evidence.note}</p>
           </div>
         </header>
         <div class="prose">
           <Content />
         </div>
+        <BlogRelated locale={locale} related={post.data.related} />
         <hr class="blog-rule" />
         {post.data.devtoUrl ? (
           <p class="blog-origin">
@@ -122,6 +151,7 @@ const jsonLd = {
         )}
       </div>
     </article>
+    <EnterpriseCta locale={locale} />
   </main>
   <Footer locale={locale} />
 

@@ -3,6 +3,18 @@ title: "Goal In, DAG Out: How Open-Multi-Agent Turns a Goal into a Task DAG"
 description: "In most TypeScript agent frameworks you wire the task graph by hand. open-multi-agent's runTeam() hands a goal to a coordinator that builds the DAG for you — here's the mechanism, step by step."
 pubDate: 2026-06-21
 tags: ["typescript","ai","agents","opensource"]
+contentType: engineering
+useCases: ["dynamic planning", "goal decomposition"]
+industries: []
+evidence:
+  kind: verified-run
+  note: "Uses a captured coordinator plan from a real run and separates the observed plan from behavior that can vary between model runs."
+related:
+  solutions: ["goal-driven-orchestration"]
+  examples: ["team-collaboration", "plan-replay"]
+  integrations: ["openai-compatible"]
+  comparisons: ["langgraph"]
+featured: false
 devtoUrl: "https://dev.to/jackchenme/goal-in-dag-out-how-open-multi-agent-turns-a-goal-into-a-task-dag-1n0m"
 readingMinutes: 7
 ---

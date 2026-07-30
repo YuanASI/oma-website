@@ -3,6 +3,18 @@ title: "用 TencentDB-Agent-Memory 给你的 TypeScript AI 智能体加上长期
 description: "把 open-multi-agent 的 MemoryStore 通过 Hermes Gateway 接到 TencentDB-Agent-Memory：一个端到端实测的跨运行记忆闭环，以及两个决定到底有没有东西被存下来的上游坑。"
 pubDate: 2026-06-15
 tags: ["typescript","ai","llm","tutorial"]
+contentType: engineering
+useCases: ["跨运行记忆", "回访型助手"]
+industries: ["客户支持", "知识工作"]
+evidence:
+  kind: verified-run
+  note: "文章实测了两次独立运行，并把观察到的适配器行为与更广泛的生产结论明确分开。"
+related:
+  solutions: ["agent-memory"]
+  examples: ["with-tencentdb-memory"]
+  integrations: ["openai-compatible"]
+  comparisons: ["langgraph"]
+featured: false
 readingMinutes: 7
 ---
 > 一篇实操，把 [open-multi-agent](https://github.com/open-multi-agent/open-multi-agent) 那个可插拔的 `MemoryStore` 通过 Hermes Gateway 接到 [TencentDB-Agent-Memory](https://github.com/TencentCloud/TencentDB-Agent-Memory)，在 DeepSeek 上端到端实测了一个真实的跨运行记忆闭环，外加两个任何 README 都没写、漏了就会悄无声息吞掉你记忆的上游行为。
