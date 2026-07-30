@@ -16,6 +16,7 @@ const c = t.capabilitiesPage;
 const L = (path: string) => localizePath(path, locale);
 const stats = await ghStats();
 const starsK = (stats.stars / 1000).toFixed(1) + 'k';
+const heroTitle = c.hero.title.join(locale === 'zh' ? '' : ' ');
 
 const groupHrefs = [
   '/reference/execution-routing/',
@@ -46,7 +47,7 @@ const jsonLd = {
         <div class="cap-hero-grid">
           <div>
             <div class="eyebrow"><span class="idx">//</span> {c.hero.eyebrow}</div>
-            <h1>{c.hero.title}</h1>
+            <h1>{c.hero.title.map((line) => <span>{line}</span>)}</h1>
             <p>{c.hero.lede}</p>
             <div class="cap-actions">
               <a class="btn-primary" href={L('/getting-started/quick-start/')}><span>{c.hero.quickStart}</span><span class="arrow">→</span></a>
@@ -59,7 +60,7 @@ const jsonLd = {
           </div>
         </div>
 
-        <ol class="runtime-flow" aria-label={c.hero.title}>
+        <ol class="runtime-flow" aria-label={heroTitle}>
           {c.flow.map((step) => (
             <li>
               <div class="runtime-flow-head"><span>{step.n}</span><b>{step.tag}</b></div>
@@ -145,6 +146,7 @@ const jsonLd = {
     font-size: clamp(42px, 7vw, 76px); line-height: 0.98;
     letter-spacing: -0.055em; color: var(--oma-fg-0);
   }
+  .cap-hero h1 > span { display: block; }
   .cap-hero-grid > div > p {
     max-width: 720px; margin: 24px 0 0;
     font-size: 17px; line-height: 1.7; color: var(--oma-fg-1);
@@ -247,6 +249,8 @@ const jsonLd = {
   }
   @media (max-width: 760px) {
     .cap-hero { padding-top: var(--space-12); }
+    .cap-hero h1 { font-size: clamp(32px, 9vw, 38px); }
+    :global(html[lang='zh-CN']) .cap-hero h1 { font-size: clamp(29px, 8.5vw, 35px); }
     .cap-hero-grid { grid-template-columns: 1fr; gap: 28px; }
     .release-stamp { justify-self: start; }
     .runtime-flow { margin-top: 42px; }

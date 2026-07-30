@@ -698,7 +698,7 @@ export const zh: UiDict = {
     },
     hero: {
       eyebrow: '能力 · v1.13.0',
-      title: '从一个目标，到一次受治理的运行。',
+      title: ['从一个目标，', '到一次受治理的运行。'],
       lede: '同一套 TypeScript 运行时，同时承载目标驱动团队与显式任务 DAG。选择执行拓扑、调度就绪工作、为高影响操作设闸，并把证据留在你自己的环境里。',
       release: '已发布 · @open-multi-agent/core@1.13.0',
       quickStart: '运行零 Key Demo',

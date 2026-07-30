@@ -579,7 +579,7 @@ export const en = {
     },
     hero: {
       eyebrow: 'capabilities · v1.13.0',
-      title: 'From a goal to a governed run.',
+      title: ['From a goal', 'to a governed run.'],
       lede: 'One TypeScript runtime for goal-driven teams and explicit task DAGs. Route the topology, schedule ready work, gate consequential actions, and keep the evidence in your own environment.',
       release: 'released · @open-multi-agent/core@1.13.0',
       quickStart: 'Run the no-key demo',
