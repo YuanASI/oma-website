@@ -5,6 +5,135 @@ description: "授予内置工具（默认拒绝）、预设与允许清单、文
 
 可以用预设、允许清单和拒绝清单，为智能体配置细粒度的工具访问控制。
 
+## 在 `runTeam()` 中声明治理角色
+
+工具与凭据边界往往绑定到具名 Agent。如果目标必须真实经过指定 roster 角色，请在
+`runTeam()` 调用上声明拓扑：
+
+```typescript
+const result = await orchestrator.runTeam(team, 'Review this change before release.', {
+  governanceIntent: 'required',
+  requiredRoles: ['reviewer', 'security'],
+  requiredOrder: ['reviewer', 'security'],
+})
+
+if (result.governanceConclusion !== 'satisfied') {
+  throw new Error('Required governance was not satisfied by the executed topology.')
+}
+```
+
+对 `required` 和 `preferred`，OMA 都会跳过 Coordinator 拆解与简单目标的单智能体
+短路，为每个 `requiredRoles` 条目创建一个任务、固定分配给该 roster Agent，并用
+`requiredOrder` 建立依赖边。每个任务收到未经改写的原始目标；角色行为来自该 Agent
+的 `systemPrompt`、工具与凭据。下游任务通过依赖作用域记忆接收前置输出。
+
+目标文本不会参与拓扑选择，因此同一声明对英文、中文或其他语言都会产生相同角色与
+依赖顺序。所有角色名必须存在于 roster；若提供 `requiredOrder`，它必须是这些角色的
+一个排列。无效声明会在任何 Agent 运行前抛错。
+
+`planOnly: true` 与 required / preferred 治理同时出现时，`planOnly` 优先：OMA
+返回已校验、全为 pending 的角色 DAG，不运行 Coordinator 或任务 Agent。
+`governanceConclusion` 在计划执行前为 `not-applicable`；之后可通过
+`runFromPlan()` 执行。
+
+执行后，required 声明会针对 execution receipt 检查。`governanceConclusion` 为
+`satisfied`、`unsatisfied` 或 `not-applicable`；只有 `required` 被强制执行。
+`unsatisfied` 表示必要角色、依赖路径 / 顺序或独立审查事实缺失。它不会改写
+`result.success`，后者仍表示 runtime error 状态，因此治理敏感的调用方必须显式检查
+`governanceConclusion`。Gate 只读取 `buildExecutionReceipt()` 产生的结构化拓扑；
+模型回答中的角色名、审批标签或审计标记不能证明另一个角色真实执行。
+
+### 显式模式与预算冲突
+
+`runTeam()` 按以下顺序解析执行策略：
+
+1. 应用指定的 `mode`（`single` 或 `team`）；
+2. 声明的 `governanceIntent` 拓扑或 `preferredUnderBudget` 策略；
+3. 配置的[执行路由器](/zh/reference/execution-routing/)；
+4. 内置 `DeterministicRouter`。
+
+`single` 使用既有的最佳 Agent 路径；`team` 强制 Coordinator 生成 Team 计划。
+`runAgent()` 与 `runTasks()` 本身仍是显式选择。`mode` 只声明拓扑偏好，不声明治理，
+因此不会绕过高影响操作确认。路由器也只能选择拓扑，不能覆盖结构化角色要求。
+
+应用可以用模式覆盖 required 下限，但不会被误报为成功：
+
+```typescript
+const result = await orchestrator.runTeam(team, goal, {
+  mode: 'single',
+  governanceIntent: 'required',
+  requiredRoles: ['reviewer', 'security'],
+  requiredOrder: ['reviewer', 'security'],
+})
+
+result.governanceConclusion // 'unsatisfied'
+result.governanceReason     // 'overridden'
+result.flags                // includes 'governance-overridden'
+```
+
+也就是“下限可以被显式覆盖，但不能静默覆盖”。即使显式模式取代治理拓扑，结构声明仍会
+在执行前校验。
+
+Token / 成本上限可以设在编排器或一次 `runTeam()` / `runTasks()` 调用上；单次运行
+不能放宽编排器上限，较低者生效。Required 运行若在完成所有执行事实前耗尽预算，
+`governanceConclusion` 为 `unsatisfied`、`governanceReason` 为 `budget`，既有
+`budget_exhausted` runtime 状态保持不变。
+
+软偏好可设 `preferredUnderBudget: 'degrade'`：当存在有效上限且没有显式模式时选择
+Single，并添加 `review-skipped-due-to-budget`。默认 `attempt` 保留原行为。
+这是一项应用策略，不是成本预测；OMA 不会预估计划是否能装进预算，普通预算检查仍发生
+在模型轮次与任务边界。
+
+## 未声明运行中的高影响工具
+
+工具作者可以声明授予某个工具会允许真实副作用：
+
+```typescript
+const rotateSecret = defineTool({
+  name: 'rotate_secret',
+  description: 'Rotate an application secret.',
+  inputSchema: z.object({ service: z.string() }),
+  consequential: true,
+  execute: async ({ service }) => rotateServiceSecret(service),
+})
+```
+
+`consequential` 可选，默认 `false`。内置 `bash`、`file_write` 与 `file_edit` 已标记
+为 consequential；只读文件工具不是。自定义与 MCP 工具除非在
+`ToolDefinition` 中显式开启，否则仍视为普通工具。
+
+对 `runAgent()` 与省略 `governanceIntent` 的自动 `runTeam()`，OMA 会在 preset、
+allowlist、denylist、自定义工具与默认 preset 全部解析后检查最终授权集。如果至少授予
+一个 consequential 工具，结果和 receipt 会带
+`consequential-no-independence` 标记。这个分类只看**工具授权**，不扫描 goal、
+prompt、模型输出、工具参数或敏感关键词。
+
+显式的 required / preferred / none `runTeam()` 不进入该 fallback；显式
+`runTasks()` DAG 与 `runFromPlan()` 也不进入。Fallback 不改变拓扑，也不把运行升级
+成独立治理。
+
+### 显式开启确认
+
+确认默认关闭。设置 `requireConsequentialConfirmation: true`，即可通过
+`onToolCall` 保护上述未声明运行：
+
+```typescript
+const orchestrator = new OpenMultiAgent({
+  requireConsequentialConfirmation: true,
+  onToolCall: async (context) => {
+    if (context.consequential !== true) return { action: 'allow' }
+    return (await app.confirm(context))
+      ? { action: 'allow' }
+      : { action: 'deny', reason: 'User rejected the action.' }
+  },
+})
+```
+
+该闸门在输入校验后、`execute` 前运行。若没有可用的 per-call Gate，动态规划的
+`runTeam()` 也可用已批准的 `onPlanReady` 提供审批；两者都没有时，工具不会执行，
+结果返回 `confirmationRequired: true` 且 `status.code === 'rejected'`。
+无论确认关闭、批准、待处理或拒绝，披露标记都会保留。
+
 ## 内置工具需显式开启（默认拒绝）
 
 内置工具——`bash` 以及文件系统工具（`file_read`、`file_write`、`file_edit`、`grep`、`glob`）——默认拒绝。只有通过 `tools`（名称的允许清单）或 `toolPreset` 显式授予时，智能体才会获得某个内置工具。两者都未设置的智能体，将解析为零个内置工具：
@@ -82,6 +211,33 @@ const customAgent: AgentConfig = {
 
 **解析顺序：** 默认拒绝（无预设_且_无允许清单 ⇒ 零个内置工具）→ 预设 → 允许清单 → 拒绝清单 → 框架安全护栏。自定义 / 运行时工具跳过授予这一步（注册即授予），但仍然遵守拒绝清单。
 
+## 能力感知的 Agent 选择
+
+`AgentConfig` 可以携带四个可选、由调用方声明的选择信号：`description`（一句角色
+摘要）、`capabilities`（标签）、`costTier` 与 `latencyClass`。省略字段保持未知；
+OMA 不会从模型、Agent 名或 `systemPrompt` 猜默认值。
+
+传给 `runTasks()` 的任务可以声明硬性要求：
+
+```typescript
+const tasks: RunTaskSpec[] = [{
+  title: 'Patch the parser',
+  description: 'Implement and test the parser fix.',
+  requires: {
+    requiredTools: ['file_read', 'file_edit'],
+    requiredCapabilities: ['typescript'],
+    requiredBackend: 'llm',
+    requiredProvider: 'anthropic',
+  },
+}]
+```
+
+统一的 `AgentSelector` 先应用硬过滤，再按声明的能力匹配度排序，最后才回退到既有的
+多语言关键词信号。`requiredTools` 针对执行所使用的同一份最终工具授权检查；
+backend 与 provider 使用结构化配置字段；`requiredCapabilities` 只看调用方声明的
+标签。权限与能力都不会从 `systemPrompt` 或其他文本推断。没有候选满足硬要求时，
+selector 返回 `NO_ELIGIBLE_AGENT`，任何 fallback 都必须由调用方明确选择。
+
 ## 用 `onToolCall` 做逐次调用门控
 
 上面这些层都作用于工具_名称_，回答的是**「哪些工具可达？」**。`onToolCall` 门控则在下一层回答一个不同的问题：**「_这一次具体调用_现在究竟是否应当运行？」** `bash` 是单个被允许的名称，它对 `ls -la` 和 `rm -rf /` 一视同仁；门控会检查实际参数，并可以否决个别调用。
@@ -94,7 +250,7 @@ import type { ToolCallContext, ToolCallDecision } from '@open-multi-agent/core'
 const orchestrator = new OpenMultiAgent({
   // Orchestrator-level default, inherited by any agent that sets no gate of its own.
   onToolCall: async (ctx: ToolCallContext): Promise<ToolCallDecision> => {
-    // ctx: { toolName, input (post-validation), agentName, runId?, taskId? }
+    // ctx: { toolName, input (post-validation), agentName, consequential?, runId?, taskId? }
     if (ctx.toolName !== 'bash') return { action: 'allow' }
     if (/^\s*rm\b/.test(String(ctx.input.command))) {
       return { action: 'deny', reason: 'rm is blocked' }
@@ -110,7 +266,9 @@ const orchestrator = new OpenMultiAgent({
 - **人工介入（human-in-the-loop）就发生在你的回调中。** 用 `await` 等你自己的 CLI 提示、Slack 按钮或网页对话框，然后返回 `allow` 或 `deny`。框架不规定任何审核渠道，从而把接口面保持得很小。
 - **智能体覆盖编排器。** 对某个智能体来说，`AgentConfig.onToolCall` 优先于 `OrchestratorConfig.onToolCall`，因此一个团队可以设定一条默认策略，同时让某个专职智能体把它收紧或放松。独立的 `new Agent({ ..., onToolCall })` 会把门控直接接进它的执行器。
 - **在基于名称的授予之后运行。** 默认拒绝 / 允许清单 / 拒绝清单的解析**先**执行；一个未被授予的工具在门控之前就已被拒绝，所以门控只会看到对那些已经可达的工具的调用。自定义工具和 MCP 工具都走同一个执行器，因此它们也会被门控。
-- **与 `onApproval` 正交。** `OrchestratorConfig.onApproval` 在编排回合之间对整批任务做门控；`onToolCall` 则在执行期间对单次工具调用做门控。它们工作在不同层级，可以叠加组合。
+- **与任务派发审批正交。** `OrchestratorConfig.onApproval` 为旧式任务轮次设闸，
+  `onTaskDispatch` 在一个就绪任务派发前设闸，`onToolCall` 则管一次工具调用。
+  三者位于不同层；两种任务级审批模式彼此互斥。
 - **可观测性。** 当门控运行时，`tool_call` 追踪事件会带有 `gated: true`、`gateAction: 'allow' | 'deny'`，以及（在 deny 时）一个 `gateReason`——它会像其它敏感的追踪文本一样被脱敏，因此 `onTrace` 的消费方可以审计每一个决定。
 
 > **不是安全边界。** 一个返回 `deny` 的门控仍然依赖于配合的代码；它是一个协调层，而不是隔离手段。`bash` 依旧没有沙箱（见下方标注）。面对一个真正不可信的 shell，请用进程级隔离（容器 / VM / seccomp）；门控负责的是*策略*，而非*隔离*。
@@ -140,7 +298,7 @@ const orchestrator = new OpenMultiAgent({
 
 复合命令会按 shell 分隔符（`&&`、`||`、`;`、`|`、替换）切段，取其中找到的**最高**风险，所以安全的前缀无法夹带破坏性的后缀（`ls && rm -rf /` 会变成 `high`）。带引号的片段会先被剥离，所以 `echo "rm -rf /"` 仍然是 `safe`。
 
-这个分类器是一个**浅层启发式，而不是解析器**；它可能被混淆手法骗过（变量间接引用、base64 解码后执行、奇异的引号用法）。它仅为便利之用：可以扩展这些表、封装一层，或将其整体替换。端到端的示例见 [`examples/patterns/risk-gated-bash.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/risk-gated-bash.ts)。
+这个分类器是一个**浅层启发式，而不是解析器**；它可能被混淆手法骗过（变量间接引用、base64 解码后执行、奇异的引号用法）。它仅为便利之用：可以扩展这些表、封装一层，或将其整体替换。端到端的示例见 [`examples/patterns/risk-gated-bash.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/patterns/risk-gated-bash.ts)。
 
 ## 文件系统工作目录
 
@@ -267,7 +425,7 @@ const team = {
 > **注意——两个不同的 `outputSchema` 字段。** `defineTool()` /
 > `ToolDefinition` 上的那个（下面展示）校验单个**工具**的 `ToolResult.data`
 > ——它始终是 `ZodSchema<string>`，因为工具输出会序列化为
-> 文本。[`AgentConfig`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/structured-output.ts)
+> 文本。[`AgentConfig`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/patterns/structured-output.ts)
 > 上的 `outputSchema` 则不同：它把**智能体的最终答案**当作解析后的 JSON、
 > 对照一个任意的 Zod schema 来校验（见 `examples/` 中的 _Structured output_）。
 > 类型不同、作用域不同——当你将它们混淆时 TypeScript 不会警告你，
@@ -344,4 +502,4 @@ await disconnect()
 - MCP 的输入校验委托给 MCP 服务器（`inputSchema` 是 `z.any()`）。
 - 优先使用本地安装或固定版本的 MCP 服务器二进制文件，并只传入该服务器需要的环境变量。避免把 `process.env` 展开进 MCP 子进程。
 
-完整可运行的配置见 [`integrations/mcp-github`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/integrations/mcp-github.ts)。
+完整可运行的配置见 [`integrations/mcp-github`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/integrations/mcp-github.ts)。

@@ -29,7 +29,7 @@ const STATS_FLOOR = {
   stars: 6400,
   forks: 2391,
   contributors: 43,
-  latestRelease: 'v1.8.0',
+  latestRelease: 'v1.13.0',
 };
 
 export function ghApiHeaders() {

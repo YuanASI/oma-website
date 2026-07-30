@@ -47,9 +47,19 @@ maintain.
 **Goal-driven coordinator.** You pass a goal, not a graph. The coordinator decomposes it
 into a task DAG, runs the independent nodes in parallel, and synthesizes the final result.
 
+**Execution routing and governance.** `runTeam()` can use an explicit `single` or `team`
+mode, a custom `ExecutionRouter`, or the built-in deterministic router. Applications can
+declare required roles and order; results expose both routing decisions and a
+post-execution governance conclusion.
+
+**Event-driven task scheduling.** Ready tasks dispatch as soon as their dependencies
+complete. Scheduling policies, hard capability requirements, task priority,
+`onTaskDispatch` approval, structured dependency payloads, and `taskResults` make the
+explicit DAG path controllable without reverting to round-based execution.
+
 **Mix any model in one team.** Each agent names its own model, and they cooperate inside a
 single team. Built-in providers include Anthropic, OpenAI, Gemini, Bedrock, Azure OpenAI,
-and DeepSeek (13 in total), plus any OpenAI-compatible endpoint.
+and DeepSeek, plus any OpenAI-compatible endpoint.
 
 **Tools and MCP, default-deny.** An agent gets only the tools it is granted. Model Context
 Protocol servers expose external systems under the same opt-in contract.
@@ -77,9 +87,10 @@ changes the business result.
 Handing real work to autonomous agents raises three fair questions — do they run off the
 rails, burn the budget, or fail where you can't see it? Each one has an answer in the API.
 
-**Stay in the loop.** Inspect the plan before any agent runs with `onPlanReady`, then
-approve each round with `onApproval`. A proposer→judge pass (`runConsensus`) has one agent
-check another's output, and loop detection halts an agent that starts repeating itself.
+**Stay in the loop.** Inspect the plan with `onPlanReady`, approve one ready task with
+`onTaskDispatch` (or retain legacy round approval with `onApproval`), and gate one
+consequential tool call with `onToolCall`. A proposer→judge pass (`runConsensus`) has one
+agent check another's output, and loop detection halts an agent that starts repeating.
 
 **Control spend.** Route planning to a flagship model and leaf tasks to cheaper models
 with `modelRouting`. `maxTokenBudget` caps cumulative input + output tokens;
@@ -88,14 +99,18 @@ provider price table stays authoritative. Both are circuit breakers checked afte
 is reported at turn and task boundaries, so a run can cross a configured ceiling by up
 to one model turn. Provider invoices remain the source of truth for billed cost.
 
-**Inspect, replay, resume.** Existing `onTrace` callbacks remain supported. TraceRecord v2
+**Inspect, replay, resume.** Task-scoped results, routing decisions, and
+`buildExecutionReceipt()` preserve compact execution evidence. Existing `onTrace`
+callbacks remain supported. TraceRecord v2
 sinks can write to `InMemoryTraceStore`, the persistent single-process `FileTraceStore`,
 or the optional `createOtelTraceSink()` bridge in `@open-multi-agent/otel`; the application
 owns the OpenTelemetry provider lifecycle. Open the offline Run Viewer after a run
 (`oma run --dashboard`), freeze a reviewed plan with `createPlanArtifact()` and execute it
 with `runFromPlan()`, or resume a crashed run from its last completed task. Prompt,
 completion, tool payload, credential, and reasoning filtering is best-effort, so apply
-your own sink policy before export.
+your own sink policy before export. Checkpoints and shared-memory values are outside
+telemetry redaction; wrap the durable store with `RedactingStore` when they may contain
+secrets.
 
 ## What you can build
 
@@ -123,7 +138,7 @@ https://open-multi-agent.com/examples/
 A library, not a platform. It composes with the providers, protocols, and servers already
 in your backend.
 
-- **Providers** — Anthropic, Gemini, OpenAI, Bedrock, Azure, DeepSeek, and more — or any OpenAI-compatible endpoint (13 built-in).
+- **Providers** — Anthropic, Gemini, OpenAI, Bedrock, Azure, DeepSeek, and more — or any OpenAI-compatible endpoint.
 - **MCP** — connect Model Context Protocol servers as tools (native).
 - **Vercel AI SDK** — bridge to 60+ AI SDK providers and hosts (compatible).
 - **OpenTelemetry** — map TraceRecord v2 through the optional `@open-multi-agent/otel` adapter to an application-owned provider.
@@ -144,7 +159,7 @@ at https://open-multi-agent.com/solutions/.
 - **Goal-driven orchestration** — describe the goal instead of wiring the graph; the coordinator decomposes it into a task DAG at runtime and parallelizes it. https://open-multi-agent.com/solutions/goal-driven-orchestration/
 - **Mixed-model agent teams** — each agent names its own provider (Claude, GPT, Gemini, or a local model), cooperating in one run with cost and latency you can watch. https://open-multi-agent.com/solutions/mixed-model-teams/
 - **Local agents with Ollama** — run a team fully on your own machine, even the coordinator on a local model at $0 API cost, or a hybrid that keeps sensitive work local and bursts to the cloud. https://open-multi-agent.com/solutions/local-agents-ollama/
-- **Agent long-term memory** — the MemoryStore interface persists state across runs, so a team can recall what an earlier run learned. https://open-multi-agent.com/solutions/agent-memory/
+- **Durable shared memory** — MemoryStore persists namespaced key-value state and completed-task checkpoints across runs; semantic recall requires a separate memory layer. https://open-multi-agent.com/solutions/agent-memory/
 - **Vercel AI SDK orchestration** — add multi-agent orchestration to an existing AI SDK app; the SDK talks to models while runTeam() decomposes the goal. https://open-multi-agent.com/solutions/vercel-ai-sdk-orchestration/
 
 ## FAQ
@@ -172,9 +187,10 @@ running, so one failure does not abort the whole run.
 
 **How do I keep a multi-agent run from going off the rails?**
 Layered controls, all opt-in. onPlanReady hands you the decomposed plan to inspect before
-any agent runs, and onApproval gates each round; return false and the remaining tasks are
-skipped. runConsensus adds a proposer→judge check that a second agent must accept, and loop
-detection halts an agent that keeps repeating the same tool call or output.
+any agent runs. `onTaskDispatch` gates one ready task, while `onApproval` preserves legacy
+round gates. `onToolCall` can require confirmation for one consequential action. Declared
+governance checks required roles and order after execution; `runConsensus` and loop
+detection add result and behavior checks.
 
 **How do I cap what a run costs?**
 Use `maxCostBudget` with `estimateCost`; the estimator owns the per-model price table.
@@ -218,6 +234,7 @@ And, in context rather than head-to-head: Claude Code's dynamic workflows make t
 ## Documentation
 
 Getting started:
+- Capabilities: https://open-multi-agent.com/capabilities/
 - Introduction: https://open-multi-agent.com/getting-started/introduction/
 - Quick Start: https://open-multi-agent.com/getting-started/quick-start/
 - Three Ways to Run: https://open-multi-agent.com/getting-started/three-ways-to-run/
@@ -229,6 +246,8 @@ Guides:
 - Architecture: https://open-multi-agent.com/architecture/
 
 Reference:
+- Execution routing: https://open-multi-agent.com/reference/execution-routing/
+- Task scheduling and dispatch: https://open-multi-agent.com/reference/task-scheduling/
 - Providers: https://open-multi-agent.com/reference/providers/
 - Tool configuration: https://open-multi-agent.com/reference/tool-configuration/
 - Observability: https://open-multi-agent.com/reference/observability/
@@ -246,6 +265,7 @@ Reference:
 
 ## Blog
 
+- Open Multi-Agent v1.13 — Route, Govern, Schedule, and Prove the Run: https://open-multi-agent.com/blog/v1-13-execution-routing-governance-scheduling/
 - A 100% Local Multi-Agent Team in TypeScript (Ollama + Gemma, $0 API Cost): https://open-multi-agent.com/blog/local-multi-agent-team-ollama-gemma/
 - From Transcript to Typed Action Items: Three Parallel Agents in TypeScript: https://open-multi-agent.com/blog/meeting-summarizer-parallel-agents/
 - Goal In, DAG Out: How Open-Multi-Agent Turns a Goal into a Task DAG: https://open-multi-agent.com/blog/goal-to-task-dag-coordinator/

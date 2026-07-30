@@ -10,7 +10,7 @@ For an existing callback integration, follow the staged
 [`onTrace` migration guide](/reference/observability-migration/). Release engineering
 and benchmark evidence are recorded in
 [`observability-performance.md`](/reference/observability-performance/) and
-[`observability-release-readiness.md`](https://github.com/open-multi-agent/open-multi-agent/blob/main/docs/observability-release-readiness.md).
+[`observability-release-readiness.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/docs/observability-release-readiness.md).
 
 ## Run identity and outcome
 
@@ -83,6 +83,73 @@ without metadata remain readable.
 This per-run channel is distinct from `ObservabilityResource`: use resource
 fields for instance-level facts such as service, release, and deployment
 environment; use run metadata for dimensions that may change on every call.
+
+## Execution receipts
+
+`buildExecutionReceipt(result, trace?)` derives a compact record of what the
+runtime actually executed. It accepts an `AgentRunResult` or `TeamRunResult`
+and optional legacy `TraceEvent[]` data, performs no I/O, and never throws when
+execution fields are missing:
+
+```typescript
+import { buildExecutionReceipt, OpenMultiAgent, type TraceEvent } from '@open-multi-agent/core'
+
+const trace: TraceEvent[] = []
+const tracedOrchestrator = new OpenMultiAgent({
+  onTrace: (event) => trace.push(event),
+})
+const result = await tracedOrchestrator.runTeam(team, goal)
+const receipt = buildExecutionReceipt(result, trace)
+```
+
+The receipt reports `mode`, distinct `rolesExecuted`, start-time-based
+`executionOrder`, cross-role `dependencyEdges`, `independentRolesCount`, token
+usage, duration, and whether the record is `partial`. For compatibility,
+`rolesExecuted` continues to mean concrete assignee names;
+`workerInstancesExecuted` makes that meaning explicit and
+`taskRolesExecuted` lists distinct caller-declared logical task roles when
+present. `independentReviewOccurred` is true only when at least two different
+worker instances executed and at least one task dependency connects two
+different assignees. Parallel workers with no dependency edge do not count as
+an independent review chain. Coordinator planning entries (`coordinator` and
+`coordinator:*`) are excluded.
+
+For `runTeam()`, the receipt also carries its stable `id` plus
+`routingDecisionId` and, when tracing is enabled, `routingDecisionSpanId`.
+These fields link the post-execution topology back to
+`TeamRunResult.routingDecision`, which in turn carries the receipt's `receiptId`.
+The routing span records the same receipt ID. `ExecutionReceipt` remains the
+only structured record of the topology that actually ran; the routing record
+describes only the pre-execution choice and its reasons.
+
+Governance decisions must use these execution facts, not labels, claims, or
+review markers in model answer text. The builder never inspects answer text.
+For a standalone `AgentRunResult`, the optional trace supplies the agent name
+and run duration because those facts are not fields on that result type. When
+the available result or trace cannot establish a fact, the builder returns an
+empty array or `null` for that field and sets `partial: true`.
+
+### Post-execution governance conclusion
+
+Every OMA-produced `TeamRunResult` carries `governanceConclusion`:
+
+- `satisfied` — a `governanceIntent: 'required'` run executed every declared
+  role, every adjacent `requiredOrder` pair appears in the observed execution
+  order and is connected by a dependency path, and declarations with two or
+  more roles produced `independentReviewOccurred: true`;
+- `unsatisfied` — at least one of those required execution facts is absent;
+- `not-applicable` — governance was omitted, `none`, or `preferred`.
+
+The conclusion is computed by passing the result through
+`buildExecutionReceipt()` and then `evaluateGovernance()`. It is therefore a
+post-execution topology verdict, not a judgment about answer wording or quality.
+Review labels or approval markers in model output cannot satisfy the gate.
+
+`success` is intentionally independent: it continues to mean that the run
+finished without runtime errors. A run can be `success: true` and
+`governanceConclusion: 'unsatisfied'`; applications that require governance
+must gate on the latter field. In particular, multiple required roles without
+a dependency-backed review chain do not count as independent review.
 
 ## TraceRecord schema v2
 
@@ -457,7 +524,7 @@ The first release intentionally provides no OTLP convenience subpath. The
 application selects its own OTel SDK and OTLP/exporter implementation, avoiding
 eager OTLP imports, implicit global-provider configuration, and a second
 SDK/exporter compatibility matrix. See
-[`packages/otel/README.md`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/otel/README.md) for the full API and
+[`packages/otel/README.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/otel/README.md) for the full API and
 mapping table.
 
 ## Flush and shutdown
@@ -563,9 +630,29 @@ const orchestrator = new OpenMultiAgent({
 })
 ```
 
-Forward trace spans to OpenTelemetry, Datadog, Honeycomb, Langfuse, or your own run database only after deciding what data is safe for that sink. See [`integrations/trace-observability`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/integrations/trace-observability.ts) for a runnable example.
+Forward trace spans to OpenTelemetry, Datadog, Honeycomb, Langfuse, or your own run database only after deciding what data is safe for that sink. See [`integrations/trace-observability`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/integrations/trace-observability.ts) for a runnable example.
 
-The seven-member `TraceEvent` union and completion/event timing are unchanged.
+Every `runTeam()` topology choice emits a `routing_decision` legacy event and
+a v2 span with kind `routing` named `decide_execution_route`. The
+record includes the decision-time `mode`, `reasons`, optional `confidence`,
+and the actual `routerVersion` when a router ran. Its `source` distinguishes
+the priority-chain path without pretending every choice came from a router:
+
+- `override` — the caller supplied `mode`;
+- `declared` — structured governance roles selected the team topology;
+- `policy` — framework policy selected the topology, including
+  `preferredUnderBudget: 'degrade'` and `planOnly`;
+- `router` — automatic routing ran; `routerVersion` identifies that router;
+- `legacy-deterministic` — reserved for serialized or compatibility paths that
+  bypass an `ExecutionRouter`. Current `runTeam()` auto routing passes through
+  `ExecutionRouter`, so new runs do not use this label.
+
+The event/span's `receiptId` points to the eventual `ExecutionReceipt`; the
+receipt points back with `routingDecisionId` and `routingDecisionSpanId`.
+The decision records do not duplicate actual task roles, order, or dependency
+edges; those remain post-execution receipt/task facts.
+
+The `TraceEvent` union now has eight members, including `routing_decision`.
 Internally, `LegacyCallbackTraceSink` maps v2 records back to the exact legacy
 event object. Synchronous callback throws and asynchronous rejections remain
 isolated and cannot become unhandled rejections. `onTrace` is not marked
@@ -624,6 +711,13 @@ tokens, costs, agents, models, and providers when recorded. DAG and Waterfall
 selection are synchronized by task ID; search and kind/status/agent/task
 filters preserve ancestor context. Cyclic or missing hierarchy/dependency data
 degrades to visible warnings instead of being silently treated as success.
+When routing data is present, a summary above both views shows what mode was
+selected, the source and reasons for that choice, and the actual
+`ExecutionReceipt` mode/roles/dependency evidence. Result-only and combined
+views use `buildExecutionReceipt(result)` for the actual topology rather than
+maintaining a dashboard-specific topology model. Trace-only views summarize
+the already-materialized Viewer tasks and label that evidence trace-derived
+because an `ExecutionReceipt` was not provided.
 
 The generated HTML contains its CSS, JavaScript, and allowlisted data and loads
 no remote scripts, stylesheets, fonts, images, telemetry, or runtime API. It

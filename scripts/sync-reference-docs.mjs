@@ -1,11 +1,11 @@
-// Sync the vendored Reference docs from the framework repo's `main` branch into
-// src/content/docs/reference/. Run on a schedule by
+// Sync the vendored Reference docs from the latest framework release published
+// on both GitHub and npm into src/content/docs/reference/. Run on a schedule by
 // .github/workflows/sync-reference.yml (which opens a PR with any changes —
 // never auto-merges; the build CI + a human review gate it). Also runnable
 // locally:  node scripts/sync-reference-docs.mjs
 //
 // Design (PRD §4.2 / §7 — prevent the docs drifting from the framework):
-//   • Tracks `main` (latest), not a pinned tag.
+//   • Tracks the latest published release, not unreleased `main`.
 //   • Each vendored file's Starlight front-matter (title + the hand-written
 //     description) is CURATED and PRESERVED; only the body is refreshed.
 //   • The upstream `# H1` is dropped (Starlight renders the title from
@@ -16,7 +16,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
-  BRANCH,
   EXCLUDE,
   REPO,
   REFDIR,
@@ -26,6 +25,7 @@ import {
   formatDiscoveryGate,
   frontmatterOf,
   listLocalFlatReferences,
+  resolvePublishedReferenceRef,
   transformUpstreamBody,
 } from './reference-sync-lib.mjs';
 
@@ -39,7 +39,11 @@ function frontmatter(file) {
 }
 
 async function main() {
-  const listing = await fetch(`https://api.github.com/repos/${REPO}/contents/docs?ref=${BRANCH}`, { headers: apiHeaders });
+  const ref = await resolvePublishedReferenceRef(apiHeaders);
+  const listing = await fetch(
+    `https://api.github.com/repos/${REPO}/contents/docs?ref=${encodeURIComponent(ref)}`,
+    { headers: apiHeaders },
+  );
   if (!listing.ok) throw new Error(`GitHub contents API returned ${listing.status}`);
   const entries = await listing.json();
   if (!Array.isArray(entries)) throw new Error('GitHub contents API did not return a directory listing');
@@ -56,13 +60,13 @@ async function main() {
   let failed = 0;
   for (const file of classification.vendored) {
     const path = join(REFDIR, `${file}.md`);
-    const response = await fetch(RAW(`docs/${file}.md`));
+    const response = await fetch(RAW(`docs/${file}.md`, ref));
     if (!response.ok) {
       console.error('FAIL fetch', file, response.status);
       failed++;
       continue;
     }
-    const body = transformUpstreamBody(await response.text(), vendored);
+    const body = transformUpstreamBody(await response.text(), vendored, ref);
     const next = `${frontmatter(file)}\n${body}`;
     if (next !== readFileSync(path, 'utf8')) {
       writeFileSync(path, next);
@@ -73,7 +77,7 @@ async function main() {
     }
   }
 
-  console.log(`\n${changed} file(s) changed, ${failed} fetch failure(s)`);
+  console.log(`\nSynced from ${ref}: ${changed} file(s) changed, ${failed} fetch failure(s)`);
   if (failed) process.exitCode = 1;
 }
 

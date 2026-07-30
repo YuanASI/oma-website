@@ -2,10 +2,11 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 export const REPO = 'open-multi-agent/open-multi-agent';
-export const BRANCH = 'main';
+export const PACKAGE = '@open-multi-agent/core';
 export const REFDIR = 'src/content/docs/reference';
-export const RAW = (path) => `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${path}`;
-export const BLOB = `https://github.com/${REPO}/blob/${BRANCH}`;
+export const REFERENCE_REF_ENV = 'OMA_REFERENCE_REF';
+export const RAW = (path, ref = 'main') => `https://raw.githubusercontent.com/${REPO}/${ref}/${path}`;
+export const BLOB = (ref = 'main') => `https://github.com/${REPO}/blob/${ref}`;
 
 // These upstream docs intentionally remain links to GitHub until they are
 // reviewed and given a local page, sidebar entry, and translation.
@@ -20,28 +21,64 @@ export const stripH1 = (markdown) => markdown.replace(/^#\s+.*\n+/, '');
 export const stripFrontmatter = (markdown) =>
   markdown.replace(/^---\n[\s\S]*?\n---\n\n?/, '');
 
+export async function resolvePublishedReferenceRef(
+  headers = {},
+  override = process.env[REFERENCE_REF_ENV],
+  fetchImpl = fetch,
+) {
+  if (override) return override;
+
+  const [releaseResponse, registryResponse] = await Promise.all([
+    fetchImpl(`https://api.github.com/repos/${REPO}/releases/latest`, { headers }),
+    fetchImpl(`https://registry.npmjs.org/${encodeURIComponent(PACKAGE)}`),
+  ]);
+  if (!releaseResponse.ok) {
+    throw new Error(`GitHub latest release API returned ${releaseResponse.status}`);
+  }
+  if (!registryResponse.ok) {
+    throw new Error(`npm registry returned ${registryResponse.status}`);
+  }
+
+  const release = await releaseResponse.json();
+  const registry = await registryResponse.json();
+  const releaseTag = typeof release?.tag_name === 'string' ? release.tag_name : '';
+  const npmVersion = typeof registry?.['dist-tags']?.latest === 'string'
+    ? registry['dist-tags'].latest
+    : '';
+
+  if (!releaseTag || !npmVersion) {
+    throw new Error('Unable to resolve a GitHub release tag and npm latest version');
+  }
+  if (releaseTag !== `v${npmVersion}`) {
+    throw new Error(
+      `Release truth mismatch: GitHub latest is ${releaseTag}, npm latest is ${npmVersion}`,
+    );
+  }
+  return releaseTag;
+}
+
 export function frontmatterOf(markdown, name = 'document') {
   const match = markdown.match(/^---\n[\s\S]*?\n---\n/);
   if (!match) throw new Error(`No front-matter in ${name} — cannot preserve curated metadata`);
   return match[0];
 }
 
-export function rewriteLinks(markdown, vendored) {
+export function rewriteLinks(markdown, vendored, ref = 'main') {
   return markdown
-    .replace(/\]\(\.\.\/([^)]+)\)/g, (_match, path) => `](${BLOB}/${path})`)
+    .replace(/\]\(\.\.\/([^)]+)\)/g, (_match, path) => `](${BLOB(ref)}/${path})`)
     .replace(
       /\]\((?:\.\/)?([\w./-]+)\.md(#[^)]*)?\)/g,
       (_match, name, hash) => {
         if (vendored.has(name)) return `](/reference/${name}/${hash ?? ''})`;
         // Both explicitly excluded and newly discovered targets stay external;
         // the discovery gate separately makes unknown top-level docs visible.
-        return `](${BLOB}/docs/${name}.md${hash ?? ''})`;
+        return `](${BLOB(ref)}/docs/${name}.md${hash ?? ''})`;
       },
     );
 }
 
-export function transformUpstreamBody(markdown, vendored) {
-  return `${rewriteLinks(stripH1(markdown), vendored).replace(/\s+$/, '')}\n`;
+export function transformUpstreamBody(markdown, vendored, ref = 'main') {
+  return `${rewriteLinks(stripH1(markdown), vendored, ref).replace(/\s+$/, '')}\n`;
 }
 
 export function listLocalReferenceSlugs(dir = REFDIR, prefix = '') {
@@ -106,8 +143,8 @@ export function discoveryHasBlockers({ pending, unsupportedDirectories }) {
   return pending.length > 0 || unsupportedDirectories.length > 0;
 }
 
-export function hasUpstreamBodyDrift(localBody, upstreamMarkdown, vendored) {
-  return localBody !== transformUpstreamBody(upstreamMarkdown, vendored);
+export function hasUpstreamBodyDrift(localBody, upstreamMarkdown, vendored, ref = 'main') {
+  return localBody !== transformUpstreamBody(upstreamMarkdown, vendored, ref);
 }
 
 export function extractSidebarReferenceSlugs(source) {

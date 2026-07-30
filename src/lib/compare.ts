@@ -6,7 +6,7 @@
 // July 2026 against a PRIMARY source; the framework's own pyproject.toml /
 // package.json (dependency counts), its docs (paradigm, budget, tracing), and
 // the PyPI/npm registry (latest version, license); not from memory. OMA's
-// column was verified against open-multi-agent core v1.12.1 source + docs and
+// column was verified against open-multi-agent core v1.13.0 source + docs and
 // the compatible first-party optional @open-multi-agent/otel v0.1.0 package. The
 // whole point of these pages is the fair "when the other tool is the better
 // choice" paragraph, so the competitor gets genuine credit and nothing is
@@ -37,7 +37,7 @@ export const AXES: Axis[] = [
   {
     key: 'paradigm',
     label: { en: 'Orchestration model', zh: '编排范式' },
-    oma: { en: 'Three modes: one agent, an explicit task DAG, or a goal the coordinator decomposes at runtime — previewable and replayable as a plan artifact', zh: '三种模式：单智能体、显式任务 DAG，或由协调器在运行时拆解目标——计划可预览、可作为工件重放' },
+    oma: { en: 'One agent, an explicit task DAG, or a goal the coordinator decomposes at runtime; explicit mode, governance policy, or an ExecutionRouter selects the topology', zh: '单智能体、显式任务 DAG，或由协调器在运行时拆解目标；显式 mode、治理策略或 ExecutionRouter 选择执行拓扑' },
   },
   {
     key: 'deps',
@@ -52,7 +52,7 @@ export const AXES: Axis[] = [
   {
     key: 'budget',
     label: { en: 'Run-budget control', zh: '运行预算控制' },
-    oma: { en: 'Hard token and estimated-USD ceilings — maxTokenBudget, or maxCostBudget with your estimateCost table — that abort the run before it overspends', zh: '硬性 token 与估算美元上限——maxTokenBudget，或配合应用自有 estimateCost 价格表的 maxCostBudget——在超支前中止运行' },
+    oma: { en: 'Run-level token and estimated-USD ceilings — maxTokenBudget, or maxCostBudget with your estimateCost table — checked between model calls and task dispatches; one in-flight model turn can cross the ceiling', zh: '运行级 token 与估算美元上限——maxTokenBudget，或配合应用自有 estimateCost 价格表的 maxCostBudget——在模型调用与任务派发边界检查；一个已在途的模型回合可能越过上限' },
   },
   {
     key: 'observability',
@@ -64,36 +64,36 @@ export const AXES: Axis[] = [
 export type OmaCapability = { title: Loc; body: Loc };
 
 // Shared OMA capability baseline, verified against the framework README,
-// packages/core/README.md, and the v1.12.1 reference docs. Every comparison page
+// packages/core/README.md, and the v1.13.0 reference docs. Every comparison page
 // renders this list so OMA is represented by its actual runtime surface, not
 // only by the six matrix axes.
 export const OMA_CAPABILITIES: OmaCapability[] = [
   {
-    title: { en: 'Dynamic and explicit orchestration', zh: '动态编排与显式编排' },
+    title: { en: 'Dynamic, explicit, and routed orchestration', zh: '动态、显式与路由编排' },
     body: {
-      en: '<code>runTeam()</code> builds a task DAG from a goal and runs independent tasks in parallel; <code>runTasks()</code> runs a graph you define; <code>runAgent()</code> covers the single-agent case. Preview a plan without executing it (<code>planOnly</code>), freeze it as a <code>PlanArtifact</code>, and replay it later with <code>runFromPlan</code> — the plan is reviewable, version-controllable data.',
-      zh: '<code>runTeam()</code> 从目标生成任务 DAG 并并行运行相互独立的任务，<code>runTasks()</code> 运行你定义的任务图，<code>runAgent()</code> 覆盖单智能体场景。计划可先预览不执行（<code>planOnly</code>）、冻结为 <code>PlanArtifact</code>，之后用 <code>runFromPlan</code> 重放——它是可审阅、可纳入版本管理的数据。',
+      en: '<code>runTeam()</code> builds a task DAG from a goal, <code>runTasks()</code> runs a graph you define, and <code>runAgent()</code> covers one agent. Explicit <code>mode</code>, governance declarations, or a custom <code>ExecutionRouter</code> choose Single or Team execution and expose a <code>routingDecision</code>. Plans remain previewable, reviewable, and replayable as data.',
+      zh: '<code>runTeam()</code> 从目标生成任务 DAG，<code>runTasks()</code> 运行你定义的任务图，<code>runAgent()</code> 覆盖单智能体场景。显式 <code>mode</code>、治理声明或自定义 <code>ExecutionRouter</code> 选择 Single 或 Team 执行并暴露 <code>routingDecision</code>；计划仍可作为数据预览、审阅和重放。',
     },
   },
   {
-    title: { en: 'Deterministic control around agents', zh: '围绕智能体的确定性控制' },
+    title: { en: 'Governance and approvals at distinct boundaries', zh: '位于不同边界的治理与审批' },
     body: {
-      en: 'Inspect and approve plans, freeze and replay them as data, validate outputs with Zod, stream per agent, cancel runs, or add a proposer and judge consensus loop.',
-      zh: '计划可检查、可审批，也可冻结为数据后重放。结果可用 Zod 校验，还支持按智能体流式输出、取消运行，以及提议者与裁判组成的共识校验。',
+      en: 'Declare required or preferred roles, ordered review paths, and budget-aware degradation. Gate the plan with <code>onPlanReady</code>, one ready task with <code>onTaskDispatch</code>, and one consequential tool call with <code>onToolCall</code>; then inspect <code>governanceConclusion</code>.',
+      zh: '声明必需或偏好的角色、有序审阅路径与预算感知降级。分别用 <code>onPlanReady</code> 审批计划、<code>onTaskDispatch</code> 审批一个就绪任务、<code>onToolCall</code> 审批一次高影响工具调用，再检查 <code>governanceConclusion</code>。',
     },
   },
   {
-    title: { en: 'Dependency scheduling and recovery', zh: '依赖调度与恢复' },
+    title: { en: 'Event-driven scheduling and task evidence', zh: '事件驱动调度与任务证据' },
     body: {
-      en: 'The scheduler runs independent branches in parallel. Retries and checkpoints let an interrupted run resume without repeating completed tasks.',
-      zh: '调度器并行运行互不依赖的分支。任务重试与检查点让中断的运行恢复时不重复已完成任务。',
+      en: 'Ready dependents start as soon as prerequisites complete. Five assignment strategies can use capabilities and hard requirements; <code>taskResults</code> preserves unmerged task outputs and structured dependency payloads carry bounded provenance. Retries and checkpoints resume from completed task boundaries.',
+      zh: '依赖完成后，就绪的下游任务立即启动。五种指派策略可使用能力与硬性要求；<code>taskResults</code> 保留未经合并的任务输出，结构化依赖载荷携带受限的来源信息。重试与检查点从已完成任务边界恢复。',
     },
   },
   {
     title: { en: 'Production controls', zh: '生产控制' },
     body: {
-      en: 'Bound each run with turn, token, estimated-cost, timeout, context, and loop limits — <code>maxTokenBudget</code> and <code>maxCostBudget</code> abort before overspend. Route planning to a flagship model and leaf work to a cheap one with <code>modelRouting</code>. Built-in tools are default-deny, and trace payloads redact detected secrets on a best-effort basis.',
-      zh: '用轮次、token、估算成本、超时、上下文与循环上限约束每次运行——<code>maxTokenBudget</code> 与 <code>maxCostBudget</code> 会在超支前中止。用 <code>modelRouting</code> 把规划交给旗舰模型、把叶子任务交给廉价模型。内置工具默认拒绝授权，链路数据以尽力而为方式脱敏检测到的敏感信息。',
+      en: 'Bound each run with turn, token, estimated-cost, timeout, context, and loop limits. <code>maxTokenBudget</code> and <code>maxCostBudget</code> stop further calls after a boundary check; one in-flight model turn can cross the ceiling. Model routes support ordered fallbacks. Built-in tools are default-deny, and trace payloads redact detected secrets on a best-effort basis.',
+      zh: '用轮次、token、估算成本、超时、上下文与循环上限约束每次运行。<code>maxTokenBudget</code> 与 <code>maxCostBudget</code> 在边界检查后停止后续调用；一个已在途的模型回合可能越过上限。模型路由支持有序 fallback。内置工具默认拒绝授权，链路数据以尽力而为方式脱敏检测到的敏感信息。',
     },
   },
   {
@@ -106,8 +106,8 @@ export const OMA_CAPABILITIES: OmaCapability[] = [
   {
     title: { en: 'Inspect, trace, and evaluate', zh: '检查、追踪与评估' },
     body: {
-      en: 'Stable run identity, TraceStore, and the offline DAG and Waterfall Viewer work with no hosted service. Score quality offline with versioned <code>EvalSets</code> (<code>defineScorer</code> → <code>runEvalSet</code> → <code>GateVerdict</code>) to gate CI, and connect runs to production telemetry through an optional first-party OTel adapter.',
-      zh: '稳定运行标识、TraceStore，以及离线 DAG 与 Waterfall Viewer 均无需托管服务。用版本化的 <code>EvalSets</code>（<code>defineScorer</code> → <code>runEvalSet</code> → <code>GateVerdict</code>）离线为质量打分、把关 CI，并通过可选的一方 OTel 适配器把运行接入生产遥测。',
+      en: 'Stable run identity, routing decisions, privacy-preserving execution receipts, TraceStore, and the offline Run Viewer work with no hosted service. Score quality with versioned <code>EvalSets</code> and <code>GateVerdict</code>, including a routing-stability gate, then connect runs to production telemetry through the optional OTel adapter.',
+      zh: '稳定运行标识、路由决策、保护隐私的 execution receipt、TraceStore 与离线 Run Viewer 均无需托管服务。用版本化的 <code>EvalSet</code> 与 <code>GateVerdict</code> 评估质量，包括路由稳定性闸门，再通过可选 OTel 适配器把运行接入生产遥测。',
     },
   },
 ];
@@ -187,8 +187,8 @@ export const COMPARISONS: Comparison[] = [
       zh: '当编排拓扑已经确定并需要显式编写，或项目要求围绕图使用状态历史与时间回溯调试时，LangGraph 合适。它的 TypeScript 包已 GA，并可接入 LangChain 技术栈。',
     },
     whenUs: {
-      en: 'open-multi-agent fits when you’d rather describe the outcome than wire the graph; the coordinator plans the task DAG at runtime, so the orchestration adapts to each goal instead of being hand-built for one. It’s TypeScript-native with three runtime dependencies, and it ships a hard <code>maxTokenBudget</code> cap that aborts a run before it overspends; a guardrail LangGraph doesn’t offer at the token level.',
-      zh: 'open-multi-agent 适合你更愿意描述结果、而非接线图的场景，协调器在运行时规划任务 DAG，于是编排随每个目标自适应，而不是为某一个手工搭好。它 TypeScript 原生、只有三个运行时依赖，并自带一道硬性 <code>maxTokenBudget</code> 上限，会在超支前中止运行，这是 LangGraph 在 token 层面没有提供的护栏。',
+      en: 'open-multi-agent fits when you’d rather describe the outcome than wire the graph; the coordinator plans the task DAG at runtime, so the orchestration adapts to each goal instead of being hand-built for one. It’s TypeScript-native with three runtime dependencies, and <code>maxTokenBudget</code> stops further model calls after cumulative usage crosses the run ceiling; checks occur between calls, not mid-generation.',
+      zh: 'open-multi-agent 适合你更愿意描述结果、而非接线图的场景，协调器在运行时规划任务 DAG，于是编排随每个目标自适应，而不是为某一个手工搭好。它 TypeScript 原生、只有三个运行时依赖；累计用量越过运行上限后，<code>maxTokenBudget</code> 会停止后续模型调用，但检查发生在调用之间，而不是生成途中。',
     },
   },
   {
@@ -209,8 +209,8 @@ export const COMPARISONS: Comparison[] = [
       zh: '你在 Python 中，需要基于角色的 crew、内置记忆与 RAG，以及 CrewAI 的现有集成。',
     },
     chooseUs: {
-      en: 'Your backend is TypeScript and you want a lean core (three dependencies) with goal-driven decomposition and a hard token budget.',
-      zh: '你的后端是 TypeScript，想要一个精简内核（三个依赖）、目标驱动的拆解，以及硬性 token 预算。',
+      en: 'Your backend is TypeScript and you want a lean core (three dependencies) with goal-driven decomposition and a run-level token circuit breaker.',
+      zh: '你的后端是 TypeScript，想要一个精简内核（三个依赖）、目标驱动的拆解，以及运行级 token 熔断器。',
     },
     them: {
       language: { en: 'Python only (3.10+); no official TypeScript port', zh: '仅 Python（3.10+）；无官方 TypeScript 移植' },
@@ -229,8 +229,8 @@ export const COMPARISONS: Comparison[] = [
       zh: '当 Python 项目需要基于角色的 crew、顺序或分层流程、内置记忆与 RAG，以及现有集成时，CrewAI 合适。这些内置能力也会带来更大的依赖规模。',
     },
     whenUs: {
-      en: 'open-multi-agent fits when your backend is TypeScript and you want to stay there; no Python service to stand up beside your Node app. The core is deliberately small (three runtime dependencies; extra providers and MCP load only when you opt in), the coordinator plans the work from a goal, and <code>maxTokenBudget</code> gives you a hard spend ceiling that aborts the run.',
-      zh: 'open-multi-agent 适合你的后端是 TypeScript、且想一直待在这里的场景，无需在 Node 应用旁再立一个 Python 服务。内核刻意做得很小（三个运行时依赖；额外提供方与 MCP 仅在你按需启用时才加载），协调器从目标出发规划工作，<code>maxTokenBudget</code> 则给你一道会中止运行的硬性花费上限。',
+      en: 'open-multi-agent fits when your backend is TypeScript and you want to stay there; no Python service to stand up beside your Node app. The core is deliberately small (three runtime dependencies; extra providers and MCP load only when you opt in), the coordinator plans the work from a goal, and <code>maxTokenBudget</code> stops further calls after a run-boundary check.',
+      zh: 'open-multi-agent 适合你的后端是 TypeScript、且想一直待在这里的场景，无需在 Node 应用旁再立一个 Python 服务。内核刻意做得很小（三个运行时依赖；额外提供方与 MCP 仅在你按需启用时才加载），协调器从目标出发规划工作，<code>maxTokenBudget</code> 则在运行边界检查后停止后续调用。',
     },
   },
   {
@@ -297,8 +297,8 @@ export const COMPARISONS: Comparison[] = [
       zh: '你以 OpenAI 平台为中心，偏好 handoff 模型，并希望追踪默认开启。',
     },
     chooseUs: {
-      en: 'You want provider-neutral, goal-driven orchestration in TypeScript, with a hard token budget and a lean footprint.',
-      zh: '你想要提供方中立、目标驱动的 TypeScript 编排，带硬性 token 预算和精简的足迹。',
+      en: 'You want provider-neutral, goal-driven orchestration in TypeScript, with a run-level token circuit breaker and a lean footprint.',
+      zh: '你想要提供方中立、目标驱动的 TypeScript 编排，带运行级 token 熔断器和精简的足迹。',
     },
     them: {
       language: { en: 'Python-first; official TypeScript port (@openai/agents); both pre-1.0', zh: 'Python 优先；官方 TypeScript 移植（@openai/agents），两者均为 pre-1.0' },
@@ -317,8 +317,8 @@ export const COMPARISONS: Comparison[] = [
       zh: '如果你的世界以 OpenAI 为中心、喜欢 handoff 模型、想要开箱即用的追踪，就选 OpenAI Agents SDK。它精简、埋点到位。它的 TypeScript 移植是官方的，不过它和 Python 包都还在 pre-1.0，所以要预期一些变动。',
     },
     whenUs: {
-      en: 'open-multi-agent fits when you want to stay provider-neutral; mix Anthropic, Gemini, OpenAI, local models, or any OpenAI-compatible endpoint in one team; and prefer decomposing a goal to wiring handoffs. It’s TypeScript-native, three dependencies, and its <code>maxTokenBudget</code> gives a hard spend ceiling the Agents SDK doesn’t have.',
-      zh: 'open-multi-agent 适合你想保持提供方中立，在同一个团队里混用 Anthropic、Gemini、OpenAI、本地模型，或任何兼容 OpenAI 的端点，并且更愿意拆解目标、而非接线 handoff。它 TypeScript 原生、三个依赖，其 <code>maxTokenBudget</code> 给出一道 Agents SDK 所没有的硬性花费上限。',
+      en: 'open-multi-agent fits when you want to stay provider-neutral; mix Anthropic, Gemini, OpenAI, local models, or any OpenAI-compatible endpoint in one team; and prefer decomposing a goal to wiring handoffs. It’s TypeScript-native, has three dependencies, and applies a run-level <code>maxTokenBudget</code> between model calls.',
+      zh: 'open-multi-agent 适合你想保持提供方中立，在同一个团队里混用 Anthropic、Gemini、OpenAI、本地模型，或任何兼容 OpenAI 的端点，并且更愿意拆解目标、而非接线 handoff。它 TypeScript 原生、三个依赖，并在模型调用之间应用运行级 <code>maxTokenBudget</code>。',
     },
   },
   {
@@ -341,7 +341,7 @@ export const COMPARISONS: Comparison[] = [
     },
     chooseUs: {
       en: 'You want a small core (three dependencies) that runs in your own environment — offline or air-gapped, on your own credentials — with goal-driven decomposition instead of hand-built workflow graphs and a hard spend cap.',
-      zh: '你想要一个小内核（三个依赖），跑在你自己的环境里——离线或气隙、用你自己的凭证——用目标驱动的拆解代替手搭 workflow 图，并带一道硬性花费上限。',
+      zh: '你想要一个小内核（三个依赖），跑在你自己的环境里——离线或气隙、用你自己的凭证——用目标驱动的拆解代替手搭 workflow 图，并在调用边界约束运行预算。',
     },
     them: {
       language: { en: 'TypeScript-native; requires Node.js 22.13+', zh: 'TypeScript 原生；要求 Node.js 22.13+' },
@@ -361,7 +361,7 @@ export const COMPARISONS: Comparison[] = [
     },
     whenUs: {
       en: 'open-multi-agent fits when you want the plan built for you and the whole run kept in your environment. The coordinator turns a goal into a task DAG at runtime, and that plan is inspectable, replayable data (<code>planOnly</code> → <code>createPlanArtifact</code> → <code>runFromPlan</code>), not a workflow graph you hand-author. It stays three dependencies on Node.js 18+, hard-caps spend with <code>maxTokenBudget</code> (or <code>maxCostBudget</code>) where Mastra has no token-level cap, and can route planning to a flagship model and leaf work to a cheap one. Evaluation, tracing, and an offline Run Viewer need no hosted service, so it runs fully offline or air-gapped, on your own credentials.',
-      zh: 'open-multi-agent 适合你想要计划替你生成、且整个运行留在你自己环境里的场景。协调器在运行时把目标拆成任务 DAG，而这份计划是可检查、可重放的数据（<code>planOnly</code> → <code>createPlanArtifact</code> → <code>runFromPlan</code>），而非你手工编写的 workflow 图。它保持三个依赖、跑在 Node.js 18+ 上，用 <code>maxTokenBudget</code>（或 <code>maxCostBudget</code>）在超支前硬性中止运行——这是 Mastra 在 token 层面没有的护栏，并且可以把规划交给旗舰模型、把叶子任务交给廉价模型。evaluation、链路追踪与离线 Run Viewer 全都无需托管服务，于是它能完全离线或气隙运行，用你自己的凭证。',
+      zh: 'open-multi-agent 适合你想要计划替你生成、且整个运行留在你自己环境里的场景。协调器在运行时把目标拆成任务 DAG，而这份计划是可检查、可重放的数据（<code>planOnly</code> → <code>createPlanArtifact</code> → <code>runFromPlan</code>），而非你手工编写的 workflow 图。它保持三个依赖、跑在 Node.js 18+ 上，用 <code>maxTokenBudget</code>（或 <code>maxCostBudget</code>）在调用与任务边界停止后续工作；一个已在途的模型回合仍可能越过上限。它还可以把规划交给旗舰模型、把叶子任务交给廉价模型。evaluation、链路追踪与离线 Run Viewer 全都无需托管服务，于是它能完全离线或气隙运行，用你自己的凭证。',
     },
   },
   {
@@ -403,8 +403,8 @@ export const COMPARISONS: Comparison[] = [
       zh: '当你需要提供方中立的模型、工具与流式原语，并打算自己掌控控制流时，Vercel AI SDK 合适。它的 Agent 抽象处理单个工具调用循环，多智能体协作则保留在应用代码中。',
     },
     whenUs: {
-      en: 'open-multi-agent fits when you want the orchestration handed to you rather than hand-built: a coordinator that plans the task DAG from a goal, mixed-model teams in one run, and a hard <code>maxTokenBudget</code> ceiling. And you don’t have to choose; run OMA over the AI SDK and keep the SDK’s provider layer underneath.',
-      zh: 'open-multi-agent 适合你想要现成的编排、而非手工搭建：一个从目标出发规划任务 DAG 的协调器、一次运行里混编模型的团队，以及一道硬性 <code>maxTokenBudget</code> 上限。而且你不必二选一，把 OMA 跑在 AI SDK 之上，底下继续用 SDK 的提供方层。',
+      en: 'open-multi-agent fits when you want the orchestration handed to you rather than hand-built: a coordinator that plans the task DAG from a goal, mixed-model teams in one run, and a run-level <code>maxTokenBudget</code> checked between calls. And you don’t have to choose; run OMA over the AI SDK and keep the SDK’s provider layer underneath.',
+      zh: 'open-multi-agent 适合你想要现成的编排、而非手工搭建：一个从目标出发规划任务 DAG 的协调器、一次运行里混编模型的团队，以及一道在调用之间检查的运行级 <code>maxTokenBudget</code>。而且你不必二选一，把 OMA 跑在 AI SDK 之上，底下继续用 SDK 的提供方层。',
     },
   },
   {
@@ -467,8 +467,8 @@ export const COMPARISONS: Comparison[] = [
       zh: '你想要能自己掌控、确定且可审视的路由，以及可持久、可重放的执行，并且乐意跑在 Inngest 上。',
     },
     chooseUs: {
-      en: 'You want the plan built at runtime instead of hand-authored routing, no Inngest dependency, and a hard token budget.',
-      zh: '你想要计划在运行时自动生成、而非手写路由，不想引入 Inngest 依赖，还要一道硬性 token 预算。',
+      en: 'You want the plan built at runtime instead of hand-authored routing, no Inngest dependency, and a run-level token circuit breaker.',
+      zh: '你想要计划在运行时自动生成、而非手写路由，不想引入 Inngest 依赖，还要一道运行级 token 熔断器。',
     },
     them: {
       language: { en: 'TypeScript-native; pre-1.0 (0.13)', zh: 'TypeScript 原生；pre-1.0（0.13）' },
@@ -487,8 +487,8 @@ export const COMPARISONS: Comparison[] = [
       zh: '当你想要自己编写的、确定且可审视的路由，以及底下 Inngest 那种可持久、可重放的执行时，选 AgentKit，当一次运行必须扛过重启、且每个路由决策都要显式可复现时，这很有价值。它还在 pre-1.0，要预期一些变动，并且默认你的技术栈里有 Inngest。',
     },
     whenUs: {
-      en: 'open-multi-agent fits when you’d rather describe the goal than author the routing, and you want to stay dependency-light: the coordinator plans the task DAG at runtime, there’s no orchestration service to stand up, and <code>maxTokenBudget</code> gives a hard spend ceiling. Checkpoint/resume covers crash recovery at task granularity over any MemoryStore, without a separate durable-execution backend.',
-      zh: 'open-multi-agent 适合你更愿意描述目标、而非编写路由，并且想保持依赖轻量：协调器在运行时规划任务 DAG，无需另立一个编排服务，<code>maxTokenBudget</code> 给出一道硬性花费上限。检查点/恢复在任意 MemoryStore 上以任务粒度覆盖崩溃恢复，无需一个单独的持久化执行后端。',
+      en: 'open-multi-agent fits when you’d rather describe the goal than author the routing, and you want to stay dependency-light: the coordinator plans the task DAG at runtime, there’s no orchestration service to stand up, and <code>maxTokenBudget</code> stops further calls at run boundaries. Checkpoint/restore covers crash recovery at completed task boundaries over any MemoryStore, without a separate durable-execution backend.',
+      zh: 'open-multi-agent 适合你更愿意描述目标、而非编写路由，并且想保持依赖轻量：协调器在运行时规划任务 DAG，无需另立一个编排服务，<code>maxTokenBudget</code> 在运行边界停止后续调用。检查点/恢复在任意 MemoryStore 上以已完成任务边界覆盖崩溃恢复，无需一个单独的持久化执行后端。',
     },
   },
   {
@@ -530,7 +530,7 @@ export const COMPARISONS: Comparison[] = [
       zh: '当应用依赖 LangChain 现有的链、提示工具、集成或 LangSmith 追踪时，LangChain 合适。Python 是其主要载体，JavaScript 与 TypeScript 项目可使用 LangChain.js。',
     },
     whenUs: {
-      en: 'open-multi-agent fits when you don’t want a broad framework; just a lean, goal-driven multi-agent runtime that plans the task DAG for you, stays TypeScript-native with three dependencies, and enforces a hard <code>maxTokenBudget</code>. For the orchestration-model question specifically, compare against LangGraph.',
+      en: 'open-multi-agent fits when you don’t want a broad framework; just a lean, goal-driven multi-agent runtime that plans the task DAG for you, stays TypeScript-native with three dependencies, and stops new calls after <code>maxTokenBudget</code> is observed at a boundary. For the orchestration-model question specifically, compare against LangGraph.',
       zh: 'open-multi-agent 适合你不想要一个庞大框架、只想要一个精简、目标驱动的多智能体运行时的场景，它替你规划任务 DAG，保持 TypeScript 原生、三个依赖，并强制一道硬性 <code>maxTokenBudget</code>。若专门就编排范式发问，请对比 LangGraph。',
     },
   },
@@ -572,7 +572,7 @@ export const COMPARISONS: Comparison[] = [
       zh: '当核心问题是在自己的数据上做检索，并希望加载器、索引、检索器、查询引擎与智能体 workflow 位于同一技术栈中时，LlamaIndex 合适。',
     },
     whenUs: {
-      en: 'open-multi-agent fits when orchestration is the heart of the problem: a coordinator that decomposes a goal into a parallel task DAG, TypeScript-native, three dependencies, and a hard <code>maxTokenBudget</code>. It doesn’t ship retrieval; you bring whatever RAG or tools you like; which keeps the core small and the orchestration general.',
+      en: 'open-multi-agent fits when orchestration is the heart of the problem: a coordinator that decomposes a goal into a parallel task DAG, TypeScript-native, three dependencies, and a boundary-checked <code>maxTokenBudget</code> circuit breaker. It doesn’t ship retrieval; you bring whatever RAG or tools you like; which keeps the core small and the orchestration general.',
       zh: 'open-multi-agent 适合编排是问题核心的场景：一个把目标拆成并行任务 DAG 的协调器、TypeScript 原生、三个依赖、一道硬性 <code>maxTokenBudget</code>。它不自带检索，RAG 或工具你随意带，这让内核保持小、编排保持通用。',
     },
   },
@@ -595,7 +595,7 @@ export const COMPARISONS: Comparison[] = [
     },
     chooseUs: {
       en: 'You want TypeScript-native, goal-driven multi-agent orchestration; a coordinator that builds the task DAG from a goal; with a hard, run-aborting token budget.',
-      zh: '你想要 TypeScript 原生、目标驱动的多智能体编排，一个从目标构建任务 DAG 的协调器，外加一道会中止运行的硬性 token 预算。',
+      zh: '你想要 TypeScript 原生、目标驱动的多智能体编排，一个从目标构建任务 DAG 的协调器，外加一道按边界检查的 token 熔断器。',
     },
     them: {
       language: { en: 'Python-native (built on Pydantic); no TypeScript port', zh: 'Python 原生（构建于 Pydantic 之上）；无 TypeScript 移植' },
@@ -614,8 +614,8 @@ export const COMPARISONS: Comparison[] = [
       zh: '当 Python 项目需要经过校验的智能体输入输出、依赖注入、Logfire 追踪与内置用量上限时，Pydantic AI 合适。它的多智能体模式使用委派与 pydantic-graph。',
     },
     whenUs: {
-      en: 'open-multi-agent fits when you want TypeScript-native, goal-driven multi-agent orchestration: the coordinator plans a parallel task DAG from the goal rather than you wiring delegation, and <code>maxTokenBudget</code> aborts the entire run at a hard ceiling. If you’re in Node rather than Python, OMA keeps you there.',
-      zh: 'open-multi-agent 适合你想要 TypeScript 原生、目标驱动的多智能体编排：协调器从目标规划一张并行任务 DAG，而非你去接线委派，<code>maxTokenBudget</code> 在硬上限处中止整个运行。若你在 Node 而非 Python，OMA 让你留在这里。',
+      en: 'open-multi-agent fits when you want TypeScript-native, goal-driven multi-agent orchestration: the coordinator plans a parallel task DAG from the goal rather than you wiring delegation, and <code>maxTokenBudget</code> stops further calls after a run-boundary check. If you’re in Node rather than Python, OMA keeps you there.',
+      zh: 'open-multi-agent 适合你想要 TypeScript 原生、目标驱动的多智能体编排：协调器从目标规划一张并行任务 DAG，而非你去接线委派；<code>maxTokenBudget</code> 在边界观察到超限后停止后续调用。若你在 Node 而非 Python，OMA 让你留在这里。',
     },
   },
   {
@@ -636,8 +636,8 @@ export const COMPARISONS: Comparison[] = [
       zh: '你在 Google Cloud / Gemini 上，想要你自己组合的显式 workflow 智能体（顺序、并行、循环），以及一个托管的部署目标（Vertex Agent Engine）。',
     },
     chooseUs: {
-      en: 'You want a TypeScript-native, provider-neutral runtime that decomposes a goal at runtime; no web-server or cloud stack pulled in; with a lean core and a hard token budget.',
-      zh: '你想要一个 TypeScript 原生、提供方中立、在运行时拆解目标的运行时，不拉进 web 服务器或云栈，内核精简、带硬性 token 预算。',
+      en: 'You want a TypeScript-native, provider-neutral runtime that decomposes a goal at runtime; no web-server or cloud stack pulled in; with a lean core and a run-level token circuit breaker.',
+      zh: '你想要一个 TypeScript 原生、提供方中立、在运行时拆解目标的运行时，不拉进 web 服务器或云栈，内核精简、带运行级 token 熔断器。',
     },
     them: {
       language: { en: 'Python-first (a Java port exists); no TypeScript', zh: 'Python 优先（有 Java 移植）；无 TypeScript' },
@@ -656,8 +656,8 @@ export const COMPARISONS: Comparison[] = [
       zh: '当 Google Cloud 项目需要显式的顺序、并行与循环智能体、Gemini 集成、评估工具，以及部署到 Vertex AI 的一方路径时，ADK 合适。',
     },
     whenUs: {
-      en: 'open-multi-agent fits when you’d rather describe the goal than assemble workflow agents, want to stay provider-neutral and TypeScript-native, and don’t want a web-server or cloud stack in your dependencies. The coordinator plans the task DAG at runtime, the core is three dependencies, and <code>maxTokenBudget</code> gives a hard spend ceiling.',
-      zh: 'open-multi-agent 适合你更愿意描述目标、而非拼装 workflow 智能体，想保持提供方中立与 TypeScript 原生，且不想让依赖里出现 web 服务器或云栈。协调器在运行时规划任务 DAG，内核三个依赖，<code>maxTokenBudget</code> 给出一道硬性花费上限。',
+      en: 'open-multi-agent fits when you’d rather describe the goal than assemble workflow agents, want to stay provider-neutral and TypeScript-native, and don’t want a web-server or cloud stack in your dependencies. The coordinator plans the task DAG at runtime, the core is three dependencies, and <code>maxTokenBudget</code> applies a run-level ceiling between calls.',
+      zh: 'open-multi-agent 适合你更愿意描述目标、而非拼装 workflow 智能体，想保持提供方中立与 TypeScript 原生，且不想让依赖里出现 web 服务器或云栈。协调器在运行时规划任务 DAG，内核三个依赖，<code>maxTokenBudget</code> 在调用之间应用运行级预算上限。',
     },
   },
   {
@@ -678,8 +678,8 @@ export const COMPARISONS: Comparison[] = [
       zh: '你在微软 / .NET / Azure 生态里，想要一个一方 SDK，插件、函数、智能体，并有一条经 Microsoft Agent Framework 的受支持前进路径。',
     },
     chooseUs: {
-      en: 'You’re in Node/TypeScript and want a lean, provider-neutral, goal-driven runtime with three dependencies and a hard token budget; no .NET, no Azure assumption.',
-      zh: '你在 Node/TypeScript 里，想要一个精简、提供方中立、目标驱动的运行时，三个依赖、一道硬性 token 预算，不带 .NET、不假设 Azure。',
+      en: 'You’re in Node/TypeScript and want a lean, provider-neutral, goal-driven runtime with three dependencies and a run-level token circuit breaker; no .NET, no Azure assumption.',
+      zh: '你在 Node/TypeScript 里，想要一个精简、提供方中立、目标驱动的运行时，三个依赖、一道运行级 token 熔断器，不带 .NET、不假设 Azure。',
     },
     them: {
       language: { en: '.NET / C#-first; first-party Python and Java; no TypeScript', zh: '.NET / C# 优先；一方支持 Python 与 Java；无 TypeScript' },
@@ -702,7 +702,7 @@ export const COMPARISONS: Comparison[] = [
       zh: '当 .NET 与 Azure 项目需要微软支持的 SDK、Azure 集成与原生 OpenTelemetry 时，Semantic Kernel 或 Microsoft Agent Framework 合适。',
     },
     whenUs: {
-      en: 'open-multi-agent fits when your stack is Node/TypeScript and you want to stay there: a lean, provider-neutral, goal-driven runtime with three dependencies and a hard <code>maxTokenBudget</code>, with no .NET runtime or Azure assumption. The coordinator plans the task DAG from a goal instead of you assembling plugins and planners.',
+      en: 'open-multi-agent fits when your stack is Node/TypeScript and you want to stay there: a lean, provider-neutral, goal-driven runtime with three dependencies and a boundary-checked <code>maxTokenBudget</code> circuit breaker, with no .NET runtime or Azure assumption. The coordinator plans the task DAG from a goal instead of you assembling plugins and planners.',
       zh: 'open-multi-agent 适合你的技术栈是 Node/TypeScript、且想留在这里的场景：一个精简、提供方中立、目标驱动的运行时，三个依赖、一道硬性 <code>maxTokenBudget</code>，不带 .NET 运行时、不假设 Azure。协调器从目标规划任务 DAG，而非你去拼装插件与 planner。',
     },
   },

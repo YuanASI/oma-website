@@ -11,27 +11,32 @@ Open Multi-Agent (OMA) is a goal-driven agent runtime for TypeScript backends. I
 
 ## Capabilities
 
-- **Goal-driven coordinator**: you pass a goal, not a graph. The coordinator decomposes it into a task DAG, runs the independent nodes in parallel, and synthesizes the final result.
-- **Mix any model in one team**: each agent names its own model, and they cooperate inside a single team. Built-in providers include Anthropic, OpenAI, Gemini, Bedrock, Azure OpenAI, and DeepSeek (13 in total), plus any OpenAI-compatible endpoint.
+- **Goal or explicit DAG**: use `runTeam()` when a coordinator should decompose an outcome, or `runTasks()` when your application already owns the graph.
+- **Execution routing and governance**: choose `single` or `team` explicitly, install an `ExecutionRouter`, or declare required roles and order. The result carries the routing decision and governance conclusion.
+- **Event-driven scheduling**: ready tasks dispatch as soon as dependencies complete, with scheduling policies, hard capability requirements, task priority, per-task approval, structured handoffs, and task-scoped results.
+- **Mix any model in one team**: each agent names its own model. Use built-in providers such as Anthropic, OpenAI, Gemini, Bedrock, Azure OpenAI, and DeepSeek, or any OpenAI-compatible endpoint.
 - **Tools and MCP, default-deny**: an agent gets only the tools it is granted. Model Context Protocol servers expose external systems under the same opt-in contract.
 - **Streaming and structured output**: stream tokens and node-state transitions as the DAG fills, or await a typed, schema-validated object when the run completes.
 - **Cross-provider reasoning**: one thinking config maps to Anthropic thinking, Gemini thinkingConfig, and OpenAI reasoning_effort. Reasoning streams as events, and can be preserved across a provider switch when you opt in.
-- **You hold the controls**: inspect the plan before any agent runs (`onPlanReady` / `onApproval` gates), verify with a proposer-to-judge pass (`runConsensus`) and loop detection, and cap usage with `maxTokenBudget` or `maxCostBudget` + the application-owned `estimateCost`. Budget checks happen at turn and task boundaries, so a run can cross a ceiling by up to one model turn.
-- **Inspect, persist, and export runs**: TraceRecord v2 sinks can feed `InMemoryTraceStore`, the persistent single-process `FileTraceStore`, or the optional first-party `createOtelTraceSink()` bridge to an application-owned OpenTelemetry provider. The offline Run Viewer remains available for local inspection; telemetry redaction is best-effort.
+- **You hold the controls**: inspect the plan (`onPlanReady`), approve one task dispatch (`onTaskDispatch`) or a legacy round (`onApproval`), gate consequential tools (`onToolCall`), verify with `runConsensus`, and cap usage with `maxTokenBudget` or `maxCostBudget` + the application-owned `estimateCost`. Budget checks happen at boundaries, so a run can cross a ceiling by one in-flight model turn.
+- **Inspect, persist, and export runs**: task results, routing decisions, execution receipts, TraceRecord v2 stores, the offline Run Viewer, and the optional first-party OpenTelemetry bridge keep evidence inspectable. Telemetry redaction is best-effort; checkpoint and shared-memory values require an explicit persisted-store policy.
 - **External agents and evaluation**: run a local process or an ACP coding agent as a member of the same task DAG, and measure completed runs with versioned EvalSets, scorers, CI gates, and best-effort production sampling through `@open-multi-agent/core/eval`.
 
 ## Docs
 
+- [Capabilities](https://open-multi-agent.com/capabilities/): the released v1.13 runtime surface, from goal or DAG through routing, scheduling, governance, recovery, and evidence.
 - [Introduction](https://open-multi-agent.com/getting-started/introduction/): what open-multi-agent is, how goal-first orchestration differs from graph-first frameworks, and how the runtime is structured.
 - [Quick Start](https://open-multi-agent.com/getting-started/quick-start/): scaffold a project with npm create oma-app, or install the core package and run your first auto-orchestrated team.
 - [Three Ways to Run](https://open-multi-agent.com/getting-started/three-ways-to-run/): runAgent, runTeam, and runTasks — plus plan preview, plan replay, and consensus verification.
-- [Orchestration Controls](https://open-multi-agent.com/guides/orchestration-controls/): team context injection, approval gates, cancellation, coordinator config, and fan-out.
+- [Orchestration Controls](https://open-multi-agent.com/guides/orchestration-controls/): execution topology, declared governance, task dispatch, consequential-tool gates, cancellation, coordinator config, and fan-out.
 - [Control costs and budgets](https://open-multi-agent.com/guides/cost-budget-control/): bound a run with maxTokenBudget or maxCostBudget and a caller-owned estimateCost function.
 - [Production Checklist](https://open-multi-agent.com/guides/production-checklist/): token budget, timeouts, retries, tool-output limits, loop detection, tracing, and tool grants.
 - [Architecture](https://open-multi-agent.com/architecture/): how OMA works — the architecture and the runTeam() execution flow, from a goal to a task DAG to a synthesized result.
 
 ## Reference
 
+- [Execution routing](https://open-multi-agent.com/reference/execution-routing/): choose single-agent or team execution through explicit modes, governance policy, custom routers, and auditable decisions.
+- [Task scheduling and dispatch](https://open-multi-agent.com/reference/task-scheduling/): event-driven DAG execution, scheduling strategies, structured requirements and handoffs, priority, metadata, and approval modes.
 - [Providers](https://open-multi-agent.com/reference/providers/): configure hosted, cloud, and local model providers — built-in shortcuts, OpenAI-compatible endpoints, env vars, and local tool-calling.
 - [Tool configuration](https://open-multi-agent.com/reference/tool-configuration/): grant built-in tools (default-deny), presets and allowlists, the filesystem sandbox, custom tools, and MCP.
 - [Observability](https://open-multi-agent.com/reference/observability/): TraceRecord v2 sinks, TraceStore implementations, optional OpenTelemetry export, and the offline post-run Run Viewer.
@@ -55,7 +60,7 @@ Use-case guides — the common shapes teams build with OMA, each with runnable T
 - [Goal-driven orchestration](https://open-multi-agent.com/solutions/goal-driven-orchestration/): describe the goal instead of wiring the graph; the coordinator decomposes it into a task DAG at runtime and parallelizes it.
 - [Mixed-model agent teams](https://open-multi-agent.com/solutions/mixed-model-teams/): each agent names its own provider — Claude, GPT, Gemini, or a local model — cooperating in one run, with cost and latency you can watch.
 - [Local agents with Ollama](https://open-multi-agent.com/solutions/local-agents-ollama/): run a multi-agent team fully on your own machine — even the coordinator on a local model, at $0 API cost — or a hybrid that bursts to the cloud.
-- [Agent long-term memory](https://open-multi-agent.com/solutions/agent-memory/): the MemoryStore interface persists state across runs, so a team can recall what an earlier run learned.
+- [Durable shared memory](https://open-multi-agent.com/solutions/agent-memory/): MemoryStore persists namespaced key-value state and completed-task checkpoints across runs; semantic recall requires a separate memory layer.
 - [Vercel AI SDK orchestration](https://open-multi-agent.com/solutions/vercel-ai-sdk-orchestration/): add multi-agent orchestration to an existing AI SDK app; the SDK talks to models while runTeam() decomposes the goal.
 
 ## Integrations
@@ -75,6 +80,7 @@ Per-provider setup — one env var and a model name to run a team on each. Hub: 
 
 ## Blog
 
+- [Open Multi-Agent v1.13: Route, Govern, Schedule, and Prove the Run](https://open-multi-agent.com/blog/v1-13-execution-routing-governance-scheduling/): execution routing, declared governance, consequential-tool confirmation, event-driven task scheduling, task-scoped results, structured handoffs, and retryable model fallbacks.
 - [A 100% Local Multi-Agent Team in TypeScript (Ollama + Gemma, $0 API Cost)](https://open-multi-agent.com/blog/local-multi-agent-team-ollama-gemma/): run a multi-agent team fully on your laptop — even the coordinator is a 5B Gemma over Ollama — with a real per-agent ledger and a hybrid cloud+local variant.
 - [From Transcript to Typed Action Items: Three Parallel Agents in TypeScript](https://open-multi-agent.com/blog/meeting-summarizer-parallel-agents/): three specialist agents run in parallel — two return typed Zod output — and a fourth aggregates them into one meeting report.
 - [Goal In, DAG Out: How Open-Multi-Agent Turns a Goal into a Task DAG](https://open-multi-agent.com/blog/goal-to-task-dag-coordinator/): how runTeam() hands a goal to a coordinator that builds the task DAG for you, with the mechanism step by step.

@@ -12,7 +12,7 @@ import LangSwitcher from './LangSwitcher.astro';
 import EnterpriseLink from './EnterpriseLink.astro';
 
 interface Props {
-  current?: 'home' | 'docs' | 'architecture' | 'examples' | 'showcase' | 'blog' | 'compare' | 'solutions' | 'integrations';
+  current?: 'home' | 'capabilities' | 'docs' | 'architecture' | 'examples' | 'showcase' | 'blog' | 'compare' | 'solutions' | 'integrations';
   starsK: string;
   locale?: Locale;
   path?: string;
@@ -29,7 +29,7 @@ const ucTitle = (e: { id: string; title: string }) => t.examples.entries[e.id]?.
 const ucHref = (e: { id: string; href: string }) => useCaseDetails.has(e.id) ? L(`/examples/${e.id}/`) : e.href;
 const ucExternal = (e: { id: string }) => !useCaseDetails.has(e.id);
 const pick = (o: Loc) => o[locale];
-const capabilitiesCurrent = current === 'architecture' || current === 'integrations';
+const capabilitiesCurrent = current === 'capabilities' || current === 'architecture' || current === 'integrations';
 const whyOmaCurrent = current === 'compare' || current === 'showcase';
 ---
 
@@ -46,9 +46,21 @@ const whyOmaCurrent = current === 'compare' || current === 'showcase';
         <div class="nav-menu nav-menu--cols nav-menu--capabilities" id="capabilities-menu">
           <div class="nav-col">
             <div class="nav-col-head">{t.nav.capabilityCols.build}</div>
+            <a class="nav-menu-link nav-menu-link--page" href={L('/capabilities/')} aria-current={current === 'capabilities' ? 'page' : undefined}>
+              <span class="pkg">{t.nav.capabilityMenu.overview.title}</span>
+              <span class="desc">{t.nav.capabilityMenu.overview.desc}</span>
+            </a>
             <a class="nav-menu-link nav-menu-link--page" href={L('/getting-started/three-ways-to-run/')}>
               <span class="pkg">{t.nav.capabilityMenu.orchestration.title}</span>
               <span class="desc">{t.nav.capabilityMenu.orchestration.desc}</span>
+            </a>
+            <a class="nav-menu-link nav-menu-link--page" href={L('/reference/execution-routing/')}>
+              <span class="pkg">{t.nav.capabilityMenu.routing.title}</span>
+              <span class="desc">{t.nav.capabilityMenu.routing.desc}</span>
+            </a>
+            <a class="nav-menu-link nav-menu-link--page" href={L('/reference/task-scheduling/')}>
+              <span class="pkg">{t.nav.capabilityMenu.scheduling.title}</span>
+              <span class="desc">{t.nav.capabilityMenu.scheduling.desc}</span>
             </a>
             <a class="nav-menu-link nav-menu-link--page" href={L('/reference/providers/')}>
               <span class="pkg">{t.nav.capabilityMenu.models.title}</span>
@@ -79,6 +91,9 @@ const whyOmaCurrent = current === 'compare' || current === 'showcase';
             <a class="nav-menu-link nav-menu-link--page" href={L('/guides/production-checklist/')}>
               <span class="pkg">{t.nav.capabilityMenu.reliability.title}</span>
               <span class="desc">{t.nav.capabilityMenu.reliability.desc}</span>
+            </a>
+            <a class="nav-menu-link nav-menu-link--page nav-menu-link--all" href={L('/capabilities/')}>
+              <span class="pkg">{t.nav.capabilityMenu.allCapabilities} →</span>
             </a>
           </div>
         </div>
@@ -113,13 +128,13 @@ const whyOmaCurrent = current === 'compare' || current === 'showcase';
       <div class="nav-item">
         <button type="button" class={`nav-menu-btn${whyOmaCurrent ? ' is-current' : ''}`} aria-haspopup="true" aria-expanded="false" aria-controls="why-oma-menu">{t.nav.whyOma} <span class="nav-menu-caret">▾</span></button>
         <div class="nav-menu" id="why-oma-menu">
-          <a class="nav-menu-link nav-menu-link--page" href={L('/compare/')} aria-current={current === 'compare' ? 'page' : undefined}>
-            <span class="pkg">{t.nav.compare}</span>
-            <span class="desc">{t.nav.whyOmaDesc.compare}</span>
-          </a>
           <a class="nav-menu-link nav-menu-link--page" href={L('/showcase/')} aria-current={current === 'showcase' ? 'page' : undefined}>
             <span class="pkg">{t.nav.showcase}</span>
             <span class="desc">{t.nav.whyOmaDesc.showcase}</span>
+          </a>
+          <a class="nav-menu-link nav-menu-link--page" href={L('/compare/')} aria-current={current === 'compare' ? 'page' : undefined}>
+            <span class="pkg">{t.nav.compare}</span>
+            <span class="desc">{t.nav.whyOmaDesc.compare}</span>
           </a>
         </div>
       </div>
