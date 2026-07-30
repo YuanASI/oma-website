@@ -106,7 +106,7 @@ export const zh: UiDict = {
     hero: {
       eyebrow: '开源多智能体框架，TypeScript 原生',
       h1: '自动分工的智能体团队，',
-      h1Accent: '由你的 TypeScript 后端掌控。',
+      h1Accent: '跑在你自己的环境里。',
       subtitle: '从一个目标或显式任务 DAG 出发；在你自己的环境里完成路由、审批、预算、追踪，并从任务边界恢复。',
       audience: '面向 TypeScript 后端与 AI 平台团队',
       meta: ['端云模型混用', 'MIT 许可'],
@@ -114,7 +114,6 @@ export const zh: UiDict = {
       demoNote: '无需注册 · 无需 API Key · 不会请求模型',
       trust: { stars: 'GitHub Star', release: '最新版本', license: '许可证', signup: '无需注册' },
       runtime: {
-        eyebrow: 'v1.13 运行路径',
         mode: '模式',
         modeValue: '团队',
         route: '路由',

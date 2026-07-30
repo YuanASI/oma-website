@@ -220,12 +220,18 @@ a { color: inherit; }
   border-left: 1px solid var(--oma-border-0); text-decoration: none;
 }
 .hero-trust > :first-child { border-left: 0; padding-left: 0; }
-.hero-trust b, .hero-trust span span {
+.hero-trust b,
+.hero-trust > a > span,
+.hero-trust > span > span {
   font-family: var(--font-mono); white-space: nowrap; overflow: hidden;
   text-overflow: ellipsis;
 }
 .hero-trust b { color: var(--oma-fg-0); font-size: 11px; font-weight: 600; }
-.hero-trust span span { color: var(--oma-fg-3); font-size: 8px; letter-spacing: 0.06em; text-transform: uppercase; }
+.hero-trust > a > span,
+.hero-trust > span > span {
+  color: var(--oma-fg-3); font-size: 8px; letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
 .hero-trust a:hover b { color: var(--oma-accent); }
 /* ── Command block (secondary CTA — the install path, sits below the Quick Start
    button so a first-time visitor meets the docs before scaffolding a project) ── */
@@ -367,10 +373,6 @@ a { color: inherit; }
   border: 1px solid var(--oma-accent-line); border-radius: var(--radius-sm);
   background: var(--oma-accent-soft);
 }
-.runtime-path-label {
-  margin-bottom: 8px; font-family: var(--font-mono); font-size: 8px;
-  letter-spacing: 0.09em; text-transform: uppercase; color: var(--oma-accent);
-}
 .runtime-path-steps { display: flex; align-items: center; gap: 7px; min-width: 0; }
 .runtime-path-steps span { display: grid; gap: 2px; min-width: 0; }
 .runtime-path-steps small, .runtime-path-steps b {
@@ -378,7 +380,7 @@ a { color: inherit; }
   white-space: nowrap;
 }
 .runtime-path-steps small { font-size: 7px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--oma-fg-3); }
-.runtime-path-steps b { font-size: 9px; font-weight: 600; color: var(--oma-fg-0); }
+.runtime-path-steps b { font-size: 11px; font-weight: 600; color: var(--oma-fg-0); }
 .runtime-path-steps i { color: var(--oma-accent); font-family: var(--font-mono); font-size: 9px; font-style: normal; }
 .artifact-goal {
   position: relative; background: var(--oma-bg-3);

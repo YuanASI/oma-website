@@ -125,7 +125,7 @@ export const en = {
     hero: {
       eyebrow: 'open-source AI Agent framework, TypeScript-native',
       h1: 'A self-organizing agent team, ',
-      h1Accent: 'controlled by your TypeScript backend.',
+      h1Accent: 'in an environment you control.',
       subtitle: 'Start from a goal or an explicit task DAG. Route, approve, budget, trace, and resume at task boundaries—in your own environment.',
       audience: 'for TypeScript backend and AI platform teams',
       meta: ['cloud + local models', 'MIT license'],
@@ -133,7 +133,6 @@ export const en = {
       demoNote: 'No signup · no API key · no model request.',
       trust: { stars: 'GitHub stars', release: 'latest release', license: 'license', signup: 'no signup' },
       runtime: {
-        eyebrow: 'v1.13 runtime path',
         mode: 'mode',
         modeValue: 'team',
         route: 'route',
