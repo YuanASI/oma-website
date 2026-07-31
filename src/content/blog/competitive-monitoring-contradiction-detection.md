@@ -1,6 +1,6 @@
 ---
-title: "Competitive Monitoring Without a Single Source of Truth"
-description: "Process social, community, and news claims in parallel, preserve their provenance, and make a separate agent compare contradictions instead of flattening them into one confident summary."
+title: "Keep Competitive Sources Apart Until Something Compares Them"
+description: "One agent per source, structured claims out of each, and an aggregator that reads validated records instead of prose — so contradictions between a vendor post, a community thread, and a news article survive to the report."
 pubDate: 2026-07-31
 tags: ["competitive-intelligence", "research", "typescript"]
 contentType: application
@@ -8,96 +8,118 @@ useCases: ["competitive monitoring", "contradiction detection"]
 industries: ["product intelligence"]
 evidence:
   kind: runnable-demo
-  note: "The recipe uses deliberately conflicting local Twitter, Reddit, and news fixtures. Live collection, source licensing, and production accuracy are outside this demonstration."
+  note: "The recipe uses deliberately conflicting local Twitter, Reddit, and news fixtures. Live collection, source licensing, and production accuracy are outside this demonstration. The handoff and scheduling behavior described here is documented runtime API."
 related:
   solutions: ["parallel-llm-calls", "mixed-model-teams"]
   examples: ["competitive-monitoring", "research-aggregation"]
   integrations: ["anthropic", "openai-compatible"]
   comparisons: ["langgraph"]
 featured: false
-readingMinutes: 5
+readingMinutes: 7
 ---
 
-A competitor announces one product update.
+A competitor announces one product update. The company post gives one date. A community thread gives another. A news article repeats a performance number with less context than it started with.
 
-The company post gives one date. A community thread gives another. A news article repeats a performance number with less context. A normal summarizer compresses the disagreement into one smooth paragraph.
+Feed all three to one summarizer and you get a smooth paragraph. It is easy to read and it has quietly destroyed the most useful thing in the input: the disagreement.
 
-That paragraph is easy to read and hard to trust.
+The fix is structural. Extract each source independently, keep the claims typed, and make comparison a separate job that reads records rather than prose.
 
-Competitive monitoring needs a different shape:
+## One reader per source boundary
 
-> Extract each source independently. Preserve the claims. Compare them only after their provenance is explicit.
+The runnable [Competitive Monitoring example](/examples/competitive-monitoring/) gives one fixture to each source analyst — a Twitter feed, a community feed, a news feed — and lets an aggregator compare what comes back.
 
-The runnable [Competitive Monitoring example](/examples/competitive-monitoring/) demonstrates that shape with three deliberately conflicting local fixtures.
+```ts
+await orchestrator.runTasks(team, [
+  {
+    title: 'Twitter',
+    description: 'Extract claims from the Twitter feed.',
+    assignee: 'twitter-analyst',
+  },
+  {
+    title: 'Reddit',
+    description: 'Extract claims from the community feed.',
+    assignee: 'reddit-analyst',
+  },
+  {
+    title: 'News',
+    description: 'Extract claims from the news feed.',
+    assignee: 'news-analyst',
+  },
+  {
+    title: 'Compare',
+    description: 'Group duplicates, compare dates and numbers, flag contradictions.',
+    assignee: 'aggregator',
+    dependsOn: ['Twitter', 'Reddit', 'News'],
+    dependencyPayload: 'structured',
+  },
+])
+```
 
-## Three readers, three source boundaries
+The three readers declare no dependencies on each other, so they run together. That is the smaller benefit.
 
-The recipe gives one fixture to each source analyst:
+The larger one is isolation. A single agent reading every feed in one prompt can treat repetition as corroboration even when all three channels copied the same original statement, and it can drop the awkward detail that two sources disagree. Separate agents do not make any source more accurate. They make the boundaries harder to lose.
 
-- A Twitter analyst reads the Twitter feed.
-- A Reddit analyst reads the community feed.
-- A news analyst reads the news feed.
+## Comparison reads records, not paragraphs
 
-Each agent returns structured claims with a claim, date, source URL, and confidence. The three analyses run together because none depends on another.
+`dependencyPayload: 'structured'` is doing the load-bearing work here. Without it, a direct dependency injects the upstream task's raw `output` — and the aggregator would be re-reading three narratives, re-extracting claims that were already extracted, and re-guessing which feed each one came from.
 
-This is more than a latency optimization. Source isolation prevents an early blend.
+With it, only canonical JSON derived from each analyst's successful `AgentRunResult.structured` reaches the aggregator. Narrative text is excluded. Each claim arrives with the shape the analyst validated: the claim, its date, its source URL, its confidence.
 
-If one agent reads every feed in one prompt, it can silently treat repetition as corroboration, even when every channel copied the same original statement. It can also discard the awkward detail that two sources disagree.
+That changes what the aggregator can be asked to do. Not "write a better summary" but a narrower, checkable job: group duplicate claims, compare dates and numbers, flag contradictions, preserve source links and confidence, and produce one report.
 
-Separate agents do not make the sources more accurate. They make the boundaries harder to lose.
+The final artifact can then say "these two sources disagree" instead of forcing a resolution the evidence does not support.
 
-## Comparison is a different job
+## Every source's extraction stays separately readable
 
-After the three source reviews finish, an intelligence aggregator receives their structured results.
+The report is not the only output worth keeping. When a claim turns out to be wrong three weeks later, the question is which feed carried it and what the analyst actually returned.
 
-Its job is not "write a better summary." It has a narrower responsibility:
+`taskResults` keeps every task's unmerged result, keyed by stable task ID, alongside the `agentResults` index that merges by agent:
 
-- Group duplicate claims.
-- Compare dates and numbers.
-- Flag contradictions.
-- Preserve source links and confidence.
-- Produce one Markdown intelligence report.
+```ts
+const result = await orchestrator.runTasks(team, tasks)
 
-That handoff separates extraction from judgment. It also gives downstream code a usable record of what was compared.
+const newsTask = result.tasks?.find(task => task.title === 'News')
+const newsClaims = newsTask
+  ? result.taskResults?.get(newsTask.id)?.structured
+  : undefined
+```
 
-The final report can say "these two sources disagree" instead of forcing an answer that the evidence does not support.
+Both indexes reference the same executions, and exposing `taskResults` does not count usage twice.
 
-## What this architecture does not solve
+## Pay for depth only where judgment happens
 
-The example uses local fixtures. It does not:
+Three extraction passes over bundled feeds and one comparison across conflicting claims are not the same kind of call. Model Routing separates them:
 
-- Authenticate to a live social or news API.
-- Decide whether your use complies with a source's terms.
-- Establish that a claim is true because several channels repeated it.
-- Replace a human analyst's decision about materiality.
-- Measure recall across the sources your team actually follows.
+```ts
+const modelRouting: ModelRoutingPolicy = {
+  rules: [
+    { match: { agent: 'aggregator' }, route: { model: 'claude-opus-4-7' } },
+    { match: { phase: 'worker' }, route: { model: 'claude-haiku-4-5' } },
+  ],
+}
 
-Those are not footnotes. They are the production work.
+await orchestrator.runTasks(team, tasks, { modelRouting })
+```
 
-A real deployment needs a source policy before it needs more agents:
+Rules evaluate in order and the first match wins, so the specific rule leads. A call matching nothing keeps the model it would have used.
 
-1. Define which channels are allowed.
-2. Store the original URL, retrieval time, and relevant excerpt.
-3. Distinguish first-party statements from commentary and repetition.
-4. Decide which contradictions require human review.
-5. Evaluate extraction and contradiction detection on a labeled set.
+## What the example does not do
 
-## When multiple agents earn their cost
+The recipe reads local fixtures. It does not authenticate to a live social or news API, decide whether your use complies with a source's terms, or measure recall across the channels your team actually follows. Those are the production work, and the first two are policy decisions before they are engineering ones.
 
-Use this pattern when source boundaries matter and each source can be processed independently.
+A real deployment needs a source policy before it needs more agents: which channels are allowed, what gets stored (original URL, retrieval time, relevant excerpt), how first-party statements are distinguished from commentary, and which contradictions require a human.
 
-Do not use it merely because there are several URLs. A single extraction pass may be enough when the volume is small and no downstream decision depends on provenance.
+Where the runtime does help is the last mile of that list. Extraction and contradiction detection are exactly the kind of thing that drifts silently, and the `@open-multi-agent/core/eval` subpath exists to measure it: score a versioned set of labeled feeds, gate CI on the report, and watch the trend rather than one run. Evaluation observes completed results and never changes the business outcome, which is why it is a separate subpath rather than a runtime hook. A scorer that throws is recorded as `scorer_error` and excluded from the averages — a failed measurement is not a zero score.
 
-The multi-agent shape earns its cost when:
+If collection eventually writes anywhere — a CRM, a briefing doc, an alert channel — that tool is `consequential: true`, and `onToolCall` gates each invocation after input validation and before `execute`.
 
-- Several feeds can be processed concurrently.
-- The same claim may appear in different forms.
-- Disagreement is itself useful information.
-- The final artifact must show where every conclusion came from.
+## When several agents earn their cost
 
-If the output is a weekly intelligence brief, the report should be a reviewable evidence product, not a prettier autocomplete result.
+Use this shape when source boundaries matter and each source can be processed independently. Do not use it merely because there are several URLs: a single extraction pass is enough when volume is small and no downstream decision depends on provenance.
 
-## Run the fixture first
+The multi-agent shape pays off when several feeds can be processed concurrently, the same claim appears in different forms, disagreement is itself the signal, and the artifact has to show where every conclusion came from.
+
+## Run the fixtures first
 
 From the framework repository, with `ANTHROPIC_API_KEY` set:
 
@@ -105,6 +127,4 @@ From the framework repository, with `ANTHROPIC_API_KEY` set:
 npx tsx packages/core/examples/cookbook/competitive-monitoring.ts
 ```
 
-Read the fixture claims before reading the generated report. Check whether the output retains the contradictions you can see by hand.
-
-Only then replace the fixtures with one live source at a time. A monitoring system should become more connected without becoming less attributable.
+Read the fixture claims by hand before reading the generated report, then check whether the output kept the contradictions you can see yourself. Only after that, replace fixtures with one live source at a time. A monitoring system should get more connected without getting less attributable.

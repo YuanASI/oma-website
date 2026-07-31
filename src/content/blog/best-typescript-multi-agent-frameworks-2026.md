@@ -43,9 +43,9 @@ Python-first frameworks such as CrewAI are outside this TypeScript shortlist. Th
 | Streaming UI and provider-neutral model/tool loops | **Vercel AI SDK** | Its agent and UI primitives sit close to the product interface; you can compose higher-level orchestration in application code. |
 | Manager agents, specialist handoffs, guardrails, and built-in tracing | **OpenAI Agents SDK for JS** | Handoffs and agents-as-tools are first-class composition patterns. |
 | A router-driven agent network on durable Inngest steps | **AgentKit** | A router selects agents around shared state, while model steps use Inngest execution semantics. |
-| Explicit task DAGs **and** runtime goal-to-DAG planning in one local runtime | **Open Multi-Agent** | The application can run one agent, supply the graph, or let a coordinator generate a reviewable task plan. |
+| Explicit task DAGs **and** runtime goal-to-DAG planning in one local runtime | **Open Multi-Agent** | Run one agent, supply the graph, or let a coordinator generate a reviewable plan — then read back which topology ran and why. |
 
-That table should produce a shortlist, not a purchase order. Build one representative workflow before committing.
+Treat that as a shortlist. Build one representative workflow before committing.
 
 ## 1. LangGraph.js: best for an explicit, durable state graph
 
@@ -108,11 +108,17 @@ Open Multi-Agent exposes three levels from one TypeScript runtime:
 - `runTasks()` when the application already knows the task DAG.
 - `runTeam()` when a coordinator should turn a goal into a task DAG at runtime.
 
-The generated plan can be inspected and approved, saved as an artifact, and replayed. Different agents can use different providers, including local OpenAI-compatible endpoints. The runtime also exposes token and estimated-cost budgets, traces, evaluation primitives, and task-grained checkpoint recovery.
+The distinguishing property is that moving between them is a decision the runtime records rather than a rewrite. An automatic `runTeam()` call resolves its topology through a documented precedence order — an explicit `mode`, then declared governance, then a per-run `ExecutionRouter`, then the orchestrator's, then the built-in `DeterministicRouter` — and reports the outcome in `result.routingDecision` with the reasons behind it, linked to trace evidence. That is Execution Routing, and it is deliberately separate from Model Routing, which picks the model for calls inside whichever topology won.
 
-Choose OMA when the key decision is not merely “one agent or many,” but **who owns the plan for this run**. Stable support tickets can use a fixed DAG; variable escalations can use a coordinator without moving to a second framework.
+Governance is declared rather than implied. `governanceIntent` with `requiredRoles` and `requiredOrder` states a role path the runtime checks against the executed topology, not against labels in agent prose, and reports `governanceConclusion`. An application may override a declared floor, but that returns `unsatisfied` with reason `overridden` rather than a clean success.
 
-Do not confuse task-grained checkpoints with a durable workflow service. A completed task can be reused after recovery, but an interrupted task starts again. If your primary requirement is process-independent timers, event waits, or infrastructure-managed durable execution, evaluate a workflow runtime explicitly.
+Approval is three boundaries, not one: `onPlanReady` for the generated plan, `onTaskDispatch` for one ready task, and `onToolCall` for one tool invocation — the last running after input validation and before `execute`, so it inspects actual arguments. Tools that cause real side effects are marked `consequential: true`; that classification reads tool grants only and never scans goals, prompts, or model output.
+
+Scheduling is event-driven: a downstream task starts as soon as its own dependencies are satisfied. `dependencyPayload: 'structured'` passes a dependency's validated JSON instead of its prose, and `taskResults` keeps every task's unmerged result addressable by stable ID. Different agents can use different providers, including local OpenAI-compatible endpoints, and model routes support ordered fallbacks. Token and estimated-cost budgets, traces, the offline Run Viewer, versioned EvalSets, and task-grained checkpoint recovery all run without a hosted service.
+
+Choose OMA when the key decision is not merely “one agent or many,” but **who owns the plan for this run, and what evidence remains afterward**. Stable support tickets can use a fixed DAG; variable escalations can use a coordinator without moving to a second framework, and the run itself records which path it took.
+
+Two boundaries are worth stating plainly. Task-grained checkpoints are not a durable workflow service: a completed task can be reused after recovery, but an interrupted task starts again — if your primary requirement is process-independent timers, event waits, or infrastructure-managed durable execution, evaluate a workflow runtime explicitly. And the tool gate is a policy decision, not a process sandbox; it decides whether a call proceeds, not what the tool can reach once it does.
 
 **Representative fit:** research, incident investigation, or operations work where the goal changes, independent investigations should run together, and a human may inspect the plan before execution.
 
@@ -127,7 +133,9 @@ Take one workflow that matters and implement the smallest end-to-end slice in tw
 5. **Can you change providers without changing orchestration?**
 6. **What infrastructure must stay running for recovery to work?**
 
-Then fail a model call, stop the process mid-run, reject one action, and change one provider. The framework that makes those events unsurprising is usually the better fit.
+Then fail a model call, stop the process mid-run, reject one action, and change one provider. The framework that makes those four events unsurprising — and leaves a record you can read afterward — is usually the better fit.
+
+Questions 1, 3, and 4 are where the candidates differ most, and they are worth answering with an actual run rather than a docs page. "Where can a human intervene?" has a different answer depending on whether the runtime offers one hook or several at distinct boundaries, and "what can you inspect?" has a different answer depending on whether the topology decision itself is recorded or only implied by what happened.
 
 ## Sources
 
