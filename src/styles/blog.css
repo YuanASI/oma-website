@@ -45,8 +45,12 @@
 /* The lead card earns emphasis from scale and the accent hairline — the same
    accent-line the DS badges use — not from a fill gradient. */
 .blog-editorial-grid .is-feature .blog-editorial-card { border-color: var(--oma-accent-line); }
+/* The lead card's text fills the card, exactly like every other card. It
+   carries no width cap: the original design filled the leftover width with a
+   gradient, and once that came out a capped measure just left the lines
+   breaking early against empty space. Only the type scale marks it as lead. */
 .blog-editorial-grid .is-feature .blog-card-title { font-size: var(--text-h3); letter-spacing: var(--tracking-tight); }
-.blog-editorial-grid .is-feature .blog-card-desc { max-width: 720px; font-size: var(--text-md); }
+.blog-editorial-grid .is-feature .blog-card-desc { font-size: var(--text-md); }
 .blog-card-kicker {
   display: flex;
   align-items: center;
