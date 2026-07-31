@@ -8,7 +8,7 @@ useCases: ["ticket triage", "escalation handling"]
 industries: ["customer support"]
 evidence:
   kind: runnable-demo
-  note: "This playbook combines two runnable repository examples with synthetic tickets. It does not claim CRM integration, autonomous account actions, or production outcomes."
+  note: "Two runnable repository examples over synthetic tickets. Classification, drafting, and routing are what the demo covers; CRM writes, account actions, and production results sit outside it."
 related:
   solutions: ["goal-driven-orchestration", "parallel-llm-calls"]
   examples: ["express-customer-support", "adaptive-customer-support"]

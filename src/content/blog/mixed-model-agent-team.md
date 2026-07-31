@@ -8,7 +8,7 @@ useCases: ["model routing", "cost-tiered pipelines"]
 industries: []
 evidence:
   kind: verified-run
-  note: "Includes measured token and latency observations from the described model mix; provider pricing remains a dated snapshot rather than a durable claim."
+  note: "Token and latency numbers are measured from the described model mix. Provider pricing is a snapshot dated to publication."
 related:
   solutions: ["mixed-model-teams"]
   examples: ["multi-model-team", "cost-tiered-pipeline"]

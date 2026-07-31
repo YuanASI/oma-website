@@ -8,7 +8,7 @@ useCases: ["工单分流", "升级事件处理"]
 industries: ["客户支持"]
 evidence:
   kind: runnable-demo
-  note: "这篇组合了仓库里的两个可运行示例，工单均为合成演示数据；不声称已经接入 CRM、能自主修改账户，或取得生产效果。"
+  note: "组合了仓库里的两个可运行示例，工单为合成数据。演示覆盖分类、起草与路由；写入 CRM、自主修改账户与生产效果都在范围之外。"
 related:
   solutions: ["goal-driven-orchestration", "parallel-llm-calls"]
   examples: ["express-customer-support", "adaptive-customer-support"]

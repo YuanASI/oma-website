@@ -8,7 +8,7 @@ useCases: ["模型路由", "分层成本流水线"]
 industries: []
 evidence:
   kind: verified-run
-  note: "包含所述模型组合的 token 与延迟实测；提供方价格只作为有日期的快照，不作为长期结论。"
+  note: "Token 与延迟为文中模型组合的实测数据。厂商价格是发表当时的快照。"
 related:
   solutions: ["mixed-model-teams"]
   examples: ["multi-model-team", "cost-tiered-pipeline"]

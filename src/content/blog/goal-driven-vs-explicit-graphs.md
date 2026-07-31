@@ -8,7 +8,7 @@ useCases: ["workflow design", "framework selection"]
 industries: []
 evidence:
   kind: source-backed-comparison
-  note: "Compares the documented orchestration surfaces and runnable code shapes available at publication time; it is a framework taxonomy, not a benchmark."
+  note: "Compares the orchestration surfaces and runnable code shapes documented at publication time. The output is a taxonomy of where each framework places decomposition cost; performance is unmeasured."
 related:
   solutions: ["goal-driven-orchestration"]
   examples: ["team-collaboration", "task-pipeline"]

@@ -8,7 +8,7 @@ useCases: ["production architecture", "framework evaluation"]
 industries: []
 evidence:
   kind: public-project
-  note: "The argument is grounded in the linked Mastra announcements and GitHub issues; it does not claim that the sampled failures represent every deployment."
+  note: "Grounded in the linked Mastra announcements and GitHub issues. That public record is the evidence; how far the same walls generalize is unmeasured."
 related:
   solutions: ["goal-driven-orchestration"]
   examples: ["trace-observability", "plan-replay"]

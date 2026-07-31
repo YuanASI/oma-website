@@ -8,7 +8,7 @@ useCases: ["多智能体适用性", "工作流拆解"]
 industries: ["应用设计"]
 evidence:
   kind: field-observation
-  note: "这篇总结来自 OMA 当前的可运行场景 recipes；它们是应用原型，不代表客户部署或行业的代表性样本。"
+  note: "综合 OMA 当前的可运行场景 recipes。文中的模式描述的是这些原型；真实客户部署是另一个问题。"
 related:
   solutions: ["parallel-llm-calls", "goal-driven-orchestration"]
   examples: ["meeting-summarizer", "competitive-monitoring", "contract-review-dag", "adaptive-customer-support"]

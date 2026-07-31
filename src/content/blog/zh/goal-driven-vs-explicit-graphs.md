@@ -8,7 +8,7 @@ useCases: ["工作流设计", "框架选型"]
 industries: []
 evidence:
   kind: source-backed-comparison
-  note: "对比发布时可查的编排接口与可运行代码形态；这是一份框架分类法，不是性能基准。"
+  note: "对比发表时可查的编排接口与可运行代码形态。产出是一份关于「分解成本落在哪里」的分类法；性能未做测量。"
 related:
   solutions: ["goal-driven-orchestration"]
   examples: ["team-collaboration", "task-pipeline"]

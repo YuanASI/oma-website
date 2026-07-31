@@ -8,7 +8,7 @@ useCases: ["offline agents", "private inference"]
 industries: ["regulated workloads"]
 evidence:
   kind: verified-run
-  note: "Reports a local coordinator run and its operating friction on the tested hardware; it does not generalize that result to every model or machine."
+  note: "Reports one local coordinator run and its operating friction on the hardware named in the article. The result is specific to that model and that machine."
 related:
   solutions: ["local-agents-ollama"]
   examples: ["gemma4-local", "ollama"]

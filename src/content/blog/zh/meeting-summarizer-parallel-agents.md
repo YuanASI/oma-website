@@ -8,7 +8,7 @@ useCases: ["会议跟进", "待办抽取"]
 industries: ["知识工作"]
 evidence:
   kind: verified-run
-  note: "工作流使用合成的工程会议转录运行；耗时与类型化结果来自该次运行，并非生产部署数据。"
+  note: "工作流跑在一份合成的工程会议转录稿上。耗时与类型化结果来自那一次运行。"
 related:
   solutions: ["parallel-llm-calls"]
   examples: ["meeting-summarizer"]

@@ -8,7 +8,7 @@ useCases: ["streaming agent apps", "Next.js orchestration"]
 industries: ["software products"]
 evidence:
   kind: runnable-demo
-  note: "The architecture is backed by the linked Next.js example; it demonstrates composition, not a claim about production scale."
+  note: "The architecture is backed by the linked Next.js example. It shows how the two libraries compose in a single route; scale is untested."
 related:
   solutions: ["vercel-ai-sdk-orchestration"]
   examples: ["with-vercel-ai-sdk"]

@@ -8,7 +8,7 @@ useCases: ["framework selection", "architecture evaluation"]
 industries: ["software"]
 evidence:
   kind: source-backed-comparison
-  note: "This guide compares current official documentation as of July 31, 2026. It does not rank popularity or benchmark output quality, latency, or cost. It is published by the Open Multi-Agent project."
+  note: "Compares official documentation current as of July 31, 2026, on orchestration surface and workflow fit. Popularity, output quality, latency, and cost sit outside its scope. Published by the Open Multi-Agent project."
 related:
   solutions: ["goal-driven-orchestration", "vercel-ai-sdk-orchestration"]
   examples: ["team-collaboration", "task-pipeline", "plan-replay"]

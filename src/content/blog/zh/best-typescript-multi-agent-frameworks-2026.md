@@ -8,7 +8,7 @@ useCases: ["框架选型", "架构评估"]
 industries: ["软件"]
 evidence:
   kind: source-backed-comparison
-  note: "本文比较截至 2026 年 7 月 31 日的一方文档；不按流行度排名，也没有对输出质量、延迟或成本做统一基准测试。本文由 Open Multi-Agent 项目发布。"
+  note: "对比截至 2026 年 7 月 31 日的官方文档，聚焦编排接口与工作流适配。热度、输出质量、延迟与成本都在对比范围之外。由 Open Multi-Agent 项目发布。"
 related:
   solutions: ["goal-driven-orchestration", "vercel-ai-sdk-orchestration"]
   examples: ["team-collaboration", "task-pipeline", "plan-replay"]

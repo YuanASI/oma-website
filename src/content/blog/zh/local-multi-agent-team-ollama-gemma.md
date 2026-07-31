@@ -8,7 +8,7 @@ useCases: ["离线智能体", "私有推理"]
 industries: ["受监管工作负载"]
 evidence:
   kind: verified-run
-  note: "记录测试硬件上的本地协调器运行与实际摩擦；不把这一结果外推到所有模型或机器。"
+  note: "记录了一次本地协调器运行，以及在文中所列硬件上的实际摩擦。结果仅对应该模型与该机器。"
 related:
   solutions: ["local-agents-ollama"]
   examples: ["gemma4-local", "ollama"]

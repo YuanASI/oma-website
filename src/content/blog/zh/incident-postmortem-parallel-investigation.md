@@ -8,7 +8,7 @@ useCases: ["事故复盘", "根因分析"]
 industries: ["软件运维"]
 evidence:
   kind: runnable-demo
-  note: "仓库示例运行在随附的事故情境上，证明的是编排与证据交接；它没有连接真实可观测性系统。"
+  note: "仓库示例运行在随附的事故情境上。演示的是编排与证据交接；接入真实可观测性系统需要读者自行完成。"
 related:
   solutions: ["parallel-llm-calls"]
   examples: ["incident-postmortem-dag", "trace-observability"]

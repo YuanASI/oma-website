@@ -8,7 +8,7 @@ useCases: ["生产架构", "框架评估"]
 industries: []
 evidence:
   kind: public-project
-  note: "论点建立在文中链接的 Mastra 公告与 GitHub issue 上；不声称这些失败样本代表所有部署。"
+  note: "论点建立在文中链接的 Mastra 公告与 GitHub issue 上。证据就是这份公开记录；同样的墙在多大范围内成立，尚未测量。"
 related:
   solutions: ["goal-driven-orchestration"]
   examples: ["trace-observability", "plan-replay"]

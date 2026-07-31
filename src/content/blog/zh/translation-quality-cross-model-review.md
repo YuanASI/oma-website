@@ -8,7 +8,7 @@ useCases: ["翻译 QA", "语义漂移审查"]
 industries: ["本地化"]
 evidence:
   kind: runnable-demo
-  note: "跨模型 recipe 运行在随附的样例文本上；回译只是审阅信号，不证明语言正确性或生产质量。"
+  note: "跨模型 recipe 运行在随附的样例文本上。回译产出的是复核信号：把可疑处挑出来交给人工确认。"
 related:
   solutions: ["mixed-model-teams", "parallel-llm-calls"]
   examples: ["translation-backtranslation", "multi-model-team"]

@@ -8,7 +8,7 @@ useCases: ["meeting follow-up", "action-item extraction"]
 industries: ["knowledge work"]
 evidence:
   kind: verified-run
-  note: "The workflow ran against a synthetic engineering transcript; timing and typed outputs come from that run, not a production deployment."
+  note: "The workflow ran against a synthetic engineering transcript. Timing and typed outputs come from that single run."
 related:
   solutions: ["parallel-llm-calls"]
   examples: ["meeting-summarizer"]

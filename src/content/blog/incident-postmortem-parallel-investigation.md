@@ -8,7 +8,7 @@ useCases: ["incident postmortems", "root-cause analysis"]
 industries: ["software operations"]
 evidence:
   kind: runnable-demo
-  note: "The repository example runs on a bundled incident scenario. It demonstrates orchestration and evidence handoffs, not an integration with a live observability stack."
+  note: "The repository example runs on a bundled incident scenario. Orchestration and evidence handoffs are demonstrated; wiring it to a live observability stack is left to the reader."
 related:
   solutions: ["parallel-llm-calls"]
   examples: ["incident-postmortem-dag", "trace-observability"]

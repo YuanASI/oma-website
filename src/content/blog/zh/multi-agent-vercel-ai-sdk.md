@@ -8,7 +8,7 @@ useCases: ["流式智能体应用", "Next.js 编排"]
 industries: ["软件产品"]
 evidence:
   kind: runnable-demo
-  note: "架构由文中链接的 Next.js 示例支撑；它证明两层可以组合，不代表生产规模。"
+  note: "架构由文中链接的 Next.js 示例支撑。展示的是两个库如何在同一个路由里组合；规模未做测试。"
 related:
   solutions: ["vercel-ai-sdk-orchestration"]
   examples: ["with-vercel-ai-sdk"]

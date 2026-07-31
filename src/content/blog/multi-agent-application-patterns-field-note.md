@@ -8,7 +8,7 @@ useCases: ["multi-agent fit", "workflow decomposition"]
 industries: ["application design"]
 evidence:
   kind: field-observation
-  note: "This is a synthesis of OMA's current runnable use-case recipes. They are application prototypes, not a representative sample of customer deployments or industries."
+  note: "Synthesizes OMA's current runnable use-case recipes. The patterns describe those prototypes; what customer deployments look like is a separate question."
 related:
   solutions: ["parallel-llm-calls", "goal-driven-orchestration"]
   examples: ["meeting-summarizer", "competitive-monitoring", "contract-review-dag", "adaptive-customer-support"]

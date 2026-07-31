@@ -8,7 +8,7 @@ useCases: ["translation QA", "semantic drift review"]
 industries: ["localization"]
 evidence:
   kind: runnable-demo
-  note: "The cross-model recipe runs on bundled sample text. Back-translation is used as a review signal, not proof of linguistic correctness or production quality."
+  note: "The cross-model recipe runs on bundled sample text. Back-translation produces a review signal: it flags candidates for a human to confirm."
 related:
   solutions: ["mixed-model-teams", "parallel-llm-calls"]
   examples: ["translation-backtranslation", "multi-model-team"]
