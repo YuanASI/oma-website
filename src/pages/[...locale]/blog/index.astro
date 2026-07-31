@@ -37,15 +37,9 @@ const contentTypeLabels = {
   engineering: bt.contentTypes.engineering,
   release: bt.contentTypes.release,
 };
-const evidenceKindLabels = {
-  'runnable-demo': bt.evidence.kinds.runnableDemo,
-  'verified-run': bt.evidence.kinds.verifiedRun,
-  'public-project': bt.evidence.kinds.publicProject,
-  'field-observation': bt.evidence.kinds.fieldObservation,
-  'source-backed-comparison': bt.evidence.kinds.sourceBackedComparison,
-  'technical-analysis': bt.evidence.kinds.technicalAnalysis,
-  'release-note': bt.evidence.kinds.releaseNote,
-};
+// Evidence kind and its scope note live on the post page, where the note gives
+// the kind its meaning. On a card the label alone repeated once per post
+// without adding much to the decision to open it.
 const primarySections = [
   { type: 'application', copy: bt.sections.application },
   { type: 'field-note', copy: bt.sections.fieldNote },
@@ -142,12 +136,6 @@ const jsonLd = {
                         {[...p.data.industries, ...p.data.useCases].slice(0, 3).map((tag) => <Badge tone="neutral">{tag}</Badge>)}
                       </div>
                     )}
-                    <div class="blog-card-foot">
-                      <span class="blog-evidence">
-                        <span class="blog-evidence-label">{bt.evidence.label}</span>
-                        {evidenceKindLabels[p.data.evidence.kind]}
-                      </span>
-                    </div>
                   </Card>
                 </a>
               ))}

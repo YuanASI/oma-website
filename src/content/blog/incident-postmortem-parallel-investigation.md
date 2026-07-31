@@ -1,5 +1,5 @@
 ---
-title: "Investigate an Incident in Parallel Without Blending the Evidence"
+title: "Incident Postmortems: Parallel Investigation, Serial Judgment"
 description: "Logs, deployments, and blast radius are independent evidence streams. A runTasks() DAG starts them together, keeps each result unmerged in taskResults, and hands the analyst validated structured payloads instead of prose."
 pubDate: 2026-07-31
 tags: ["sre", "incident-response", "typescript"]

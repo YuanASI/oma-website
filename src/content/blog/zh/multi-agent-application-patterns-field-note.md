@@ -1,5 +1,5 @@
 ---
-title: "决定一条工作流要不要一支团队的五条接缝"
+title: "五条接缝：一条工作流什么时候需要一支团队"
 description: "在 OMA 的可运行 recipe 里反复出现的五条边界——而每一条背后都对应一个具体的运行时机制，从结构化依赖载荷到事后可回读的执行路由决策。"
 pubDate: 2026-07-31
 tags: ["field-notes", "workflow-design", "agents"]

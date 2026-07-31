@@ -1,5 +1,5 @@
 ---
-title: "Keep Competitive Sources Apart Until Something Compares Them"
+title: "Competitive Monitoring: Isolate Each Source Before Comparing Them"
 description: "One agent per source, structured claims out of each, and an aggregator that reads validated records instead of prose — so contradictions between a vendor post, a community thread, and a news article survive to the report."
 pubDate: 2026-07-31
 tags: ["competitive-intelligence", "research", "typescript"]

@@ -1,5 +1,5 @@
 ---
-title: "并行调查一次事故，但不要把证据搅在一起"
+title: "事故复盘：调查并行，判断串行"
 description: "日志、部署与影响面是三条互不依赖的证据流。runTasks() 的任务图让它们同时开跑，taskResults 保留每条未经合并的结果，交到分析方手里的是校验过的结构化载荷而非散文。"
 pubDate: 2026-07-31
 tags: ["sre", "incident-response", "typescript"]

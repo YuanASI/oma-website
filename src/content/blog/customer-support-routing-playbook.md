@@ -1,5 +1,5 @@
 ---
-title: "Route Support Tickets Between a Fixed Pipeline and a Live Agent Team"
+title: "Support Tickets: A Fixed Pipeline and a Routed Agent Team"
 description: "Keep the high-volume path on a typed classify → draft → QA graph, let escalations get a coordinator-built team, and put the refund behind a confirmation gate the runtime enforces per call."
 pubDate: 2026-07-31
 tags: ["customer-support", "typescript", "agents"]

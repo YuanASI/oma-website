@@ -1,5 +1,5 @@
 ---
-title: "用一条路由规则把回译交给另一个模型，抓出语义漂移"
+title: "回译交给另一个模型，才抓得出语义漂移"
 description: "一个提供方负责翻译，通过 Model Routing 规则把回译交给另一个提供方，再由 Reviewer 返回结构化的漂移发现——然后用版本化的 EvalSet 去衡量 Reviewer 本身。"
 pubDate: 2026-07-31
 tags: ["localization", "translation", "typescript"]

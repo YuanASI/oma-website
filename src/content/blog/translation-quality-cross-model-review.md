@@ -1,5 +1,5 @@
 ---
-title: "Catch Translation Drift by Routing the Back-Translation to Another Model"
+title: "Translation Drift: Route the Back-Translation to Another Model"
 description: "Translate with one provider, back-translate with another through a model-routing rule, and let a reviewer return structured drift findings — then measure the reviewer itself with a versioned EvalSet."
 pubDate: 2026-07-31
 tags: ["localization", "translation", "typescript"]

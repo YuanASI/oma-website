@@ -1,5 +1,5 @@
 ---
-title: "让竞品来源保持隔离，直到有人真正去比对"
+title: "竞品监控：先隔离来源，再交给一个 Agent 比对"
 description: "每个来源一个 Agent，各自产出结构化论断，聚合方读到的是校验过的记录而不是散文——这样厂商公告、社区帖和新闻报道之间的矛盾，才能活着抵达报告。"
 pubDate: 2026-07-31
 tags: ["competitive-intelligence", "research", "typescript"]
