@@ -15,7 +15,7 @@ related:
   integrations: ["opentelemetry"]
   comparisons: ["langgraph"]
 featured: true
-readingMinutes: 7
+readingMinutes: 4
 ---
 
 Most multi-agent designs start from a cast list. Researcher. Writer. Reviewer. Planner.

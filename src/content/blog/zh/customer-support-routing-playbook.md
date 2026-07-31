@@ -15,7 +15,7 @@ related:
   integrations: ["openai", "openai-compatible"]
   comparisons: ["langgraph"]
 featured: true
-readingMinutes: 8
+readingMinutes: 5
 ---
 
 重置密码和争议账单，从同一个客服表单进来。它们不该走同一条工作流。

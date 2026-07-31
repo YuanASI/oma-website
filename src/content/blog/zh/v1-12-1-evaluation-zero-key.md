@@ -15,7 +15,7 @@ related:
   integrations: ["opentelemetry"]
   comparisons: []
 featured: false
-readingMinutes: 5
+readingMinutes: 3
 ---
 
 Open Multi-Agent v1.12.1 在运行时外面补上了一套质量闭环。你现在可以给评估案例与 Scorer 逻辑做版本管理、比较报告、在 CI 中执行质量闸门，也可以采样已经完成的线上运行，而不改变业务结果。同一个版本还把 `create-oma-app` 的首次运行变成无需凭证的确定性 Demo，并为离线 Run Viewer 补充了更完整的任务级证据。

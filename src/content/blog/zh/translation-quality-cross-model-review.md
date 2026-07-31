@@ -15,7 +15,7 @@ related:
   integrations: ["anthropic", "openai", "gemini"]
   comparisons: ["openai-agents-sdk"]
 featured: false
-readingMinutes: 7
+readingMinutes: 4
 ---
 
 一段译文可以读起来很自然，同时把意思改掉。一个限定词消失了。一个截止日期变软了。一句产品承诺比原文放得更宽。句子看上去没问题，直到有人把它和原意摆在一起对照。

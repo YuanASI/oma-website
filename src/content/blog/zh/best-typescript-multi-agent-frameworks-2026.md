@@ -15,7 +15,7 @@ related:
   integrations: ["external-agents", "opentelemetry"]
   comparisons: ["langgraph", "mastra", "vercel-ai-sdk", "openai-agents-sdk", "inngest-agentkit"]
 featured: true
-readingMinutes: 10
+readingMinutes: 7
 ---
 
 在说清楚哪种工作必须经得住生产环境之前，“最好的 TypeScript 多智能体框架是什么”没有一个有用的答案。

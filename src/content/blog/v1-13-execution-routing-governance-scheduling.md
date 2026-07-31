@@ -15,7 +15,7 @@ related:
   integrations: ["opentelemetry"]
   comparisons: []
 featured: false
-readingMinutes: 6
+readingMinutes: 2
 ---
 
 Open Multi-Agent v1.13 makes four runtime boundaries explicit: which topology

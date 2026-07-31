@@ -15,7 +15,7 @@ related:
   integrations: ["anthropic", "openai-compatible"]
   comparisons: ["langgraph"]
 featured: false
-readingMinutes: 7
+readingMinutes: 4
 ---
 
 竞品发布了一次产品更新。官方公告给了一个日期，社区帖子给了另一个日期，新闻报道复述了一个性能数字、但上下文比原文少了一截。

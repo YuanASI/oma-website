@@ -15,7 +15,7 @@ related:
   integrations: ["anthropic", "openai", "gemini"]
   comparisons: ["openai-agents-sdk"]
 featured: false
-readingMinutes: 7
+readingMinutes: 4
 ---
 
 A translation can read naturally and still change the meaning. A qualifier disappears. A deadline gets softer. A product promise gets broader than the source. The sentence looks fine until somebody compares it against the original intent.

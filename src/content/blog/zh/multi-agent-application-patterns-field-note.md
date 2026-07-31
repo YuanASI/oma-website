@@ -15,7 +15,7 @@ related:
   integrations: ["opentelemetry"]
   comparisons: ["langgraph"]
 featured: true
-readingMinutes: 7
+readingMinutes: 4
 ---
 
 多数多智能体设计是从一张角色表开始的。研究员、撰写者、审阅者、规划者。

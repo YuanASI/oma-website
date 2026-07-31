@@ -15,7 +15,7 @@ related:
   integrations: ["opentelemetry"]
   comparisons: ["langgraph", "inngest-agentkit"]
 featured: false
-readingMinutes: 7
+readingMinutes: 4
 ---
 
 事故复盘常常从排队开始。一个人看日志，然后另一个人查部署记录，接着团队估算客户影响。全都做完之后，才有人开始解释到底发生了什么。

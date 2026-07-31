@@ -15,7 +15,7 @@ related:
   integrations: ["opentelemetry"]
   comparisons: []
 featured: false
-readingMinutes: 5
+readingMinutes: 3
 ---
 
 Open Multi-Agent v1.12.1 adds a quality loop around the runtime. You can now

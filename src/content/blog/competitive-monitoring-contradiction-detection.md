@@ -15,7 +15,7 @@ related:
   integrations: ["anthropic", "openai-compatible"]
   comparisons: ["langgraph"]
 featured: false
-readingMinutes: 7
+readingMinutes: 4
 ---
 
 A competitor announces one product update. The company post gives one date. A community thread gives another. A news article repeats a performance number with less context than it started with.

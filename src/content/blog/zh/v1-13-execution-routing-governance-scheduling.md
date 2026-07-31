@@ -15,7 +15,7 @@ related:
   integrations: ["opentelemetry"]
   comparisons: []
 featured: false
-readingMinutes: 6
+readingMinutes: 2
 ---
 
 Open Multi-Agent v1.13 把四个运行时边界变成显式能力：选择哪种执行拓扑、

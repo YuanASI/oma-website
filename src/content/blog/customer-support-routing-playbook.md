@@ -15,7 +15,7 @@ related:
   integrations: ["openai", "openai-compatible"]
   comparisons: ["langgraph"]
 featured: true
-readingMinutes: 8
+readingMinutes: 5
 ---
 
 A password reset and a disputed invoice arrive through the same support form. They should not run the same workflow.

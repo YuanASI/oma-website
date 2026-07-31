@@ -15,7 +15,7 @@ related:
   integrations: ["external-agents", "opentelemetry"]
   comparisons: ["langgraph", "mastra", "vercel-ai-sdk", "openai-agents-sdk", "inngest-agentkit"]
 featured: true
-readingMinutes: 10
+readingMinutes: 7
 ---
 
 There is no useful answer to “What is the best TypeScript multi-agent framework?” until you say what kind of work must survive contact with production.

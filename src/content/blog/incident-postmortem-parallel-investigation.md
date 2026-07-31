@@ -15,7 +15,7 @@ related:
   integrations: ["opentelemetry"]
   comparisons: ["langgraph", "inngest-agentkit"]
 featured: false
-readingMinutes: 7
+readingMinutes: 4
 ---
 
 Incident reviews usually begin with a queue. One person reads logs. Then somebody checks the deployment history. Then the team estimates customer impact. Only after all of that does anyone try to explain what happened.
