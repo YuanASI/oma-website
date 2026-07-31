@@ -678,8 +678,8 @@ export const en = {
       fieldNote: {
         index: '02',
         eyebrow: 'Field notes',
-        title: 'Measured runs and recurring patterns.',
-        lede: 'Token ledgers, latency, and the friction a run actually hits — plus the boundaries that keep reappearing across workflows.',
+        title: 'What it looks like once it runs.',
+        lede: 'What the tokens cost, where it slowed down, what got in the way — and the boundaries that only surface after enough runs.',
       },
       decisionGuide: {
         index: '03',

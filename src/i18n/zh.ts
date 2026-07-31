@@ -797,8 +797,8 @@ export const zh: UiDict = {
       fieldNote: {
         index: '02',
         eyebrow: '一线观察',
-        title: '实测运行与反复出现的模式。',
-        lede: 'Token 账单、延迟，以及真跑一遍会遇到的摩擦；还有在不同工作流中反复出现的边界。',
+        title: '真跑起来是什么样。',
+        lede: 'Token 花了多少、在哪里变慢、卡在什么地方，以及跑得够多之后才浮现出来的那些边界。',
       },
       decisionGuide: {
         index: '03',
