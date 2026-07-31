@@ -3,6 +3,18 @@ title: "用 TypeScript 跑一支 100% 本地的多智能体团队（Ollama + Gem
 description: "在你的笔记本上把一支多智能体团队完全本地地跑起来——连协调器都是一个跑在 Ollama 上的 5B Gemma，$0 API 成本。附一本真实的按智能体台账、诚实的摩擦，以及一个云+本地的混合变体。"
 pubDate: 2026-07-02
 tags: ["typescript","ai","agents","ollama"]
+contentType: field-note
+useCases: ["离线智能体", "私有推理"]
+industries: ["受监管工作负载"]
+evidence:
+  kind: verified-run
+  note: "记录了一次本地协调器运行，以及在文中所列硬件上的实际摩擦。结果仅对应该模型与该机器。"
+related:
+  solutions: ["local-agents-ollama"]
+  examples: ["gemma4-local", "ollama"]
+  integrations: ["ollama", "openai-compatible"]
+  comparisons: ["mastra"]
+featured: false
 readingMinutes: 10
 ---
 ## API 账单就是一张数据外泄回执

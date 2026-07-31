@@ -8,13 +8,120 @@
 /* Narrower reading column for post bodies. */
 .container--narrow { max-width: 768px; }
 
-/* ── Index list ── */
-.blog-list { display: grid; gap: var(--space-5); margin-top: var(--space-10); }
+/* ── Editorial index ── */
 .blog-card-link { text-decoration: none; display: block; }
 .blog-card-meta { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted); letter-spacing: 0.02em; }
 .blog-card-title { font-size: var(--text-h4); line-height: 1.25; color: var(--text-strong); margin: var(--space-3) 0 var(--space-2); }
-.blog-card-desc { font-size: var(--text-sm); line-height: 1.65; color: var(--text-body); margin: 0 0 var(--space-4); }
+/* Descriptions double as the SEO meta description, so they run long. Cap the
+   card at three lines rather than shortening the source text. */
+.blog-card-desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  font-size: var(--text-sm);
+  line-height: 1.65;
+  color: var(--text-body);
+  margin: 0 0 var(--space-4);
+}
 .blog-card-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+/* Hero → first pillar rhythm, matching /examples, the other page built from a
+   hero plus numbered sections. Two stacked .section paddings plus the default
+   .hero-head-row margin would read as one enormous gap, so the hero takes a
+   tuned bottom padding, zeroes that margin (landing.css expects each hero to
+   override it), and the section under it tightens its top. */
+.section.blog-hero { padding: 72px 0 8px; }
+.blog-hero .hero-head-row { margin-bottom: 0; }
+.section.blog-pillar.is-first,
+.section.blog-archive.is-first { padding-top: 56px; }
+
+/* Pillar sections reuse the shared .section / .section-head scaffolding from
+   landing.css — no divider rule between them; the numbered eyebrow (matching
+   /examples) and the section rhythm carry the separation on their own. */
+
+/* Card grid. auto-fit tracks match the /solutions hub, so the mid widths
+   between the mobile breakpoint and full desktop reflow instead of squeezing
+   two columns. The lead post of each pillar spans the row. */
+.blog-editorial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-4);
+}
+.blog-editorial-grid .blog-card-link.is-feature { grid-column: 1 / -1; }
+.blog-editorial-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+/* The lead card earns emphasis from scale and the accent hairline — the same
+   accent-line the DS badges use — not from a fill gradient. */
+.blog-editorial-grid .is-feature .blog-editorial-card { border-color: var(--oma-accent-line); }
+/* The lead card's text fills the card, exactly like every other card. It
+   carries no width cap: the original design filled the leftover width with a
+   gradient, and once that came out a capped measure just left the lines
+   breaking early against empty space. Only the type scale marks it as lead. */
+.blog-editorial-grid .is-feature .blog-card-title { font-size: var(--text-h3); letter-spacing: var(--tracking-tight); }
+.blog-editorial-grid .is-feature .blog-card-desc { font-size: var(--text-md); }
+.blog-card-kicker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.blog-editorial-card .blog-card-tags { margin-top: auto; }
+/* Shared by the post header's evidence band (see .blog-evidence-note). */
+.blog-evidence {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  color: var(--text-body);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+.blog-evidence-label {
+  color: var(--text-faint);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+/* Archive rows follow the /examples .ex-row list: hover paints the surface and
+   colors the title, no layout property animates. */
+.blog-archive-list { border-top: 1px solid var(--border-subtle); }
+.blog-archive-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  gap: var(--space-4);
+  align-items: baseline;
+  padding: var(--space-4) var(--space-1);
+  border-bottom: 1px solid var(--border-subtle);
+  color: inherit;
+  text-decoration: none;
+  transition: background var(--duration-base) var(--ease-out);
+}
+.blog-archive-row:hover { background: var(--oma-bg-1); }
+.blog-archive-row .kind { align-self: center; }
+.blog-archive-row .name {
+  min-width: 0;
+  margin: 0;
+  color: var(--text-strong);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  line-height: 1.35;
+}
+.blog-archive-row:hover .name { color: var(--oma-accent); }
+.blog-archive-row .meta {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+.blog-archive-row .arr {
+  color: var(--text-muted);
+  transition: transform var(--duration-base) var(--ease-out), color var(--duration-base) var(--ease-out);
+}
+.blog-archive-row:hover .arr { color: var(--oma-accent); transform: translateX(3px); }
 
 /* ── Post head / footer ── */
 .blog-back { display: inline-block; font-family: var(--font-mono); font-size: var(--text-sm); color: var(--text-muted); text-decoration: none; margin-bottom: var(--space-8); }
@@ -22,6 +129,20 @@
 .blog-post-head { margin-bottom: var(--space-10); }
 .blog-post-head h1 { font-size: var(--text-h2); line-height: 1.08; color: var(--text-strong); margin: var(--space-4) 0 var(--space-5); letter-spacing: -0.01em; }
 .blog-post-head .blog-card-tags { margin-top: var(--space-3); }
+/* Evidence band under the post title — same label/value pair the index cards
+   carry, so the scope disclosure reads identically in both places. */
+.blog-evidence-note {
+  margin-top: var(--space-6);
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.blog-evidence-note p {
+  margin: var(--space-2) 0 0;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
 .blog-rule { border: 0; border-top: 1px solid var(--border-subtle); margin: var(--space-16) 0 var(--space-6); }
 .blog-origin { font-size: var(--text-sm); color: var(--text-muted); }
 .blog-origin a { color: var(--oma-accent); }
@@ -60,4 +181,17 @@
 
 @media (max-width: 640px) {
   .blog-post-head h1 { font-size: var(--text-h3); }
+  .blog-editorial-grid { grid-template-columns: 1fr; }
+  .blog-editorial-grid .blog-card-link.is-feature { grid-column: auto; }
+  .blog-editorial-grid .is-feature .blog-card-title { font-size: var(--text-h4); }
+  .blog-editorial-grid .is-feature .blog-card-desc { font-size: var(--text-sm); }
+  .blog-card-kicker { align-items: flex-start; flex-direction: column; gap: var(--space-2); }
+  /* Archive rows stack: badge + date share a line, the title spans below. */
+  .blog-archive-row {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: var(--space-2) var(--space-3);
+    align-items: center;
+    padding: var(--space-4) var(--space-1);
+  }
+  .blog-archive-row .name { grid-row: 2; grid-column: 1 / -1; }
 }

@@ -3,6 +3,18 @@ title: "Adding Multi-Agent Orchestration to a Vercel AI SDK App"
 description: "Add multi-agent orchestration to an existing Vercel AI SDK app: the AI SDK streams tokens and talks to models while open-multi-agent's runTeam() decomposes the goal and coordinates the agents — sharing a single Next.js API route."
 pubDate: 2026-04-15
 tags: ["ai","nextjs","webdev","typescript"]
+contentType: application
+useCases: ["streaming agent apps", "Next.js orchestration"]
+industries: ["software products"]
+evidence:
+  kind: runnable-demo
+  note: "The architecture is backed by the linked Next.js example. It shows how the two libraries compose in a single route; scale is untested."
+related:
+  solutions: ["vercel-ai-sdk-orchestration"]
+  examples: ["with-vercel-ai-sdk"]
+  integrations: ["openai", "openai-compatible"]
+  comparisons: ["vercel-ai-sdk"]
+featured: false
 devtoUrl: "https://dev.to/jackchenme/adding-multi-agent-orchestration-to-a-vercel-ai-sdk-app-4536"
 readingMinutes: 7
 ---

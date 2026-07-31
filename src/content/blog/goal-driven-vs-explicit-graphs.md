@@ -3,6 +3,18 @@ title: "Goal-Driven Agent Orchestration vs Explicit Graphs: A TypeScript Framewo
 description: "Most multi-agent framework reviews compare features. This post compares a different axis: where the framework places the decomposition cost. Goal-first frameworks pay it at runtime in tokens; graph-first frameworks pay it at design time in code."
 pubDate: 2026-06-03
 tags: ["typescript","ai"]
+contentType: decision-guide
+useCases: ["workflow design", "framework selection"]
+industries: []
+evidence:
+  kind: source-backed-comparison
+  note: "Compares the orchestration surfaces and runnable code shapes documented at publication time. The output is a taxonomy of where each framework places decomposition cost; performance is unmeasured."
+related:
+  solutions: ["goal-driven-orchestration"]
+  examples: ["team-collaboration", "task-pipeline"]
+  integrations: []
+  comparisons: ["langgraph", "mastra"]
+featured: false
 devtoUrl: "https://dev.to/jackchenme/goal-driven-agent-orchestration-vs-explicit-graphs-a-typescript-framework-taxonomy-6i3"
 readingMinutes: 12
 ---

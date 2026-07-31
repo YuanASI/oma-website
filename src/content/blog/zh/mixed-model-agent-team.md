@@ -3,6 +3,18 @@ title: "如何用 TypeScript 跑一支混合模型的 AI 智能体团队？"
 description: "一篇实操走查：从单模型团队基线，到带实时成本与延迟监控的多供应商生产配置，用的是 open-multi-agent——TypeScript 生态里对标 CrewAI 的那个答案。"
 pubDate: 2026-05-16
 tags: ["typescript","agents","ai","opensource"]
+contentType: field-note
+useCases: ["模型路由", "分层成本流水线"]
+industries: []
+evidence:
+  kind: verified-run
+  note: "Token 与延迟为文中模型组合的实测数据。厂商价格是发表当时的快照。"
+related:
+  solutions: ["mixed-model-teams"]
+  examples: ["multi-model-team", "cost-tiered-pipeline"]
+  integrations: ["anthropic", "openai-compatible"]
+  comparisons: ["crewai"]
+featured: false
 readingMinutes: 16
 ---
 > 一篇实操走查，带你从单模型团队基线走到带实时成本与延迟监控的多供应商生产配置，用的是 [open-multi-agent](https://github.com/open-multi-agent/open-multi-agent)——TypeScript 生态里对标 CrewAI 的那个答案。

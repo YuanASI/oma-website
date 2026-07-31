@@ -3,7 +3,19 @@ title: "Open Multi-Agent v1.12.1: Evaluation, Offline Inspection, and a No-Key F
 description: "v1.12.1 adds versioned EvalSets, scorers, CI gates, online sampling, richer offline run inspection, per-run metadata, and a deterministic create-oma-app demo that needs no API key."
 pubDate: 2026-07-20
 tags: ["release","evaluation","typescript"]
-readingMinutes: 5
+contentType: release
+useCases: ["agent evaluation", "offline inspection"]
+industries: []
+evidence:
+  kind: release-note
+  note: "Describes the published v1.12.1 release surface and its bundled no-key demo."
+related:
+  solutions: []
+  examples: ["eval-offline-regression", "observability-v2"]
+  integrations: ["opentelemetry"]
+  comparisons: []
+featured: false
+readingMinutes: 3
 ---
 
 Open Multi-Agent v1.12.1 adds a quality loop around the runtime. You can now

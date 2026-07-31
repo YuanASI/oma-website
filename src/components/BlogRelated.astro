@@ -1,0 +1,178 @@
+---
+// Editorial bridge from a scenario or decision article into the site's
+// product, runnable-example, and integration layers. Frontmatter stores stable
+// slugs; this component resolves labels from each layer's source of truth and
+// fails the build when an article points at a missing entry.
+import { getCatalogExample } from '../lib/examples';
+import { COMPARISONS } from '../lib/compare';
+import { getIntegration } from '../lib/integrations';
+import { getSolution } from '../lib/solutions';
+import { localizePath, useTranslations, type Locale } from '../i18n';
+
+interface RelatedLinks {
+  solutions: string[];
+  examples: string[];
+  integrations: string[];
+  comparisons: string[];
+}
+
+interface Props {
+  locale?: Locale;
+  related: RelatedLinks;
+}
+
+const { locale = 'en', related } = Astro.props;
+const t = useTranslations(locale);
+const bt = t.blog;
+const L = (path: string) => localizePath(path, locale);
+
+const solutions = related.solutions.map((slug) => {
+  const item = getSolution(slug);
+  if (!item) throw new Error(`Blog related solution does not exist: ${slug}`);
+  return { slug, title: item.title[locale], description: item.lede[locale] };
+});
+const examples = related.examples.map((slug) => {
+  const item = getCatalogExample(slug);
+  if (!item) throw new Error(`Blog related example does not exist: ${slug}`);
+  return {
+    slug,
+    title: t.examples.detail.recipes[slug]?.title ?? item.title,
+    description: t.examples.entries[slug]?.blurb ?? item.description,
+  };
+});
+const integrations = related.integrations.map((slug) => {
+  const item = getIntegration(slug);
+  if (!item) throw new Error(`Blog related integration does not exist: ${slug}`);
+  return { slug, title: item.title[locale], description: item.lede[locale] };
+});
+const comparisons = related.comparisons.map((slug) => {
+  const item = COMPARISONS.find((comparison) => comparison.slug === slug);
+  if (!item) throw new Error(`Blog related comparison does not exist: ${slug}`);
+  return {
+    slug,
+    title: `open-multi-agent vs ${item.name}`,
+    description: item.lede[locale],
+  };
+});
+const groups = [
+  { key: 'solutions', label: bt.related.solutions, items: solutions },
+  { key: 'examples', label: bt.related.examples, items: examples },
+  { key: 'integrations', label: bt.related.integrations, items: integrations },
+  { key: 'compare', label: bt.related.comparisons, items: comparisons },
+] as const;
+const hasLinks = groups.some((group) => group.items.length > 0);
+---
+
+{hasLinks && (
+  <aside class="blog-related" aria-labelledby="blog-related-title">
+    <div class="eyebrow"><span class="idx">//</span> {bt.related.eyebrow}</div>
+    <h2 id="blog-related-title">{bt.related.title}</h2>
+    <p class="blog-related-lede">{bt.related.lede}</p>
+    <div class="blog-related-grid">
+      {groups.map((group) => group.items.length > 0 && (
+        <section class="blog-related-group">
+          <div class="blog-related-label">{group.label}</div>
+          {group.items.map((item) => (
+            <a class="blog-related-link" href={L(`/${group.key}/${item.slug}/`)}>
+              <span>
+                <strong>{item.title}</strong>
+                <small>{item.description}</small>
+              </span>
+              <span class="blog-related-open" aria-hidden="true">{bt.related.open} →</span>
+            </a>
+          ))}
+        </section>
+      ))}
+    </div>
+  </aside>
+)}
+
+<style>
+  .blog-related {
+    margin-top: var(--space-16);
+    padding-top: var(--space-10);
+    border-top: 1px solid var(--border-default);
+  }
+  .blog-related h2 {
+    margin: var(--space-3) 0 var(--space-3);
+    color: var(--text-strong);
+    font-size: var(--text-h3);
+    line-height: 1.18;
+  }
+  .blog-related-lede {
+    max-width: 660px;
+    margin: 0 0 var(--space-8);
+    color: var(--text-body);
+    line-height: var(--leading-normal);
+  }
+  .blog-related-grid {
+    display: grid;
+    gap: var(--space-5);
+  }
+  .blog-related-group {
+    display: grid;
+    grid-template-columns: 132px minmax(0, 1fr);
+    border-top: 1px solid var(--border-subtle);
+  }
+  .blog-related-label {
+    padding: var(--space-5) var(--space-5) var(--space-5) 0;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+  .blog-related-link {
+    grid-column: 2;
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-5);
+    padding: var(--space-5);
+    border-left: 1px solid var(--border-subtle);
+    color: inherit;
+    text-decoration: none;
+    transition: background var(--duration-fast) var(--ease-out);
+  }
+  .blog-related-link + .blog-related-link {
+    border-top: 1px solid var(--border-subtle);
+  }
+  .blog-related-link:hover {
+    background: var(--oma-bg-1);
+  }
+  .blog-related-link:hover strong {
+    color: var(--oma-accent);
+  }
+  .blog-related-link:hover .blog-related-open {
+    transform: translateX(3px);
+  }
+  .blog-related-link strong {
+    display: block;
+    color: var(--text-strong);
+    font-size: var(--text-md);
+    line-height: 1.4;
+    transition: color var(--duration-base) var(--ease-out);
+  }
+  .blog-related-link small {
+    display: block;
+    max-width: 620px;
+    margin-top: var(--space-2);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    line-height: 1.55;
+  }
+  .blog-related-open {
+    flex: none;
+    align-self: center;
+    color: var(--oma-accent);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+  @media (max-width: 640px) {
+    .blog-related h2 { font-size: var(--text-h4); }
+    .blog-related-group { grid-template-columns: 1fr; }
+    .blog-related-label { padding-bottom: var(--space-3); }
+    .blog-related-link { grid-column: 1; border-left: 0; padding: var(--space-4) 0; }
+    .blog-related-open { display: none; }
+  }
+</style>

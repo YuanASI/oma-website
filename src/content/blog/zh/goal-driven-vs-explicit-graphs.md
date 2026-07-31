@@ -3,6 +3,18 @@ title: "目标驱动的智能体编排 vs 显式图：一份 TypeScript 框架�
 description: "多数多智能体框架评测比的是功能。这篇换一个轴来比：框架把拆解的成本放在哪里。目标优先的框架在运行时用 token 付，图优先的框架在设计期用代码付。"
 pubDate: 2026-06-03
 tags: ["typescript","ai"]
+contentType: decision-guide
+useCases: ["工作流设计", "框架选型"]
+industries: []
+evidence:
+  kind: source-backed-comparison
+  note: "对比发表时可查的编排接口与可运行代码形态。产出是一份关于「分解成本落在哪里」的分类法；性能未做测量。"
+related:
+  solutions: ["goal-driven-orchestration"]
+  examples: ["team-collaboration", "task-pipeline"]
+  integrations: []
+  comparisons: ["langgraph", "mastra"]
+featured: false
 readingMinutes: 12
 ---
 > 多数多智能体框架评测比的是功能。这篇主张你应该先比另一个轴：框架把拆解的成本放在哪里。目标优先的框架在运行时用 token 付，图优先的框架在设计期用代码付。哪个该作为默认选择，取决于你的团队真正做的是哪类活。

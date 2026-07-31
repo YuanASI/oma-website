@@ -3,6 +3,18 @@ title: "目标进，DAG 出：open-multi-agent 如何把一个目标变成任务
 description: "多数 TypeScript 智能体框架都要你手工接线任务图。open-multi-agent 的 runTeam() 把目标交给一个协调器，由它替你构建 DAG——这篇一步步讲清这个机制。"
 pubDate: 2026-06-21
 tags: ["typescript","ai","agents","opensource"]
+contentType: engineering
+useCases: ["动态规划", "目标拆解"]
+industries: []
+evidence:
+  kind: verified-run
+  note: "使用一次真实运行捕获的协调器计划，并把这次观察与不同模型运行之间可能变化的行为分开。"
+related:
+  solutions: ["goal-driven-orchestration"]
+  examples: ["team-collaboration", "plan-replay"]
+  integrations: ["openai-compatible"]
+  comparisons: ["langgraph"]
+featured: false
 readingMinutes: 7
 ---
 ## 你手画了那张图。然后需求变了。

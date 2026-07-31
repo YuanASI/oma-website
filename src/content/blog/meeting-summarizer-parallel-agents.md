@@ -3,6 +3,18 @@ title: "From Transcript to Typed Action Items: Three Parallel Agents in TypeScri
 description: "Most meeting summarizers cram summary, action items, and sentiment into one LLM prompt. Here's a cleaner TypeScript shape: three specialist agents run in parallel, two return typed Zod output, and an aggregator merges them into one report."
 pubDate: 2026-06-24
 tags: ["typescript","ai","agents","opensource"]
+contentType: application
+useCases: ["meeting follow-up", "action-item extraction"]
+industries: ["knowledge work"]
+evidence:
+  kind: verified-run
+  note: "The workflow ran against a synthetic engineering transcript. Timing and typed outputs come from that single run."
+related:
+  solutions: ["parallel-llm-calls"]
+  examples: ["meeting-summarizer"]
+  integrations: ["anthropic", "openai-compatible"]
+  comparisons: []
+featured: false
 devtoUrl: "https://dev.to/jackchenme/from-transcript-to-typed-action-items-three-parallel-agents-in-typescript-3oe"
 readingMinutes: 8
 ---

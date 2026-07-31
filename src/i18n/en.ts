@@ -661,19 +661,68 @@ export const en = {
 
   blog: {
     seo: {
-      title: 'Blog — Open Multi-Agent',
+      title: 'Multi-agent application playbooks, field notes, and framework guides',
       description:
-        'Writing on TypeScript AI Agent orchestration: goal-driven task DAGs, mixed-model teams, durable shared state, and lessons from the agent-framework ecosystem.',
+        'Workflow walkthroughs with runnable TypeScript examples, patterns from building them, and framework comparisons that cite their sources.',
     },
     eyebrow: 'Blog',
-    title: 'Notes on AI Agent orchestration.',
-    // Index lede. The inline link renders only when `ledeLink` is set: the en
-    // index points at dev.to ("Cross-posted from dev.to"); the zh index drops it
-    // (translations aren't cross-posted) by leaving ledeLink/ledePost empty.
-    ledePre:
-      'Deep dives on goal-driven task DAGs, mixed-model teams, and the TypeScript agent ecosystem. Cross-posted from ',
-    ledeLink: 'dev.to',
-    ledePost: '.',
+    title: 'Which workflows are worth a team of agents.',
+    lede: 'Every post starts from a workflow: what goes in, which agent handles which part, and where the approach stops paying for itself.',
+    sections: {
+      application: {
+        index: '01',
+        eyebrow: 'Applications',
+        title: 'One workflow, start to finish.',
+        lede: 'A scenario walked through end to end, with a runnable example you can open alongside the article.',
+      },
+      fieldNote: {
+        index: '02',
+        eyebrow: 'Field notes',
+        title: 'What it looks like once it runs.',
+        lede: 'What the tokens cost, where it slowed down, what got in the way — and the boundaries that only surface after enough runs.',
+      },
+      decisionGuide: {
+        index: '03',
+        eyebrow: 'Decision guides',
+        title: 'Which framework fits which workflow.',
+        lede: 'Comparisons that cite their sources and say who each option suits, including the workflows where open-multi-agent is the wrong tool.',
+      },
+      archive: {
+        index: '04',
+        eyebrow: 'Engineering & releases',
+        title: 'How the runtime works, and what changed.',
+        lede: 'Mechanism walkthroughs and what shipped in each version.',
+      },
+    },
+    contentTypes: {
+      application: 'Application',
+      fieldNote: 'Field note',
+      decisionGuide: 'Decision guide',
+      engineering: 'Engineering',
+      release: 'Release',
+    },
+    evidence: {
+      label: 'Evidence',
+      kinds: {
+        runnableDemo: 'Runnable demo',
+        verifiedRun: 'Verified run',
+        publicProject: 'Public project',
+        fieldObservation: 'Field observation',
+        sourceBackedComparison: 'Source-backed comparison',
+        technicalAnalysis: 'Technical analysis',
+        releaseNote: 'Release note',
+      },
+    },
+    related: {
+      eyebrow: 'Keep going',
+      title: 'From scenario to implementation.',
+      lede: 'The solution page, the runnable example, and the integrations behind this article.',
+      solutions: 'Solution',
+      examples: 'Runnable example',
+      integrations: 'Integration',
+      comparisons: 'Comparison',
+      open: 'Open',
+    },
     minRead: 'min read',
     allPosts: '← All posts',
     // en posts show "Originally published on dev.to"; zh translations show the

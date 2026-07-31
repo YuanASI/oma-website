@@ -3,7 +3,19 @@ title: "Open Multi-Agent v1.13: Route, Govern, Schedule, and Prove the Run"
 description: "v1.13 adds execution routing, declared governance, consequential-tool confirmation, event-driven task scheduling, task-scoped results, structured handoffs, and retryable model fallbacks."
 pubDate: 2026-07-24
 tags: ["release","orchestration","governance","typescript"]
-readingMinutes: 6
+contentType: release
+useCases: ["execution routing", "governed orchestration", "task scheduling"]
+industries: []
+evidence:
+  kind: release-note
+  note: "Describes the published v1.13.0 runtime surface and links to version-aligned reference documentation."
+related:
+  solutions: ["goal-driven-orchestration"]
+  examples: ["team-collaboration", "task-pipeline", "plan-replay"]
+  integrations: ["opentelemetry"]
+  comparisons: []
+featured: false
+readingMinutes: 2
 ---
 
 Open Multi-Agent v1.13 makes four runtime boundaries explicit: which topology

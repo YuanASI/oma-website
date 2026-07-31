@@ -3,7 +3,19 @@ title: "Open Multi-Agent v1.13：路由、治理、调度与运行证据"
 description: "v1.13 带来执行路由、声明式治理、高影响工具确认、事件驱动任务调度、任务级结果、结构化交接与可重试的模型 fallback。"
 pubDate: 2026-07-24
 tags: ["release","orchestration","governance","typescript"]
-readingMinutes: 6
+contentType: release
+useCases: ["执行路由", "治理式编排", "任务调度"]
+industries: []
+evidence:
+  kind: release-note
+  note: "描述已经发布的 v1.13.0 运行时能力，并链接到与版本一致的 Reference 文档。"
+related:
+  solutions: ["goal-driven-orchestration"]
+  examples: ["team-collaboration", "task-pipeline", "plan-replay"]
+  integrations: ["opentelemetry"]
+  comparisons: []
+featured: false
+readingMinutes: 2
 ---
 
 Open Multi-Agent v1.13 把四个运行时边界变成显式能力：选择哪种执行拓扑、
