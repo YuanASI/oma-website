@@ -10,9 +10,28 @@ import {
   formatDiscoveryGate,
   hasUpstreamBodyDrift,
   listLocalReferenceSlugs,
+  resolvePublishedReferenceRef,
   rewriteLinks,
   transformUpstreamBody,
 } from './reference-sync-lib.mjs';
+
+test('uses an explicit release ref without network access', async () => {
+  const ref = await resolvePublishedReferenceRef({}, 'v1.13.0', () => {
+    throw new Error('fetch should not run');
+  });
+  assert.equal(ref, 'v1.13.0');
+});
+
+test('fails closed when GitHub latest and npm latest disagree', async () => {
+  const responses = [
+    { ok: true, json: async () => ({ tag_name: 'v1.13.0' }) },
+    { ok: true, json: async () => ({ 'dist-tags': { latest: '1.12.1' } }) },
+  ];
+  await assert.rejects(
+    resolvePublishedReferenceRef({}, '', async () => responses.shift()),
+    /Release truth mismatch/,
+  );
+});
 
 test('discovers vendored docs while excluding deliberate GitHub-only pages', () => {
   const entries = [
@@ -38,6 +57,17 @@ test('rewrites vendored links locally and all other doc links to GitHub', () => 
   assert.match(output, /\]\(\/reference\/cli\/\)/);
   assert.match(output, /\]\(\/reference\/observability-migration\/\)/);
   assert.match(output, /github\.com\/open-multi-agent\/open-multi-agent\/blob\/main\/docs\/new-capability\.md#api/);
+});
+
+test('pins external source links to the synchronized release tag', () => {
+  const output = rewriteLinks(
+    '[new](new-capability.md#api) [source](../packages/core/src/types.ts)',
+    new Set(),
+    'v1.13.0',
+  );
+
+  assert.match(output, /blob\/v1\.13\.0\/docs\/new-capability\.md#api/);
+  assert.match(output, /blob\/v1\.13\.0\/packages\/core\/src\/types\.ts/);
 });
 
 test('normalizes upstream headings before drift comparison', () => {

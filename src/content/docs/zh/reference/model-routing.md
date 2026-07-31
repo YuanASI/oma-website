@@ -3,6 +3,10 @@ title: "模型路由"
 description: "需显式开启的确定性策略，把编排各阶段路由到不同模型——按阶段、智能体、任务角色、优先级或叶子节点匹配。"
 ---
 
+模型路由为已选执行拓扑内部的调用选择模型。它与
+[执行路由](/zh/reference/execution-routing/)相互独立；执行路由决定一次自动
+`runTeam()` 调用使用一个 Agent，还是 Coordinator 生成的 Team 计划。
+
 `modelRouting` 是一个需显式开启的确定性策略，它在不改动你的团队或智能体配置的前提下，把不同的编排调用发往不同的模型。常见形态是「旗舰模型做规划，廉价模型运行叶子工作」：
 
 ```ts
@@ -55,6 +59,41 @@ const result = await orchestrator.runTasks(team, tasks, { modelRouting })
 | `baseURL` | OpenAI 兼容或自托管端点的 Base URL。 |
 | `apiKey` | 命中调用所用的 API 密钥。 |
 | `region` | AWS region，用于 Bedrock 路由。 |
+| `fallback` | worker provider 发生可重试故障时使用的有序备选路由。 |
+
+## 可重试的 provider fallback
+
+Worker 路由可以声明有顺序的 `fallback` 列表。首次尝试使用路由本身；确认是可重试的
+provider 错误时，下一次任务重试移到列表下一项。列表耗尽后，后续重试继续使用最后一项。
+
+```ts
+const modelRouting: ModelRoutingPolicy = {
+  rules: [{
+    match: { phase: 'worker' },
+    route: {
+      model: 'claude-sonnet-4-5',
+      provider: 'anthropic',
+      fallback: [{
+        model: 'gpt-5',
+        provider: 'openai',
+      }],
+    },
+  }],
+}
+
+await orchestrator.runTasks(team, [{
+  title: 'Write report',
+  description: 'Summarize the findings.',
+  assignee: 'writer',
+  maxRetries: 1,
+}], { modelRouting })
+```
+
+Fallback 需显式开启，并复用每个任务现有的重试设置，因此 `maxRetries` 要足以抵达
+配置的备选项。认证、校验、Hook 与其他非 provider 错误不会推进 fallback 链。
+没有结构化 provider 错误的失败任务继续使用当前路由。每个 fallback 条目和普通路由
+一样应用到 worker 的生效配置；如果备选项使用不同 provider 或端点，请按需带上
+`provider`、`baseURL`、`apiKey` 与 `region` 覆盖。
 
 ## 哪些调用会被路由
 
@@ -75,4 +114,4 @@ const result = await orchestrator.runTasks(team, tasks, { modelRouting })
 
 ## 成本分层示例
 
-[`examples/patterns/cost-tiered-pipeline.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/patterns/cost-tiered-pipeline.ts) 把同一条四阶段流水线跑两遍（全旗舰 vs. 分层混搭），并打印按模型分的 token 与美元开销明细，让你在采用某条路由策略之前就能看清它能省下多少。
+[`examples/patterns/cost-tiered-pipeline.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/patterns/cost-tiered-pipeline.ts) 把同一条四阶段流水线跑两遍（全旗舰 vs. 分层混搭），并打印按模型分的 token 与美元开销明细，让你在采用某条路由策略之前就能看清它能省下多少。

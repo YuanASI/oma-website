@@ -55,9 +55,9 @@ The coordinator routes the coding work to `coder` based on its roster descriptio
 subprocess does the file edits; `reviewer` then reads the result from shared memory.
 
 A runnable `process` version is at
-[`examples/integrations/external-agent-process.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/integrations/external-agent-process.ts).
+[`examples/integrations/external-agent-process.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/integrations/external-agent-process.ts).
 A runnable ACP version is at
-[`examples/integrations/external-agent-acp.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/integrations/external-agent-acp.ts).
+[`examples/integrations/external-agent-acp.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/integrations/external-agent-acp.ts).
 
 ## Installation
 

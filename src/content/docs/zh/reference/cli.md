@@ -234,14 +234,24 @@ CLI 强制执行的校验规则：
 ```
 
 - **`dependsOn`** —— 任务标题（不是内部 id），与库中协调器输出的约定一致。
-- 可选的每任务字段：`memoryScope`（`"dependencies"` \| `"all"`）、`maxRetries`、`retryDelayMs`、`retryBackoff`。启用重试（`maxRetries > 0`）时，退避会加抖动，且可证明是终态的失败——除 408/409/429 之外的 4xx 客户端错误，加上 token 预算和无效消息错误——会自动跳过重试；无需额外配置。
+- 可选的每任务字段：`memoryScope`（`"dependencies"` \| `"all"`）、
+  `dependencyPayload`（`"output"` \| `"structured"` \| `"both"`）、`role`、
+  `priority`、有边界的 `metadata`、`maxRetries`、`retryDelayMs` 与
+  `retryBackoff`。`dependencyPayload` 默认传原始输出；结构化模式要求上游有已校验的
+  structured result，并执行与 SDK 相同的每依赖 64 KiB 限制。任务 metadata 遵循
+  [任务调度与派发](/zh/reference/task-scheduling/#任务角色与来源-metadata)中的边界
+  与凭据脱敏规则。启用重试（`maxRetries > 0`）时，退避会加抖动，且可证明是终态的
+  失败——除 408/409/429 之外的 4xx 客户端错误，加上 token 预算和无效消息错误——
+  会自动跳过重试；无需额外配置。
 - **`tasks`** 必须是非空数组；每一项需要字符串 `title` 和 `description`。
 
 如果传了 **`--team path.json`**，文件顶层的 `team` 属性会被忽略，改用外部文件（当同一份团队定义在多个 pipeline 文件间共享时很有用）。
 
 ### Orchestrator 与 coordinator JSON
 
-这些文件是任意 JSON 对象，分别合并进 **`OrchestratorConfig`** 和 **`CoordinatorConfig`**。函数值的选项（`onProgress`、`onApproval` 等）无法出现在 JSON 中，CLI 也不支持。
+这些文件是任意 JSON 对象，分别合并进 **`OrchestratorConfig`** 和
+**`CoordinatorConfig`**。函数值的选项（`onProgress`、`onApproval`、
+`onTaskDispatch` 等）无法出现在 JSON 中，CLI 也不支持。
 
 在 orchestrator JSON 上设 `defaultCwd`，或在单个 agent/coordinator JSON 上设 `cwd`，来选择内置文件系统工具的沙箱根目录。传给 `file_read`、`file_write`、`file_edit`、`grep` 和 `glob` 的路径必须是绝对路径，并解析到该根目录内部。省略 `defaultCwd` 时，沙箱默认为 `<cwd>/.agent-workspace`（首次写入时自动创建）。传入等价于 `"<process.cwd()>"` 的绝对路径可把它放宽到整个工作目录，或传 `null` 来禁用沙箱。`bash` 工具有意未被覆盖——理由和推荐做法见 `docs/tool-configuration.md`。
 
@@ -284,7 +294,9 @@ CLI 强制执行的校验规则：
 }
 ```
 
-`agentResults` 的键是 agent 名。当一个 agent 运行了多个任务时，库会合并结果；CLI 镜像合并后的 `AgentRunResult` 字段。
+`agentResults` 的键是 Agent 名。当一个 Agent 运行多个任务时，库会合并结果；
+CLI 镜像合并后的 `AgentRunResult` 字段。若可用，CLI 也会输出以稳定任务 ID 为键的
+`taskResults`，保存每个未合并结果。`--include-messages` 同时作用于两个索引。
 
 **成功的历史仪表盘导出**
 
@@ -376,5 +388,5 @@ esac
 
 - 没有 TTY 会话、历史，或从 `stdin` 输入目标。
 - 没有专门的标志来设置文件系统沙箱根目录；通过 orchestrator 或 agent JSON 中的 `defaultCwd` / `cwd` 来配置。
-- JSON 里没有 **`onApproval`**；仅支持非交互式批处理。
+- JSON 里没有 **`onApproval`** 或 **`onTaskDispatch`**；CLI 运行是非交互式的。
 - 协调器 **`runTeam`** 路径和其它任何运行一样，仍然需要网络和 API 密钥。

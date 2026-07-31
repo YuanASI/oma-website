@@ -9,7 +9,7 @@ description: "三个遥测层：onProgress 事件、带 TraceStore 和可选 Ope
 [`onTrace` 迁移指南](/zh/reference/observability-migration/)。发布工程
 与基准测试证据记录在
 [`observability-performance.md`](/zh/reference/observability-performance/) 以及
-[`observability-release-readiness.md`](https://github.com/open-multi-agent/open-multi-agent/blob/main/docs/observability-release-readiness.md) 中。
+[`observability-release-readiness.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/docs/observability-release-readiness.md) 中。
 
 ## 运行标识与结果
 
@@ -73,6 +73,56 @@ result.metadata // the validated metadata, even without observability sinks
 
 这个按运行划分的通道不同于 `ObservabilityResource`：资源字段用于实例级的事实，
 例如服务、版本和部署环境；运行元数据用于可能在每次调用时变化的维度。
+
+## Execution receipt
+
+`buildExecutionReceipt(result, trace?)` 会推导一份紧凑的真实执行记录。它接受
+`AgentRunResult` 或 `TeamRunResult`，以及可选的旧版 `TraceEvent[]`；不执行 I/O，
+并且在执行字段缺失时也不会抛错：
+
+```typescript
+import { buildExecutionReceipt, OpenMultiAgent, type TraceEvent } from '@open-multi-agent/core'
+
+const trace: TraceEvent[] = []
+const tracedOrchestrator = new OpenMultiAgent({
+  onTrace: (event) => trace.push(event),
+})
+const result = await tracedOrchestrator.runTeam(team, goal)
+const receipt = buildExecutionReceipt(result, trace)
+```
+
+Receipt 会报告 `mode`、不同的 `rolesExecuted`、按开始时间计算的
+`executionOrder`、跨角色 `dependencyEdges`、`independentRolesCount`、token
+用量、耗时，以及记录是否 `partial`。为保持兼容，`rolesExecuted` 继续表示具体
+assignee 名；`workerInstancesExecuted` 明确这一含义；存在调用方声明的逻辑角色时，
+`taskRolesExecuted` 列出这些角色。只有至少两个不同 worker 实例真实执行，且至少一条
+任务依赖连接两个不同 assignee 时，`independentReviewOccurred` 才为 true。没有依赖边
+的并行 worker 不构成独立审查链；Coordinator 规划条目会被排除。
+
+对于 `runTeam()`，receipt 还带稳定 `id`、`routingDecisionId`，以及开启 tracing 时的
+`routingDecisionSpanId`。这些字段把执行后的拓扑关联回
+`TeamRunResult.routingDecision`，后者也携带 receipt 的 `receiptId`；路由 span
+记录同一个 ID。`ExecutionReceipt` 是实际运行拓扑的唯一结构化记录，路由记录只描述
+执行前的选择与原因。
+
+治理必须使用这些执行事实，而不是模型答案中的标签、声明或 review 标记；builder
+从不检查答案文本。对于独立 `AgentRunResult`，可选 trace 用来补充 Agent 名与运行时长。
+若结果或 trace 无法确认某个事实，对应字段返回空数组或 `null`，并设 `partial: true`。
+
+### 执行后的治理结论
+
+每个 OMA 产生的 `TeamRunResult` 都携带 `governanceConclusion`：
+
+- `satisfied`——`governanceIntent: 'required'` 运行执行了所有声明角色；相邻
+  `requiredOrder` 对在观察到的顺序中出现，并由依赖路径连接；声明两个及以上角色时，
+  也真实发生了独立审查；
+- `unsatisfied`——至少一个必要执行事实缺失；
+- `not-applicable`——治理省略，或为 `none` / `preferred`。
+
+结论通过 `buildExecutionReceipt()` 与 `evaluateGovernance()` 计算，因此它是执行后
+的拓扑判决，不评价答案措辞或质量。`success` 仍只表示运行没有 runtime error。
+一次运行可以 `success: true` 但 `governanceConclusion: 'unsatisfied'`；要求治理的
+应用必须检查后者。
 
 ## TraceRecord schema v2
 
@@ -396,7 +446,7 @@ run/task/tenant/request 字段变成指标标签。
 首个版本有意不提供 OTLP 便利子路径。应用自行选择其 OTel SDK 和 OTLP/exporter 实现，
 从而避免过早的 OTLP 导入、隐式的全局 provider 配置，以及第二套 SDK/exporter
 兼容性矩阵。完整的 API 和映射表见
-[`packages/otel/README.md`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/otel/README.md)。
+[`packages/otel/README.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/otel/README.md)。
 
 ## Flush 与 shutdown
 
@@ -496,9 +546,25 @@ const orchestrator = new OpenMultiAgent({
 
 把 trace span 转发给 OpenTelemetry、Datadog、Honeycomb、Langfuse，或你自己的运行
 数据库——但要先判断哪些数据进入该 sink 是安全的。可运行的示例见
-[`integrations/trace-observability`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/integrations/trace-observability.ts)。
+[`integrations/trace-observability`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/integrations/trace-observability.ts)。
 
-七个成员的 `TraceEvent` 联合类型以及 completion/event 计时保持不变。在内部，
+每次 `runTeam()` 拓扑选择都会发出旧版 `routing_decision` event，以及一个 kind
+为 `routing`、名为 `decide_execution_route` 的 v2 span。记录包括决策时的
+`mode`、`reasons`、可选 `confidence`，以及确有路由器运行时的实际
+`routerVersion`。`source` 区分优先链路径：
+
+- `override`——调用方提供了 `mode`；
+- `declared`——结构化治理角色选择 Team 拓扑；
+- `policy`——框架策略选择拓扑，包括 `preferredUnderBudget: 'degrade'` 和
+  `planOnly`；
+- `router`——自动路由真实运行，`routerVersion` 标识该路由器；
+- `legacy-deterministic`——仅为绕过 `ExecutionRouter` 的序列化或兼容路径保留。
+
+Event/span 的 `receiptId` 指向最终 `ExecutionReceipt`；receipt 通过
+`routingDecisionId` 与 `routingDecisionSpanId` 反向关联。决策记录不复制实际任务
+角色、顺序或依赖边，这些仍属于执行后的 receipt / task 事实。
+
+`TraceEvent` 联合类型现在有八个成员，包括 `routing_decision`。在内部，
 `LegacyCallbackTraceSink` 会把 v2 记录映射回确切的旧版事件对象。同步回调的抛出和
 异步的拒绝仍然是隔离的，不会变成未处理的拒绝。`onTrace` 在本次发布中未被标记为弃用；
 1.x 兼容窗口保持开放，用户可以按自己的节奏把传输代码迁移到 `observability.sinks`。
@@ -553,6 +619,11 @@ oma dashboard --trace-store ./.oma/traces.ndjson --run-id <runId> --output run.h
 agent、model 和 provider。DAG 与 Waterfall 的选择通过任务 ID 同步；搜索以及
 kind/status/agent/task 过滤器会保留祖先上下文。有环或缺失的层级/依赖数据会降级为
 可见的警告，而不是被静默地当作成功。
+
+存在路由数据时，两个视图上方都会显示摘要：选择了什么模式、选择来源与原因，以及实际
+`ExecutionReceipt` 的模式 / 角色 / 依赖证据。仅结果与组合视图通过
+`buildExecutionReceipt(result)` 获取实际拓扑，而不维护 Viewer 专属的拓扑模型；
+仅 trace 视图汇总已物化的 Viewer task，并明确标注这些证据来自 trace。
 
 生成的 HTML 包含它自己的 CSS、JavaScript 和进入白名单的数据，不加载任何远程脚本、
 样式表、字体、图片、遥测或运行时 API。它不嵌入 prompt、completion、任意属性、工具

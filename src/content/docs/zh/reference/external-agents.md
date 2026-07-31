@@ -44,9 +44,9 @@ const result = await oma.runTeam(team, 'Add a slugify() utility with tests, then
 协调器根据 `coder` 的名册描述把编码工作路由给它；子进程执行文件编辑；`reviewer` 随后从共享内存读取结果。
 
 一个可运行的 `process` 版本见
-[`examples/integrations/external-agent-process.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/integrations/external-agent-process.ts)。
+[`examples/integrations/external-agent-process.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/integrations/external-agent-process.ts)。
 一个可运行的 ACP 版本见
-[`examples/integrations/external-agent-acp.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/integrations/external-agent-acp.ts)。
+[`examples/integrations/external-agent-acp.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/integrations/external-agent-acp.ts)。
 
 ## 安装
 

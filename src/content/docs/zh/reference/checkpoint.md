@@ -112,7 +112,15 @@ await orchestrator.restore(team,        { checkpoint: { store } })  // resume-on
 - **执行标识（schema v2）**——`runId`、当前的 `attempt`、`lastTraceId` 和 `lastRootSpanId`。恢复会保留逻辑 `runId`，递增 `attempt`，创建全新的 trace/root ID，并返回一个指向上一次尝试的 `continued_from` 链接。
 - **任务队列状态**——每个任务及其状态分区（pending / in-progress / completed / failed / blocked / skipped）。
 - **共享内存**——回合计数器总会被记录。完整的条目快照**仅在检查点存储与团队的共享内存存储不同时**才嵌入。当它们是同一个存储时（`checkpoint: true` 的默认情形），这些条目已经在那里持久化了，因此每个任务都重新嵌入它们会造成在一次长运行中浪费约 O(N²) 的写入量；恢复时改为直接从存储读取它们。无论哪种方式，恢复都能正确地重建共享内存。
-- **已完成任务的结果**——每个完成任务的 `taskId`、`assignee` 和 `result`，这样被恢复的智能体能看到先前的输出。
+- **已完成任务的结果**——每个完成任务的 `taskId`、`assignee`、原始 `result`
+  与 JSON-safe 的 `AgentRunResult`。这样可保留任务级 `structured`、规范化状态 /
+  错误详情、token 用量、工具调用和消息，让恢复后可以重建
+  `TeamRunResult.taskResults`。仅限进程内的原始 `error` 对象不会持久化。如果调用方
+  添加的结果数据无法 JSON 序列化，以 checkpoint 持久性为先：该任务的完整结果会被
+  省略，恢复时重建旧版最小结果。
+- **任务交接 / 来源配置**——`dependencyPayload`、逻辑 `role` 与已校验的任务
+  `metadata` 会保留在队列快照中，因此恢复后的消费者使用与原运行相同的数据流和
+  trace 引用。
 
 快照以 JSON 形式存储在一个保留命名空间下：`__oma_checkpoint__/<runId>/latest`（未设 `runId` 时为 `__oma_checkpoint__/latest`）。`__oma_checkpoint__/` 下的键是保留的——共享内存的快照 / 恢复会刻意跳过它们，使得一个存储能同时承载智能体内存和检查点。
 
@@ -134,7 +142,11 @@ const orchestrator = new OpenMultiAgent({
 
 ## 对持久化的密钥脱敏
 
-检查点会**原样**存储已完成任务的结果——对于一个独立的检查点存储，还包括共享内存快照。别处（trace、仪表盘）的脱敏**不会**触及这条路径，因此智能体输出到其答案中的密钥会落到磁盘上。要清除它，用 **`RedactingStore`** 包裹持久化存储：
+检查点会**原样**存储已完成任务的结果——包括结构化值、消息与工具调用；对于独立
+的 checkpoint store，还包括共享内存快照。任务 metadata 有自己的校验和凭据脱敏
+边界，但 Agent 产生的结果没有。别处（trace、仪表盘）的脱敏**不会**触及这条路径，
+因此智能体输出到答案中的密钥会落到磁盘上。要清除它，用
+**`RedactingStore`** 包裹持久化存储：
 
 ```typescript
 import { RedactingStore, FileStore } from '@open-multi-agent/core'

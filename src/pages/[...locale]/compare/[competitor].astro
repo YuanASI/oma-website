@@ -41,7 +41,24 @@ const path = `/compare/${comp.slug}/`;
 const title = withName(t.page.seoTitle);
 const description = pick(comp.seoDescription);
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const others = COMPARISONS.filter((c) => c.slug !== comp.slug);
+const relatedBySlug: Record<string, string[]> = {
+  langgraph: ['mastra', 'inngest-agentkit', 'semantic-kernel'],
+  crewai: ['autogen', 'langgraph', 'google-adk'],
+  autogen: ['semantic-kernel', 'crewai', 'google-adk'],
+  'openai-agents-sdk': ['vercel-ai-sdk', 'mastra', 'pydantic-ai'],
+  mastra: ['langgraph', 'vercel-ai-sdk', 'voltagent'],
+  'vercel-ai-sdk': ['openai-agents-sdk', 'mastra', 'voltagent'],
+  voltagent: ['mastra', 'openai-agents-sdk', 'crewai'],
+  'inngest-agentkit': ['langgraph', 'mastra', 'google-adk'],
+  langchain: ['langgraph', 'llamaindex', 'mastra'],
+  llamaindex: ['langchain', 'pydantic-ai', 'google-adk'],
+  'pydantic-ai': ['openai-agents-sdk', 'llamaindex', 'crewai'],
+  'google-adk': ['semantic-kernel', 'crewai', 'inngest-agentkit'],
+  'semantic-kernel': ['autogen', 'google-adk', 'langgraph'],
+};
+const related = (relatedBySlug[comp.slug] ?? [])
+  .map((slug) => COMPARISONS.find((candidate) => candidate.slug === slug))
+  .filter((candidate): candidate is Comparison => Boolean(candidate));
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -172,7 +189,7 @@ const jsonLd = {
       <div class="container">
         <div class="eyebrow"><span class="idx">//</span> {t.page.seeAlso}</div>
         <div class="compare-more">
-          {others.map((c) => (
+          {related.map((c) => (
             <a class="compare-more-link" href={L(`/compare/${c.slug}/`)}>
               <span class="compare-more-name">open-multi-agent vs {c.name}</span>
               <span class="arrow">→</span>

@@ -1,20 +1,15 @@
 ---
-// First-touch language auto-routing for both page systems (custom pages via
-// BaseLayout, docs via StarlightHead). On a visitor's FIRST load in this browser
-// it routes them to the locale their browser prefers — zh-* → /zh/, anything
-// else → the English root — then never interferes again, so neither the custom
-// LangSwitcher nor Starlight's built-in selector ever has to fight it.
+// First-touch language auto-routing for the neutral site root only. An explicit
+// locale or deep link is user intent and must never be replaced by the browser
+// language. On the first visit to `/`, zh-* → `/zh/`; anything else stays put.
 //
 // Why "once per browser": after the first run we set `oma-lang-seen` and bail on
 // every later load regardless of outcome. That's what makes a manual switch
 // sticky without us having to capture every switcher's click — the auto-route is
 // a one-time first-touch convenience, not a standing redirect.
 //
-// Why it can't 404: the target URL is read from the page's own
-// `<link rel="alternate" hreflang>` tag, which both systems emit ONLY when a real
-// translated counterpart exists (untranslated blog posts drop the zh alternate).
-// No alternate → no redirect. Must therefore sit AFTER those <link>s in <head>;
-// it still runs before <body> paints, so the redirect is effectively flash-free.
+// The target URL still comes from the page's own alternate link, so routing
+// remains coupled to a real localized counterpart rather than a guessed path.
 ---
 <script is:inline>
   (() => {
@@ -27,6 +22,9 @@
       // get the identical page; we only skip *redirecting* the crawler.
       if (/bot|crawl|spider|slurp|mediapartners/i.test(navigator.userAgent)) return;
 
+      // `/zh/`, documentation routes, and every other explicit deep link win.
+      if (location.pathname !== '/') return;
+
       // One shot per browser: if we've already evaluated once, never interfere
       // again — this is what keeps a later manual language switch from bouncing.
       if (localStorage.getItem('oma-lang-seen')) return;
@@ -38,7 +36,7 @@
       const want = langs.some((l) => /^zh\b/i.test(l)) ? 'zh' : 'en';
 
       const path = location.pathname;
-      const current = path === '/zh' || path.indexOf('/zh/') === 0 ? 'zh' : 'en';
+      const current = 'en';
       if (current === want) return;
 
       // Counterpart URL from the hreflang alternate the page already emits; it's

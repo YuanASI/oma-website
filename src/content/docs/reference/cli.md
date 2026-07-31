@@ -23,7 +23,7 @@ npm run build
 node packages/core/dist/cli/oma.js help
 ```
 
-Set the usual provider API keys in the environment (see [README](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/README.md#quick-start)); the CLI does not read secrets from flags. MiniMax additionally reads `MINIMAX_BASE_URL` to select the global (`https://api.minimax.io/v1`) or China (`https://api.minimaxi.com/v1`) endpoint. MiMo additionally reads `MIMO_BASE_URL` for Token Plan cluster endpoints such as `https://token-plan-cn.xiaomimimo.com/v1`.
+Set the usual provider API keys in the environment (see [README](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/README.md#quick-start)); the CLI does not read secrets from flags. MiniMax additionally reads `MINIMAX_BASE_URL` to select the global (`https://api.minimax.io/v1`) or China (`https://api.minimaxi.com/v1`) endpoint. MiMo additionally reads `MIMO_BASE_URL` for Token Plan cluster endpoints such as `https://token-plan-cn.xiaomimimo.com/v1`.
 
 OpenRouter works through the OpenAI-compatible adapter: set `provider` to `openai`, `baseURL` to `https://openrouter.ai/api/v1`, and pass `OPENROUTER_API_KEY` as the agent or orchestrator `apiKey`.
 
@@ -280,14 +280,25 @@ Used with **`oma task --file`**.
 ```
 
 - **`dependsOn`** — Task titles (not internal ids), same convention as the coordinator output in the library.
-- Optional per-task fields: `memoryScope` (`"dependencies"` \| `"all"`), `maxRetries`, `retryDelayMs`, `retryBackoff`. When retry is enabled (`maxRetries > 0`), backoff is jittered and provably-terminal failures — 4xx client errors other than 408/409/429, plus token-budget and invalid-message errors — skip retries automatically; no extra config.
+- Optional per-task fields: `memoryScope` (`"dependencies"` \| `"all"`),
+  `dependencyPayload` (`"output"` \| `"structured"` \| `"both"`), `role`,
+  `priority`, bounded `metadata`, `maxRetries`, `retryDelayMs`, and
+  `retryBackoff`. `dependencyPayload` defaults to raw output; structured modes
+  require a validated upstream structured result and enforce the same 64 KiB
+  per-dependency limit as the SDK. Task metadata follows the bounds and
+  credential-redaction rules in
+  [Task scheduling and dispatch](/reference/task-scheduling/#task-role-and-provenance-metadata).
+  When retry is enabled (`maxRetries > 0`), backoff is jittered and
+  provably-terminal failures — 4xx client errors other than 408/409/429, plus
+  token-budget and invalid-message errors — skip retries automatically; no
+  extra config.
 - **`tasks`** must be a non-empty array; each item needs string `title` and `description`.
 
 If **`--team path.json`** is passed, the file’s top-level `team` property is ignored and the external file is used instead (useful when the same team definition is shared across several pipeline files).
 
 ### Orchestrator and coordinator JSON
 
-These files are arbitrary JSON objects merged into **`OrchestratorConfig`** and **`CoordinatorConfig`**. Function-valued options (`onProgress`, `onApproval`, etc.) cannot appear in JSON and are not supported by the CLI.
+These files are arbitrary JSON objects merged into **`OrchestratorConfig`** and **`CoordinatorConfig`**. Function-valued options (`onProgress`, `onApproval`, `onTaskDispatch`, etc.) cannot appear in JSON and are not supported by the CLI.
 
 Set `defaultCwd` on the orchestrator JSON, or `cwd` on individual agents/coordinator JSON, to choose the sandbox root for built-in filesystem tools. Paths passed to `file_read`, `file_write`, `file_edit`, `grep`, and `glob` must be absolute and resolve inside that root. When `defaultCwd` is omitted, the sandbox defaults to `<cwd>/.agent-workspace` (auto-created on first write). Pass the string `"<process.cwd()>"`-equivalent absolute path to widen it to the full working directory, or `null` to disable the sandbox. The `bash` tool is intentionally not covered — see `docs/tool-configuration.md` for the rationale and recommended posture.
 
@@ -330,7 +341,10 @@ Every invocation prints **one JSON document** to stdout, followed by a newline.
 }
 ```
 
-`agentResults` keys are agent names. When an agent ran multiple tasks, the library merges results; the CLI mirrors the merged `AgentRunResult` fields.
+`agentResults` keys are agent names. When an agent ran multiple tasks, the
+library merges results; the CLI mirrors the merged `AgentRunResult` fields.
+`taskResults` is also emitted when available, keyed by stable task ID with each
+unmerged result. `--include-messages` applies to both indexes.
 
 **Successful historical dashboard export**
 
@@ -428,5 +442,5 @@ esac
 
 - No TTY session, history, or `stdin` goal input.
 - No dedicated flag for the filesystem sandbox root; configure it through `defaultCwd` / `cwd` in the orchestrator or agent JSON.
-- No **`onApproval`** from JSON; non-interactive batch only.
+- No **`onApproval`** or **`onTaskDispatch`** from JSON; CLI runs are non-interactive.
 - Coordinator **`runTeam`** path still requires network and API keys like any other run.
