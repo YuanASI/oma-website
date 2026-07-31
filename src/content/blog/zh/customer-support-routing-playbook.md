@@ -1,6 +1,6 @@
 ---
-title: "一个客服工单，什么时候才需要一支多智能体团队？"
-description: "一套实用的客服分流方式：高频工单继续走固定的分类 → 起草 → QA 流水线；只有工作形态会随工单变化的升级事件，才使用动态专家路由。"
+title: "客服工单的两条车道：固定流水线与运行时组建的团队"
+description: "高频路径交给带类型的分类 → 起草 → QA 任务图，升级事件交给协调器现场组队，退款这类动作则由运行时逐次拦在确认闸门后面。"
 pubDate: 2026-07-31
 tags: ["customer-support", "typescript", "agents"]
 contentType: application
@@ -8,116 +8,168 @@ useCases: ["工单分流", "升级事件处理"]
 industries: ["客户支持"]
 evidence:
   kind: runnable-demo
-  note: "组合了仓库里的两个可运行示例，工单为合成数据。演示覆盖分类、起草与路由；写入 CRM、自主修改账户与生产效果都在范围之外。"
+  note: "组合了仓库里的两个可运行示例，工单为合成数据。演示覆盖分类、起草与路由；写入 CRM、自主修改账户与生产效果都在范围之外。文中的运行时控制能力来自已发布的 API，不由这两个示例演示。"
 related:
   solutions: ["goal-driven-orchestration", "parallel-llm-calls"]
   examples: ["express-customer-support", "adaptive-customer-support"]
   integrations: ["openai", "openai-compatible"]
   comparisons: ["langgraph"]
 featured: true
-readingMinutes: 6
+readingMinutes: 8
 ---
 
-重置密码和争议账单，都从同一个客服表单进来。
+重置密码和争议账单，从同一个客服表单进来。它们不该走同一条工作流。
 
-但它们不该走同一条工作流。
+重置密码很熟悉：分类、起草、检查语气、发出。争议账单可能要牵扯计费政策、账户记录、退款规则——以及在任何内容发给客户之前，得有人过一眼。
 
-重置密码很熟悉。先分类，再起草回复，最后检查语气。
+Open Multi-Agent 为这两种形态各提供了一个可运行示例。它们都用演示工单，都没有连接真实客服系统。有价值的是这条边界划在哪里，以及真接上生产系统之后，靠什么把它守住。
 
-争议账单可能需要核对计费规则、账户记录和退款政策，还可能需要人工接手。具体要做什么，会跟着工单变化。
+## 高频路径：拓扑属于应用
 
-这给了客服团队一条很实用的设计原则：
+[Express 客服示例](/zh/examples/express-customer-support/) 在 `POST /tickets` 后面放了三步：分类 Agent 返回类别与紧急程度，起草 Agent 写面向客户的回复，QA Agent 检查语气与事实一致性。
 
-> 已经理解清楚的高频路径，用固定任务图。只有升级事件的工作形态确实会变化时，才为动态规划付费。
+这里没有任何东西需要为每张工单重新推导。分类必然在起草之前，QA 必然在最后，拓扑本来就属于应用。`runTasks()` 直接执行你写好的图：
 
-Open Multi-Agent 里有两个可运行示例，正好把这条边界讲清楚。它们都没有连接真实客服系统，使用的也是演示工单。真正有价值的是两种架构背后的取舍。
+```ts
+await orchestrator.runTasks(team, [
+  {
+    title: 'Classify',
+    description: '判定工单类别与紧急程度。',
+    assignee: 'classifier',
+  },
+  {
+    title: 'Draft',
+    description: '起草面向客户的回复。',
+    assignee: 'drafter',
+    dependsOn: ['Classify'],
+  },
+  {
+    title: 'QA',
+    description: '检查语气、同理心与事实一致性。',
+    assignee: 'reviewer',
+    dependsOn: ['Draft'],
+    dependencyPayload: 'structured',
+  },
+])
+```
 
-## 高频路径：固定，而且带类型
-
-[Express 客服示例](/zh/examples/express-customer-support/) 在 `POST /tickets` 后放了一条三步流水线：
-
-1. 分类 Agent 返回类别与紧急程度。
-2. 回复 Agent 起草面向客户的回复。
-3. QA Agent 检查语气、同理心与事实一致性。
-
-任何模型调用之前，路由会先校验请求。每个 Agent 都返回经过 schema 校验的对象。无效输入、流水线失败和超时，也会被映射成明确的 HTTP 行为。
-
-这张图不需要为每张工单重新发现。分类永远在起草之前，QA 永远排在最后。应用已经拥有完整拓扑，所以这里最自然的选择是 `runTasks()`。
-
-对一条高频接口来说，可预测通常比新奇更重要。每次交接都能检查、测试，下游代码会拿到什么也很清楚。
+`dependencyPayload: 'structured'` 让 QA 拿到起草 Agent 校验过的 JSON，而不是它的叙述文本——审阅方读到的是带类型的工作产物，不必再去解析一段散文。
 
 ## 升级路径：让工单决定需要谁
 
-有些工单没有稳定拓扑。
+有些工单没有稳定拓扑。物流升级可能需要物流专家加政策审核，账单争议又是另一组人。把所有分支永久编进一张图，维护成本会一路涨，边缘情况照样脆。
 
-物流升级事件可能需要物流专家和政策审核。账单争议又是另一组检查。如果把所有分支永久塞进一张图，维护成本会越来越高，边缘情况依旧很脆。
+[自适应客服示例](/zh/examples/adaptive-customer-support/) 把一个目标和一组专家交给 `runTeam()`。协调器在运行时把目标拆成任务 DAG，分派工作，让互不依赖的任务并行，最后综合出回复。
 
-[自适应客服示例](/zh/examples/adaptive-customer-support/) 走了另一条路。它把客服目标和一组专家交给 `runTeam()`。协调器在运行时把目标拆成任务 DAG，分配相关工作，让互不依赖的任务并行，最后综合回复。
+这次实际走了哪种形态，不需要你去猜：
 
-代价也很真实：
+```ts
+const result = await orchestrator.runTeam(team, goal, { mode: 'team' })
 
-- 计划可以适应当前工单。
-- 协调器会多一次规划调用。
-- 不同运行的任务图可能变化。
-- 在有后果的工作流里使用结果之前，需要加审批、预算和链路边界。
+result.routingDecision
+// { mode: 'team', reasons: [...], routerVersion: '...' }
+```
 
-动态规划不是应该到处套用的升级版。它只是另一种成本结构。
+不传 `mode`，内置的 `DeterministicRouter` 来判定；传一个 `ExecutionRouter`，则由你自己的策略判定——按队列、客户等级，或者任何应用本来就知道的信息来路由工单。无论哪种，`routingDecision` 都会记下选中的拓扑和理由，并关联到链路证据。
 
-## 两条客服车道
+这就是 Execution Routing，它只回答一个问题：单 Agent 还是团队。它与 Model Routing 是刻意分开的——后者决定的是在选定拓扑内部，每次调用用哪个模型。
 
-把两种模式放在一起，客服系统就有了两条车道。
+## 退款动作，才是这套设计真正兑现的地方
 
-### 车道一：重复性工单
+起草一段回复和执行一笔退款是两种性质的动作，运行时对它们的处理也不同。
 
-这些情况用固定 DAG：
+内置工具默认拒绝授权：一个既没声明 `tools` 也没声明 `toolPreset` 的 Agent，拿到的内置工具数量是零——起草 Agent 碰不到文件系统、跑不了 shell，不是因为有人记得去锁，而是默认如此。退款是你自己写的工具，授权它意味着什么，由你显式声明：
 
-- 类别稳定。
-- 交接顺序已知。
-- 每份回复都要走同一轮 QA。
-- 延迟和成本可预测比自适应更重要。
+```ts
+const issueRefund = defineTool({
+  name: 'issue_refund',
+  description: '对一张发票执行退款。',
+  inputSchema: z.object({ invoiceId: z.string(), amount: z.number() }),
+  consequential: true,
+  execute: async (input) => billing.refund(input),
+})
+```
 
-应用决定路线，Agent 在路线里填充带类型的工作成果。
+`consequential: true` 让这次授权对运行时可见。开启确认要求后，每一次这类调用都要先过闸门才能执行：
 
-### 车道二：形态会变化的升级事件
+```ts
+const orchestrator = new OpenMultiAgent({
+  requireConsequentialConfirmation: true,
+  onToolCall: async (context) => {
+    if (context.consequential !== true) return { action: 'allow' }
+    return (await supervisorApproves(context))
+      ? { action: 'allow' }
+      : { action: 'deny', reason: '退款未获批准。' }
+  },
+})
+```
 
-这些情况可以用协调器：
+闸门每次调用触发一次，位置在输入校验之后、`execute` 之前，所以它看得到真实参数。这一点很关键：`bash` 是一个被允许的名字，`ls` 和 `rm -rf /` 都在它下面；5 元的退款和 5000 元的退款也是同一种不对称。
 
-- 不同工单可能需要不同专家。
-- 仅靠类别无法提前确定依赖顺序。
-- 最终结果需要综合多路调查。
-- 执行有后果的动作前，人可以检查或批准计划。
+有两条边界必须说清楚。
 
-协调器提出路线。允许哪些 Agent、工具、预算与审批策略，依旧由应用掌控。
+这套判定**只看工具授权**。OMA 不会去扫描目标、提示词、工具参数或模型输出里有没有「退款」「密码」「生产」这类字眼。一张措辞吓人但只授权了无害工具的工单不会被标记；反过来，授权了高影响工具的运行会被标记，哪怕目标读起来平平无奇。
 
-## 最终会产出什么
+以及，这个闸门是策略决策，不是进程沙箱。它决定一次调用能不能继续，不决定工具真跑起来之后能碰到什么。
 
-固定示例返回结构化 JSON：分类、紧急程度、回复草稿和 QA 意见。
+如果要求确认却没有配置任何审批路径，工具不会执行：结果会带上 `confirmationRequired: true` 和 `status.code === 'rejected'`，应用可以带着决策重新发起。
 
-自适应示例则从本次工单选中的专家结果中，综合出一份回复。
+## 「加人工审批」其实是三个不同的决定
 
-两个示例都不会退款、修改账户或读取真实 CRM。那些属于另一层集成，也需要单独的权限和审计。一份面向客户的草稿，和一次修改账户的动作，不是一回事。
+一次动态规划的运行有三个可介入的位置，它们回答的是不同的问题：
 
-真正上线时，这条边界应该继续可见：
+- `onPlanReady`——协调器已产出计划。在任何任务开跑之前，审批这次工作的整体形态。
+- `onTaskDispatch`——某个任务已就绪。审批这一个工作单元。
+- `onToolCall`——某次工具调用即将执行。审批这一个动作。
 
-- 读取工具和写入工具使用不同授权。
-- 退款、取消或修改账户前必须审批。
-- 在运行链路里保留工单、计划、Agent 输出与最终决策。
-- 扩大权限之前，先用版本化的代表性工单集评估工作流。
+放到客服场景：计划闸门是主管看清升级车道打算做什么的地方，工具闸门是退款本身被拦下的地方。
 
-## 两种都跑一遍，再决定
+如果工作流必须按顺序经过指定角色，那就把它声明出来，而不是寄望于写在 Agent 提示词里：
 
-理解差别最快的方法，就是把两种形态都跑起来。先按各自示例页的说明配置模型凭据，再从框架仓库根目录执行：
+```ts
+const result = await orchestrator.runTeam(team, goal, {
+  governanceIntent: 'required',
+  requiredRoles: ['reviewer', 'security'],
+  requiredOrder: ['reviewer', 'security'],
+})
+
+if (result.governanceConclusion !== 'satisfied') {
+  throw new Error(`治理未通过：${result.governanceReason}`)
+}
+```
+
+OMA 检查的是实际执行的拓扑，不是 Agent 话术里的标签。应用可以覆盖已声明的下限，但那绝不会被报告成一次干净的成功：结论会是 `unsatisfied`，原因是 `overridden`。
+
+## 怎么选车道
+
+类别稳定、交接已知、每条回复都要过同一道 QA、可预测的延迟与成本比适应性更重要——用固定任务图。路由由应用决定，Agent 在其中填入带类型的工作产物。
+
+工单可能需要不同专家、依赖顺序无法从类别推出、结果需要跨多路调查综合——用协调器。路由由协调器提议，允许的 Agent、工具、预算和审批策略依然归你的应用。
+
+协调器要多付一次规划调用，任务图也可能在不同运行之间变化。这种变化在升级车道上正是你要的，在高频车道上则是负债。
+
+## 扩大权限之前
+
+两个示例跑的都是演示工单。换成真实工单，就该让评估上场了。评估在独立的 `@open-multi-agent/core/eval` 子路径下——它观察已完成的结果，从不改变业务结果，这正是它被分开的原因。
+
+用一组版本化的代表性工单打分，用报告卡住 CI，看的是趋势而不是单次运行。抛异常的 scorer 会被记为 `scorer_error` 并排除在均值之外——一次失败的测量不等于零分。
+
+运行记录留在你自己的基础设施上。稳定的运行标识、路由决策、execution receipt、TraceStore 与离线 Run Viewer 都不需要托管服务；链路数据会以尽力而为的方式脱敏检测到的敏感信息——之所以要标明「尽力而为」，恰恰是因为工单里可能有客户数据，而尽力而为不等于保证。
+
+## 先把两条都跑一遍
+
+按各示例页面上列出的凭证配好 provider，然后从框架仓库根目录把两种形态连着跑一次：
 
 ```bash
-# 固定的分类 → 起草 → QA API
+# 固定的 分类 → 起草 → QA 接口
 (
   cd packages/core/examples/integrations/express-customer-support
   npm install
   npm start
 )
 
-# 回到仓库根目录，动态选择专家
+# 动态选择专家
 npx tsx packages/core/examples/cookbook/adaptive-customer-support.ts
 ```
 
-先从固定路径开始。只有那些变化确实值得额外规划与控制成本的工单，再进入自适应车道。
+先跑固定路径。只有当某类工单的变化程度确实值得多付规划和管控成本时，再加上自适应车道。

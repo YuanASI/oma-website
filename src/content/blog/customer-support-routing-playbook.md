@@ -1,6 +1,6 @@
 ---
-title: "When Should a Support Ticket Trigger a Multi-Agent Team?"
-description: "A practical split for customer support: keep the high-volume path on a fixed classify → draft → QA pipeline, and use dynamic specialist routing only for escalations whose shape changes with the ticket."
+title: "Route Support Tickets Between a Fixed Pipeline and a Live Agent Team"
+description: "Keep the high-volume path on a typed classify → draft → QA graph, let escalations get a coordinator-built team, and put the refund behind a confirmation gate the runtime enforces per call."
 pubDate: 2026-07-31
 tags: ["customer-support", "typescript", "agents"]
 contentType: application
@@ -8,103 +8,157 @@ useCases: ["ticket triage", "escalation handling"]
 industries: ["customer support"]
 evidence:
   kind: runnable-demo
-  note: "Two runnable repository examples over synthetic tickets. Classification, drafting, and routing are what the demo covers; CRM writes, account actions, and production results sit outside it."
+  note: "Two runnable repository examples over synthetic tickets. Classification, drafting, and routing are what the demo covers; CRM writes, account actions, and production results sit outside it. The runtime controls shown here are documented API surface, exercised outside these two recipes."
 related:
   solutions: ["goal-driven-orchestration", "parallel-llm-calls"]
   examples: ["express-customer-support", "adaptive-customer-support"]
   integrations: ["openai", "openai-compatible"]
   comparisons: ["langgraph"]
 featured: true
-readingMinutes: 6
+readingMinutes: 8
 ---
 
-A password reset and a disputed invoice arrive through the same support form. That does not mean they deserve the same workflow.
+A password reset and a disputed invoice arrive through the same support form. They should not run the same workflow.
 
-The password reset is familiar. Classify it, draft a reply, check the tone, return the result.
+The password reset is familiar: classify, draft, check the tone, send. The disputed invoice may need billing policy, account history, refund rules — and a person, before anything reaches the customer.
 
-The disputed invoice may need billing policy, account history, refund rules, and a careful handoff. The work changes with the ticket.
+Open Multi-Agent ships a runnable example for each shape. Both use demonstration tickets and connect to no help desk. What they show is where the boundary falls, and which runtime controls hold it once real systems sit behind it.
 
-That gives support teams a useful design rule:
+## The high-volume path owns its graph
 
-> Use a fixed task graph for the path you already understand. Pay for dynamic planning only when the escalation can take materially different shapes.
+The [Express Customer Support example](/examples/express-customer-support/) puts three steps behind `POST /tickets`: a classifier returns category and urgency, a drafter writes the customer-facing reply, a QA reviewer checks tone and factual consistency.
 
-Open Multi-Agent has two runnable examples that make this boundary concrete. Neither connects to a real help desk. Both use demonstration tickets. Their value is the decision they expose.
+Nothing there needs rediscovering per ticket. Classification precedes drafting, QA is last, and the application owns the topology. `runTasks()` executes the graph you wrote:
 
-## The high-volume path: fixed and typed
+```ts
+await orchestrator.runTasks(team, [
+  {
+    title: 'Classify',
+    description: 'Categorize the ticket and set urgency.',
+    assignee: 'classifier',
+  },
+  {
+    title: 'Draft',
+    description: 'Write the customer-facing reply.',
+    assignee: 'drafter',
+    dependsOn: ['Classify'],
+  },
+  {
+    title: 'QA',
+    description: 'Check tone, empathy, and factual consistency.',
+    assignee: 'reviewer',
+    dependsOn: ['Draft'],
+    dependencyPayload: 'structured',
+  },
+])
+```
 
-The [Express Customer Support example](/examples/express-customer-support/) puts a three-step workflow behind `POST /tickets`:
+`dependencyPayload: 'structured'` hands QA the drafter's validated JSON instead of its narrative text, so the reviewer reads a typed work product rather than prose it has to re-parse.
 
-1. A classifier returns a category and urgency.
-2. A support drafter writes the customer-facing response.
-3. A QA reviewer checks tone, empathy, and factual consistency.
+## The escalation path lets the ticket shape the team
 
-The route validates the request before any model call. Each agent returns a schema-validated object. The endpoint also maps invalid input, pipeline failure, and timeout to explicit HTTP behavior.
+Some tickets do not fit one stable graph. A shipping escalation may need a logistics specialist and a policy reviewer; a billing dispute needs a different set. Encoding every branch permanently produces a graph that costs more to maintain and is still brittle at the edges.
 
-Nothing in that topology needs to be rediscovered for every ticket. Classification always comes before drafting. QA always comes last. `runTasks()` is the natural fit because the application owns the graph.
+The [Adaptive Customer Support example](/examples/adaptive-customer-support/) hands `runTeam()` a goal and a pool of specialists. A coordinator decomposes the goal into a task DAG at runtime, assigns the work, runs independent tasks together, and synthesizes the reply.
 
-That predictability matters more than novelty on a busy route. You can inspect each handoff, test its schema, and decide exactly what downstream code receives.
+Which shape actually ran is not something you have to infer:
 
-## The escalation path: let the ticket shape the team
+```ts
+const result = await orchestrator.runTeam(team, goal, { mode: 'team' })
 
-Some tickets do not fit one stable graph.
+result.routingDecision
+// { mode: 'team', reasons: [...], routerVersion: '...' }
+```
 
-A shipping escalation may need a logistics specialist and a policy reviewer. A billing dispute may need a different set of checks. Adding every possible branch to one permanent workflow produces a graph that is expensive to maintain and still brittle at the edges.
+Omit `mode` and the built-in `DeterministicRouter` decides. Supply an `ExecutionRouter` and your own policy decides — routing a ticket by queue, customer tier, or anything else your application already knows. Either way `routingDecision` records the topology and the reasons behind it, linked to trace evidence.
 
-The [Adaptive Customer Support example](/examples/adaptive-customer-support/) takes the other route. It gives `runTeam()` a support goal and a pool of specialists. A coordinator decomposes that goal into a task DAG at runtime, assigns the relevant work, runs independent tasks together, and synthesizes the response.
+This is Execution Routing, and it answers one question: single agent or team. It is deliberately separate from Model Routing, which chooses the model for calls inside whichever topology won.
 
-The trade-off is real:
+## The refund is where the design earns its keep
 
-- The plan can adapt to the ticket.
-- The coordinator adds a planning call.
-- The exact task graph can vary between runs.
-- You need approval, budget, and trace boundaries before using the result in a consequential workflow.
+Drafting a reply and issuing a refund are different acts, and the runtime treats them differently.
 
-Dynamic planning is not an upgrade to apply everywhere. It is a different cost shape.
+Built-in tools are default-deny. An agent that declares neither `tools` nor `toolPreset` resolves to zero of them — a drafter cannot touch the filesystem or run a shell because nobody remembered to lock it down. A refund is a tool you write, and you declare what granting it permits:
 
-## A two-lane support architecture
+```ts
+const issueRefund = defineTool({
+  name: 'issue_refund',
+  description: 'Issue a refund against an invoice.',
+  inputSchema: z.object({ invoiceId: z.string(), amount: z.number() }),
+  consequential: true,
+  execute: async (input) => billing.refund(input),
+})
+```
 
-Put the two patterns together and the support system has two lanes.
+`consequential: true` makes that grant visible to the runtime. Require confirmation, and each such call clears a gate before it executes:
 
-### Lane 1: repeatable tickets
+```ts
+const orchestrator = new OpenMultiAgent({
+  requireConsequentialConfirmation: true,
+  onToolCall: async (context) => {
+    if (context.consequential !== true) return { action: 'allow' }
+    return (await supervisorApproves(context))
+      ? { action: 'allow' }
+      : { action: 'deny', reason: 'Refund not approved.' }
+  },
+})
+```
 
-Use a fixed DAG when:
+The gate runs once per invocation, after input validation and before `execute`, so it sees the actual arguments. That matters: `bash` is a single allowed name covering both `ls` and `rm -rf /`, and the same asymmetry separates a $5 refund from a $5,000 one.
 
-- The categories are stable.
-- The handoffs are known.
-- Every response needs the same QA step.
-- Latency and predictable cost matter more than adaptation.
+Two boundaries are worth stating plainly.
 
-The application decides the route. Agents fill in typed work products inside it.
+The classification reads **tool grants only**. OMA never scans the goal, the prompt, tool arguments, or model output for words like "refund", "password", or "production". A ticket full of alarming language that grants only benign tools is not flagged; a granted consequential tool is flagged even when the goal reads as routine.
 
-### Lane 2: changing escalations
+And the gate is a policy decision, not a process sandbox. It decides whether a call proceeds — not what the tool can reach once it does.
 
-Use a coordinator when:
+If confirmation is required and no approval path is configured, the tool does not run. The result carries `confirmationRequired: true` with `status.code === 'rejected'`, and the application can re-run with a decision.
 
-- The ticket may require different specialists.
-- The dependency order cannot be known from the category alone.
-- The result needs synthesis across several investigations.
-- A human can inspect or approve the plan before consequential actions.
+## "Human approval" is three different decisions
 
-The coordinator proposes the route. Your application still owns the allowed agents, tools, budgets, and approval policy.
+A dynamically planned run offers three places to intervene, and they answer different questions:
 
-## What comes out
+- `onPlanReady` — the coordinator has produced a plan. Approve the shape of the work before any task runs.
+- `onTaskDispatch` — one task is ready. Approve this unit of work.
+- `onToolCall` — one tool call is about to execute. Approve this action.
 
-The fixed example returns structured JSON: classification, urgency, draft reply, and QA notes.
+For support, the plan gate is where a supervisor sees what the escalation lane intends to do; the tool gate is where the refund itself stops.
 
-The adaptive example produces a synthesized response from the specialists selected for that ticket.
+If the workflow must pass named roles in order, declare it rather than implying it in agent prompts:
 
-Neither example issues a refund, changes an account, or reads a real CRM. Those are separate integrations with their own permissions and audit requirements. A customer-facing draft is one thing. An account-changing action is another.
+```ts
+const result = await orchestrator.runTeam(team, goal, {
+  governanceIntent: 'required',
+  requiredRoles: ['reviewer', 'security'],
+  requiredOrder: ['reviewer', 'security'],
+})
 
-That boundary should stay visible in production:
+if (result.governanceConclusion !== 'satisfied') {
+  throw new Error(`Governance failed: ${result.governanceReason}`)
+}
+```
 
-- Give read tools and write tools different grants.
-- Require approval before refunds, cancellations, or account changes.
-- Preserve the ticket, plan, agent outputs, and final decision in the run trace.
-- Evaluate the workflow on a versioned set of representative tickets before expanding its authority.
+OMA checks the executed topology, not labels in agent prose. An application may override a declared floor, but that never reports as a clean success: the conclusion comes back `unsatisfied` with reason `overridden`.
+
+## Choosing a lane
+
+Use the fixed graph when the categories are stable, the handoffs are known, every reply needs the same QA step, and predictable latency and cost matter more than adaptation. The application decides the route; agents fill in typed work products inside it.
+
+Use the coordinator when the ticket may require different specialists, the dependency order cannot be read off the category, and the result needs synthesis across several investigations. The coordinator proposes the route; your application still owns the allowed agents, tools, budgets, and approval policy.
+
+The coordinator costs a planning call, and the task graph can vary between runs. That variance is the point on the escalation lane and a liability on the high-volume one.
+
+## Before widening its authority
+
+Both examples run on demonstration tickets. Moving to real ones is where evaluation belongs, and it lives in a separate subpath — `@open-multi-agent/core/eval` — because it observes completed results and never changes the business outcome.
+
+Score a versioned set of representative tickets, gate CI on the report, and watch the trend rather than a single run. A scorer that throws is recorded as `scorer_error` and excluded from the averages; a failed measurement is not a zero.
+
+Runs stay inspectable on your own infrastructure. Stable run identity, routing decisions, execution receipts, the TraceStore, and the offline Run Viewer need no hosted service, and trace payloads redact detected secrets on a best-effort basis — worth knowing precisely because "best-effort" is not "guaranteed" when customer data is in the ticket.
 
 ## Run both before choosing
 
-The fastest way to understand the difference is to run both shapes. Start from the framework repository root after setting the provider credential listed on each example page:
+Set the provider credential listed on each example page, then run the two shapes back to back from the framework repository root:
 
 ```bash
 # Fixed classify → draft → QA API
@@ -114,7 +168,7 @@ The fastest way to understand the difference is to run both shapes. Start from t
   npm start
 )
 
-# Dynamic specialist selection, from the repository root
+# Dynamic specialist selection
 npx tsx packages/core/examples/cookbook/adaptive-customer-support.ts
 ```
 
