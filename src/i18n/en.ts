@@ -663,35 +663,35 @@ export const en = {
     seo: {
       title: 'Multi-agent application playbooks, field notes, and framework guides',
       description:
-        'Runnable multi-agent application playbooks, field notes from real workflow design, and evidence-backed framework decisions for TypeScript teams.',
+        'Workflow walkthroughs with runnable TypeScript examples, patterns from building them, and framework comparisons that cite their sources.',
     },
     eyebrow: 'Blog',
-    title: 'Multi-agent systems for real work.',
-    lede: 'Runnable application playbooks, field notes from workflow design, and evidence-backed framework decisions for TypeScript teams.',
+    title: 'Which workflows are worth a team of agents.',
+    lede: 'Every post starts from a workflow: what goes in, which agent handles which part, and where the approach stops paying for itself.',
     sections: {
       application: {
         index: '01',
         eyebrow: 'Applications',
-        title: 'Start with the work, not the framework.',
-        lede: 'Concrete inputs, handoffs, deliverables, and limits — with a runnable example behind every playbook.',
+        title: 'One workflow, start to finish.',
+        lede: 'A scenario walked through end to end, with a runnable example you can open alongside the article.',
       },
       fieldNote: {
         index: '02',
         eyebrow: 'Field notes',
-        title: 'What the workflow evidence keeps showing.',
-        lede: 'Observed patterns with their scope made explicit: prototypes stay prototypes, public projects stay attributable, and unknowns stay visible.',
+        title: 'Patterns that keep showing up.',
+        lede: 'Observations from designing these workflows — where multi-agent structure pays off, and where a single model call still wins.',
       },
       decisionGuide: {
         index: '03',
         eyebrow: 'Decision guides',
-        title: 'Choose by workflow, not by hype.',
-        lede: 'Source-backed comparisons that explain who each approach fits, including when open-multi-agent is not the right choice.',
+        title: 'Which framework fits which workflow.',
+        lede: 'Comparisons that cite their sources and say who each option suits, including the workflows where open-multi-agent is the wrong tool.',
       },
       archive: {
         index: '04',
         eyebrow: 'Engineering & releases',
-        title: 'The technical archive.',
-        lede: 'Mechanism deep dives, integrations, ecosystem analysis, and product updates.',
+        title: 'How the runtime works, and what changed.',
+        lede: 'Mechanism walkthroughs, integration guides, and what shipped in each version.',
       },
     },
     contentTypes: {
@@ -716,7 +716,7 @@ export const en = {
     related: {
       eyebrow: 'Keep going',
       title: 'From scenario to implementation.',
-      lede: 'Read the product fit, run the exact workflow, and connect it to the stack you already use.',
+      lede: 'The solution page, the runnable example, and the integrations behind this article.',
       solutions: 'Solution',
       examples: 'Runnable example',
       integrations: 'Integration',

@@ -15,10 +15,8 @@
 .blog-card-desc { font-size: var(--text-sm); line-height: 1.65; color: var(--text-body); margin: 0 0 var(--space-4); }
 .blog-card-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 /* Pillar sections reuse the shared .section / .section-head scaffolding from
-   landing.css; only the hairline that separates consecutive pillars is local.
-   Section numbering rides in the eyebrow's .idx, matching /examples. */
-.blog-pillar,
-.blog-archive { border-top: 1px solid var(--border-subtle); }
+   landing.css — no divider rule between them; the numbered eyebrow (matching
+   /examples) and the section rhythm carry the separation on their own. */
 
 /* Card grid. auto-fit tracks match the /solutions hub, so the mid widths
    between the mobile breakpoint and full desktop reflow instead of squeezing

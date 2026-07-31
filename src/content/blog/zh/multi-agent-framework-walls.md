@@ -3,11 +3,11 @@ title: "多智能体框架会撞上的 5 堵墙：来自 Mastra 那一年从 .ne
 description: "Mastra 花了一年把 .network() 迁到 Supervisor 模式。撞上 5 堵工程之墙（上下文、路由、可观测性、嵌套、性能），18 个 GitHub issue 为证。这对 TypeScript 多智能体框架开发意味着什么。"
 pubDate: 2026-05-21
 tags: ["mastra","typescript","agents","opensource"]
-contentType: decision-guide
+contentType: field-note
 useCases: ["生产架构", "框架评估"]
 industries: []
 evidence:
-  kind: source-backed-comparison
+  kind: public-project
   note: "论点建立在文中链接的 Mastra 公告与 GitHub issue 上；不声称这些失败样本代表所有部署。"
 related:
   solutions: ["goal-driven-orchestration"]
