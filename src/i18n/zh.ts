@@ -798,7 +798,7 @@ export const zh: UiDict = {
         index: '02',
         eyebrow: '一线观察',
         title: '真跑起来是什么样。',
-        lede: 'Token 花了多少、在哪里变慢、卡在什么地方，以及跑得够多之后才浮现出来的那些边界。',
+        lede: 'Token 花了多少、在哪里变慢、卡在什么地方，以及跑得够多之后才浮现的边界。',
       },
       decisionGuide: {
         index: '03',
