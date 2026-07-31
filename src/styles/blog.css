@@ -14,6 +14,16 @@
 .blog-card-title { font-size: var(--text-h4); line-height: 1.25; color: var(--text-strong); margin: var(--space-3) 0 var(--space-2); }
 .blog-card-desc { font-size: var(--text-sm); line-height: 1.65; color: var(--text-body); margin: 0 0 var(--space-4); }
 .blog-card-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+/* Hero → first pillar rhythm, matching /examples, the other page built from a
+   hero plus numbered sections. Two stacked .section paddings plus the default
+   .hero-head-row margin would read as one enormous gap, so the hero takes a
+   tuned bottom padding, zeroes that margin (landing.css expects each hero to
+   override it), and the section under it tightens its top. */
+.section.blog-hero { padding: 72px 0 8px; }
+.blog-hero .hero-head-row { margin-bottom: 0; }
+.section.blog-pillar.is-first,
+.section.blog-archive.is-first { padding-top: 56px; }
+
 /* Pillar sections reuse the shared .section / .section-head scaffolding from
    landing.css — no divider rule between them; the numbered eyebrow (matching
    /examples) and the section rhythm carry the separation on their own. */

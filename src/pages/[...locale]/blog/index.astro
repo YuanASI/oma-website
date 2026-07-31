@@ -57,6 +57,11 @@ const postsFor = (type: (typeof primarySections)[number]['type']) =>
     .sort((a, b) =>
       Number(b.data.featured) - Number(a.data.featured)
       || b.data.pubDate.getTime() - a.data.pubDate.getTime());
+// Resolved before render so the section directly under the hero can tighten
+// its top padding (`is-first`), whichever pillar that turns out to be.
+const pillars = primarySections
+  .map((section) => ({ ...section, posts: postsFor(section.type) }))
+  .filter((section) => section.posts.length > 0);
 const archivePosts = posts.filter((post) =>
   post.data.contentType === 'engineering' || post.data.contentType === 'release');
 const fmtDate = (d: Date) =>
@@ -92,7 +97,7 @@ const jsonLd = {
 
   <Nav current="blog" starsK={starsK} locale={locale} path="/blog/" />
   <main>
-    <section class="section">
+    <section class="section blog-hero">
       <div class="container">
         <div class="hero-head-row">
           <div class="section-head">
@@ -105,12 +110,14 @@ const jsonLd = {
       </div>
     </section>
 
-    {primarySections.map((section) => {
-      const sectionPosts = postsFor(section.type);
-      if (sectionPosts.length === 0) return null;
+    {pillars.map((section, sectionIndex) => {
+      const sectionPosts = section.posts;
 
       return (
-        <section class="section blog-pillar" aria-labelledby={`blog-${section.type}`}>
+        <section
+          class={`section blog-pillar${sectionIndex === 0 ? ' is-first' : ''}`}
+          aria-labelledby={`blog-${section.type}`}
+        >
           <div class="container">
             <div class="section-head">
               <div class="eyebrow"><span class="idx">{section.copy.index}</span> {section.copy.eyebrow}</div>
@@ -151,7 +158,10 @@ const jsonLd = {
     })}
 
     {archivePosts.length > 0 && (
-      <section class="section blog-archive" aria-labelledby="blog-archive">
+      <section
+        class={`section blog-archive${pillars.length === 0 ? ' is-first' : ''}`}
+        aria-labelledby="blog-archive"
+      >
         <div class="container">
           <div class="section-head">
             <div class="eyebrow"><span class="idx">{bt.sections.archive.index}</span> {bt.sections.archive.eyebrow}</div>
