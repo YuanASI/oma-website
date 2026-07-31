@@ -137,13 +137,20 @@ const hasLinks = groups.some((group) => group.items.length > 0);
     border-top: 1px solid var(--border-subtle);
   }
   .blog-related-link:hover {
-    background: var(--oma-accent-soft);
+    background: var(--oma-bg-1);
+  }
+  .blog-related-link:hover strong {
+    color: var(--oma-accent);
+  }
+  .blog-related-link:hover .blog-related-open {
+    transform: translateX(3px);
   }
   .blog-related-link strong {
     display: block;
     color: var(--text-strong);
     font-size: var(--text-md);
     line-height: 1.4;
+    transition: color var(--duration-base) var(--ease-out);
   }
   .blog-related-link small {
     display: block;
@@ -159,6 +166,7 @@ const hasLinks = groups.some((group) => group.items.length > 0);
     color: var(--oma-accent);
     font-family: var(--font-mono);
     font-size: var(--text-xs);
+    transition: transform var(--duration-base) var(--ease-out);
   }
   @media (max-width: 640px) {
     .blog-related h2 { font-size: var(--text-h4); }

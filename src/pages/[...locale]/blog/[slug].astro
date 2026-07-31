@@ -123,14 +123,15 @@ const jsonLd = {
           <h1>{post.data.title}</h1>
           <div class="blog-card-tags">
             <Badge tone="accent">{contentTypeLabels[post.data.contentType]}</Badge>
-            {[...post.data.industries, ...post.data.useCases].map((tag) => <Badge tone="info">{tag}</Badge>)}
-            {post.data.tags.map((tag) => <Badge tone="neutral">{tag}</Badge>)}
+            {[...post.data.industries, ...post.data.useCases, ...post.data.tags].map((tag) => (
+              <Badge tone="neutral">{tag}</Badge>
+            ))}
           </div>
           <div class="blog-evidence-note">
-            <div>
-              <span>{bt.evidence.label}</span>
-              <strong>{evidenceKindLabels[post.data.evidence.kind]}</strong>
-            </div>
+            <span class="blog-evidence">
+              <span class="blog-evidence-label">{bt.evidence.label}</span>
+              {evidenceKindLabels[post.data.evidence.kind]}
+            </span>
             <p>{post.data.evidence.note}</p>
           </div>
         </header>

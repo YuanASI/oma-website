@@ -110,16 +110,13 @@ const jsonLd = {
       if (sectionPosts.length === 0) return null;
 
       return (
-        <section class={`section blog-pillar blog-pillar--${section.type}`} aria-labelledby={`blog-${section.type}`}>
+        <section class="section blog-pillar" aria-labelledby={`blog-${section.type}`}>
           <div class="container">
-            <header class="blog-pillar-head">
-              <div class="blog-pillar-index" aria-hidden="true">{section.copy.index}</div>
-              <div>
-                <div class="eyebrow"><span class="idx">//</span> {section.copy.eyebrow}</div>
-                <h2 class="section-title" id={`blog-${section.type}`}>{section.copy.title}</h2>
-                <p class="section-sub">{section.copy.lede}</p>
-              </div>
-            </header>
+            <div class="section-head">
+              <div class="eyebrow"><span class="idx">{section.copy.index}</span> {section.copy.eyebrow}</div>
+              <h2 class="section-title" id={`blog-${section.type}`}>{section.copy.title}</h2>
+              <p class="section-sub">{section.copy.lede}</p>
+            </div>
             <div class="blog-editorial-grid">
               {sectionPosts.map((p, index) => (
                 <a class={`blog-card-link${index === 0 ? ' is-feature' : ''}`} href={L(`/blog/${blogSlugOf(p.id)}/`)}>
@@ -133,14 +130,16 @@ const jsonLd = {
                     </div>
                     <h3 class="blog-card-title">{p.data.title}</h3>
                     <p class="blog-card-desc">{p.data.description}</p>
-                    <div class="blog-card-foot">
-                      <span class="blog-evidence">
-                        <span>{bt.evidence.label}</span>
-                        {evidenceKindLabels[p.data.evidence.kind]}
-                      </span>
+                    {(p.data.industries.length > 0 || p.data.useCases.length > 0) && (
                       <div class="blog-card-tags">
                         {[...p.data.industries, ...p.data.useCases].slice(0, 3).map((tag) => <Badge tone="neutral">{tag}</Badge>)}
                       </div>
+                    )}
+                    <div class="blog-card-foot">
+                      <span class="blog-evidence">
+                        <span class="blog-evidence-label">{bt.evidence.label}</span>
+                        {evidenceKindLabels[p.data.evidence.kind]}
+                      </span>
                     </div>
                   </Card>
                 </a>
@@ -154,27 +153,25 @@ const jsonLd = {
     {archivePosts.length > 0 && (
       <section class="section blog-archive" aria-labelledby="blog-archive">
         <div class="container">
-          <header class="blog-pillar-head">
-            <div class="blog-pillar-index" aria-hidden="true">{bt.sections.archive.index}</div>
-            <div>
-              <div class="eyebrow"><span class="idx">//</span> {bt.sections.archive.eyebrow}</div>
-              <h2 class="section-title" id="blog-archive">{bt.sections.archive.title}</h2>
-              <p class="section-sub">{bt.sections.archive.lede}</p>
-            </div>
-          </header>
+          <div class="section-head">
+            <div class="eyebrow"><span class="idx">{bt.sections.archive.index}</span> {bt.sections.archive.eyebrow}</div>
+            <h2 class="section-title" id="blog-archive">{bt.sections.archive.title}</h2>
+            <p class="section-sub">{bt.sections.archive.lede}</p>
+          </div>
           <div class="blog-archive-list">
             {archivePosts.map((p) => (
               <a class="blog-archive-row" href={L(`/blog/${blogSlugOf(p.id)}/`)}>
-                <div>
+                <span class="kind">
                   <Badge tone={p.data.contentType === 'release' ? 'info' : 'neutral'}>
                     {contentTypeLabels[p.data.contentType]}
                   </Badge>
-                  <h3>{p.data.title}</h3>
-                </div>
-                <span class="blog-card-meta">
+                </span>
+                <h3 class="name">{p.data.title}</h3>
+                <span class="meta">
                   <time datetime={p.data.pubDate.toISOString()}>{fmtDate(p.data.pubDate)}</time>
                   {' · '}{p.data.readingMinutes} {bt.minRead}
                 </span>
+                <span class="arr" aria-hidden="true">→</span>
               </a>
             ))}
           </div>
