@@ -3,7 +3,7 @@ title: "A 100% Local Multi-Agent Team in TypeScript (Ollama + Gemma, $0 API Cost
 description: "Run a multi-agent team fully on your laptop in TypeScript — even the coordinator is a 5B Gemma over Ollama, at $0 API cost. With a real per-agent ledger, honest friction, and a hybrid cloud+local variant."
 pubDate: 2026-07-02
 tags: ["typescript","ai","agents","ollama"]
-contentType: engineering
+contentType: field-note
 useCases: ["offline agents", "private inference"]
 industries: ["regulated workloads"]
 evidence:

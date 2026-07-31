@@ -678,8 +678,8 @@ export const en = {
       fieldNote: {
         index: '02',
         eyebrow: 'Field notes',
-        title: 'Patterns that keep showing up.',
-        lede: 'Observations from designing these workflows — where multi-agent structure pays off, and where a single model call still wins.',
+        title: 'Measured runs and recurring patterns.',
+        lede: 'Token ledgers, latency, and the friction a run actually hits — plus the boundaries that keep reappearing across workflows.',
       },
       decisionGuide: {
         index: '03',
@@ -691,7 +691,7 @@ export const en = {
         index: '04',
         eyebrow: 'Engineering & releases',
         title: 'How the runtime works, and what changed.',
-        lede: 'Mechanism walkthroughs, integration guides, and what shipped in each version.',
+        lede: 'Mechanism walkthroughs and what shipped in each version.',
       },
     },
     contentTypes: {

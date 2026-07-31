@@ -3,7 +3,7 @@ title: "用 TencentDB-Agent-Memory 给你的 TypeScript AI 智能体加上长期
 description: "把 open-multi-agent 的 MemoryStore 通过 Hermes Gateway 接到 TencentDB-Agent-Memory：一个端到端实测的跨运行记忆闭环，以及两个决定到底有没有东西被存下来的上游坑。"
 pubDate: 2026-06-15
 tags: ["typescript","ai","llm","tutorial"]
-contentType: engineering
+contentType: application
 useCases: ["跨运行记忆", "回访型助手"]
 industries: ["客户支持", "知识工作"]
 evidence:

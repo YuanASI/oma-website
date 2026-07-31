@@ -797,8 +797,8 @@ export const zh: UiDict = {
       fieldNote: {
         index: '02',
         eyebrow: '一线观察',
-        title: '反复出现的那些模式。',
-        lede: '来自设计这些工作流的观察：多智能体结构在哪里真正划算，哪些场景一次模型调用就够。',
+        title: '实测运行与反复出现的模式。',
+        lede: 'Token 账单、延迟，以及真跑一遍会遇到的摩擦；还有在不同工作流中反复出现的边界。',
       },
       decisionGuide: {
         index: '03',
@@ -810,7 +810,7 @@ export const zh: UiDict = {
         index: '04',
         eyebrow: '工程与发布',
         title: '运行时如何工作，以及每个版本改了什么。',
-        lede: '机制拆解、集成指南，以及各版本发布的内容。',
+        lede: '机制拆解，以及各版本发布的内容。',
       },
     },
     contentTypes: {

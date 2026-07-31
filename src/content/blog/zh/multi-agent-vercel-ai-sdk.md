@@ -3,7 +3,7 @@ title: "给 Vercel AI SDK 应用加上多智能体编排"
 description: "给现有的 Vercel AI SDK 应用加上多智能体编排：AI SDK 负责流式输出 token、对接模型，open-multi-agent 的 runTeam() 负责拆解目标、协调各个智能体——两者共用同一个 Next.js API 路由。"
 pubDate: 2026-04-15
 tags: ["ai","nextjs","webdev","typescript"]
-contentType: engineering
+contentType: application
 useCases: ["流式智能体应用", "Next.js 编排"]
 industries: ["软件产品"]
 evidence:
