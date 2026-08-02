@@ -183,125 +183,11 @@ export const zh: UiDict = {
       points: ['任务 DAG 与承担者', '模型、提供方、token 与成本汇总', '工具调用、状态与安全证据详情'],
       link: '打开可观测性参考',
     },
-    sectionCapabilities: {
-      eyebrow: '工作原理',
-      title: '一个智能体运行时，不是图构建器。',
-      sub: '目标优先，而非图优先。你描述想要的结果；拆解、并行与综合都交给 OMA。',
-    },
-    caps: [
-      { n: '01', t: '目标驱动的协调器', d: '你传入的是目标，不是图。协调器把它拆解成任务 DAG，并行运行相互独立的节点，并综合出最终结果。' },
-      { n: '02', t: '在一个团队里混用任意模型', d: '每个智能体各自指定模型，在同一个团队里协作。可使用 Anthropic、OpenAI、Gemini、Bedrock、Azure OpenAI、DeepSeek 等内置提供方，或任何兼容 OpenAI 的端点。' },
-      { n: '03', t: '工具与 MCP，默认拒绝', d: '智能体只拥有被授予的工具。Model Context Protocol 服务器在同样的按需授权约定下，把外部系统暴露给智能体。' },
-      { n: '04', t: '流式与结构化输出', d: '在 DAG 逐步填充时流式输出 token 和节点状态变化，或在运行结束时取回一个带类型、经 schema 校验的对象。' },
-      { n: '05', t: '跨提供方推理', d: '一份 thinking 配置，映射到 Anthropic 的 thinking、Gemini 的 thinkingConfig 和 OpenAI 的 reasoning_effort。推理以事件形式流式输出，开启后还能在切换提供方时保留。' },
-      { n: '06', t: '把编码 CLI 当作智能体运行', d: '通过 Agent Client Protocol（ACP），外部编码智能体（包括 Claude Code）作为 OMA 智能体加入团队，而调度、共享记忆与预算仍由协调器掌管。' },
-    ],
-    oneCall: { title: '一次调用', body: '整个 DAG 解析完成时 runTeam() 才返回。无需手工接线节点，也没有调度器要维护。' },
-    capsLinks: { threeWays: 'runAgent · runTeam · runTasks：三种运行方式', archFlow: '查看架构与 runTeam() 流程' },
-    sectionReliability: {
-      eyebrow: '掌控',
-      title: '控制权在你手里。',
-      sub: '在非确定性的智能体外面，加上确定性控制与可度量的质量。',
-    },
-    reliability: [
-      {
-        tag: '留在回路内',
-        t: '你始终在掌控之中',
-        ref: '/guides/orchestration-controls/',
-        refLabel: '编排控制',
-        parts: [
-          '用 ', { c: 'onPlanReady' },
-          ' 预览计划、', { c: 'onApproval' },
-          ' 逐轮审批、', { c: 'onToolCall' },
-          ' 为每次工具调用把关。', { c: 'runConsensus' },
-          ' 加一道第二智能体校验；循环检测叫停原地打转的智能体。',
-        ],
-      },
-      {
-        tag: '花费封顶',
-        t: '把钱花在刀刃上',
-        ref: '/reference/model-routing/',
-        refLabel: '模型路由',
-        parts: [
-          '用 ', { c: 'modelRouting' },
-          ' 把规划交给旗舰模型、叶子任务交给便宜模型。用 ', { c: 'maxTokenBudget' },
-          ' 和 ', { c: 'maxCostBudget' },
-          ' + ', { c: 'estimateCost' },
-          ' 给花费封一个 token 或美元上限。',
-        ],
-      },
-      {
-        tag: '可观测',
-        t: '检查、重放计划、恢复任务',
-        ref: '/reference/observability/',
-        refLabel: '可观测性',
-        parts: [
-          '用 ', { c: 'createPlanArtifact' },
-          ' 冻结一份已审过的计划，再用 ', { c: 'runFromPlan' },
-          ' 重放。运行后打开离线 Run Viewer（', { c: 'oma run --dashboard' },
-          '）；检查点从已完成任务边界恢复。',
-        ],
-      },
-    ],
-    evaluation: {
-      tag: '评估',
-      title: '在部署前后，量出质量变化。',
-      parts: [
-        '为 ', { c: 'EvalSet' }, ' 数据集和 ', { c: 'Scorer' },
-        ' 逻辑做版本管理，用 ', { c: 'runEvalSet()' },
-        ' 跑回归，再用 ', { c: 'oma eval gate' }, ' 在 CI 中执行结果。',
-      ],
-      note: '线上采样需要显式开启，且不会改变业务结果。Scorer 失败会保留为 scorer_error，不会被算成零分。',
-      steps: [
-        { label: '版本', value: 'EvalSet + Scorer' },
-        { label: '运行', value: '报告 + 聚合指标' },
-        { label: '闸门', value: 'GateVerdict + CLI' },
-      ],
-      ref: '/reference/evaluation/',
-      refLabel: '评估参考',
-    },
     dashboard: {
       caption: '而当真的出岔子时，离线 Run Viewer 可以回放已完成的运行：任务 DAG，以及每个任务的承担者、模型与提供方、token 与成本汇总、工具调用次数和安全证据详情。',
       obsLink: '可观测性',
       imgAlt: '离线 Run Viewer 正在回放一次已完成的团队运行，展示任务 DAG，以及每个任务的承担者、模型、提供方、token、成本、工具调用与状态详情。',
     },
-    sectionEnvironment: {
-      eyebrow: '你的运行环境',
-      title: '跑在你自己的环境里。',
-      sub: '本地、离线，或气隙运行，用你自己的凭证，工具默认拒绝，只有三个运行时依赖。无需托管服务，无需云。',
-    },
-    environment: [
-      {
-        tag: '你的基础设施',
-        t: '跑在数据所在的地方',
-        ref: '/reference/providers/',
-        refLabel: '本地与自托管模型',
-        parts: [
-          '本地、离线，或气隙运行 OMA，跑在你自己的服务器、用你自己的凭证。用 ', { c: 'baseURL' },
-          ' 指向一个本地端点，整次运行就都在离线状态：没有要接入的托管 OMA 服务，也无需云。',
-        ],
-      },
-      {
-        tag: '最小权限',
-        t: '默认锁死',
-        ref: '/reference/tool-configuration/',
-        refLabel: '工具与沙箱',
-        parts: [
-          '内置工具默认拒绝：智能体只拿到你授予的那些，文件系统工具限定在配置的 ', { c: 'cwd' },
-          ' 内。密钥会从 trace、shell 输出和 Viewer 载荷中脱敏，尽力而为。',
-        ],
-      },
-      {
-        tag: '轻量',
-        t: '轻到能塞进封闭内网',
-        ref: '/guides/production-checklist/',
-        refLabel: '生产清单',
-        parts: [
-          'core 只装三个运行时依赖：', { c: '@anthropic-ai/sdk' }, '、', { c: 'openai' }, ' 和 ', { c: 'zod' },
-          '。没有守护进程，没有 sidecar；其余每个 SDK 都是惰性加载、按需可选的 peer。',
-        ],
-      },
-    ],
     sectionEvidence: {
       eyebrow: '场景 · 技术栈 · 采用证据',
       title: '它适合哪些场景，又有谁在用。',
@@ -320,17 +206,6 @@ export const zh: UiDict = {
       'contract-review-dag': { primitive: '显式 DAG · runTasks()', scenario: '法务运营 · 审查', title: '合同审查', desc: '只提取一次条款，并行完成合规检查与摘要，等待两者完成后再生成通知。', outcome: '一份支持步骤级重试的完整 Markdown 审查。' },
       'incident-postmortem-dag': { primitive: '显式 DAG · runTasks()', scenario: 'SRE · 运维', title: '事故复盘', desc: '三项基于 fixtures 的调查并行开始，再汇入根因假设与最终事故复盘。', outcome: '一份保留证据链、运行时长与 token 成本的 Markdown 产物。' },
     },
-    sectionStack: {
-      eyebrow: '集成',
-      title: '与你的技术栈协同。',
-    },
-    stack: [
-      { name: '提供方', note: 'Anthropic、Gemini、OpenAI、Bedrock、Azure、DeepSeek，以及任何兼容 OpenAI 的端点', count: '内置 + 兼容端点' },
-      { name: 'MCP', note: '把 Model Context Protocol 服务器作为工具接入', count: '原生' },
-      { name: 'Vercel AI SDK', note: '桥接 60+ 个 AI SDK 提供方与平台', count: '兼容' },
-      { name: 'Express', note: '把固定的 runTasks() 流水线挂在路由处理器后面', count: '即插即用' },
-      { name: '任意 Node.js', note: '没有守护进程，没有 sidecar，只有三个运行时依赖', count: 'Node 20+' },
-    ],
     sectionProof: {
       eyebrow: '采用情况',
       title: '开源，数字实时来自仓库。',

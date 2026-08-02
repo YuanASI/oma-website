@@ -202,125 +202,11 @@ export const en = {
       points: ['Task DAG and assignees', 'Model, provider, token, and cost rollups', 'Tool calls, status, and safe evidence details'],
       link: 'Open the observability reference',
     },
-    sectionCapabilities: {
-      eyebrow: 'How it works',
-      title: 'An agent runtime, not a graph builder.',
-      sub: 'Goal-first, not graph-first. You describe the outcome; OMA owns the decomposition, the parallelism, and the synthesis.',
-    },
-    caps: [
-      { n: '01', t: 'Goal-driven coordinator', d: 'You pass a goal, not a graph. The coordinator decomposes it into a task DAG, runs the independent nodes in parallel, and synthesizes the final result.' },
-      { n: '02', t: 'Mix any model in one team', d: 'Each agent names its own model, and they cooperate inside a single team. Use built-in providers such as Anthropic, OpenAI, Gemini, Bedrock, Azure OpenAI, and DeepSeek, or any OpenAI-compatible endpoint.' },
-      { n: '03', t: 'Tools and MCP, default-deny', d: 'An agent gets only the tools it is granted. Model Context Protocol servers expose external systems under the same opt-in contract.' },
-      { n: '04', t: 'Streaming and structured output', d: 'Stream tokens and node-state transitions as the DAG fills, or await a typed, schema-validated object when the run completes.' },
-      { n: '05', t: 'Cross-provider reasoning', d: 'One thinking config maps to Anthropic thinking, Gemini thinkingConfig, and OpenAI reasoning_effort. Reasoning streams as events, and can be preserved across a provider switch when you opt in.' },
-      { n: '06', t: 'Run coding CLIs as agents', d: 'Over the Agent Client Protocol (ACP), external coding agents (Claude Code included) join a team as OMA agents while the coordinator keeps scheduling, shared memory, and budgets.' },
-    ],
-    oneCall: { title: 'One call', body: 'runTeam() returns when the whole DAG resolves. No manual node wiring, no scheduler to maintain.' },
-    capsLinks: { threeWays: 'runAgent · runTeam · runTasks: three ways to run', archFlow: 'See the architecture and runTeam() flow' },
-    sectionReliability: {
-      eyebrow: 'Control',
-      title: 'You hold the controls.',
-      sub: 'Deterministic controls and measurable quality around non-deterministic agents.',
-    },
-    reliability: [
-      {
-        tag: 'in the loop',
-        t: 'You stay in the loop',
-        ref: '/guides/orchestration-controls/',
-        refLabel: 'orchestration controls',
-        parts: [
-          'Preview the plan with ', { c: 'onPlanReady' },
-          ', approve each round with ', { c: 'onApproval' },
-          ', and gate every tool call with ', { c: 'onToolCall' },
-          '. ', { c: 'runConsensus' },
-          ' adds a second-agent check; loop detection stops an agent that repeats itself.',
-        ],
-      },
-      {
-        tag: 'on budget',
-        t: 'Spend where it counts',
-        ref: '/reference/model-routing/',
-        refLabel: 'model routing',
-        parts: [
-          'Route planning to a flagship model and leaf tasks to cheap ones with ', { c: 'modelRouting' },
-          '. Cap spend at a token or USD ceiling with ', { c: 'maxTokenBudget' },
-          ' and ', { c: 'maxCostBudget' },
-          ' + ', { c: 'estimateCost' },
-          '.',
-        ],
-      },
-      {
-        tag: 'observable',
-        t: 'Inspect, replay plans, restore tasks',
-        ref: '/reference/observability/',
-        refLabel: 'observability',
-        parts: [
-          'Freeze a vetted plan with ', { c: 'createPlanArtifact' },
-          ' and replay it with ', { c: 'runFromPlan' },
-          '. Open the offline Run Viewer after any run (', { c: 'oma run --dashboard' },
-          '); checkpoints restore from completed task boundaries.',
-        ],
-      },
-    ],
-    evaluation: {
-      tag: 'evaluation',
-      title: 'Measure quality before and after deployment.',
-      parts: [
-        'Version ', { c: 'EvalSet' }, ' fixtures and ', { c: 'Scorer' },
-        ' logic, run regressions with ', { c: 'runEvalSet()' },
-        ', and enforce the result in CI with ', { c: 'oma eval gate' }, '.',
-      ],
-      note: 'Online sampling is opt-in and never changes the business result. Scorer failures remain scorer_error instead of becoming zero scores.',
-      steps: [
-        { label: 'version', value: 'EvalSet + Scorer' },
-        { label: 'run', value: 'reports + aggregates' },
-        { label: 'gate', value: 'GateVerdict + CLI' },
-      ],
-      ref: '/reference/evaluation/',
-      refLabel: 'evaluation reference',
-    },
     dashboard: {
       caption: 'And when something does slip, the offline Run Viewer replays the completed run: the task DAG, per-task assignee, model and provider, token and cost rollups, tool-call count, and safe evidence details.',
       obsLink: 'Observability',
       imgAlt: 'Offline Run Viewer replaying a completed team run with its task DAG and per-task assignee, model, provider, token, cost, tool-call, and status details.',
     },
-    sectionEnvironment: {
-      eyebrow: 'Your environment',
-      title: 'Runs in your environment.',
-      sub: 'Local, offline, or air-gapped, on your own credentials, with tools locked down by default and three runtime dependencies. No hosted service, no cloud required.',
-    },
-    environment: [
-      {
-        tag: 'your infrastructure',
-        t: 'Runs where your data lives',
-        ref: '/reference/providers/',
-        refLabel: 'local & self-hosted models',
-        parts: [
-          'Run OMA local, offline, or air-gapped, on your own servers and your own credentials. Point it at a local endpoint with ', { c: 'baseURL' },
-          ' and a whole run stays offline: no hosted OMA service to adopt, no cloud required.',
-        ],
-      },
-      {
-        tag: 'least privilege',
-        t: 'Locked down by default',
-        ref: '/reference/tool-configuration/',
-        refLabel: 'tools & sandbox',
-        parts: [
-          'Built-in tools are default-deny: an agent gets only what you grant, and filesystem tools stay inside the configured ', { c: 'cwd' },
-          '. Secrets are redacted from traces, shell output, and Viewer payloads on a best-effort path.',
-        ],
-      },
-      {
-        tag: 'lightweight',
-        t: 'Light enough for locked-down infra',
-        ref: '/guides/production-checklist/',
-        refLabel: 'production checklist',
-        parts: [
-          'Core installs three runtime dependencies: ', { c: '@anthropic-ai/sdk' }, ', ', { c: 'openai' }, ', and ', { c: 'zod' },
-          '. No daemon, no sidecar; every other SDK is a lazy-loaded, opt-in peer.',
-        ],
-      },
-    ],
     sectionEvidence: {
       eyebrow: 'Scenarios · stack · adoption',
       title: 'Where OMA fits, and what runs on it.',
@@ -339,17 +225,6 @@ export const en = {
       'contract-review-dag': { primitive: 'explicit DAG · runTasks()', scenario: 'legal ops · review', title: 'Contract review', desc: 'Extract clauses once, run compliance and summary work in parallel, then wait for both before producing the notification.', outcome: 'A complete Markdown review with step-level retry.' },
       'incident-postmortem-dag': { primitive: 'explicit DAG · runTasks()', scenario: 'sre · operations', title: 'Incident postmortem', desc: 'Three fixture-backed investigations start in parallel, then feed a root-cause hypothesis and final postmortem.', outcome: 'A traceable Markdown artifact with timing and token-cost evidence.' },
     },
-    sectionStack: {
-      eyebrow: 'Integrations',
-      title: 'Works with your stack.',
-    },
-    stack: [
-      { name: 'Providers', note: 'Anthropic, Gemini, OpenAI, Bedrock, Azure, DeepSeek, or any OpenAI-compatible endpoint', count: 'built-in + compatible' },
-      { name: 'MCP', note: 'Connect Model Context Protocol servers as tools', count: 'native' },
-      { name: 'Vercel AI SDK', note: 'Bridge to 60+ AI SDK providers and hosts', count: 'compatible' },
-      { name: 'Express', note: 'Mount a fixed runTasks() pipeline behind a route handler', count: 'drop-in' },
-      { name: 'Any Node.js', note: 'No daemon, no sidecar, three runtime deps', count: 'Node 20+' },
-    ],
     sectionProof: {
       eyebrow: 'Adoption',
       title: 'Open source, live from the repo.',
