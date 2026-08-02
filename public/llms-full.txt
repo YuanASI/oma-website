@@ -91,7 +91,9 @@ failure is still `failed` with `recoveredByRevision`, a replaced branch is `skip
 `supersededByRevision`, and accepted revisions surface in `result.planRevisions`, progress
 events, and observability spans. Repairs are forward-only: OMA does not undo side effects
 a task already performed, and `runFromPlan()` rejects repairable recovery because it is
-exact replay.
+exact replay. `onTaskOutcome` is the shorthand for applications that don't want a named
+`Replanner` — configure one or the other, not both. Reference:
+https://open-multi-agent.com/reference/adaptive-recovery/
 
 **Mix any model in one team.** Each agent names its own model, and they cooperate inside a
 single team. Built-in providers include Anthropic, OpenAI, Gemini, Bedrock, Azure OpenAI,
@@ -324,6 +326,7 @@ Reference:
 - Observability performance: https://open-multi-agent.com/reference/observability-performance/
 - Shared memory: https://open-multi-agent.com/reference/shared-memory/
 - Checkpoint & resume: https://open-multi-agent.com/reference/checkpoint/
+- Adaptive recovery: https://open-multi-agent.com/reference/adaptive-recovery/
 - Plan preview & replay: https://open-multi-agent.com/reference/plan-replay/
 - Context management: https://open-multi-agent.com/reference/context-management/
 - Consensus: https://open-multi-agent.com/reference/consensus/
