@@ -348,7 +348,7 @@ export const en = {
       { name: 'MCP', note: 'Connect Model Context Protocol servers as tools', count: 'native' },
       { name: 'Vercel AI SDK', note: 'Bridge to 60+ AI SDK providers and hosts', count: 'compatible' },
       { name: 'Express', note: 'Mount a fixed runTasks() pipeline behind a route handler', count: 'drop-in' },
-      { name: 'Any Node.js', note: 'No daemon, no sidecar, three runtime deps', count: 'Node 18+' },
+      { name: 'Any Node.js', note: 'No daemon, no sidecar, three runtime deps', count: 'Node 20+' },
     ],
     sectionProof: {
       eyebrow: 'Adoption',
@@ -822,7 +822,7 @@ export const en = {
         { k: 'Where it runs', dw: 'Inside Claude Code — CLI, desktop, and IDE', oma: 'Your own Node.js backend — installed with npm, no hosted service to adopt' },
         { k: 'What it is', dw: 'A capability of Claude Code', oma: 'An open-source (MIT) library you embed' },
         { k: 'Models', dw: 'Claude subagents', oma: 'Any provider — OpenAI, Anthropic, Gemini, Bedrock, or any local / OpenAI-compatible model' },
-        { k: 'Language / surface', dw: 'Used from Claude Code', oma: 'TypeScript, in any Node.js 18+ backend' },
+        { k: 'Language / surface', dw: 'Used from Claude Code', oma: 'TypeScript, in any Node.js 20+ backend' },
         { k: 'The plan', dw: 'Orchestration scripts Claude writes and runs in the session, checking its work before returning', oma: 'A task DAG you can inspect and replay as data — planOnly, createPlanArtifact, runFromPlan' },
       ],
     },

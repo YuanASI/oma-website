@@ -9,7 +9,7 @@ You will scaffold a project, exercise the real OMA scheduler with scripted model
 
 ## Before you start
 
-- Node.js 18 or newer
+- Node.js 20 or newer (Node.js 22 or 24 recommended)
 - npm access to download the generated project's dependencies
 - About five minutes
 

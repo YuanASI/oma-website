@@ -32,7 +32,7 @@ export const AXES: Axis[] = [
   {
     key: 'language',
     label: { en: 'Language / runtime', zh: '语言 / 运行时' },
-    oma: { en: 'TypeScript-native; embeds in any Node.js 18+ backend', zh: 'TypeScript 原生，可嵌入任意 Node.js 18+ 后端' },
+    oma: { en: 'TypeScript-native; embeds in any Node.js 20+ backend', zh: 'TypeScript 原生，可嵌入任意 Node.js 20+ 后端' },
   },
   {
     key: 'paradigm',
@@ -360,8 +360,8 @@ export const COMPARISONS: Comparison[] = [
       zh: '当你想要一套开箱即全的技术栈、并愿意自己编写 workflow 图时，Mastra 合适：内置记忆、RAG、evals 与调试台，若你愿意运行它所需的存储与 server，还能获得挂起/恢复的持久性。它专门的 Harness（仍是 beta）面向的是交互式、多模式的智能体应用，而非任务编排。',
     },
     whenUs: {
-      en: 'open-multi-agent fits when you want the plan built for you and the whole run kept in your environment. The coordinator turns a goal into a task DAG at runtime, and that plan is inspectable, replayable data (<code>planOnly</code> → <code>createPlanArtifact</code> → <code>runFromPlan</code>), not a workflow graph you hand-author. It stays three dependencies on Node.js 18+, hard-caps spend with <code>maxTokenBudget</code> (or <code>maxCostBudget</code>) where Mastra has no token-level cap, and can route planning to a flagship model and leaf work to a cheap one. Evaluation, tracing, and an offline Run Viewer need no hosted service, so it runs fully offline or air-gapped, on your own credentials.',
-      zh: 'open-multi-agent 适合你想要计划替你生成、且整个运行留在你自己环境里的场景。协调器在运行时把目标拆成任务 DAG，而这份计划是可检查、可重放的数据（<code>planOnly</code> → <code>createPlanArtifact</code> → <code>runFromPlan</code>），而非你手工编写的 workflow 图。它保持三个依赖、跑在 Node.js 18+ 上，用 <code>maxTokenBudget</code>（或 <code>maxCostBudget</code>）在调用与任务边界停止后续工作；一个已在途的模型回合仍可能越过上限。它还可以把规划交给旗舰模型、把叶子任务交给廉价模型。evaluation、链路追踪与离线 Run Viewer 全都无需托管服务，于是它能完全离线或气隙运行，用你自己的凭证。',
+      en: 'open-multi-agent fits when you want the plan built for you and the whole run kept in your environment. The coordinator turns a goal into a task DAG at runtime, and that plan is inspectable, replayable data (<code>planOnly</code> → <code>createPlanArtifact</code> → <code>runFromPlan</code>), not a workflow graph you hand-author. It stays three dependencies on Node.js 20+, hard-caps spend with <code>maxTokenBudget</code> (or <code>maxCostBudget</code>) where Mastra has no token-level cap, and can route planning to a flagship model and leaf work to a cheap one. Evaluation, tracing, and an offline Run Viewer need no hosted service, so it runs fully offline or air-gapped, on your own credentials.',
+      zh: 'open-multi-agent 适合你想要计划替你生成、且整个运行留在你自己环境里的场景。协调器在运行时把目标拆成任务 DAG，而这份计划是可检查、可重放的数据（<code>planOnly</code> → <code>createPlanArtifact</code> → <code>runFromPlan</code>），而非你手工编写的 workflow 图。它保持三个依赖、跑在 Node.js 20+ 上，用 <code>maxTokenBudget</code>（或 <code>maxCostBudget</code>）在调用与任务边界停止后续工作；一个已在途的模型回合仍可能越过上限。它还可以把规划交给旗舰模型、把叶子任务交给廉价模型。evaluation、链路追踪与离线 Run Viewer 全都无需托管服务，于是它能完全离线或气隙运行，用你自己的凭证。',
     },
   },
   {
