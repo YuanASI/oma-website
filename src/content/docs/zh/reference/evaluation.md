@@ -464,14 +464,16 @@ GitHub Actions 作业可以保留两种机器可读报告，同时让闸门控�
 固定的 `run-team-routing-stability@1.0.0` EvalSet 位于
 `packages/core/tests/fixtures/eval/routing-stability-set.json`，用来衡量
 `runTeam()` 的等价目标在 prompt 长度或语言变化后，是否保持相同执行拓扑。每个 family
-包含一个短英文版本、一个超过当前简单目标边界的详细英文版本，以及一份中文翻译。
+包含短英文与详细英文两个版本，外加中文、日文与韩文翻译。
 治理 family 的每个变体都携带相同 `governanceIntent: 'required'`、`requiredRoles`
 与 `requiredOrder`；普通 family 不带声明。
 
 测试向每个 worker 与 Coordinator 注入同一个确定性 `LLMAdapter`。所有模型调用返回
-相同固定文本，其中包括有效的双角色计划，因此无需网络与 API Key。同一 family 中只有
-目标文本变化。拓扑通过 `buildExecutionReceipt(result)` 与 `result.tasks` 短路标记
-测量，只包括：
+相同固定文本，其中包括有效的双角色计划。测试还会为普通 Single 候选注入一份有效的
+低风险 `TaskProfiler` fixture，并且要求 Hybrid 分析必须以 `outcome: 'applied'`
+结束，否则测试失败；因此这道闸不会因为无效 profile 输出被静默回退而蒙混通过。整个
+套件无需网络与 API Key。同一 family 中只有目标文本变化。拓扑通过
+`buildExecutionReceipt(result)` 与 `result.tasks` 短路标记测量，只包括：
 
 - `single-short-circuit` 或任务图；
 - 实际执行的 worker 角色；
@@ -481,28 +483,81 @@ GitHub Actions 作业可以保留两种机器可读报告，同时让闸门控�
 flip rate 是规范拓扑不同的无序变体对数量除以 `n * (n - 1) / 2`。长度不变性比较
 fixture 的短 / 长英文对；语言不变性比较显式配对的英文 / 中文变体。
 
-`packages/core/tests/fixtures/eval/routing-stability-gate.json` 只对
+`packages/core/tests/fixtures/eval/routing-stability-gate.json` 对
 `governance` 标签应用三条绝对阈值：路由稳定性、长度不变性、语言不变性都必须为
-`1`（零 flip）。Scorer 与 target error 上限都为零。Vitest 先生成完整报告，再对
-`governance` 过滤后的运行执行 Gate，因此普通目标得分与健康度不会影响判决。现有 CI
-的 `npm test` 会阻止声明式路由因目标语言或长度而变化。负向对照会注入一个假的声明式
-路由器，把中文变体压成单角色，并断言路由稳定性与语言不变性阈值同时失败。
+`1`（零 flip）。它同时把普通目标的路由稳定性设在 `0.95`（pair flip 不超过 5%）；
+普通目标的长度 / 语言子指标仍然只监测。Scorer 与 target error 上限都为零。现有 CI
+的 `npm test` 会阻止声明式路由因目标语言或长度而变化，也会阻止普通目标的拓扑 flip
+超出上限。负向对照会注入一个假的声明式路由器，把中文变体压成单角色，并断言路由
+稳定性与语言不变性阈值同时失败。
 
-普通自动路由只监测、不设闸。引入时的快照为：
+当前快照会出现在测试的 `[routing-stability]` EvalSet 报告中：
 
 | Family | Pair flips | Flip rate | 长度不变 | 语言不变 |
 |---|---:|---:|---:|---:|
-| 声明式转账 | 0 / 3 | 0% | 100% | 100% |
-| 声明式密钥轮换 | 0 / 3 | 0% | 100% | 100% |
-| **声明式治理总计** | **0 / 6** | **0%** | **100%** | **100%** |
-| 未声明 DNS | 2 / 3 | 66.7% | 0% | 0% |
-| 未声明数据库比较 | 2 / 3 | 66.7% | 0% | 100% |
-| **未声明普通目标总计** | **4 / 6** | **66.7%** | **0%** | **50%** |
+| 声明式转账 | 0 / 10 | 0% | 100% | 100% |
+| 声明式密钥轮换 | 0 / 10 | 0% | 100% | 100% |
+| **声明式治理总计** | **0 / 20** | **0%** | **100%** | **100%** |
+| 未声明 DNS | 0 / 10 | 0% | 100% | 100% |
+| 未声明数据库比较 | 0 / 10 | 0% | 100% | 100% |
+| **未声明普通目标总计** | **0 / 20** | **0%** | **100%** | **100%** |
 
 未声明普通路由的目标是 pair flip 不超过 5%，长度不匹配不超过 5%（长度不变性至少
-95%）。当前快照明显未达标，因此刻意不阻断 CI：自动路由的语言 / 长度中立性是已知
-未解决项，改变其分类行为不属于这个 EvalSet 的范围。只有在审查过有意的测量变化后，
-才更新固定语料版本与文档快照。
+95%）。只有在审查过有意的测量变化后，才更新固定语料版本与文档快照。
+
+## 语义路由策略 EvalSet
+
+`packages/core/tests/fixtures/eval/semantic-routing-set.json` 把 V1 的 Hybrid
+策略契约固定下来，与 provider 行为解耦。它覆盖简短的独立证据与独立评审目标、权限
+隔离、高影响副作用、目标冲突、普通的短 / 长单任务负样本、等价的中文 / 日文 / 韩文
+目标，以及一个 prompt 注入样本。
+
+每条 fixture 包含一份经过审阅的 `TaskProfile`、框架计算出的事实，以及期望的确定性
+建议。CI 会校验严格的 profile schema，并要求每条 fixture 完全匹配。这样就能在不把
+某个 provider 当下的分类当成语义契约的前提下，证明策略行为。真实 provider 的 E2E
+只用于检查一次调用的 Profiler 集成能否产出有效 profile，它不是唯一的路由判准。
+
+Shadow 评估属于 CI 与灰度发布工作，不是公开的运行时默认值。在推进一次大版本之前，
+用经过审阅的端到端语料对照这些闸门测量：
+
+- 关键用例上零 false-Single；
+- 经审阅的路由准确率不低于 95%；
+- 无效 / 失败的 Profiler 输出不超过 1%；
+- Profiler token 开销中位数不超过代表性总用量的 5%；以及
+- P95 端到端延迟回退不超过 10%。
+
+### 运行真实 provider 的 Shadow 闸门
+
+`packages/core/tests/e2e/semantic-routing-shadow.test.ts` 把经过审阅的合成语料喂给
+真实的 `LLMTaskProfiler`，再套用 Hybrid 路由所用的同一套确定性策略。除非设置
+`SEMANTIC_ROUTING_SHADOW=1`，否则它会被跳过；它不执行任何 worker 或工具，也不发送
+用户数据。Profiler 使用 `LLMTaskProfiler` 出厂默认的每条 fixture 800 输出 token，
+因此灰度验证的就是生产契约。可选的 `SEMANTIC_ROUTING_SHADOW_BASE_URL` 与
+`SEMANTIC_ROUTING_SHADOW_REGION` 会映射到所选 adapter；Bedrock 使用它常规的 AWS
+凭据链，而不是 API Key 变量。
+
+对 DeepSeek V4，内置 Profiler 显式使用非思考模式：这是一次有边界的 JSON 分类调用，
+而 DeepSeek 默认会开启思考。生产路径与这道闸门用的是同一个设置。
+
+凭据只在本地 shell 或 CI 密钥库里设置；不要把 Key 粘进命令、仓库文件或测试日志。
+例如，在不打印的前提下映射一个已有的本地 provider 密钥：
+
+```bash
+export SEMANTIC_ROUTING_SHADOW=1
+export SEMANTIC_ROUTING_SHADOW_PROVIDER=openai
+export SEMANTIC_ROUTING_SHADOW_MODEL=gpt-4o-mini
+export SEMANTIC_ROUTING_SHADOW_API_KEY="$OPENAI_API_KEY"
+npm run test:semantic-routing-shadow -w @open-multi-agent/core
+```
+
+报告只包含 provider / 模型标识、总体准确率、失败与不匹配的用例 ID、P95 Profiler
+延迟以及总 token 用量。它刻意省略目标文本、推断理由、模型原始输出与全部配置密钥。
+可执行的闸门强制要求零无效 profile、关键用例零 false-Single，以及经审阅的路由准确率
+不低于 95%。把输出记录为发布证据。剩下的端到端 token 与延迟回退闸门，在把某个
+provider / 模型宣布为支持 Hybrid 路由之前，于生产 shadow 灰度中测量。
+
+历史成功率、在线自适应学习与 Team 降为 Single 的优化，都需要独立版本化的评估、监控
+与回滚机制，不属于 V1。
 
 ## 内存评估指标
 

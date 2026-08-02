@@ -9,7 +9,7 @@ description: "三个遥测层：onProgress 事件、带 TraceStore 和可选 Ope
 [`onTrace` 迁移指南](/zh/reference/observability-migration/)。发布工程
 与基准测试证据记录在
 [`observability-performance.md`](/zh/reference/observability-performance/) 以及
-[`observability-release-readiness.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/docs/observability-release-readiness.md) 中。
+[`observability-release-readiness.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/docs/observability-release-readiness.md) 中。
 
 ## 运行标识与结果
 
@@ -446,7 +446,7 @@ run/task/tenant/request 字段变成指标标签。
 首个版本有意不提供 OTLP 便利子路径。应用自行选择其 OTel SDK 和 OTLP/exporter 实现，
 从而避免过早的 OTLP 导入、隐式的全局 provider 配置，以及第二套 SDK/exporter
 兼容性矩阵。完整的 API 和映射表见
-[`packages/otel/README.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/otel/README.md)。
+[`packages/otel/README.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/otel/README.md)。
 
 ## Flush 与 shutdown
 
@@ -546,12 +546,15 @@ const orchestrator = new OpenMultiAgent({
 
 把 trace span 转发给 OpenTelemetry、Datadog、Honeycomb、Langfuse，或你自己的运行
 数据库——但要先判断哪些数据进入该 sink 是安全的。可运行的示例见
-[`integrations/trace-observability`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/integrations/trace-observability.ts)。
+[`integrations/trace-observability`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/trace-observability.ts)。
 
 每次 `runTeam()` 拓扑选择都会发出旧版 `routing_decision` event，以及一个 kind
 为 `routing`、名为 `decide_execution_route` 的 v2 span。记录包括决策时的
-`mode`、`reasons`、可选 `confidence`，以及确有路由器运行时的实际
-`routerVersion`。`source` 区分优先链路径：
+`mode`、`reasons`、可选 `confidence`、实际 `routerVersion`，以及 Router 真实运行时
+的结构化 fallback 字段。Hybrid 的 Single 候选还会创建一个 `profile_execution_route`
+路由 span，带上置信度、延迟、token 用量与 fallback code；决策记录与 `TeamRunResult`
+则携带有边界的 `semanticRoutingAssessment`。`source` 区分优先链路径，同时不假装每次
+选择都来自路由器：
 
 - `override`——调用方提供了 `mode`；
 - `declared`——结构化治理角色选择 Team 拓扑；
@@ -561,8 +564,10 @@ const orchestrator = new OpenMultiAgent({
 - `legacy-deterministic`——仅为绕过 `ExecutionRouter` 的序列化或兼容路径保留。
 
 Event/span 的 `receiptId` 指向最终 `ExecutionReceipt`；receipt 通过
-`routingDecisionId` 与 `routingDecisionSpanId` 反向关联。决策记录不复制实际任务
-角色、顺序或依赖边，这些仍属于执行后的 receipt / task 事实。
+`routingDecisionId` 与 `routingDecisionSpanId` 反向关联。这份 assessment 是模型推断
+出来的证据，不复制也不替代实际任务角色、顺序、依赖边或最终工具授权，这些仍属于
+执行后的 receipt / task 事实。可观测性 sink 会把 assessment 派生出的文本，交给已有的
+敏感数据处理器处理。
 
 `TraceEvent` 联合类型现在有八个成员，包括 `routing_decision`。在内部，
 `LegacyCallbackTraceSink` 会把 v2 记录映射回确切的旧版事件对象。同步回调的抛出和

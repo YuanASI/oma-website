@@ -55,9 +55,9 @@ The coordinator routes the coding work to `coder` based on its roster descriptio
 subprocess does the file edits; `reviewer` then reads the result from shared memory.
 
 A runnable `process` version is at
-[`examples/integrations/external-agent-process.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/integrations/external-agent-process.ts).
+[`examples/integrations/external-agent-process.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/external-agent-process.ts).
 A runnable ACP version is at
-[`examples/integrations/external-agent-acp.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/integrations/external-agent-acp.ts).
+[`examples/integrations/external-agent-acp.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/external-agent-acp.ts).
 
 ## Installation
 
@@ -189,6 +189,12 @@ across turns telescopes to the latest figure instead of double-counting. That to
 aggregates into the run and honors `maxTokenBudget`. An agent that emits no
 `usage_update` reports `{0, 0}` and is therefore **not** budget-gated — size the
 budget on LLM agents, or bound the ACP agent with its own `--max-*` flags.
+
+On a Hybrid `runTeam()` Single short circuit, semantic-profiler usage is charged
+before the external backend starts. The backend's reported usage is then added
+at the run boundary, so an ACP usage delta can exhaust the remaining run budget.
+The process backend continues to contribute `{0, 0}` because it has no token
+signal.
 
 ## Programmatic API
 

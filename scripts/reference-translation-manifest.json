@@ -24,45 +24,49 @@
     "enBodySha256": "ec5ef5affb57bd77dd8e1b542adf3db7a942529973b854aa40b4a8a5ef56cc7c",
     "translatedAt": "2026-07-30"
   },
+  "reference/adaptive-recovery": {
+    "enBodySha256": "de371a360ead16de8f4e063354a3cfbeba06444815f9f811acf648878743d8fc",
+    "translatedAt": "2026-08-02"
+  },
   "reference/checkpoint": {
     "enBodySha256": "3d49baace901cd51761cc03c98585a495bb97d1ba82166cbd285093a8e3d8113",
     "translatedAt": "2026-07-30"
   },
   "reference/cli": {
-    "enBodySha256": "cdbabaf696b0fbb7874c609e7628f5ba54612b59f8f8bc3c8b6e117b1db9231c",
-    "translatedAt": "2026-07-30"
+    "enBodySha256": "99ce949be4de074d8f67fd06cf33adf75636530bfbcd2fbc0fd58a45c16d1b3c",
+    "translatedAt": "2026-08-02"
   },
   "reference/consensus": {
     "enBodySha256": "3aebc5b0d0264b05c55c3995b89221d396eb37a6b8ae9c4cbb66e65f8c35feb1",
     "translatedAt": "2026-07-18"
   },
   "reference/context-management": {
-    "enBodySha256": "f115f1d4648139b9c1d82487e190f076b67b0df234634fbe09c594968e4d418e",
-    "translatedAt": "2026-07-30"
+    "enBodySha256": "1ffeb25dc2ffb29a85e714fdaa9ca0cf90b91b686f23003579e0bb1241563880",
+    "translatedAt": "2026-08-02"
   },
   "reference/evaluation": {
-    "enBodySha256": "52b6f858cbfe51ed16a264ce60d2f287914354c0780581f3458b82f4a0411848",
-    "translatedAt": "2026-07-30"
+    "enBodySha256": "9973bc27f69c5fff6018ac284e17982d4cf5d6f117bccc8a1ce73a484d68d9f1",
+    "translatedAt": "2026-08-02"
   },
   "reference/execution-routing": {
-    "enBodySha256": "d3037dd5f0fbb9d34b56a38e6641a6297c3871077edaab21ecefb4c3f23ff172",
-    "translatedAt": "2026-07-30"
+    "enBodySha256": "e0d9c6c3583e61b15dad6a159ec1e6ad3c31e67ba4404c7a75ff7a4462f37c48",
+    "translatedAt": "2026-08-02"
   },
   "reference/external-agents": {
-    "enBodySha256": "8429fe050ad68a5a2e29e20e28be288159df47629fbc8e0cdbf70d819c5cadf3",
-    "translatedAt": "2026-07-30"
+    "enBodySha256": "a9ab82a32ee2ee78ccb197fa2d5c9510d4d333ed33188f77f9534ae327c03c25",
+    "translatedAt": "2026-08-02"
   },
   "reference/model-routing": {
-    "enBodySha256": "3b12e21f7b81c66f51e303a7e1cfb68e40564c319c1437092bea249affa59aeb",
-    "translatedAt": "2026-07-30"
+    "enBodySha256": "cafa65c06d27359463094e270c12881de10a53baf1bf7e6c42ec49a0986f3314",
+    "translatedAt": "2026-08-02"
   },
   "reference/observability": {
-    "enBodySha256": "046f5d7a7bdc64b4fc6739d63f92a622cf3170f4b3b5047fc83f86d0adb2b360",
-    "translatedAt": "2026-07-30"
+    "enBodySha256": "3baa50fed6e582e5dcd827d32bc36f429952837af315585300cbffe72572bf83",
+    "translatedAt": "2026-08-02"
   },
   "reference/observability-migration": {
-    "enBodySha256": "dc4d46a2cc3ffc7c02242bec0216f927feb3ba6894ae9d06bdd9b4bcbeb944f3",
-    "translatedAt": "2026-07-30"
+    "enBodySha256": "483b58773336b7bd884c4dcb7682c7d6feb86d0ba61ffc8535f864fdefde6612",
+    "translatedAt": "2026-08-02"
   },
   "reference/observability-performance": {
     "enBodySha256": "1ba6d380fa3f88c77d1230423a215c23536c176f983a7bda85e4e7de4fa0fb4e",
@@ -73,19 +77,19 @@
     "translatedAt": "2026-07-18"
   },
   "reference/providers": {
-    "enBodySha256": "8933d9fbb4ca9ee35bc288e620ebf3927551fd10fb71938baa6c41c8a021cfb4",
-    "translatedAt": "2026-07-30"
+    "enBodySha256": "83a36ded3f29bef9526b4629bc48798e2ddb0c08592bc817ede8afab7f629cb2",
+    "translatedAt": "2026-08-02"
   },
   "reference/shared-memory": {
     "enBodySha256": "16cec06d3a1045c8dbc37c756fb195feb946b35c06ddae3d83bd5613dcc341eb",
     "translatedAt": "2026-07-18"
   },
   "reference/task-scheduling": {
-    "enBodySha256": "3cb84893750336494685001a26bfec3577211de7accbe45423758483dc4556af",
-    "translatedAt": "2026-07-30"
+    "enBodySha256": "72db7ea5164d3381264f982f2ca2f8784481f6505e001f4ba68c0396fa41222d",
+    "translatedAt": "2026-08-02"
   },
   "reference/tool-configuration": {
-    "enBodySha256": "a3e1d6801be53e5f7097f5a62f0a61e5d3eb39db39a485dc0f392aa5b6c99ae3",
-    "translatedAt": "2026-07-30"
+    "enBodySha256": "e5a9fe4c5298d6946c3559afbc575fdcab6d3d9ea42a003b9a02a8fe82639d84",
+    "translatedAt": "2026-08-02"
   }
 }
