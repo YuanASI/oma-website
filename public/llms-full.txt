@@ -8,8 +8,9 @@ and the docs at https://open-multi-agent.com.
 
 - Install: `npm create oma-app@latest`
 - Package: `@open-multi-agent/core` (npm)
+- Latest release: v1.14.0
 - License: MIT
-- Runtime: Node.js 18+, three runtime dependencies (Anthropic SDK, OpenAI SDK, Zod)
+- Runtime: Node.js 20+ (Node 18 reached end of life on 2025-04-30; Node 22 or 24 recommended), three runtime dependencies (Anthropic SDK, OpenAI SDK, Zod)
 - Repository: https://github.com/open-multi-agent/open-multi-agent
 
 ## What it is
@@ -24,23 +25,27 @@ in your backend, with no daemon and no sidecar.
 ## Minimal example
 
 ```ts
-import { OpenMultiAgent, type AgentConfig } from '@open-multi-agent/core'
+import { OpenMultiAgent } from '@open-multi-agent/core'
 
-const agents: AgentConfig[] = [
-  { name: 'architect', model: 'claude-sonnet-4-6', tools: ['file_write'] },
-  { name: 'developer', model: 'claude-sonnet-4-6', tools: ['bash', 'file_read', 'file_write', 'file_edit'] },
-  { name: 'reviewer',  model: 'claude-sonnet-4-6', tools: ['file_read', 'grep'] },
-]
+const oma = new OpenMultiAgent({ defaultProvider: 'openai', defaultModel: 'gpt-5.4' })
 
-const oma  = new OpenMultiAgent({ defaultModel: 'claude-sonnet-4-6' })
-const team = oma.createTeam('api-team', { name: 'api-team', agents })
+const team = oma.createTeam('research-team', {
+  name: 'research-team',
+  agents: [
+    { name: 'researcher', systemPrompt: 'Find the relevant facts.' },
+    { name: 'analyst', systemPrompt: 'Compare evidence and identify tradeoffs.' },
+  ],
+  sharedMemory: true,
+})
 
 // coordinator plans the DAG, runs independents in parallel, synthesizes
-const result = await oma.runTeam(team, 'Create a REST API for a todo list')
+const result = await oma.runTeam(team, 'Compare three approaches and recommend one.')
+console.log(result.agentResults.get('coordinator')?.output)
 ```
 
 `runTeam()` returns when the whole DAG resolves — no manual node wiring, no scheduler to
-maintain.
+maintain. Any agent can override the defaults with its own `model` and its own `tools`
+array; anything it does not list is unavailable to it.
 
 ## Capabilities
 
@@ -52,10 +57,43 @@ mode, a custom `ExecutionRouter`, or the built-in deterministic router. Applicat
 declare required roles and order; results expose both routing decisions and a
 post-execution governance conclusion.
 
+**Hybrid semantic routing (v1.14, opt-in).** Automatic routing stays deterministic by
+default. `executionRouting.strategy: 'hybrid'` adds at most one no-tool model call, and
+only where the deterministic router would otherwise choose Single. The model does not
+choose the topology: a profiler returns a strict `TaskProfile` — independent evidence,
+independent review, conflicting objectives, side-effect intent, permission isolation,
+decomposability, parallelism, complexity, confidence — and a deterministic policy consumes
+it alongside framework-computed facts. High-confidence signals can upgrade Single to Team;
+low confidence keeps Single; v1 never turns Team into Single. The profiler is treated as a
+hostile-input surface: it receives no system prompts, credentials, or tool
+implementations, and it cannot call tools. A profile never creates `requiredRoles`,
+approves a side effect, or proves governance was satisfied — the executed topology, the
+final tool grants, and the `ExecutionReceipt` remain governance truth. Profiling usage is
+charged to the run's token and cost budget, and is reported in
+`semanticRoutingAssessment`.
+
 **Event-driven task scheduling.** Ready tasks dispatch as soon as their dependencies
 complete. Scheduling policies, hard capability requirements, task priority,
 `onTaskDispatch` approval, structured dependency payloads, and `taskResults` make the
 explicit DAG path controllable without reverting to round-based execution.
+
+**Adaptive plan recovery (v1.14, opt-in).** A retry re-runs the same task; a full re-plan
+discards what already succeeded. `recovery.mode: 'repairable'` is the option in between:
+after a task succeeds, fails, or is rejected by consensus verification, a `Replanner` may
+propose an append-only `PlanPatch` over the part of the graph that has not started —
+adding tasks (`addTasks`), reassigning a pending or blocked one (`retargetPending`), or
+skipping one (`supersedePending`). The patch lands on an outcome barrier rather than in a
+retry loop: OMA validates agent eligibility, limits, task states, references, and the
+resulting DAG, runs the optional `onPlanPatch` approval, applies the patch atomically, and
+persists a checkpoint when checkpointing is enabled, before the triggering task completes
+or cascades. Nothing is rewritten or deleted, and history stays truthful — a repaired
+failure is still `failed` with `recoveredByRevision`, a replaced branch is `skipped` with
+`supersededByRevision`, and accepted revisions surface in `result.planRevisions`, progress
+events, and observability spans. Repairs are forward-only: OMA does not undo side effects
+a task already performed, and `runFromPlan()` rejects repairable recovery because it is
+exact replay. `onTaskOutcome` is the shorthand for applications that don't want a named
+`Replanner` — configure one or the other, not both. Reference:
+https://open-multi-agent.com/reference/adaptive-recovery/
 
 **Mix any model in one team.** Each agent names its own model, and they cooperate inside a
 single team. Built-in providers include Anthropic, OpenAI, Gemini, Bedrock, Azure OpenAI,
@@ -68,8 +106,10 @@ Protocol servers expose external systems under the same opt-in contract.
 fills, or await a typed, schema-validated object when the run completes.
 
 **Cross-provider reasoning.** One `thinking` config maps to Anthropic thinking, Gemini
-`thinkingConfig`, and OpenAI `reasoning_effort`. Reasoning streams as events, and can be
-preserved across a provider switch when you opt in.
+`thinkingConfig`, OpenAI `reasoning_effort`, and DeepSeek V4 Flash's `thinking.type`
+(where `thinking.effort` also accepts the DeepSeek-only value `'max'`, which is not
+forwarded to OpenAI, Azure OpenAI, or GitHub Copilot). Reasoning streams as events, and
+can be preserved across a provider switch when you opt in.
 
 **External agents.** A team member can use a local `process` backend or an Agent Client
 Protocol (`acp`) backend instead of a model. It joins the same task DAG, shared memory,
@@ -82,15 +122,41 @@ scorers, persists EvalRecords, produces CI GateVerdicts, and can sample complete
 production runs on a best-effort basis. Evaluation observes completed results and never
 changes the business result.
 
+**Fail closed on invalid input (v1.14).** Three validation paths moved from permissive to
+strict: an invalid task dependency graph is rejected up front instead of executing a
+partially valid plan; the coordinator fails closed on a plan it could not validate; and
+task requirements are enforced as global hard constraints, so a task whose requirements no
+agent satisfies is rejected rather than assigned to an ineligible agent
+(`validateTaskRequirements` is exported for checking a roster before dispatch). This is a
+real behavior change — a run that previously finished with an invalid DAG or an
+unsatisfiable requirement now fails at validation time, surfacing a defect that was
+already present. Correct graphs and rosters are unaffected.
+
+## Platform and compatibility (v1.14.0)
+
+Node.js 20 is the floor across `@open-multi-agent/core`, `@open-multi-agent/otel`, and
+`create-oma-app`; Node 18 reached end of life on 2025-04-30. Node 22 or 24 is the
+recommended runtime — 20 is a migration window that the next major release will remove, no
+earlier than 2026-10-31. The bundled `openai` dependency moved from v4 to v6: user aborts
+are now classified as cancellation rather than as a retryable failure, and an
+OpenAI-compatible response containing the separate `custom` tool-call variant raises
+`UnsupportedToolCallError` instead of collapsing into an empty successful turn. Every
+public export from 1.13.0 is still exported and new result and configuration fields are
+optional, so existing callers and serialized results keep type-checking. Adaptive recovery
+adds a version 2 task-queue snapshot carrying plan-revision history;
+`TaskQueue.fromSnapshot()` still accepts version 1 snapshots, so checkpoints written by
+earlier releases remain restorable.
+
 ## You hold the controls
 
 Handing real work to autonomous agents raises three fair questions — do they run off the
 rails, burn the budget, or fail where you can't see it? Each one has an answer in the API.
 
 **Stay in the loop.** Inspect the plan with `onPlanReady`, approve one ready task with
-`onTaskDispatch` (or retain legacy round approval with `onApproval`), and gate one
-consequential tool call with `onToolCall`. A proposer→judge pass (`runConsensus`) has one
-agent check another's output, and loop detection halts an agent that starts repeating.
+`onTaskDispatch` (or retain legacy round approval with `onApproval`), gate one
+consequential tool call with `onToolCall`, and approve a mid-run plan repair with
+`onPlanPatch`. A proposer→judge pass (`runConsensus`) has one agent check another's
+output, and loop detection halts an agent that starts repeating.
 
 **Control spend.** Route planning to a flagship model and leaf tasks to cheaper models
 with `modelRouting`. `maxTokenBudget` caps cumulative input + output tokens;
@@ -114,23 +180,25 @@ secrets.
 
 ## What you can build
 
-Each of these is a single goal that benefits from parallel, multi-model decomposition —
-exactly what the coordinator is built for.
+Three workflows, three explicit orchestration choices — each a runnable recipe with the
+orchestration decision made explicit rather than implied.
 
-**Contract review (legal · document review).** One goal — "flag risk in this MSA" — fans
-out to agents reading clauses, cross-checking a policy library, and drafting redlines in
-parallel. Outcome: a single structured risk report from one runTeam() call.
+**Adaptive customer support (support · escalation) — goal-driven, `runTeam()`.** A
+coordinator selects the specialists a shipping or billing escalation actually needs, then
+synthesizes their evidence. Outcome: a grounded response shaped around the actual support
+goal.
 
-**Competitive monitoring (market · monitoring).** Agents pull from different sources via
-MCP, each on the model that fits — cheap-local for scraping, frontier for analysis — and
-reconcile findings. Outcome: a deduped digest, refreshed on a schedule, mixed providers
-in one team.
+**Contract review (legal ops · review) — explicit DAG, `runTasks()`.** Extract clauses
+once, run compliance and summary work in parallel, then wait for both before producing the
+notification. Outcome: a complete Markdown review with step-level retry.
 
-**Incident postmortem (sre · operations).** Logs, metrics, and the deploy timeline are
-investigated as parallel nodes; a reviewer agent synthesizes cause and contributing
-factors. Outcome: a timeline-grounded postmortem draft minutes after resolution.
+**Incident postmortem (sre · operations) — explicit DAG, `runTasks()`.** Three
+fixture-backed investigations start in parallel, then feed a root-cause hypothesis and a
+final postmortem. Outcome: a traceable Markdown artifact with timing and token-cost
+evidence.
 
-Runnable versions of these live in the goal-grouped examples catalog:
+These are prototypes with fixtures and stated limits, not customer deployments. Runnable
+versions live in the goal-grouped examples catalog:
 https://open-multi-agent.com/examples/
 
 ## Works with your stack
@@ -144,7 +212,7 @@ in your backend.
 - **OpenTelemetry** — map TraceRecord v2 through the optional `@open-multi-agent/otel` adapter to an application-owned provider.
 - **External agents** — run a local process or ACP coding agent as a first-class member of the same task DAG.
 - **Express** — mount runTeam() behind a route handler (drop-in).
-- **Any Node.js** — no daemon, no sidecar; three runtime deps (Node 18+).
+- **Any Node.js** — no daemon, no sidecar; three runtime deps (Node 20+).
 
 Integration guides live at https://open-multi-agent.com/integrations/ (OpenTelemetry,
 external agents over ACP, Anthropic, OpenAI, Gemini, DeepSeek, AWS Bedrock, Azure OpenAI,
@@ -181,16 +249,19 @@ everything else is unavailable. External systems are connected through MCP serve
 the same opt-in contract.
 
 **What happens when a node fails?**
-A failed node is retried under its policy; persistent failures surface on the node with
-FAILED state and an error, and downstream dependents are held. The rest of the DAG keeps
-running, so one failure does not abort the whole run.
+A failed node is retried under its task policy when the error may be transient. Budget
+exhaustion, malformed input, deliberate aborts, and non-retryable client errors skip
+pointless retries. Persistent failures surface on the node with FAILED state and an error,
+downstream dependents are held, and independent branches can continue. With
+`recovery.mode: 'repairable'` a `Replanner` can additionally propose an append-only patch
+over the part of the graph that has not started.
 
 **How do I keep a multi-agent run from going off the rails?**
 Layered controls, all opt-in. onPlanReady hands you the decomposed plan to inspect before
 any agent runs. `onTaskDispatch` gates one ready task, while `onApproval` preserves legacy
-round gates. `onToolCall` can require confirmation for one consequential action. Declared
-governance checks required roles and order after execution; `runConsensus` and loop
-detection add result and behavior checks.
+round gates. `onToolCall` can require confirmation for one consequential action, and
+`onPlanPatch` gates a mid-run plan repair. Declared governance checks required roles and
+order after execution; `runConsensus` and loop detection add result and behavior checks.
 
 **How do I cap what a run costs?**
 Use `maxCostBudget` with `estimateCost`; the estimator owns the per-model price table.
@@ -255,6 +326,7 @@ Reference:
 - Observability performance: https://open-multi-agent.com/reference/observability-performance/
 - Shared memory: https://open-multi-agent.com/reference/shared-memory/
 - Checkpoint & resume: https://open-multi-agent.com/reference/checkpoint/
+- Adaptive recovery: https://open-multi-agent.com/reference/adaptive-recovery/
 - Plan preview & replay: https://open-multi-agent.com/reference/plan-replay/
 - Context management: https://open-multi-agent.com/reference/context-management/
 - Consensus: https://open-multi-agent.com/reference/consensus/
@@ -265,7 +337,15 @@ Reference:
 
 ## Blog
 
+- Open Multi-Agent v1.14 — Repair the Plan, Keep the Record: https://open-multi-agent.com/blog/v1-14-adaptive-recovery-hybrid-routing/
+- Best TypeScript Multi-Agent Frameworks in 2026 — Choose by Workflow: https://open-multi-agent.com/blog/best-typescript-multi-agent-frameworks-2026/
+- Competitive Monitoring — Isolate Each Source Before Comparing Them: https://open-multi-agent.com/blog/competitive-monitoring-contradiction-detection/
+- Support Tickets — A Fixed Pipeline and a Routed Agent Team: https://open-multi-agent.com/blog/customer-support-routing-playbook/
+- Incident Postmortems — Parallel Investigation, Serial Judgment: https://open-multi-agent.com/blog/incident-postmortem-parallel-investigation/
+- Five Seams That Decide Whether a Workflow Needs a Team: https://open-multi-agent.com/blog/multi-agent-application-patterns-field-note/
+- Translation Drift — Route the Back-Translation to Another Model: https://open-multi-agent.com/blog/translation-quality-cross-model-review/
 - Open Multi-Agent v1.13 — Route, Govern, Schedule, and Prove the Run: https://open-multi-agent.com/blog/v1-13-execution-routing-governance-scheduling/
+- Open Multi-Agent v1.12.1 — Evaluation, Offline Inspection, and a No-Key First Run: https://open-multi-agent.com/blog/v1-12-1-evaluation-zero-key/
 - A 100% Local Multi-Agent Team in TypeScript (Ollama + Gemma, $0 API Cost): https://open-multi-agent.com/blog/local-multi-agent-team-ollama-gemma/
 - From Transcript to Typed Action Items: Three Parallel Agents in TypeScript: https://open-multi-agent.com/blog/meeting-summarizer-parallel-agents/
 - Goal In, DAG Out: How Open-Multi-Agent Turns a Goal into a Task DAG: https://open-multi-agent.com/blog/goal-to-task-dag-coordinator/
@@ -274,6 +354,11 @@ Reference:
 - 5 walls multi-agent frameworks hit (Mastra .network() → Supervisor receipts): https://open-multi-agent.com/blog/multi-agent-framework-walls/
 - How to Run a Mixed-Model AI Agent Team in TypeScript: https://open-multi-agent.com/blog/mixed-model-agent-team/
 - Adding Multi-Agent Orchestration to a Vercel AI SDK App: https://open-multi-agent.com/blog/multi-agent-vercel-ai-sdk/
+
+## Mentioned
+
+"A brilliant TypeScript-native multi-agent orchestration framework."
+— GithubAwesome, GitHub Trending Monthly #6.
 
 ## Project links
 
