@@ -329,7 +329,7 @@ export const zh: UiDict = {
       { name: 'MCP', note: '把 Model Context Protocol 服务器作为工具接入', count: '原生' },
       { name: 'Vercel AI SDK', note: '桥接 60+ 个 AI SDK 提供方与平台', count: '兼容' },
       { name: 'Express', note: '把固定的 runTasks() 流水线挂在路由处理器后面', count: '即插即用' },
-      { name: '任意 Node.js', note: '没有守护进程，没有 sidecar，只有三个运行时依赖', count: 'Node 18+' },
+      { name: '任意 Node.js', note: '没有守护进程，没有 sidecar，只有三个运行时依赖', count: 'Node 20+' },
     ],
     sectionProof: {
       eyebrow: '采用情况',
@@ -933,7 +933,7 @@ export const zh: UiDict = {
         { k: '在哪里运行', dw: 'Claude Code 内部——CLI、桌面端与 IDE', oma: '你自己的 Node.js 后端——用 npm 安装，无需迁移到托管服务' },
         { k: '它是什么', dw: 'Claude Code 的一项能力', oma: '一个你嵌入的开源（MIT）库' },
         { k: '模型', dw: 'Claude 子智能体', oma: '任意提供方——OpenAI、Anthropic、Gemini、Bedrock，或任意本地 / OpenAI 兼容模型' },
-        { k: '语言 / 载体', dw: '从 Claude Code 使用', oma: 'TypeScript，可用于任意 Node.js 18+ 后端' },
+        { k: '语言 / 载体', dw: '从 Claude Code 使用', oma: 'TypeScript，可用于任意 Node.js 20+ 后端' },
         { k: '计划', dw: 'Claude 在会话里写下并运行的编排脚本，返回前自行检查', oma: '一张可作为数据检视与重放的任务 DAG——planOnly、createPlanArtifact、runFromPlan' },
       ],
     },

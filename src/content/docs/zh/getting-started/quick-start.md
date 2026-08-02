@@ -9,7 +9,7 @@ description: "无需 API Key，约五分钟即可运行一个真实的 OMA 任�
 
 ## 开始之前
 
-- Node.js 18 或更高版本
+- Node.js 20 或更高版本（推荐 Node.js 22 或 24）
 - 可以通过 npm 下载生成项目所需的依赖
 - 大约五分钟
 
