@@ -8,7 +8,7 @@ useCases: ["adaptive recovery", "execution routing", "governed orchestration"]
 industries: []
 evidence:
   kind: release-note
-  note: "Describes the published v1.14.0 runtime surface. Capabilities not yet mirrored in site reference link to version-pinned upstream documentation."
+  note: "Describes the published v1.14.0 runtime surface and links to version-pinned reference documentation."
 related:
   solutions: ["goal-driven-orchestration"]
   examples: ["task-pipeline", "task-retry", "plan-replay"]

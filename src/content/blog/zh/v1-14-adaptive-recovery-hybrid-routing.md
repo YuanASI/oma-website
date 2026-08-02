@@ -8,7 +8,7 @@ useCases: ["自适应恢复", "执行路由", "治理式编排"]
 industries: []
 evidence:
   kind: release-note
-  note: "描述已经发布的 v1.14.0 运行时能力。尚未同步到站内 Reference 的能力，链接到按版本固定的上游文档。"
+  note: "描述已经发布的 v1.14.0 运行时能力，并链接到按版本固定的 Reference 文档。"
 related:
   solutions: ["goal-driven-orchestration"]
   examples: ["task-pipeline", "task-retry", "plan-replay"]
