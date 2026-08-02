@@ -5,6 +5,11 @@ description: "配置托管、云端与本地的模型提供方——内置快捷
 
 `open-multi-agent` 在托管、云端与本地提供方之间保持智能体配置的形态一致。更改 `provider`、`model` 和相应的凭据；团队定义的其余部分保持不变。
 
+受支持的运行时是 Node.js 20 及以上；推荐 Node.js 22 或 24。Node.js 20 上游已经
+EOL，保留它只是作为迁移兼容窗口。OMA 会在下一个大版本移除对 Node.js 20 的支持，
+时间不早于 2026-10-31。对 OpenAI 与 OpenAI 兼容的 Chat Completions 端点，core 使用
+OpenAI SDK v6。
+
 ```typescript
 const agent = {
   name: 'my-agent',
@@ -28,15 +33,15 @@ const agent = {
 | Azure OpenAI | `provider: 'azure-openai'` | `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_ENDPOINT` | `gpt-4` | 可选 `AZURE_OPENAI_API_VERSION`、`AZURE_OPENAI_DEPLOYMENT`。 |
 | GitHub Copilot | `provider: 'copilot'` | `GITHUB_COPILOT_TOKEN`（回退到 `GITHUB_TOKEN`） | `gpt-4o` | 在 OpenAI 协议之上的自定义 token 交换流程。 |
 | Grok (xAI) | `provider: 'grok'` | `XAI_API_KEY` | `grok-4` | OpenAI 兼容；端点为 `api.x.ai/v1`。 |
-| DeepSeek | `provider: 'deepseek'` | `DEEPSEEK_API_KEY` | `deepseek-v4-flash` | OpenAI 兼容。`deepseek-v4-flash`（默认）或 `deepseek-v4-pro`（编程旗舰）；两者都支持 1M 上下文与 384K 最大输出。旧版 `deepseek-chat` / `deepseek-reasoner` 将于 2026-07-24 下线。 |
-| Doubao (Volcengine) | `provider: 'doubao'` | `ARK_API_KEY` | `doubao-seed-1-8-251228` | OpenAI 兼容。字节跳动火山引擎 Ark 端点 `https://ark.cn-beijing.volces.com/api/v3`。见 [`providers/doubao`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/providers/doubao.ts)。 |
-| Hunyuan (Tencent MaaS / TokenHub) | `provider: 'hunyuan'` | `HUNYUAN_API_KEY` | `hy3-preview` | OpenAI 兼容。默认端点 `https://tokenhub.tencentmaas.com/v1`（腾讯当前平台；`sk-...` 密钥，Hunyuan 3 系列模型）。工具调用已在 `hy3-preview` 上验证。见 [`providers/hunyuan`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/providers/hunyuan.ts)。 |
+| DeepSeek | `provider: 'deepseek'` | `DEEPSEEK_API_KEY` | `deepseek-v4-flash` | OpenAI 兼容 Chat Completions。`deepseek-v4-flash` 当前解析为 DeepSeek-V4-Flash-0731（公测）；`deepseek-v4-pro` 仍是 Preview API。两者都支持 1M 上下文与 384K 最大输出。Flash 端点也支持 DeepSeek 原生的 Responses API，而 OMA 内置适配器使用 Chat Completions。旧版 `deepseek-chat` / `deepseek-reasoner` 已于 2026-07-24 下线。 |
+| Doubao (Volcengine) | `provider: 'doubao'` | `ARK_API_KEY` | `doubao-seed-1-8-251228` | OpenAI 兼容。字节跳动火山引擎 Ark 端点 `https://ark.cn-beijing.volces.com/api/v3`。见 [`providers/doubao`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/providers/doubao.ts)。 |
+| Hunyuan (Tencent MaaS / TokenHub) | `provider: 'hunyuan'` | `HUNYUAN_API_KEY` | `hy3-preview` | OpenAI 兼容。默认端点 `https://tokenhub.tencentmaas.com/v1`（腾讯当前平台；`sk-...` 密钥，Hunyuan 3 系列模型）。工具调用已在 `hy3-preview` 上验证。见 [`providers/hunyuan`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/providers/hunyuan.ts)。 |
 | Hunyuan (legacy Tencent Cloud) | `provider: 'hunyuan'` + `HUNYUAN_BASE_URL` | `HUNYUAN_API_KEY` | `hunyuan-turbos-latest` | 旧版端点 `https://api.hunyuan.cloud.tencent.com/v1`（console.cloud.tencent.com/hunyuan 密钥；独立的密钥命名空间）。腾讯已宣布该平台即将下线（2026-06-30 停售，2026-09-30 全面关停）。在此之前可设置 `HUNYUAN_BASE_URL=https://api.hunyuan.cloud.tencent.com/v1` 指向它。工具调用已在 `hunyuan-turbos` 和 `hunyuan-functioncall` 上验证。 |
 | MiniMax (global) | `provider: 'minimax'` | `MINIMAX_API_KEY` | `MiniMax-M3` | OpenAI 兼容。 |
 | MiniMax (China) | `provider: 'minimax'` + `MINIMAX_BASE_URL` | `MINIMAX_API_KEY` | `MiniMax-M3` | 设置 `MINIMAX_BASE_URL=https://api.minimaxi.com/v1`。 |
-| MiMo | `provider: 'mimo'` | `MIMO_API_KEY`（+ 可选 `MIMO_BASE_URL`） | `mimo-v2.5-pro` | OpenAI 兼容。默认使用按量付费端点 `https://api.xiaomimimo.com/v1`；Token Plan 密钥（`tp-...`）需要订阅页面提供的集群 base URL，例如 `https://token-plan-cn.xiaomimimo.com/v1`。通过内置的 MiMo 适配器支持推理 / 工具调用循环。见 [`providers/mimo`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/providers/mimo.ts)。 |
+| MiMo | `provider: 'mimo'` | `MIMO_API_KEY`（+ 可选 `MIMO_BASE_URL`） | `mimo-v2.5-pro` | OpenAI 兼容。默认使用按量付费端点 `https://api.xiaomimimo.com/v1`；Token Plan 密钥（`tp-...`）需要订阅页面提供的集群 base URL，例如 `https://token-plan-cn.xiaomimimo.com/v1`。通过内置的 MiMo 适配器支持推理 / 工具调用循环。见 [`providers/mimo`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/providers/mimo.ts)。 |
 | Qiniu | `provider: 'qiniu'` | `QINIU_API_KEY` | `deepseek-v3` | OpenAI 兼容。端点 `https://api.qnaigc.com/v1`；多个模型系列，见 [Qiniu AI docs](https://developer.qiniu.com/aitokenapi/12882/ai-inference-api)。 |
-| AWS Bedrock | `provider: 'bedrock'` | 无（AWS SDK 凭据链） | `anthropic.claude-3-5-haiku-20241022-v1:0` | 无 API 密钥。设置 `AWS_REGION`，或把 `region` 作为第 4 个参数传给 `createAdapter`。凭据来自环境变量、共享配置或 IAM 角色。较新的 Claude 模型可能需要跨区域推理配置前缀，如 `us.`。同时支持 Llama、Mistral 和 Cohere。见 [`providers/bedrock`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/providers/bedrock.ts)。需要 `npm install @aws-sdk/client-bedrock-runtime`。 |
+| AWS Bedrock | `provider: 'bedrock'` | 无（AWS SDK 凭据链） | `anthropic.claude-3-5-haiku-20241022-v1:0` | 无 API 密钥。设置 `AWS_REGION`，或把 `region` 作为第 4 个参数传给 `createAdapter`。凭据来自环境变量、共享配置或 IAM 角色。较新的 Claude 模型可能需要跨区域推理配置前缀，如 `us.`。同时支持 Llama、Mistral 和 Cohere。见 [`providers/bedrock`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/providers/bedrock.ts)。需要 `npm install @aws-sdk/client-bedrock-runtime`。 |
 
 ## OpenAI 兼容提供方
 
@@ -50,14 +55,18 @@ const agent = {
 | llama.cpp server (local) | `provider: 'openai'` + `baseURL` | none | server-loaded | |
 | OpenRouter | `provider: 'openai'` + `baseURL: 'https://openrouter.ai/api/v1'` + `apiKey` | `OPENROUTER_API_KEY` | `openai/gpt-4o-mini` | |
 | Groq | `provider: 'openai'` + `baseURL: 'https://api.groq.com/openai/v1'` | `GROQ_API_KEY` | `llama-3.3-70b-versatile` | |
-| Mistral | `provider: 'openai'` + `baseURL: 'https://api.mistral.ai/v1'` | `MISTRAL_API_KEY` | `mistral-large-latest` | 见 [`providers/mistral`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/providers/mistral.ts)。 |
+| Mistral | `provider: 'openai'` + `baseURL: 'https://api.mistral.ai/v1'` | `MISTRAL_API_KEY` | `mistral-large-latest` | 见 [`providers/mistral`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/providers/mistral.ts)。 |
 | MiMo | `provider: 'openai'` + `baseURL: 'https://api.xiaomimimo.com/v1'` | `MIMO_API_KEY` | `mimo-v2.5-pro` | 在使用工具调用的智能体循环时，优先选用内置的 `mimo` 提供方。Token Plan 用户应设置自己的 `token-plan-*.xiaomimimo.com/v1` base URL。 |
-| Zhipu GLM | `provider: 'openai'` + `baseURL: 'https://open.bigmodel.cn/api/paas/v4'` | `ZHIPU_API_KEY` | `glm-4-plus` | 见 [`providers/zhipu`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/providers/zhipu.ts)。 |
-| Qwen (DashScope) | `provider: 'openai'` + `baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1'` | `DASHSCOPE_API_KEY` | `qwen-plus` | 见 [`providers/qwen`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/providers/qwen.ts)。 |
-| Moonshot AI (Kimi) | `provider: 'openai'` + `baseURL: 'https://api.moonshot.ai/v1'` | `MOONSHOT_API_KEY` | `kimi-k2.5` | 见 [`providers/moonshot`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/providers/moonshot.ts)。 |
+| Zhipu GLM | `provider: 'openai'` + `baseURL: 'https://open.bigmodel.cn/api/paas/v4'` | `ZHIPU_API_KEY` | `glm-4-plus` | 见 [`providers/zhipu`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/providers/zhipu.ts)。 |
+| Qwen (DashScope) | `provider: 'openai'` + `baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1'` | `DASHSCOPE_API_KEY` | `qwen-plus` | 见 [`providers/qwen`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/providers/qwen.ts)。 |
+| Moonshot AI (Kimi) | `provider: 'openai'` + `baseURL: 'https://api.moonshot.ai/v1'` | `MOONSHOT_API_KEY` | `kimi-k2.5` | 见 [`providers/moonshot`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/providers/moonshot.ts)。 |
 | LiteLLM (proxy) | `provider: 'openai'` + `baseURL: 'http://localhost:4000/v1'` + `apiKey` | `LITELLM_API_KEY`（若代理启用了鉴权） | 代理上的任意模型 | [LiteLLM](https://github.com/BerriAI/litellm) 把 100+ 提供方（OpenAI、Anthropic、Azure、Bedrock、Vertex 等）统一到一个 OpenAI 兼容端点之后。运行 `litellm --config config.yaml` 并把 `baseURL` 指向该代理。 |
 
 其他服务只要实现了 OpenAI Chat Completions API，也能以同样方式接入，但这里未把它们列为已验证的提供方。对于密钥不是 `OPENAI_API_KEY` 的服务，通过 `apiKey` 显式传入；否则 `openai` 适配器会回退到 `OPENAI_API_KEY`。
+
+OMA 注册的是 JSON schema 的 `function` 工具。如果 OpenAI 兼容响应里出现独立的
+`custom` 工具调用变体，适配器会抛出 `UnsupportedToolCallError`，而不是丢弃这次调用
+或呈现一次空的成功回合。
 
 ## 预算上限与受治理运行
 
@@ -117,7 +126,7 @@ await oma.runAgent(
 )
 ```
 
-协调器通过 `runTeam(team, goal, { coordinator: { adapter: new AISdkAdapter(...) } })` 接受同一个钩子。完整应用见 [`integrations/with-vercel-ai-sdk`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/integrations/with-vercel-ai-sdk/)。
+协调器通过 `runTeam(team, goal, { coordinator: { adapter: new AISdkAdapter(...) } })` 接受同一个钩子。完整应用见 [`integrations/with-vercel-ai-sdk`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/with-vercel-ai-sdk/)。
 
 ## 扩展思考 / 推理
 
@@ -134,10 +143,11 @@ const agent = {
 ```
 
 - `budgetTokens` 映射到 Anthropic 的 `thinking.budget_tokens` 和 Gemini 的 `thinkingConfig.thinkingBudget`。
-- `effort`（`'low' | 'medium' | 'high'`）映射到 OpenAI 的 `reasoning_effort`。固定版本 SDK 的 union 尚未声明的值（例如 `'minimal'` 或 `'none'`）可通过 `extraBody: { reasoning_effort: '<value>' }` 传入。
+- `effort`（`'low' | 'medium' | 'high'`）映射到 OpenAI 兼容的 `reasoning_effort`。框架 union 之外的值（例如 `'minimal'` 或 `'none'`）可通过 `extraBody: { reasoning_effort: '<value>' }` 传入。
+- DeepSeek 还会把 `enabled` 映射为 `thinking: { type: 'enabled' | 'disabled' }`，并接受 `effort: 'max'`。其他内置的 OpenAI 系列适配器会忽略 DeepSeek 专有的 `max` 值。显式的 `extraBody` 取值优先。
 - 适配器会忽略无法识别的字段，因此同一份配置可安全用于混合提供方团队。
 
-推理以 `reasoning` 事件流式传输。跨提供方切换时保留推理需通过 `preserveReasoningAsText` 选择启用；参见[上下文管理](/zh/reference/context-management/)和 [`patterns/cross-provider-reasoning`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/patterns/cross-provider-reasoning.ts)。
+推理以 `reasoning` 事件流式传输。跨提供方切换时保留推理需通过 `preserveReasoningAsText` 选择启用；参见[上下文管理](/zh/reference/context-management/)和 [`patterns/cross-provider-reasoning`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/patterns/cross-provider-reasoning.ts)。
 
 ## 本地模型工具调用
 
@@ -161,7 +171,7 @@ const localAgent = {
 }
 ```
 
-在消费级硬件上高度量化的 MoE 模型，在默认采样下可能陷入重复循环或臆造工具调用 schema。`AgentConfig` 暴露了 `topK`、`minP`、`frequencyPenalty`、`presencePenalty`、`parallelToolCalls` 和 `extraBody`，用于服务端专属的参数，如 vLLM 的 `repetition_penalty`。完整配置见 [`providers/local-quantized`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/providers/local-quantized.ts)。
+在消费级硬件上高度量化的 MoE 模型，在默认采样下可能陷入重复循环或臆造工具调用 schema。`AgentConfig` 暴露了 `topK`、`minP`、`frequencyPenalty`、`presencePenalty`、`parallelToolCalls` 和 `extraBody`，用于服务端专属的参数，如 vLLM 的 `repetition_penalty`。完整配置见 [`providers/local-quantized`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/providers/local-quantized.ts)。
 
 ## 故障排查
 

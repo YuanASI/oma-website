@@ -44,9 +44,9 @@ const result = await oma.runTeam(team, 'Add a slugify() utility with tests, then
 协调器根据 `coder` 的名册描述把编码工作路由给它；子进程执行文件编辑；`reviewer` 随后从共享内存读取结果。
 
 一个可运行的 `process` 版本见
-[`examples/integrations/external-agent-process.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/integrations/external-agent-process.ts)。
+[`examples/integrations/external-agent-process.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/external-agent-process.ts)。
 一个可运行的 ACP 版本见
-[`examples/integrations/external-agent-acp.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/integrations/external-agent-acp.ts)。
+[`examples/integrations/external-agent-acp.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/external-agent-acp.ts)。
 
 ## 安装
 
@@ -145,6 +145,8 @@ OMA 担任 ACP **客户端**角色。在某个智能体的第一次运行时，�
 ### ACP token 计量的注意事项
 
 ACP 报告的是单个**上下文 token**数字（`usage_update.used`——“当前在上下文中的 token”），而非输入/输出的拆分，且它在一个会话中是*累计的*，不是每回合的增量。因为 OMA 在一个智能体的各回合间复用同一个会话，它把每回合的用量记录为自上次读数以来的**增量**，并存为 `tokenUsage.input_tokens`（`output_tokens: 0`）——这样跨回合求和会收敛到最新的数字，而非重复计数。那个总量会聚合进本次运行并遵守 `maxTokenBudget`。一个不发出任何 `usage_update` 的智能体会报告 `{0, 0}`，因此**不受**预算门控——请按 LLM 智能体来设定预算，或用 ACP 智能体自己的 `--max-*` 标志来约束它。
+
+在 Hybrid `runTeam()` 的 Single 短路上，语义 Profiler 的用量会在外部后端启动之前先计入。后端上报的用量随后在运行边界处累加，因此一次 ACP 用量增量可能耗尽剩余的运行预算。Process 后端仍然贡献 `{0, 0}`，因为它没有 token 信号。
 
 ## 编程式 API
 

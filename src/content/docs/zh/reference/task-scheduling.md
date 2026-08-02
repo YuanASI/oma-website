@@ -88,9 +88,10 @@ worker 副本与业务角色混淆。
 
 ## 分配策略
 
-未指定 assignee 的任务会在就绪时分配。`dependency-first` 与 `composite` 按下游
-关键度排序当前就绪集合，再逐个分配选中的任务。`round-robin` 保留游标，
-`least-busy` 读取当前 `in_progress` 负载，`capability-match` 则保留硬性资格过滤。
+在派发任何任务之前，完整计划会先针对显式任务要求做校验。所有调度策略都先过滤出
+符合条件的 Agent；配置的策略只在这个合格集合内部排序或轮转。`dependency-first`
+与 `composite` 按下游关键度排序当前就绪集合，`round-robin` 保留游标，`least-busy`
+读取当前 `in_progress` 负载。
 
 Agent 可以声明 `description`、`capabilities`、`costTier` 与 `latencyClass`；
 省略时不会推断。显式 `runTasks()` 规格和 Coordinator 生成的任务可以通过
@@ -98,12 +99,13 @@ Agent 可以声明 `description`、`capabilities`、`costTier` 与 `latencyClass
 与 `requiredProvider`。工具要求会在 preset、allowlist、denylist 与框架安全限制
 全部解析后，针对最终授权集合检查。
 
-任务 `requires` 无法满足时，`capability-match` 与 `composite` 的行为不同：
+Provider 要求还会在 worker 模型路由之后再检查一次。不兼容的 fallback 路由会被移除，
+而不是越过声明的 provider 边界。
 
-| 策略 | 没有符合条件的 Agent |
-|---|---|
-| `capability-match` | 以 `NO_ELIGIBLE_AGENT` 终止调度。 |
-| `composite` | 发出结构化 `NO_ELIGIBLE_AGENT` 警告，再以零匹配度和当前负载回退。 |
+当 roster 中没有任何候选满足一个未指定 assignee 的任务时，校验会以
+`INVALID_TASK_REQUIREMENTS` 失败，issue code 为 `NO_ELIGIBLE_AGENT`。当存在显式
+assignee 但它不满足要求时，issue code 是 `ASSIGNEE_REQUIREMENTS_MISMATCH`。两种情况
+都在 worker 执行之前失败；硬性要求永远不会回退到不合格的 Agent。
 
 `composite` 最大化
 `fitWeight * fit + loadWeight * (1 - normalizedCurrentLoad)`。
@@ -112,9 +114,9 @@ Agent 可以声明 `description`、`capabilities`、`costTier` 与 `latencyClass
 Composite 负载是传入 DAG 状态的快照；同一次调度器调用内较早的分配不会折回该快照。
 事件驱动执行的下一次就绪任务调用可以观察已经标为 `in_progress` 的任务。
 
-Coordinator 计划若指定 roster 外的 Agent，会发出 `INVALID_ASSIGNEE` 警告、清除该
-分配，并默认使用配置的调度器。设 `strictAssignees: true` 可在任务执行前以结构化
-校验错误停止。
+Coordinator 计划若指定 roster 外的 Agent，默认会在任务执行前校验失败。只有需要保留
+旧行为——发出 `INVALID_ASSIGNEE` 警告、清除该分配、并使用配置的调度器——时，才设置
+`strictAssignees: false`。
 
 ## 审批模式
 
@@ -168,6 +170,6 @@ restore 不会重跑已经记录为 completed 的任务。
 `onApproval` 并返回 `true`。
 
 无需 Key 的 deferred-promise 演示见
-[`examples/patterns/event-driven-dag.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/patterns/event-driven-dag.ts)。
+[`examples/patterns/event-driven-dag.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/patterns/event-driven-dag.ts)。
 它只展示受支持的结论：一个下游任务会在自己的依赖满足后启动，不等待同一就绪集合中
 与它无关的任务。

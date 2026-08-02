@@ -36,6 +36,11 @@ if (result.governanceConclusion !== 'satisfied') {
 `governanceConclusion` 在计划执行前为 `not-applicable`；之后可通过
 `runFromPlan()` 执行。
 
+用 `governanceIntent: 'none'` 显式选择自动 `runTeam()` 路由；省略 `governanceIntent`
+效果相同。这条路径默认是 Hybrid：确定性的 Single 候选可能在一次语义 profile 调用后
+被升级。想要此前不带 Profiler 的行为，设置
+`executionRouting: { strategy: 'deterministic' }`。
+
 执行后，required 声明会针对 execution receipt 检查。`governanceConclusion` 为
 `satisfied`、`unsatisfied` 或 `not-applicable`；只有 `required` 被强制执行。
 `unsatisfied` 表示必要角色、依赖路径 / 顺序或独立审查事实缺失。它不会改写
@@ -49,12 +54,16 @@ if (result.governanceConclusion !== 'satisfied') {
 
 1. 应用指定的 `mode`（`single` 或 `team`）；
 2. 声明的 `governanceIntent` 拓扑或 `preferredUnderBudget` 策略；
-3. 配置的[执行路由器](/zh/reference/execution-routing/)；
-4. 内置 `DeterministicRouter`。
+3. 用于自动路由的自定义[执行路由器](/zh/reference/execution-routing/)；
+4. 内置 `DeterministicRouter`；
+5. 语义 Profiler 与确定性策略，只作用于默认 / fallback 的 Single 候选。
 
 `single` 使用既有的最佳 Agent 路径；`team` 强制 Coordinator 生成 Team 计划。
 `runAgent()` 与 `runTasks()` 本身仍是显式选择。`mode` 只声明拓扑偏好，不声明治理，
 因此不会绕过高影响操作确认。路由器也只能选择拓扑，不能覆盖结构化角色要求。
+TaskProfile 同样只是推断出来的路由证据。如果推断出的副作用或隔离需求，与实际的
+高影响工具授权、或调用方声明的多个 `AgentConfig.permissionBoundary` 相交，OMA 会在
+任何模型或工具执行之前抛出 `ROUTING_DECLARATION_REQUIRED`。
 
 应用可以用模式覆盖 required 下限，但不会被误报为成功：
 
@@ -298,7 +307,7 @@ const orchestrator = new OpenMultiAgent({
 
 复合命令会按 shell 分隔符（`&&`、`||`、`;`、`|`、替换）切段，取其中找到的**最高**风险，所以安全的前缀无法夹带破坏性的后缀（`ls && rm -rf /` 会变成 `high`）。带引号的片段会先被剥离，所以 `echo "rm -rf /"` 仍然是 `safe`。
 
-这个分类器是一个**浅层启发式，而不是解析器**；它可能被混淆手法骗过（变量间接引用、base64 解码后执行、奇异的引号用法）。它仅为便利之用：可以扩展这些表、封装一层，或将其整体替换。端到端的示例见 [`examples/patterns/risk-gated-bash.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/patterns/risk-gated-bash.ts)。
+这个分类器是一个**浅层启发式，而不是解析器**；它可能被混淆手法骗过（变量间接引用、base64 解码后执行、奇异的引号用法）。它仅为便利之用：可以扩展这些表、封装一层，或将其整体替换。端到端的示例见 [`examples/patterns/risk-gated-bash.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/patterns/risk-gated-bash.ts)。
 
 ## 文件系统工作目录
 
@@ -425,7 +434,7 @@ const team = {
 > **注意——两个不同的 `outputSchema` 字段。** `defineTool()` /
 > `ToolDefinition` 上的那个（下面展示）校验单个**工具**的 `ToolResult.data`
 > ——它始终是 `ZodSchema<string>`，因为工具输出会序列化为
-> 文本。[`AgentConfig`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/patterns/structured-output.ts)
+> 文本。[`AgentConfig`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/patterns/structured-output.ts)
 > 上的 `outputSchema` 则不同：它把**智能体的最终答案**当作解析后的 JSON、
 > 对照一个任意的 Zod schema 来校验（见 `examples/` 中的 _Structured output_）。
 > 类型不同、作用域不同——当你将它们混淆时 TypeScript 不会警告你，
@@ -502,4 +511,4 @@ await disconnect()
 - MCP 的输入校验委托给 MCP 服务器（`inputSchema` 是 `z.any()`）。
 - 优先使用本地安装或固定版本的 MCP 服务器二进制文件，并只传入该服务器需要的环境变量。避免把 `process.env` 展开进 MCP 子进程。
 
-完整可运行的配置见 [`integrations/mcp-github`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.13.0/packages/core/examples/integrations/mcp-github.ts)。
+完整可运行的配置见 [`integrations/mcp-github`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/mcp-github.ts)。
