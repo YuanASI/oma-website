@@ -6,14 +6,17 @@ Open Multi-Agent (OMA) is a goal-driven agent runtime for TypeScript backends. I
 
 - Install: `npm create oma-app@latest`
 - Package: `@open-multi-agent/core` (npm)
+- Latest release: v1.14.0
 - License: MIT
-- Runtime: Node.js 18+, three runtime dependencies (Anthropic SDK, OpenAI SDK, Zod)
+- Runtime: Node.js 20+ (Node 18 reached end of life on 2025-04-30), three runtime dependencies (Anthropic SDK, OpenAI SDK, Zod)
 
 ## Capabilities
 
 - **Goal or explicit DAG**: use `runTeam()` when a coordinator should decompose an outcome, or `runTasks()` when your application already owns the graph.
-- **Execution routing and governance**: choose `single` or `team` explicitly, install an `ExecutionRouter`, or declare required roles and order. The result carries the routing decision and governance conclusion.
+- **Execution routing and governance**: choose `single` or `team` explicitly, install an `ExecutionRouter`, or declare required roles and order. Automatic routing is deterministic by default; `strategy: 'hybrid'` (v1.14, opt-in) adds at most one no-tool model call that returns a structured task profile for a deterministic policy to consume — the model never picks the topology. The result carries the routing decision and governance conclusion.
 - **Event-driven scheduling**: ready tasks dispatch as soon as dependencies complete, with scheduling policies, hard capability requirements, task priority, per-task approval, structured handoffs, and task-scoped results.
+- **Adaptive plan recovery**: `recovery.mode: 'repairable'` (v1.14, opt-in) lets a `Replanner` append, retarget, or supersede tasks that have not started, on an outcome barrier, under `onPlanPatch` approval and explicit limits. Repairs are forward-only and append-only — history stays truthful in `result.tasks` and `result.planRevisions`, and `runFromPlan()` rejects repairable recovery because it is exact replay.
+- **Fail closed on invalid input**: an invalid task dependency graph, a coordinator plan that failed validation, and task requirements no agent satisfies are all rejected up front (v1.14) instead of executing a partially valid plan.
 - **Mix any model in one team**: each agent names its own model. Use built-in providers such as Anthropic, OpenAI, Gemini, Bedrock, Azure OpenAI, and DeepSeek, or any OpenAI-compatible endpoint.
 - **Tools and MCP, default-deny**: an agent gets only the tools it is granted. Model Context Protocol servers expose external systems under the same opt-in contract.
 - **Streaming and structured output**: stream tokens and node-state transitions as the DAG fills, or await a typed, schema-validated object when the run completes.
@@ -24,7 +27,7 @@ Open Multi-Agent (OMA) is a goal-driven agent runtime for TypeScript backends. I
 
 ## Docs
 
-- [Capabilities](https://open-multi-agent.com/capabilities/): the released v1.13 runtime surface, from goal or DAG through routing, scheduling, governance, recovery, and evidence.
+- [Capabilities](https://open-multi-agent.com/capabilities/): the released runtime surface, from goal or DAG through routing, scheduling, governance, recovery, and evidence.
 - [Introduction](https://open-multi-agent.com/getting-started/introduction/): what open-multi-agent is, how goal-first orchestration differs from graph-first frameworks, and how the runtime is structured.
 - [Quick Start](https://open-multi-agent.com/getting-started/quick-start/): scaffold a project with npm create oma-app, or install the core package and run your first auto-orchestrated team.
 - [Three Ways to Run](https://open-multi-agent.com/getting-started/three-ways-to-run/): runAgent, runTeam, and runTasks — plus plan preview, plan replay, and consensus verification.
@@ -80,7 +83,15 @@ Per-provider setup — one env var and a model name to run a team on each. Hub: 
 
 ## Blog
 
+- [Open Multi-Agent v1.14: Repair the Plan, Keep the Record](https://open-multi-agent.com/blog/v1-14-adaptive-recovery-hybrid-routing/): adaptive plan recovery, opt-in hybrid semantic execution routing, DeepSeek V4 Flash reasoning controls, fail-closed validation, and Node.js 20 as the new floor.
+- [Best TypeScript Multi-Agent Frameworks in 2026: Choose by Workflow](https://open-multi-agent.com/blog/best-typescript-multi-agent-frameworks-2026/): a source-backed guide to six TypeScript options matched to explicit graphs, agent UIs, handoffs, routed networks, all-in-one apps, and goal-driven task DAGs — a fit guide, not a ranking.
+- [Competitive Monitoring: Isolate Each Source Before Comparing Them](https://open-multi-agent.com/blog/competitive-monitoring-contradiction-detection/): one agent per source and typed claims out of each, so contradictions between a vendor post, a community thread, and a news article survive to the report instead of being smoothed away.
+- [Support Tickets: A Fixed Pipeline and a Routed Agent Team](https://open-multi-agent.com/blog/customer-support-routing-playbook/): keep the high-volume path on a typed classify → draft → QA graph, let escalations get a coordinator-built team, and put the refund behind a confirmation gate the runtime enforces per call.
+- [Incident Postmortems: Parallel Investigation, Serial Judgment](https://open-multi-agent.com/blog/incident-postmortem-parallel-investigation/): logs, deployments, and blast radius start together in a runTasks() DAG, stay unmerged in taskResults, and reach the analyst as validated structured payloads rather than prose.
+- [Five Seams That Decide Whether a Workflow Needs a Team](https://open-multi-agent.com/blog/multi-agent-application-patterns-field-note/): find the seams in the work before naming agents — five boundaries that keep reappearing across the runnable recipes, each with a specific runtime mechanism behind it.
+- [Translation Drift: Route the Back-Translation to Another Model](https://open-multi-agent.com/blog/translation-quality-cross-model-review/): translate with one provider, back-translate with another through a model-routing rule, and measure the reviewer itself with a versioned EvalSet.
 - [Open Multi-Agent v1.13: Route, Govern, Schedule, and Prove the Run](https://open-multi-agent.com/blog/v1-13-execution-routing-governance-scheduling/): execution routing, declared governance, consequential-tool confirmation, event-driven task scheduling, task-scoped results, structured handoffs, and retryable model fallbacks.
+- [Open Multi-Agent v1.12.1: Evaluation, Offline Inspection, and a No-Key First Run](https://open-multi-agent.com/blog/v1-12-1-evaluation-zero-key/): versioned EvalSets, scorers, CI gates, online sampling, richer offline run inspection, and a deterministic create-oma-app demo that needs no API key.
 - [A 100% Local Multi-Agent Team in TypeScript (Ollama + Gemma, $0 API Cost)](https://open-multi-agent.com/blog/local-multi-agent-team-ollama-gemma/): run a multi-agent team fully on your laptop — even the coordinator is a 5B Gemma over Ollama — with a real per-agent ledger and a hybrid cloud+local variant.
 - [From Transcript to Typed Action Items: Three Parallel Agents in TypeScript](https://open-multi-agent.com/blog/meeting-summarizer-parallel-agents/): three specialist agents run in parallel — two return typed Zod output — and a fourth aggregates them into one meeting report.
 - [Goal In, DAG Out: How Open-Multi-Agent Turns a Goal into a Task DAG](https://open-multi-agent.com/blog/goal-to-task-dag-coordinator/): how runTeam() hands a goal to a coordinator that builds the task DAG for you, with the mechanism step by step.
