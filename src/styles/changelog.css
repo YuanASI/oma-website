@@ -1,0 +1,104 @@
+/* Changelog — the full release history on one page (src/pages/[...locale]/changelog.astro).
+   Built on the shared landing scaffolding plus blog.css's .prose, which already
+   styles the markdown the vendored release notes are made of. What is specific
+   here: the hero rhythm, the sticky release index, and the per-release header. */
+
+/* Hero → stream rhythm, matching the blog index: the hero takes a tuned bottom
+   padding, zeroes the .hero-head-row margin landing.css expects a hero to
+   override, and the section under it tightens its top. */
+.section.changelog-hero { padding: 72px 0 8px; }
+.changelog-hero .hero-head-row { margin-bottom: 0; }
+.section.changelog-body-section.is-first { padding-top: 48px; }
+
+.changelog-source {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
+  margin: var(--space-5) 0 0;
+  font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.02em;
+  color: var(--text-muted);
+}
+.changelog-source a { color: var(--oma-accent); text-decoration: none; }
+.changelog-source a:hover { text-decoration: underline; text-underline-offset: 2px; }
+.changelog-count::after { content: '·'; margin-left: var(--space-3); color: var(--oma-border-1); }
+.changelog-note { margin: var(--space-3) 0 0; font-size: var(--text-sm); color: var(--text-muted); }
+
+/* Index rail + release stream. The rail is sticky on desktop only; below the
+   breakpoint it becomes a horizontally scrollable chip row above the stream. */
+.changelog-layout {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: var(--space-10);
+  align-items: start;
+}
+.changelog-index { position: sticky; top: 88px; }
+.changelog-index-head {
+  font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.06em; color: var(--oma-fg-3);
+  padding-bottom: var(--space-3); border-bottom: 1px solid var(--border-subtle);
+}
+.changelog-index-list {
+  list-style: none; margin: 0; padding: 0;
+  max-height: calc(100vh - 180px); overflow-y: auto;
+}
+/* Version only — each release's date is already in its own header, and the rail
+   reads faster as a plain column of versions: no per-row rule, the spacing
+   carries the separation. */
+.changelog-index-list a {
+  display: block; padding: 6px 0; text-decoration: none;
+}
+.changelog-index-list a:hover .v { color: var(--oma-accent); }
+.changelog-index-list .v {
+  font-family: var(--font-mono); font-size: var(--text-sm); font-weight: 550;
+  color: var(--text-strong);
+}
+
+.changelog-stream { min-width: 0; }
+.changelog-release { padding-bottom: var(--space-12); }
+.changelog-release + .changelog-release {
+  padding-top: var(--space-12);
+  border-top: 1px solid var(--border-subtle);
+}
+/* Anchor targets clear the fixed nav when jumped to from the index. */
+.changelog-release { scroll-margin-top: 88px; }
+
+.changelog-release-head {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+.changelog-version {
+  font-family: var(--font-mono); font-size: var(--text-h3); line-height: 1.1;
+  color: var(--text-strong); letter-spacing: -0.01em; margin: 0;
+}
+.changelog-release-meta {
+  display: flex; align-items: center; gap: var(--space-3);
+  font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted);
+}
+
+/* Release bodies come in one level deeper than a hand-written post (the version
+   is the section's h2), so the top-level body heading is an h3. Tighten the
+   first one against the release header and keep the h5 fallback styled in case
+   an upstream body nests further than today's do. */
+.changelog-prose > :first-child { margin-top: 0; }
+.changelog-prose h3 { margin-top: var(--space-8); }
+.changelog-prose h3:first-child { margin-top: 0; }
+.changelog-prose h5 { font-size: var(--text-sm); font-weight: 650; color: var(--text-strong); margin: var(--space-6) 0 var(--space-2); }
+
+.changelog-release-link {
+  display: inline-block; margin-top: var(--space-6);
+  font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.02em;
+  color: var(--oma-accent); text-decoration: none;
+}
+.changelog-release-link:hover { text-decoration: underline; text-underline-offset: 2px; }
+
+@media (max-width: 960px) {
+  .changelog-layout { grid-template-columns: minmax(0, 1fr); gap: var(--space-8); }
+  .changelog-index { position: static; }
+  .changelog-index-list {
+    display: flex; gap: var(--space-2); overflow-x: auto; max-height: none;
+    padding-bottom: var(--space-2);
+  }
+  .changelog-index-list li { flex: none; }
+  .changelog-index-list a {
+    padding: 6px 10px;
+    border: 1px solid var(--oma-border-1); border-radius: var(--radius-xs);
+  }
+}

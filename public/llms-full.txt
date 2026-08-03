@@ -355,6 +355,14 @@ Reference:
 - How to Run a Mixed-Model AI Agent Team in TypeScript: https://open-multi-agent.com/blog/mixed-model-agent-team/
 - Adding Multi-Agent Orchestration to a Vercel AI SDK App: https://open-multi-agent.com/blog/multi-agent-vercel-ai-sdk/
 
+## Changelog
+
+The complete release history, newest first, with additions, breaking changes,
+published package versions, and upgrade notes for every version back to v1.0.0:
+https://open-multi-agent.com/changelog/ (per-release anchors follow the version,
+e.g. https://open-multi-agent.com/changelog/#v1-14-0). It mirrors the GitHub
+releases at https://github.com/open-multi-agent/open-multi-agent/releases.
+
 ## Mentioned
 
 "A brilliant TypeScript-native multi-agent orchestration framework."
@@ -369,4 +377,5 @@ Reference:
 - Integrations: https://open-multi-agent.com/integrations/
 - Showcase: https://open-multi-agent.com/showcase/
 - Compare: https://open-multi-agent.com/compare/
+- Changelog: https://open-multi-agent.com/changelog/
 - License: MIT

@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import sitemap from '@astrojs/sitemap';
 import { omaDark, omaLight } from './src/styles/code-theme.mjs';
+import { rehypeChangelog } from './src/lib/rehype-changelog.mjs';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -13,9 +14,27 @@ import { join } from 'node:path';
 // isn't available inside the config); this mirrors the approach used in the
 // open-design landing astro.config. See docs/growth/seo-benchmark.md.
 const BLOG_DIR = join(import.meta.dirname, 'src/content/blog');
+const CHANGELOG_DIR = join(import.meta.dirname, 'src/content/changelog');
 
 /** @type {Map<string, string>} pathname (trailing slash) → YYYY-MM-DD */
 const blogLastmod = new Map();
+
+/**
+ * The newest vendored release date — /changelog's <lastmod>. Read here rather
+ * than from astro:content for the same reason as the blog dates: content APIs
+ * aren't available inside the config.
+ * @returns {string | undefined} YYYY-MM-DD
+ */
+function latestReleaseDate() {
+	const dates = readdirSync(CHANGELOG_DIR, { withFileTypes: true })
+		.filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
+		.map((entry) => readFileSync(join(CHANGELOG_DIR, entry.name), 'utf-8')
+			.match(/^date:\s*['"]?(\d{4}-\d{2}-\d{2})/m)?.[1])
+		.filter(Boolean)
+		.sort();
+	return dates.at(-1);
+}
+const changelogLastmod = latestReleaseDate();
 
 /**
  * Read pubDate/updatedDate from each blog post's frontmatter into blogLastmod,
@@ -69,6 +88,10 @@ function serializeSitemap(item) {
 		changefreq = 'weekly';
 		const lastmod = blogLastmod.get(path);
 		if (lastmod) item.lastmod = lastmod;
+	} else if (p === '/changelog/') {
+		priority = 0.7;
+		changefreq = 'weekly';
+		if (changelogLastmod) item.lastmod = changelogLastmod;
 	} else if (p === '/capabilities/') {
 		priority = 0.9;
 		changefreq = 'weekly';
@@ -121,7 +144,11 @@ export default defineConfig({
 	// blog.css — disabling Astro's Shiki here keeps every code glyph at a
 	// controlled >=4.5:1 contrast. Starlight docs use Expressive Code (configured
 	// on the integration below), which this setting does not touch.
-	markdown: { syntaxHighlight: false },
+	// `rehypeChangelog` only touches src/content/changelog/*.md — it deepens the
+	// vendored release-note headings by one and namespaces their ids by version,
+	// so 19 releases can share one page without colliding anchors. It runs before
+	// Astro's own heading-id pass, which leaves an existing id alone.
+	markdown: { syntaxHighlight: false, rehypePlugins: [rehypeChangelog] },
 	integrations: [
 		starlight({
 			title: 'Open Multi-Agent',

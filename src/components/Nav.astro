@@ -12,7 +12,7 @@ import LangSwitcher from './LangSwitcher.astro';
 import EnterpriseLink from './EnterpriseLink.astro';
 
 interface Props {
-  current?: 'home' | 'capabilities' | 'docs' | 'architecture' | 'examples' | 'showcase' | 'blog' | 'compare' | 'solutions' | 'integrations';
+  current?: 'home' | 'capabilities' | 'docs' | 'architecture' | 'examples' | 'showcase' | 'blog' | 'changelog' | 'compare' | 'solutions' | 'integrations';
   starsK: string;
   locale?: Locale;
   path?: string;
@@ -31,6 +31,9 @@ const ucExternal = (e: { id: string }) => !useCaseDetails.has(e.id);
 const pick = (o: Loc) => o[locale];
 const capabilitiesCurrent = current === 'capabilities' || current === 'architecture' || current === 'integrations';
 const whyOmaCurrent = current === 'compare' || current === 'showcase';
+// Resources is where the post-adoption pages collect — writing today, release
+// history now, and the community pages that come next (contributors, and so on).
+const resourcesCurrent = current === 'blog' || current === 'changelog';
 ---
 
 <nav class="nav">
@@ -139,7 +142,19 @@ const whyOmaCurrent = current === 'compare' || current === 'showcase';
         </div>
       </div>
       <a class="nav-link" href={L('/getting-started/introduction/')} aria-current={current === 'docs' ? 'page' : undefined}>{t.nav.docs}</a>
-      <a class="nav-link" href={L('/blog/')} aria-current={current === 'blog' ? 'page' : undefined}>{t.nav.blog}</a>
+      <div class="nav-item">
+        <button type="button" class={`nav-menu-btn${resourcesCurrent ? ' is-current' : ''}`} aria-haspopup="true" aria-expanded="false" aria-controls="resources-menu">{t.nav.resources} <span class="nav-menu-caret">▾</span></button>
+        <div class="nav-menu" id="resources-menu">
+          <a class="nav-menu-link nav-menu-link--page" href={L('/blog/')} aria-current={current === 'blog' ? 'page' : undefined}>
+            <span class="pkg">{t.nav.blog}</span>
+            <span class="desc">{t.nav.resourcesDesc.blog}</span>
+          </a>
+          <a class="nav-menu-link nav-menu-link--page" href={L('/changelog/')} aria-current={current === 'changelog' ? 'page' : undefined}>
+            <span class="pkg">{t.nav.changelog}</span>
+            <span class="desc">{t.nav.resourcesDesc.changelog}</span>
+          </a>
+        </div>
+      </div>
       <EnterpriseLink class="nav-link nav-link--ext" locale={locale}>
         {t.nav.forCompanies} {locale === 'en' && <span class="ext" aria-hidden="true">↗</span>}
       </EnterpriseLink>
