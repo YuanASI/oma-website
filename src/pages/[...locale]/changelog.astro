@@ -122,10 +122,7 @@ const jsonLd = {
           <ol class="changelog-index-list">
             {releases.map((release) => (
               <li>
-                <a href={`#${release.anchor}`}>
-                  <span class="v">v{release.version}</span>
-                  <time datetime={release.date.toISOString()}>{fmtDate(release.date)}</time>
-                </a>
+                <a href={`#${release.anchor}`}><span class="v">v{release.version}</span></a>
               </li>
             ))}
           </ol>
