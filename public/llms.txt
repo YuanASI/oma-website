@@ -102,6 +102,10 @@ Per-provider setup — one env var and a model name to run a team on each. Hub: 
 - [How to Run a Mixed-Model AI Agent Team in TypeScript?](https://open-multi-agent.com/blog/mixed-model-agent-team/): a walkthrough from a single-model baseline to a mixed-provider team with live cost and latency monitoring.
 - [Adding Multi-Agent Orchestration to a Vercel AI SDK App](https://open-multi-agent.com/blog/multi-agent-vercel-ai-sdk/): layering OMA orchestration onto an existing Vercel AI SDK app, sharing a single Next.js API route.
 
+## Changelog
+
+- [Changelog](https://open-multi-agent.com/changelog/): the full release history of `@open-multi-agent/core`, newest first — additions, breaking changes, published package versions, and upgrade notes, mirrored from the GitHub releases. Per-release anchors follow the version, e.g. `/changelog/#v1-14-0`.
+
 ## Compare
 
 Honest, sourced comparisons against the main multi-agent frameworks — language, orchestration model, runtime dependencies, token-budget control, and observability, with a fair account of when the other tool is the better choice. Hub: [Compare](https://open-multi-agent.com/compare/).

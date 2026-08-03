@@ -13,16 +13,20 @@ export const en = {
     brandAria: 'Open Multi-Agent — home',
     // Top-level nav labels. `capabilities` exposes the framework's build and
     // production surfaces; `useCases` fronts catalog-featured examples; `whyOma`
-    // groups selection and adoption proof; docs, blog, and the enterprise pathway
-    // stay directly reachable.
+    // groups selection and adoption proof; `resources` collects the pages a
+    // reader returns to after adopting (writing, release history, and whatever
+    // community pages come next); docs and the enterprise pathway stay directly
+    // reachable.
     capabilities: 'Capabilities',
     docs: 'Docs',
     useCases: 'Use Cases',
     whyOma: 'Why OMA',
+    resources: 'Resources',
     architecture: 'Architecture',
     examples: 'Examples',
     showcase: 'Showcase',
     blog: 'Blog',
+    changelog: 'Changelog',
     compare: 'Compare',
     solutions: 'Solutions',
     integrations: 'Integrations',
@@ -48,6 +52,10 @@ export const en = {
       compare: 'See how OMA differs from other agent frameworks',
       showcase: 'Real projects and teams building with OMA',
     },
+    resourcesDesc: {
+      blog: 'Workflow playbooks, field notes, and framework guides',
+      changelog: 'What shipped in every release, newest first',
+    },
     // Use Cases dropdown column headers + the left column's "view all" link
     // (the right column reuses examples.detail.browseAll).
     useCasesCols: { solutions: 'Solutions', examples: 'Examples' },
@@ -66,7 +74,7 @@ export const en = {
   footer: {
     blurb: 'A self-organizing agent team,<br />in an environment you control.',
     product: { head: 'Product', capabilities: 'Capabilities', useCases: 'Use cases', integrations: 'Integrations', faq: 'FAQ' },
-    resources: { head: 'Resources', docs: 'Docs', architecture: 'Architecture', examples: 'Examples', showcase: 'Showcase', compare: 'Compare', blog: 'Blog' },
+    resources: { head: 'Resources', docs: 'Docs', architecture: 'Architecture', examples: 'Examples', showcase: 'Showcase', compare: 'Compare', blog: 'Blog', changelog: 'Changelog' },
     project: { head: 'Project', github: 'GitHub', npm: 'npm', mitLicense: 'MIT license', llmsTxt: 'llms.txt', rss: 'RSS' },
     resourcesEnterprise: 'Enterprise support',
     mitLicensed: 'MIT licensed · @open-multi-agent',
@@ -604,6 +612,28 @@ export const en = {
     // "translated from" link to the en original instead.
     originallyOn: 'Originally published on',
     translatedFrom: 'Read the English original',
+  },
+
+  // /changelog — chrome only. The release notes themselves are vendored from the
+  // framework's GitHub releases (src/content/changelog) and stay in English on
+  // every locale, the way package names and API identifiers do; `upstreamNote`
+  // says so on the locales where that is a difference the reader can see.
+  changelog: {
+    seo: {
+      title: 'Changelog — every open-multi-agent release',
+      description:
+        'Release notes for @open-multi-agent/core: what was added, what changed, what broke, and which package versions shipped in each release.',
+    },
+    eyebrow: 'Changelog',
+    title: 'Every release, and what it changed.',
+    lede: 'The full release history of open-multi-agent, newest first — additions, breaking changes, published package versions, and the upgrade notes that go with them.',
+    upstreamNote: 'Release notes are published in English by the framework repository and kept verbatim here.',
+    jumpTo: 'Releases',
+    latest: 'Latest',
+    prerelease: 'Prerelease',
+    releaseCount: '{count} releases',
+    viewOnGitHub: 'This release on GitHub',
+    sourceLink: 'All releases on GitHub',
   },
 
   // Comparison pages (§7.2). Chrome only — the per-framework copy (matrix cells,

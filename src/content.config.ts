@@ -63,8 +63,25 @@ const blogPostSchema = z.object({
 	}
 });
 
+// One published framework release, vendored from its GitHub release notes by
+// scripts/sync-releases.mjs. The file name is the version (1.14.0.md); the body
+// is upstream's, transformed once at sync time (see release-sync-lib.mjs).
+const releaseSchema = z.object({
+	version: z.string(),
+	tag: z.string(),
+	date: z.coerce.date(),
+	url: z.string().url(),
+	prerelease: z.boolean().default(false),
+});
+
 export const collections = {
 	docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
+	// Release notes behind /changelog. Upstream CHANGELOG.md keeps only the last
+	// couple of releases, so this collection — not that file — is the archive.
+	changelog: defineCollection({
+		loader: glob({ pattern: '*.md', base: './src/content/changelog' }),
+		schema: releaseSchema,
+	}),
 	// Blog posts migrated from dev.to (scripts/migrate-devto-blog.mjs). Custom
 	// landing-style pages, not Starlight docs — see src/pages/[...locale]/blog/.
 	blog: defineCollection({

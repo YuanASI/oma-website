@@ -1,0 +1,165 @@
+---
+// /changelog and /zh/changelog — the full release history on one page. One
+// template, both locales (the [...locale] rest param is empty for en at the
+// root, `zh` for /zh/).
+//
+// Entries come from the `changelog` collection: one vendored file per published
+// GitHub release, written by scripts/sync-releases.mjs. Upstream CHANGELOG.md
+// keeps only the last couple of releases, so this collection is the archive —
+// nothing drops off the page when upstream trims.
+//
+// The release bodies stay in English on every locale (they are published that
+// way upstream); only the chrome is translated, and `upstreamNote` says so on
+// the locales where the reader would notice. Heading depth and per-release
+// anchor ids are handled by src/lib/rehype-changelog.mjs.
+import '@fontsource-variable/geist';
+import '@fontsource-variable/jetbrains-mono';
+import '../../styles/tokens.css';
+import '../../styles/landing.css';
+import '../../styles/blog.css';
+import '../../styles/changelog.css';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Badge from '../../components/ds/Badge.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import EnterpriseCta from '../../components/EnterpriseCta.astro';
+import EnterpriseHeadCta from '../../components/EnterpriseHeadCta.astro';
+import { ghStats, REPO } from '../../lib/site';
+import { getCollection, render } from 'astro:content';
+import { localeStaticPaths, toLocale, useTranslations } from '../../i18n';
+import { releaseAnchor } from '../../lib/rehype-changelog.mjs';
+
+export function getStaticPaths() { return localeStaticPaths(); }
+const locale = toLocale(Astro.params.locale);
+const ct = useTranslations(locale).changelog;
+
+const stats = await ghStats();
+const starsK = (stats.stars / 1000).toFixed(1) + 'k';
+
+// Newest first: published date decides, version breaks a same-day tie.
+const compareVersions = (a: string, b: string) => {
+  const parts = (v: string) => v.split(/[.-]/).map((n) => Number.parseInt(n, 10) || 0);
+  const [left, right] = [parts(a), parts(b)];
+  for (let i = 0; i < Math.max(left.length, right.length); i++) {
+    const diff = (right[i] ?? 0) - (left[i] ?? 0);
+    if (diff !== 0) return diff;
+  }
+  return 0;
+};
+
+const entries = (await getCollection('changelog')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+    || compareVersions(a.data.version, b.data.version),
+);
+// render() is per-entry and async, so every body is resolved before the markup.
+const releases = await Promise.all(entries.map(async (entry) => ({
+  ...entry.data,
+  anchor: releaseAnchor(entry.data.version),
+  Content: (await render(entry)).Content,
+})));
+
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+const title = ct.seo.title;
+const description = ct.seo.description;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: title,
+  description,
+  inLanguage: locale === 'zh' ? 'zh-CN' : 'en',
+  url: canonical,
+  isPartOf: { '@type': 'WebSite', name: 'Open Multi-Agent', url: 'https://open-multi-agent.com' },
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListOrder: 'https://schema.org/ItemListOrderDescending',
+    numberOfItems: releases.length,
+    itemListElement: releases.map((release, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'SoftwareApplication',
+        name: `@open-multi-agent/core ${release.version}`,
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'Node.js',
+        softwareVersion: release.version,
+        datePublished: release.date.toISOString().slice(0, 10),
+        url: `${canonical}#${release.anchor}`,
+      },
+    })),
+  },
+};
+---
+
+<BaseLayout locale={locale} title={title} description={description} jsonLd={jsonLd} path="/changelog/">
+  <Nav current="changelog" starsK={starsK} locale={locale} path="/changelog/" />
+  <main>
+    <section class="section changelog-hero">
+      <div class="container">
+        <div class="hero-head-row">
+          <div class="section-head">
+            <div class="eyebrow"><span class="idx">//</span> {ct.eyebrow}</div>
+            <h1 class="section-title">{ct.title}</h1>
+            <p class="section-sub">{ct.lede}</p>
+            <p class="changelog-source">
+              <span class="changelog-count">{ct.releaseCount.replace('{count}', String(releases.length))}</span>
+              <a href={`${REPO}/releases`} target="_blank" rel="noreferrer">{ct.sourceLink} ↗</a>
+            </p>
+            {locale !== 'en' && <p class="changelog-note">{ct.upstreamNote}</p>}
+          </div>
+          <EnterpriseHeadCta locale={locale} />
+        </div>
+      </div>
+    </section>
+
+    <section class="section changelog-body-section is-first">
+      <div class="container changelog-layout">
+        <nav class="changelog-index" aria-label={ct.jumpTo}>
+          <div class="changelog-index-head">{ct.jumpTo}</div>
+          <ol class="changelog-index-list">
+            {releases.map((release) => (
+              <li>
+                <a href={`#${release.anchor}`}>
+                  <span class="v">v{release.version}</span>
+                  <time datetime={release.date.toISOString()}>{fmtDate(release.date)}</time>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+
+        <div class="changelog-stream">
+          {releases.map((release, index) => {
+            // Bound to a capitalized local so Astro renders the body as a
+            // component rather than an unknown HTML tag.
+            const Body = release.Content;
+            return (
+              <article class="changelog-release" id={release.anchor} aria-labelledby={`${release.anchor}-title`}>
+                <header class="changelog-release-head">
+                  <h2 class="changelog-version" id={`${release.anchor}-title`}>v{release.version}</h2>
+                  <div class="changelog-release-meta">
+                    <time datetime={release.date.toISOString()}>{fmtDate(release.date)}</time>
+                    {index === 0 && !release.prerelease && <Badge tone="accent">{ct.latest}</Badge>}
+                    {release.prerelease && <Badge tone="warning">{ct.prerelease}</Badge>}
+                  </div>
+                </header>
+                <div class="prose changelog-prose">
+                  <Body />
+                </div>
+                <a class="changelog-release-link" href={release.url} target="_blank" rel="noreferrer">
+                  {ct.viewOnGitHub} ↗
+                </a>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+
+    <EnterpriseCta locale={locale} />
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>

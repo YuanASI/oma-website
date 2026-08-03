@@ -1,0 +1,106 @@
+name: Sync release notes
+
+# Keeps the vendored release notes (src/content/changelog) in step with the
+# framework's published GitHub releases — the content behind /changelog.
+# Runs scripts/sync-releases.mjs, validates the build, then proposes the result
+# through a PR so main can remain protected. The PR is auto-merged after the
+# required Build check passes; the resulting push to main triggers Cloudflare
+# Pages and IndexNow normally. Same model as refresh-gh-data: the bodies are
+# already published upstream, so a release reaches the site without waiting on a
+# manual merge. Unlike the Reference sync, nothing here is human-gated — the
+# safety net is `pnpm check` + `pnpm build` below plus the required check on the
+# PR itself.
+#
+# WHY the releases and not CHANGELOG.md: upstream trims that file to the last
+# couple of versions, while the releases go back to v1.0.0. The sync is additive
+# — a release unpublished upstream stays vendored here — so the site holds the
+# complete archive.
+
+on:
+  schedule:
+    # Daily, 05:41 UTC — releases land irregularly, so check more often than the
+    # weekly Reference sync. Off-the-hour avoids GitHub's scheduling congestion.
+    - cron: '41 5 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync-releases
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync release notes from GitHub releases
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      # pnpm version is pinned by package.json "packageManager" (Corepack-style).
+      # Do NOT add a `version:` input — action-setup errors if both are set.
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # The only step that talks to the GitHub API. GITHUB_TOKEN authenticates the
+      # fetch (5,000/hr) so a shared-runner IP doesn't hit the 60/hr limit. On any
+      # hard failure the script exits non-zero and writes nothing.
+      - name: Sync release notes
+        run: node scripts/sync-releases.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Validate the transform contract and then build against the fresh files
+      # before proposing them, so a malformed upstream body fails here instead of
+      # opening a red PR. Both consume only committed data.
+      - name: Validate checks
+        run: pnpm check
+
+      - name: Validate build
+        run: pnpm build
+
+      - name: Open PR if the release notes changed
+        id: cpr
+        uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6
+        with:
+          # Org policy blocks the built-in GITHUB_TOKEN from creating pull
+          # requests, so use the repo-scoped PAT (same as the Reference sync).
+          token: ${{ secrets.SYNC_PAT }}
+          add-paths: src/content/changelog
+          branch: chore/sync-releases
+          delete-branch: true
+          base: main
+          commit-message: 'chore(changelog): sync release notes from GitHub releases'
+          title: 'chore(changelog): sync release notes from GitHub releases'
+          labels: |
+            docs
+            automated
+          body: |
+            Automated sync of the vendored release notes behind `/changelog` from
+            the `open-multi-agent/open-multi-agent` GitHub releases.
+
+            - One file per published release; drafts are never vendored.
+            - Bodies are upstream's, transformed once at sync time: GitHub
+              `@mention` and `#123` autolinks, and framework doc links pointed at
+              the vendored Reference pages when one exists.
+            - Additive — a release unpublished upstream stays vendored here.
+            - `pnpm check` and `pnpm build` passed in this run before the PR was
+              created or updated.
+
+            Auto-merges once the required Build check passes. Re-run anytime via
+            **Actions → Sync release notes → Run workflow**.
+
+      - name: Enable auto-merge
+        if: steps.cpr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.SYNC_PAT }}
+          PR_NUMBER: ${{ steps.cpr.outputs.pull-request-number }}
+          REPO: ${{ github.repository }}
+        run: gh pr merge "$PR_NUMBER" --repo "$REPO" --auto --squash

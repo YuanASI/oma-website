@@ -12,10 +12,12 @@ export const zh: UiDict = {
     docs: '文档',
     useCases: '应用场景',
     whyOma: '为什么选择 OMA',
+    resources: '资源',
     architecture: '架构',
     examples: '示例',
     showcase: '案例',
     blog: '博客',
+    changelog: '更新日志',
     compare: '对比',
     solutions: '用例',
     integrations: '集成',
@@ -39,6 +41,10 @@ export const zh: UiDict = {
       compare: '与主流多智能体框架逐项对比',
       showcase: '真实项目、团队与采用案例',
     },
+    resourcesDesc: {
+      blog: '工作流实操、实测记录与框架选型指南',
+      changelog: '每个版本改了什么，按时间倒序',
+    },
     useCasesCols: { solutions: '解决方案', examples: '示例' },
     viewAllSolutions: '全部解决方案',
     stars: 'Star',
@@ -54,7 +60,7 @@ export const zh: UiDict = {
   footer: {
     blurb: '自动分工的智能体团队，<br />跑在你掌控的环境里。',
     product: { head: '产品', capabilities: '能力', useCases: '应用场景', integrations: '集成', faq: '常见问题' },
-    resources: { head: '资源', docs: '文档', architecture: '架构', examples: '示例', showcase: '案例', compare: '对比', blog: '博客' },
+    resources: { head: '资源', docs: '文档', architecture: '架构', examples: '示例', showcase: '案例', compare: '对比', blog: '博客', changelog: '更新日志' },
     project: { head: '项目', github: 'GitHub', npm: 'npm', mitLicense: 'MIT 许可证', llmsTxt: 'llms.txt', rss: 'RSS' },
     resourcesEnterprise: '企业服务',
     mitLicensed: 'MIT 许可 · @open-multi-agent',
@@ -721,6 +727,26 @@ export const zh: UiDict = {
     allPosts: '← 所有文章',
     originallyOn: '最初发表于',
     translatedFrom: '阅读英文原文',
+  },
+
+  // 页面外壳中文化；发布说明正文由框架仓库以英文发布，与包名、API 标识符同类，
+  // 在本站按原文保留，由 upstreamNote 向读者说明。
+  changelog: {
+    seo: {
+      title: '更新日志 — open-multi-agent 全部版本',
+      description:
+        '@open-multi-agent/core 的发布说明：每个版本新增了什么、改了什么、有哪些破坏性变更，以及随之发布的包版本。',
+    },
+    eyebrow: '更新日志',
+    title: '每个版本，改了什么。',
+    lede: 'open-multi-agent 的完整发布历史，按时间倒序 —— 新增能力、破坏性变更、发布的包版本，以及配套的升级说明。',
+    upstreamNote: '发布说明由框架仓库以英文发布，本页按原文保留。',
+    jumpTo: '版本',
+    latest: '最新',
+    prerelease: '预发布',
+    releaseCount: '共 {count} 个版本',
+    viewOnGitHub: '在 GitHub 上查看本版本',
+    sourceLink: '在 GitHub 上查看全部版本',
   },
 
   compare: {
