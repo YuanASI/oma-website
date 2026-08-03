@@ -40,10 +40,10 @@
   max-height: calc(100vh - 180px); overflow-y: auto;
 }
 /* Version only — each release's date is already in its own header, and the rail
-   reads faster as a single column of versions. */
+   reads faster as a plain column of versions: no per-row rule, the spacing
+   carries the separation. */
 .changelog-index-list a {
-  display: block; padding: 7px 0;
-  text-decoration: none; border-bottom: 1px solid var(--border-subtle);
+  display: block; padding: 6px 0; text-decoration: none;
 }
 .changelog-index-list a:hover .v { color: var(--oma-accent); }
 .changelog-index-list .v {
