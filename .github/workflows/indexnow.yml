@@ -1,6 +1,7 @@
 # IndexNow — submit canonical URLs to Bing / Yandex / partners (and, via Bing's
 # index, ChatGPT search / Copilot). ENABLED: auto-submits the sitemap on every
-# push to main. Also runnable by hand (workflow_dispatch); a manual run is a dry
+# push to main, once that push's Cloudflare Pages deploy has landed (see the
+# wait step). Also runnable by hand (workflow_dispatch); a manual run is a dry
 # run unless confirm_submit=true.
 #
 # The IndexNow key lives at public/<key>.txt (public by design — it verifies
@@ -20,6 +21,8 @@ on:
 
 permissions:
   contents: read
+  # Read the Cloudflare Pages check run that reports this commit's deploy.
+  checks: read
 
 jobs:
   indexnow:
@@ -29,6 +32,44 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
+
+      # scripts/submit-indexnow.mjs submits whatever the LIVE sitemap contains,
+      # but Cloudflare Pages deploys asynchronously after the push — so without
+      # this wait, a push that adds pages submits the PREVIOUS deploy's URL set
+      # and the new pages are never announced. Observed on the /changelog
+      # launch: the run finished 4s after the merge and submitted 216 URLs
+      # against a sitemap that the deploy then grew to 218.
+      #
+      # Cloudflare reports each deploy as a "Cloudflare Pages" check run on the
+      # commit (it creates no GitHub deployment), so that check is the signal.
+      # Any terminal outcome releases the wait: a failed or missing deploy falls
+      # back to submitting the live sitemap as-is, which is exactly today's
+      # behavior — this step can delay a submission but never lose one.
+      - name: Wait for this commit's Cloudflare Pages deploy
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          for attempt in $(seq 1 60); do
+            state=$(gh api "repos/$REPO/commits/$SHA/check-runs" \
+              --jq '[.check_runs[] | select(.name == "Cloudflare Pages")] | first
+                    | "\(.status // "missing") \(.conclusion // "none")"' 2>/dev/null) \
+              || state="unreachable none"
+            case "$state" in
+              "completed success")
+                echo "Cloudflare Pages deploy succeeded after ~$((attempt * 10))s."
+                exit 0
+                ;;
+              completed*)
+                echo "::warning::Cloudflare Pages deploy ended as '${state#completed }' — submitting the live sitemap as-is."
+                exit 0
+                ;;
+            esac
+            sleep 10
+          done
+          echo "::warning::No completed Cloudflare Pages check after 10 minutes — submitting the live sitemap as-is."
+
       - name: Submit to IndexNow
         env:
           # Auto-submit on push to main; on a manual run, honor confirm_submit.
