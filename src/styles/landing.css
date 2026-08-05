@@ -379,7 +379,12 @@ a { color: inherit; }
   font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis;
   white-space: nowrap;
 }
-.runtime-path-steps small { font-size: 7px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--oma-fg-3); }
+/* fg-2, not fg-3: these are labels (MODE / ROUTE / SCHEDULE / EVIDENCE), which
+   is what fg-2 is for, and they sit on the accent-soft tint rather than on the
+   page canvas. fg-3 is scoped to bg-0…bg-2 and came out at 3.45:1 here in light
+   and 3.92:1 in dark — the worst contrast on the site. Lighthouse only reported
+   the light case; the swap fixes both. */
+.runtime-path-steps small { font-size: 7px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--oma-fg-2); }
 .runtime-path-steps b { font-size: 11px; font-weight: 600; color: var(--oma-fg-0); }
 .runtime-path-steps i { color: var(--oma-accent); font-family: var(--font-mono); font-size: 9px; font-style: normal; }
 .artifact-goal {

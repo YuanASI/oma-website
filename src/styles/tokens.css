@@ -227,20 +227,27 @@
   /* Text (warm near-black → warm grays) */
   --oma-fg-0: #1C1916;
   --oma-fg-1: #4A443B;
-  --oma-fg-2: #6B6359;   /* ≥4.5:1 on bg-3 */
-  --oma-fg-3: #7C7468;   /* ≥4.5:1 on bg-0 */
+  /* Both were slightly under the ratio their own comments claimed — fg-2 was
+     4.33:1 on bg-3 and fg-3 was 4.38:1 on bg-0. Deepened until the stated
+     contract actually holds, with the fg-1 > fg-2 > fg-3 hierarchy intact. */
+  --oma-fg-2: #635C52;   /* ≥4.5:1 on bg-0…bg-3 (4.83 on bg-3) */
+  --oma-fg-3: #6B645A;   /* ≥4.5:1 on bg-0…bg-2 (4.69 on bg-2) */
 
   /* Borders (warm light grays) */
   --oma-border-0: #ECE7DB;
   --oma-border-1: #DBD4C6;
   --oma-border-2: #C6BDAC;
 
-  /* Accent (deepened emerald — AA as small mono text on light) */
-  --oma-accent:      #047857;
+  /* Accent (deepened emerald — AA as small mono text on light).
+     #047857 met that goal on bg-0 (5.21:1) but not on the raised surfaces it
+     is actually used as text on: 4.40:1 on bg-2, which is where the
+     /#build card kickers live. Deepened one step so the comment above is true
+     on bg-0 through bg-2; accent-fg is near-white, so the fill only improves. */
+  --oma-accent:      #046A4D;
   --oma-accent-deep: #065F46;
   --oma-accent-fg:   #FBFAF7;   /* text on an accent fill → light */
-  --oma-accent-soft: rgba(4, 120, 87, 0.12);
-  --oma-accent-line: rgba(4, 120, 87, 0.36);
+  --oma-accent-soft: rgba(4, 106, 77, 0.12);
+  --oma-accent-line: rgba(4, 106, 77, 0.36);
 
   /* Functional (deepened for contrast on light) */
   --oma-warning: #B45309;
@@ -264,7 +271,7 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.10);
   --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.16);
-  --shadow-accent-glow: 0 0 0 1px var(--oma-accent-line), 0 0 24px rgba(4, 120, 87, 0.14);
+  --shadow-accent-glow: 0 0 0 1px var(--oma-accent-line), 0 0 24px rgba(4, 106, 77, 0.14);
 
   /* Nav glass + grid dot, flipped for the light canvas */
   --nav-glass: rgba(250, 249, 246, 0.72);
