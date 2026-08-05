@@ -19,20 +19,24 @@ import { AUTHOR, articleDates, publisher } from '../lib/schema';
 import geistWoff2 from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
 import jbmWoff2 from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
 
-const { entry, lang, lastUpdated } = Astro.locals.starlightRoute;
+const { entry, lang } = Astro.locals.starlightRoute;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL('/github-social.png', Astro.site).href;
 
-// `lastUpdated` comes from git (enabled in astro.config.mjs) and is undefined
-// when history isn't available. Omit the field in that case — a docs page with
-// no date is honest; one stamped with the build date is not.
+// Both dates come from the committed git snapshot, NOT from Starlight's own
+// `lastUpdated`.
 //
-// datePublished has no Starlight equivalent, so it comes from the committed
-// git snapshot keyed by route. Prefer Starlight's live lastUpdated for
-// dateModified and fall back to the snapshot when the clone has no history.
-const snapshot = articleDates(Astro.url.pathname);
-const dateModified = lastUpdated ? lastUpdated.toISOString() : snapshot.dateModified;
-const datePublished = snapshot.datePublished;
+// Starlight reads git during the build, and Cloudflare Pages clones shallow —
+// so on production it resolves every page to the deploy commit. It does not
+// return undefined, it returns a confidently wrong value, which is worse: a
+// fallback never fires and every doc claims it was revised on the day of the
+// last deploy. Verified on a preview deploy, where /reference/checkpoint/
+// reported the build timestamp instead of its real July revision date.
+//
+// The snapshot is generated from full history (scripts/page-dates.mjs) and
+// committed, so it is correct regardless of how the deploy clones. A path
+// missing from it emits no dates rather than a guess.
+const { datePublished, dateModified } = articleDates(Astro.url.pathname);
 
 const jsonLd = {
   '@context': 'https://schema.org',
