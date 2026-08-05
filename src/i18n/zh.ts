@@ -63,8 +63,145 @@ export const zh: UiDict = {
     resources: { head: '资源', docs: '文档', architecture: '架构', examples: '示例', showcase: '案例', compare: '对比', blog: '博客', changelog: '更新日志' },
     project: { head: '项目', github: 'GitHub', npm: 'npm', mitLicense: 'MIT 许可证', llmsTxt: 'llms.txt', rss: 'RSS' },
     resourcesEnterprise: '企业服务',
+    legal: { about: '关于', privacy: '隐私', terms: '条款' },
     mitLicensed: 'MIT 许可 · @open-multi-agent',
     builtBy: '出自',
+  },
+
+  // /zh/about、/zh/privacy、/zh/terms —— 三个信任页。页面上的每条陈述都可以
+  // 对仓库、线上站点或本站 <head> 实际加载的脚本核实，不写愿景式表述。
+  // sections[].body 经 set:html 渲染，可内嵌链接。
+  legal: {
+    lastUpdated: '最后更新',
+    about: {
+      seo: {
+        title: '关于 —— Open Multi-Agent',
+        description: 'Open Multi-Agent 由谁开发和维护、项目如何维持运转、以及联系方式。一个 MIT 许可的 TypeScript 多智能体编排框架。',
+      },
+      eyebrow: '关于',
+      title: '关于 Open Multi-Agent。',
+      lede: '一个 MIT 许可的 TypeScript 多智能体编排框架，以及维护它的人。',
+      sections: [
+        {
+          h: '这是什么',
+          body: [
+            'Open Multi-Agent（OMA）是一个 TypeScript 原生的多智能体运行框架。你交给它一个目标或一张显式任务 DAG，协调器完成分解、让多个智能体并行执行，并返回可追溯、可断点续跑的运行结果。它跑在你自己的环境里——云端模型、本地模型，或完全离线。',
+            '运行时以 <code>@open-multi-agent/core</code> 发布在 npm，采用 MIT 许可。开发过程在 GitHub 上公开进行：issue、发布记录和完整提交历史都可查。',
+          ],
+        },
+        {
+          h: '由谁维护',
+          body: [
+            'OMA 由元定义科技（YuanASI）创始人 Jack Chen 编写和维护，并接受社区贡献——本页构建时，仓库共有 {contributors} 位贡献者、{stars} 个 star。',
+            '项目没有基金会背书，也不是某家风险投资公司的产品线。技术方向通过公开的 GitHub issue 和发布记录确定。',
+          ],
+        },
+        {
+          h: '如何维持运转',
+          body: [
+            '本站没有广告、没有软文位，也不做基于数据的变现。框架在 MIT 许可下免费使用，今后也是如此。',
+            '元定义科技（YuanASI）是独立的商业主体，为需要按期落地 OMA 的团队提供付费交付、集成与技术支持。这是项目的经济来源——开源项目本身保持非商业化。',
+          ],
+        },
+        {
+          h: '联系方式',
+          body: [
+            '缺陷反馈、功能建议和技术问题，请在 <a href="https://github.com/open-multi-agent/open-multi-agent/issues">GitHub</a> 提 issue 或发起 discussion——这是主要渠道，且回答对所有人可检索。',
+            '商业交付与咨询请访问 <a href="https://yuanasi.com">yuanasi.com</a>，也可以直接发邮件至 <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>。',
+          ],
+        },
+      ],
+    },
+    privacy: {
+      seo: {
+        title: '隐私 —— Open Multi-Agent',
+        description: 'open-multi-agent.com 收集什么、不收集什么：自托管的无 Cookie 分析、面向中国大陆读者的百度统计，无账号体系，无广告网络。',
+      },
+      eyebrow: '隐私',
+      title: '隐私说明。',
+      lede: '本站统计了什么、没有统计什么，以及哪些第三方会接触到数据。',
+      sections: [
+        {
+          h: '简要结论',
+          body: [
+            '这是一个静态文档站点。没有账号、没有登录、没有表单，也没有邮件订阅。你在此处的浏览行为不与任何身份关联，数据不出售、不提供给数据经纪商。',
+            '页面上运行两套分析工具，包括其中会设置 Cookie 的那一套，均列明如下。',
+          ],
+        },
+        {
+          h: '第一方分析',
+          body: [
+            '页面访问量由 <a href="https://github.com/benvinegar/counterscale">Counterscale</a> 统计，由我们自托管在 <code>insights.open-multi-agent.com</code>。它不使用 Cookie，只保存聚合数据——页面路径、来源、国家/地区、浏览器、设备类型。不设置 Cookie，不在多次访问间保留标识符，也不会跨站点追踪你。',
+          ],
+        },
+        {
+          h: '百度统计',
+          body: [
+            '页面同时加载百度统计（<code>hm.baidu.com</code>），用于衡量中国大陆读者的触达情况——第一方统计脚本在该网络环境下往往无法访问。与 Counterscale 不同，百度统计<strong>会设置 Cookie</strong>，访问数据在百度的基础设施上处理，适用<a href="https://www.baidu.com/duty/">百度自身的隐私条款</a>。',
+            '若不希望被统计，可在浏览器或广告/追踪拦截工具中屏蔽 <code>hm.baidu.com</code>——本站在没有它的情况下功能不受影响。',
+          ],
+        },
+        {
+          h: '托管与服务器日志',
+          body: [
+            '本站由 Cloudflare Pages 提供服务。与任何 CDN 一样，Cloudflare 会处理请求元数据——IP 地址、User-Agent、时间戳——用于分发页面和防范滥用。该处理行为适用 <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare 的隐私政策</a>。',
+          ],
+        },
+        {
+          h: '本站不做的事',
+          body: [
+            '不接入广告网络，不使用重定向广告像素，不做会话录制或热力图，不引用第三方字体或脚本 CDN（网页字体自托管，从本域名分发），不做跨站画像。',
+          ],
+        },
+        {
+          h: '疑问反馈',
+          body: [
+            '隐私相关问题可通过 <a href="https://github.com/open-multi-agent/open-multi-agent/issues">GitHub issue</a> 提出。若本页描述与站点实际加载的内容不再一致，这属于缺陷，欢迎反馈。',
+          ],
+        },
+      ],
+    },
+    terms: {
+      seo: {
+        title: '条款 —— Open Multi-Agent',
+        description: 'open-multi-agent.com 使用条款：软件采用 MIT 许可，文档按现状提供，对比页面涉及的第三方名称归各自所有者。',
+      },
+      eyebrow: '条款',
+      title: '使用条款。',
+      lede: '此处包含两件相互独立的事：软件的许可，以及本网站的使用条款。',
+      sections: [
+        {
+          h: '关于软件',
+          body: [
+            'Open Multi-Agent 运行时及仓库发布的所有包均采用 MIT 许可。以<a href="https://github.com/open-multi-agent/open-multi-agent/blob/main/LICENSE">仓库中的 LICENSE 文件</a>为准，本页内容不对其作出修改、限缩或补充。',
+          ],
+        },
+        {
+          h: '关于本网站',
+          body: [
+            '本站的文档、博客、对比页面和示例供参考使用。你可以引用和转述其中内容（包括在 AI 生成的回答中），请附上原页面链接。',
+          ],
+        },
+        {
+          h: '按现状提供',
+          body: [
+            '本站内容不附带任何形式的担保。版本号、基准数据、能力对照表和竞品对比反映的是特定时间点的情况，可能随上游项目演进而过时。任何作为关键依据的信息，请在投入生产前对当前源头复核。',
+          ],
+        },
+        {
+          h: '第三方',
+          body: [
+            '对比页面和集成页面会提及其他项目和产品。相关名称与商标归各自所有者，引用不意味着任何方向上的关联或背书。对于从本站链出的外部站点内容，我们不承担责任。',
+          ],
+        },
+        {
+          h: '条款变更',
+          body: [
+            '本站跟随一个持续开发中的项目，内容与本条款都会调整。以本页当前展示的版本为准。',
+          ],
+        },
+      ],
+    },
   },
 
   enterpriseCta: {

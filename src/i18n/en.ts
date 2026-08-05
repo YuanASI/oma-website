@@ -77,8 +77,146 @@ export const en = {
     resources: { head: 'Resources', docs: 'Docs', architecture: 'Architecture', examples: 'Examples', showcase: 'Showcase', compare: 'Compare', blog: 'Blog', changelog: 'Changelog' },
     project: { head: 'Project', github: 'GitHub', npm: 'npm', mitLicense: 'MIT license', llmsTxt: 'llms.txt', rss: 'RSS' },
     resourcesEnterprise: 'Enterprise support',
+    legal: { about: 'About', privacy: 'Privacy', terms: 'Terms' },
     mitLicensed: 'MIT licensed · @open-multi-agent',
     builtBy: 'Built by',
+  },
+
+  // /about, /privacy, /terms — the three trust pages. Every claim here is
+  // checkable against the repo, the deployed site, or the scripts this site's
+  // own <head> loads; nothing is aspirational. `sections[].body` entries are
+  // rendered with set:html so they can carry inline links.
+  legal: {
+    lastUpdated: 'Last updated',
+    about: {
+      seo: {
+        title: 'About — Open Multi-Agent',
+        description: 'Who builds Open Multi-Agent, how the project is funded, and where to reach the maintainers. An MIT-licensed TypeScript framework for multi-agent orchestration.',
+      },
+      eyebrow: 'about',
+      title: 'About Open Multi-Agent.',
+      lede: 'An MIT-licensed TypeScript framework for multi-agent orchestration — and the people who maintain it.',
+      sections: [
+        {
+          h: 'What this is',
+          body: [
+            'Open Multi-Agent (OMA) is a TypeScript-native framework for running teams of AI agents. You hand it a goal or an explicit task DAG; a coordinator decomposes the work, fans agents out in parallel, and returns a traced, resumable run. It runs in your environment — cloud providers, local models, or fully offline.',
+            'The runtime ships as <code>@open-multi-agent/core</code> on npm under the MIT license. Development happens in the open on GitHub: issues, releases, and the full commit history are public.',
+          ],
+        },
+        {
+          h: 'Who maintains it',
+          body: [
+            'OMA is authored and maintained by Jack Chen, founder of 元定义科技 (YuanASI), with contributions from the wider community — {contributors} contributors and {stars} GitHub stars at the time this page was built.',
+            'The project is not backed by a foundation or a venture-funded company product team. Direction is set in public through GitHub issues and releases.',
+          ],
+        },
+        {
+          h: 'How it is funded',
+          body: [
+            'This site carries no advertising, no sponsored placements, and no data-driven monetization. The framework is free to use under MIT and always will be.',
+            'YuanASI, a separate commercial entity, offers paid delivery, integration, and support for teams that want OMA implemented on a deadline. That is the funding model — the open-source project itself stays uncommercial.',
+          ],
+        },
+        {
+          h: 'Reaching us',
+          body: [
+            'For bugs, feature requests, and technical questions, open an issue or a discussion on <a href="https://github.com/open-multi-agent/open-multi-agent/issues">GitHub</a> — that is the primary channel and answers stay searchable for everyone.',
+            'For commercial delivery or consulting, see <a href="https://yuanasi.com/en">yuanasi.com</a>, or email <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a> directly.',
+          ],
+        },
+      ],
+    },
+    privacy: {
+      seo: {
+        title: 'Privacy — Open Multi-Agent',
+        description: 'What open-multi-agent.com measures and what it does not: self-hosted cookieless analytics, Baidu Analytics for readers in mainland China, and no ad networks.',
+      },
+      eyebrow: 'privacy',
+      title: 'Privacy.',
+      lede: 'What this site measures, what it does not, and which third parties see anything.',
+      sections: [
+        {
+          h: 'The short version',
+          body: [
+            'This is a static documentation site. There are no accounts, no logins, no forms, and no newsletter. Nothing you do here is tied to an identity, and no data is sold or shared with data brokers.',
+            'Two analytics tools run on these pages. Both are listed below, including the one that sets cookies.',
+          ],
+        },
+        {
+          h: 'First-party analytics',
+          body: [
+            'Page views are counted by <a href="https://github.com/benvinegar/counterscale">Counterscale</a>, self-hosted by us at <code>insights.open-multi-agent.com</code>. It is cookieless and stores aggregate counts only — page path, referrer, country, browser, device type. No cookie is set, no identifier persists between visits, and nothing follows you to other sites.',
+          ],
+        },
+        {
+          h: 'Baidu Analytics (百度统计)',
+          body: [
+            'These pages also load Baidu Analytics (<code>hm.baidu.com</code>) to measure reach among readers in mainland China, where the first-party tracker is often unreachable. Unlike Counterscale, Baidu Analytics <strong>does set cookies</strong> and processes the visit on Baidu\'s infrastructure under <a href="https://www.baidu.com/duty/">Baidu\'s own privacy terms</a>.',
+            'If you would rather not be counted there, block <code>hm.baidu.com</code> in your browser or an ad/tracker blocker — the site works normally without it.',
+          ],
+        },
+        {
+          h: 'Hosting and server logs',
+          body: [
+            'The site is served from Cloudflare Pages. As with any CDN, Cloudflare processes request metadata — IP address, user agent, timestamp — to deliver pages and mitigate abuse. That handling is governed by <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare\'s privacy policy</a>.',
+          ],
+        },
+        {
+          h: 'What this site does not do',
+          body: [
+            'No advertising networks, no retargeting pixels, no session recording or heatmaps, no third-party font or script CDNs (webfonts are self-hosted and served from this domain), and no cross-site profiling.',
+          ],
+        },
+        {
+          h: 'Questions',
+          body: [
+            'Privacy questions can go to <a href="https://github.com/open-multi-agent/open-multi-agent/issues">GitHub issues</a>. If something on this page stops matching what the site actually loads, that is a bug worth reporting.',
+          ],
+        },
+      ],
+    },
+    terms: {
+      seo: {
+        title: 'Terms — Open Multi-Agent',
+        description: 'Terms for open-multi-agent.com: the software stays MIT-licensed, the documentation is provided as-is, and third-party names belong to their owners.',
+      },
+      eyebrow: 'terms',
+      title: 'Terms of use.',
+      lede: 'Two separate things live here: the license on the software, and the terms for this website.',
+      sections: [
+        {
+          h: 'The software',
+          body: [
+            'The Open Multi-Agent runtime and every package published from the repository are licensed under the MIT license. The authoritative text is <a href="https://github.com/open-multi-agent/open-multi-agent/blob/main/LICENSE">LICENSE in the repository</a>, and nothing on this page modifies, narrows, or supplements it.',
+          ],
+        },
+        {
+          h: 'This website',
+          body: [
+            'Documentation, blog posts, comparison pages, and examples on this site are published for reference. You may quote and cite them, including in AI-generated answers, with a link back to the source page.',
+          ],
+        },
+        {
+          h: 'Provided as-is',
+          body: [
+            'Content here is provided without warranty of any kind. Version numbers, benchmarks, capability tables, and competitor comparisons reflect a point in time and can fall out of date as upstream projects move. Verify anything load-bearing against the current source before you depend on it in production.',
+          ],
+        },
+        {
+          h: 'Third parties',
+          body: [
+            'Comparison and integration pages name other projects and products. Those names and trademarks belong to their respective owners, and referencing them implies no affiliation or endorsement in either direction. We are not responsible for the content of external sites linked from here.',
+          ],
+        },
+        {
+          h: 'Changes',
+          body: [
+            'This site tracks an actively developed project, so both the content and these terms change. The version shown on this page is the one in effect.',
+          ],
+        },
+      ],
+    },
   },
 
   // Enterprise-support CTA (§3.2). Shared by the /compare pages and the examples
@@ -128,7 +266,9 @@ export const en = {
   landing: {
     seo: {
       title: 'Open Multi-Agent: open-source TypeScript AI Agent framework',
-      description: 'Open-source, TypeScript-native AI agent framework: one goal in, a self-organizing agent team plans and runs it in parallel, in your environment, cloud or fully offline.',
+      // 158 chars — stays inside the ~160 SERP truncation window so the
+      // "cloud or fully offline" differentiator survives to the snippet.
+      description: 'Open-source, TypeScript-native AI agent framework: one goal in, a self-organizing agent team runs it in parallel, in your environment, cloud or fully offline.',
     },
     hero: {
       eyebrow: 'open-source AI Agent framework, TypeScript-native',

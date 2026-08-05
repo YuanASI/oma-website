@@ -61,7 +61,14 @@ const L = (p: string) => localizePath(p, locale);
       </div>
     </div>
     <div class="footer-bottom">
-      <span class="footer-meta">{t.footer.mitLicensed}</span>
+      <span class="footer-meta">
+        {t.footer.mitLicensed}
+        <span class="footer-legal">
+          <a href={L('/about/')}>{t.footer.legal.about}</a>
+          <a href={L('/privacy/')}>{t.footer.legal.privacy}</a>
+          <a href={L('/terms/')}>{t.footer.legal.terms}</a>
+        </span>
+      </span>
       <span class="footer-meta">{t.footer.builtBy} <a class="by" href="https://yuanasi.com" target="_blank" rel="noreferrer">元定义科技 (YuanASI)</a></span>
     </div>
   </div>

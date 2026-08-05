@@ -12,7 +12,9 @@ import LangSwitcher from './LangSwitcher.astro';
 import EnterpriseLink from './EnterpriseLink.astro';
 
 interface Props {
-  current?: 'home' | 'capabilities' | 'docs' | 'architecture' | 'examples' | 'showcase' | 'blog' | 'changelog' | 'compare' | 'solutions' | 'integrations';
+  // 'legal' marks the About/Privacy/Terms pages: they are footer-linked only, so
+  // the value deliberately matches no nav item and leaves every link unhighlighted.
+  current?: 'home' | 'capabilities' | 'docs' | 'architecture' | 'examples' | 'showcase' | 'blog' | 'changelog' | 'compare' | 'solutions' | 'integrations' | 'legal';
   starsK: string;
   locale?: Locale;
   path?: string;

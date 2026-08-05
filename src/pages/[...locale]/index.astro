@@ -126,12 +126,33 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
     {
+      // The homepage's site-level entity. Inner pages already declare
+      // `isPartOf` a WebSite; this is the node they point back to. No
+      // SearchAction — site search is client-side (Pagefind) with no query URL
+      // to declare, and claiming one Google cannot execute would be a fiction.
+      '@type': 'WebSite',
+      '@id': new URL('/#website', Astro.site).href,
+      name: 'Open Multi-Agent',
+      alternateName: 'OMA',
+      url: new URL('/', Astro.site).href,
+      inLanguage: locale === 'zh' ? 'zh-CN' : 'en',
+      publisher: { '@id': orgId },
+    },
+    {
       '@type': 'Organization',
       '@id': orgId,
       name: 'YuanASI',
       alternateName: '元定义科技',
       url: 'https://yuanasi.com',
       logo: new URL('/logo-mark-dark.svg', Astro.site).href,
+      // Same address the /about page publishes — one contact fact, two places.
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'customer service',
+        email: 'jack@yuanasi.com',
+        url: 'https://yuanasi.com',
+        availableLanguage: ['en', 'zh-CN'],
+      },
     },
     {
       '@type': 'SoftwareApplication',
