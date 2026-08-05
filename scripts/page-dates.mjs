@@ -38,6 +38,35 @@ import { join } from 'node:path';
 const OUT = 'src/data/page-dates.json';
 const check = process.argv.includes('--check');
 
+/**
+ * A shallow clone has exactly one commit, so every `git log` here would report
+ * today for every page. Generating from that would overwrite real dates with a
+ * uniform build-date stamp — the precise failure this snapshot exists to
+ * prevent — and checking against it would fail on a difference that says
+ * nothing about the source. So: refuse to write, and skip the check.
+ *
+ * CI passes fetch-depth: 0 so the check runs for real there. Cloudflare Pages
+ * clones shallow and only builds, never regenerates, so it is unaffected.
+ */
+function isShallow() {
+  try {
+    return execFileSync('git', ['rev-parse', '--is-shallow-repository'], { encoding: 'utf8' }).trim() === 'true';
+  } catch {
+    return false;
+  }
+}
+
+if (isShallow()) {
+  const msg = 'page-dates: shallow clone — git history is not available.';
+  if (check) {
+    console.log(`${msg} Skipping (nothing to verify against).`);
+    process.exit(0);
+  }
+  console.error(`${msg} Refusing to regenerate: every page would be stamped with today's date.`);
+  console.error('Run `git fetch --unshallow` first.');
+  process.exit(1);
+}
+
 /** Commit dates (author date, YYYY-MM-DD) touching a line range, newest first. */
 function datesForRange(file, start, end) {
   const out = execFileSync(
@@ -139,18 +168,61 @@ if (check) {
     console.error(`${OUT} is missing — run: node scripts/page-dates.mjs`);
     process.exit(1);
   }
-  if (current !== next) {
-    console.error(`${OUT} is stale — run: node scripts/page-dates.mjs`);
-    const a = JSON.parse(current);
-    const b = JSON.parse(next);
-    for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) {
-      const x = JSON.stringify(a[k]);
-      const y = JSON.stringify(b[k]);
-      if (x !== y) console.error(`  ${k}: ${x ?? '(absent)'} -> ${y ?? '(absent)'}`);
+
+  // What this gate is actually for: making sure the site never claims a page is
+  // fresher, or older, than git says. It deliberately does NOT demand byte
+  // equality with a freshly generated snapshot.
+  //
+  // It cannot. Regenerating reads committed history, so a commit that edits
+  // compare.ts moves those pages' dateModified to that commit's date — a date
+  // that did not exist when the snapshot was written moments earlier, in the
+  // same commit. A byte-equality gate is therefore unsatisfiable immediately
+  // after any content change, which would train everyone to bypass it.
+  //
+  // So: a snapshot lagging behind git is fine. It under-claims freshness, which
+  // is the safe direction, and gets picked up by the next regeneration. What
+  // fails the build is a snapshot that OVERSTATES — a modified date newer than
+  // any commit, a published date earlier than the first commit, or a path with
+  // no git history at all. Those are the fabrications worth blocking.
+  const snapshot = JSON.parse(current);
+  const errors = [];
+  const behind = [];
+
+  for (const [path, got] of Object.entries(snapshot)) {
+    const real = dates[path];
+    if (!real) {
+      errors.push(`${path}: in the snapshot but has no git history — stale path or hand-written entry`);
+      continue;
     }
+    if (got.modified > real.modified) {
+      errors.push(`${path}: modified ${got.modified} is newer than the last commit (${real.modified})`);
+    }
+    if (got.published < real.published) {
+      errors.push(`${path}: published ${got.published} predates the first commit (${real.published})`);
+    }
+    if (got.modified < real.modified || got.published > real.published) {
+      behind.push(`${path}: ${got.published}..${got.modified} -> ${real.published}..${real.modified}`);
+    }
+  }
+  const missing = Object.keys(dates).filter((p) => !(p in snapshot));
+
+  if (errors.length) {
+    console.error(`${OUT} claims dates git does not support:`);
+    for (const e of errors) console.error(`  ${e}`);
+    console.error('\nRun: node scripts/page-dates.mjs');
     process.exit(1);
   }
-  console.log(`page-dates: ${Object.keys(dates).length} paths up to date`);
+  if (missing.length) {
+    console.warn(`page-dates: ${missing.length} page(s) absent from the snapshot (they will emit no dates):`);
+    for (const p of missing.slice(0, 10)) console.warn(`  ${p}`);
+    console.warn('Run `pnpm gen:page-dates` to include them.');
+  }
+  if (behind.length) {
+    console.warn(`page-dates: ${behind.length} entr(y/ies) behind git — safe, but refresh when convenient:`);
+    for (const b of behind.slice(0, 10)) console.warn(`  ${b}`);
+    console.warn('Run `pnpm gen:page-dates`.');
+  }
+  console.log(`page-dates: ${Object.keys(snapshot).length} paths verified against git history`);
 } else {
   writeFileSync(OUT, next);
   console.log(`page-dates: wrote ${Object.keys(dates).length} paths to ${OUT}`);
