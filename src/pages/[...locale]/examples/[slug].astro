@@ -19,6 +19,7 @@ import CodeBlock from '../../../components/ds/CodeBlock.astro';
 import Badge from '../../../components/ds/Badge.astro';
 import Callout from '../../../components/ds/Callout.astro';
 import { REPO, ghStats } from '../../../lib/site';
+import { DESC_MAX, clamp, withSuffix } from '../../../lib/seo';
 import { getAllExampleDetails, getCatalogExample, type ExampleDetail } from '../../../lib/examples';
 import { locales, defaultLocale, toLocale, useTranslations, localizePath, type Locale } from '../../../i18n';
 import { getExampleStory, getExampleStoryUi } from '../../../i18n/example-stories';
@@ -55,10 +56,15 @@ const starsK = (stats.stars / 1000).toFixed(1) + 'k';
 
 const path = `/examples/${detail.name}/`;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const title = displayTitle + dt.seoTitleSuffix;
+// Recipe titles are descriptive by design (they are parsed from the upstream
+// JSDoc heading), so several already fill the SERP budget on their own. Append
+// the brand suffix only when it fits — otherwise Google cuts the suffix and the
+// tail of the title with it, and the page loses the words that distinguish it.
+const title = withSuffix(displayTitle, dt.seoTitleSuffix);
 const heroLede = story?.outcome ?? displayIntent;
-const description =
-  heroLede.length > 175 ? heroLede.slice(0, 172).trimEnd() + '…' : heroLede;
+// Auto-derived from upstream prose, so clamping is the honest option here — but
+// clamp to the width Google actually renders, on a word boundary.
+const description = clamp(heroLede, DESC_MAX);
 
 const allDetails = getAllExampleDetails();
 const related = story

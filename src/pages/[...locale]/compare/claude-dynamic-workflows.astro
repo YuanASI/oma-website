@@ -28,6 +28,7 @@ import Footer from '../../../components/Footer.astro';
 import EnterpriseCta from '../../../components/EnterpriseCta.astro';
 import EnterpriseHeadCta from '../../../components/EnterpriseHeadCta.astro';
 import { ghStats } from '../../../lib/site';
+import { AUTHOR, articleDates, publisher } from '../../../lib/schema';
 import { localeStaticPaths, toLocale, useTranslations, localizePath } from '../../../i18n';
 
 export function getStaticPaths() { return localeStaticPaths(); }
@@ -52,7 +53,11 @@ const jsonLd = {
   headline: title,
   description,
   url: canonical,
+  mainEntityOfPage: canonical,
   keywords: 'claude dynamic workflows, open source, self-hosted, any model, typescript, multi-agent orchestration, open-multi-agent',
+  ...articleDates(path),
+  author: AUTHOR,
+  publisher: publisher(Astro.site),
   isPartOf: { '@type': 'WebSite', name: 'Open Multi-Agent', url: 'https://open-multi-agent.com' },
 };
 ---

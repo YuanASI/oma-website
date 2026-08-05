@@ -173,6 +173,17 @@ export default defineConfig({
 				zh: { label: '简体中文', lang: 'zh-CN' },
 				// ja: { label: '日本語', lang: 'ja' },  // future: this line + docs/ja/
 			},
+			// Git-derived per-page revision date. StarlightHead feeds it to the page's
+			// TechArticle JSON-LD as dateModified — docs shipped an Article subtype with
+			// no freshness signal at all before this. Starlight also renders the date in
+			// the page footer, which is the right default for reference docs that are
+			// synced from the framework repo on a schedule.
+			//
+			// Reads `git log` at build time and resolves to undefined when history is
+			// unavailable (a shallow clone), so the JSON-LD omits the field rather than
+			// inventing one. The custom pages under src/pages/ can't use this and take
+			// their dates from the committed snapshot instead (scripts/page-dates.mjs).
+			lastUpdated: true,
 			// Keep docs chrome aligned with the custom pages. StarlightHead adds the
 			// missing social image + JSON-LD; SocialIcons adds the locale-aware
 			// enterprise pathway to desktop and mobile navigation; Footer mounts one

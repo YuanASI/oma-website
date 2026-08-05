@@ -155,8 +155,8 @@ export const COMPARISONS: Comparison[] = [
     repo: 'https://github.com/langchain-ai/langgraph',
     keywords: ['open-multi-agent vs langgraph', 'langgraph alternative typescript', 'langgraph vs open multi agent', 'goal-driven vs graph agents'],
     seoDescription: {
-      en: 'open-multi-agent vs LangGraph: goal-first task-DAG decomposition versus a declarative state graph. An honest, sourced comparison of language, orchestration model, dependencies, budget control, and observability; and when to pick each.',
-      zh: 'open-multi-agent 对比 LangGraph：目标优先的任务 DAG 拆解，对上声明式状态图。就语言、编排范式、依赖、预算控制与可观测性做一份诚实、可溯源的对比，以及各自何时更合适。',
+      en: 'open-multi-agent vs LangGraph: goal-first task-DAG decomposition versus a declarative state graph you wire by hand. Where each puts the design work.',
+      zh: 'open-multi-agent 对比 LangGraph：目标优先的任务 DAG 拆解，对上需要手工接线的声明式状态图。看清设计成本各自落在哪一端。',
     },
     lede: {
       en: 'LangGraph and open-multi-agent approach multi-agent orchestration from opposite ends: LangGraph runs a graph you define; open-multi-agent decomposes a goal you describe.',
@@ -197,8 +197,8 @@ export const COMPARISONS: Comparison[] = [
     repo: 'https://github.com/crewAIInc/crewAI',
     keywords: ['crewai alternative', 'crewai vs open multi agent', 'crewai typescript alternative', 'crewai alternative nodejs'],
     seoDescription: {
-      en: 'open-multi-agent vs CrewAI: a lean 3-dependency TypeScript runtime versus a batteries-included Python framework of role-based crews. An honest, sourced comparison; and when each is the right call.',
-      zh: 'open-multi-agent 对比 CrewAI：精简到 3 个依赖的 TypeScript 运行时，对上开箱即全、基于角色 crew 的 Python 框架。一份诚实、可溯源的对比，以及各自何时更合适。',
+      en: 'open-multi-agent vs CrewAI: a 3-dependency TypeScript runtime versus a batteries-included Python framework built around role-based crews.',
+      zh: 'open-multi-agent 对比 CrewAI：3 个依赖的 TypeScript 运行时，对上开箱即全、围绕角色 crew 构建的 Python 框架。',
     },
     lede: {
       en: 'CrewAI organizes Python agents by roles and processes; open-multi-agent supports dynamic and explicit task DAGs in TypeScript. Language and orchestration model are the main differences.',
@@ -239,8 +239,8 @@ export const COMPARISONS: Comparison[] = [
     repo: 'https://github.com/microsoft/autogen',
     keywords: ['autogen alternative', 'autogen typescript alternative', 'autogen vs open multi agent', 'conversation-driven vs goal-driven agents'],
     seoDescription: {
-      en: 'open-multi-agent vs Microsoft AutoGen: goal-driven TypeScript orchestration versus conversation-driven Python agents. An honest, sourced comparison; including AutoGen’s shift to maintenance mode; and when each is the right call.',
-      zh: 'open-multi-agent 对比微软 AutoGen：目标驱动的 TypeScript 编排，对上对话驱动的 Python 智能体。一份诚实、可溯源的对比，含 AutoGen 转入维护模式这一事实，以及各自何时更合适。',
+      en: 'open-multi-agent vs Microsoft AutoGen: goal-driven TypeScript orchestration versus conversation-driven Python agents now in maintenance mode.',
+      zh: 'open-multi-agent 对比微软 AutoGen：目标驱动的 TypeScript 编排，对上已转入维护模式的对话驱动 Python 智能体。',
     },
     lede: {
       en: 'AutoGen models multi-agent work as conversations over a Python runtime; open-multi-agent uses task DAGs in a TypeScript runtime.',
@@ -285,8 +285,8 @@ export const COMPARISONS: Comparison[] = [
     repo: 'https://github.com/openai/openai-agents-python',
     keywords: ['openai agents sdk alternative', 'openai agents sdk typescript', 'multi provider agent framework', 'openai agents sdk vs open multi agent'],
     seoDescription: {
-      en: 'open-multi-agent vs the OpenAI Agents SDK: provider-neutral task-DAG orchestration versus a lightweight, handoffs-based SDK with built-in tracing. A sourced comparison of mechanisms, controls, and fit.',
-      zh: 'open-multi-agent 对比 OpenAI Agents SDK：提供方中立的任务 DAG 编排，对上轻量、基于 handoff、内置追踪的 SDK。对机制、控制与适用场景做可溯源的对比。',
+      en: 'open-multi-agent vs the OpenAI Agents SDK: provider-neutral task-DAG orchestration versus a lightweight handoffs-based SDK with built-in tracing.',
+      zh: 'open-multi-agent 对比 OpenAI Agents SDK：提供方中立的任务 DAG 编排，对上轻量、基于 handoff、内置追踪的 SDK。',
     },
     lede: {
       en: 'The OpenAI Agents SDK is a lightweight, handoffs-based framework with tracing enabled by default; open-multi-agent uses task DAGs and is provider-neutral. The main differences are orchestration model and provider coupling.',
@@ -328,8 +328,8 @@ export const COMPARISONS: Comparison[] = [
     repo: 'https://github.com/mastra-ai/mastra',
     keywords: ['mastra alternative', 'mastra vs open multi agent', 'mastra typescript agent framework', 'lean mastra alternative'],
     seoDescription: {
-      en: 'open-multi-agent vs Mastra: a lean, 3-dependency, goal-driven runtime versus a batteries-included TypeScript framework whose workflows you wire by hand. An honest, sourced comparison of dependency weight, orchestration model, and run-budget control; and when each is the right call.',
-      zh: 'open-multi-agent 对比 Mastra：精简、3 个依赖、目标驱动的运行时，对上一个开箱即全、workflow 需你手工接线的 TypeScript 框架。就依赖体量、编排范式与运行预算控制做一份诚实、可溯源的对比，以及各自何时更合适。',
+      en: 'open-multi-agent vs Mastra: a 3-dependency goal-driven runtime versus a batteries-included TypeScript framework whose workflows you wire by hand.',
+      zh: 'open-multi-agent 对比 Mastra：3 个依赖、目标驱动的运行时，对上开箱即全、workflow 需手工接线的 TypeScript 框架。',
     },
     lede: {
       en: 'Both are TypeScript-native and actively developed; the real difference is surface area. Mastra is a batteries-included framework; open-multi-agent is a lean, goal-driven core.',
@@ -371,8 +371,8 @@ export const COMPARISONS: Comparison[] = [
     repo: 'https://github.com/vercel/ai',
     keywords: ['vercel ai sdk alternative', 'vercel ai sdk multi-agent', 'ai sdk vs open multi agent', 'multi-agent on top of vercel ai sdk'],
     seoDescription: {
-      en: 'open-multi-agent vs the Vercel AI SDK: goal-driven multi-agent orchestration versus a lower-level provider-neutral toolkit. They sit at different layers; and open-multi-agent can run on top of the AI SDK. An honest, sourced comparison.',
-      zh: 'open-multi-agent 对比 Vercel AI SDK：目标驱动的多智能体编排，对上更底层、提供方中立的工具包。两者处在不同层，open-multi-agent 甚至可以跑在 AI SDK 之上。一份诚实、可溯源的对比。',
+      en: 'open-multi-agent vs the Vercel AI SDK: goal-driven multi-agent orchestration over a lower-level provider toolkit. Different layers, not rivals.',
+      zh: 'open-multi-agent 对比 Vercel AI SDK：目标驱动的多智能体编排，可跑在这个更底层的提供方工具包之上。两者处在不同层，不是竞品。',
     },
     lede: {
       en: 'These sit at different layers. The Vercel AI SDK is a lightweight toolkit for talking to models; one agent, tools, streaming. open-multi-agent is the orchestration layer above it: describe a goal, get a multi-agent task DAG. You can even run OMA on top of the AI SDK.',
@@ -413,8 +413,8 @@ export const COMPARISONS: Comparison[] = [
     repo: 'https://github.com/VoltAgent/voltagent',
     keywords: ['voltagent alternative', 'voltagent vs open multi agent', 'typescript agent observability framework', 'voltagent alternative nodejs'],
     seoDescription: {
-      en: 'open-multi-agent vs VoltAgent: a lean 3-dependency goal-driven core versus an observability-first TypeScript framework with a bundled OpenTelemetry stack and supervisor/sub-agent networks. An honest, sourced comparison.',
-      zh: 'open-multi-agent 对比 VoltAgent：精简到 3 个依赖、目标驱动的内核，对上一个可观测性优先、内置整套 OpenTelemetry、带 supervisor/子智能体网络的 TypeScript 框架。一份诚实、可溯源的对比。',
+      en: 'open-multi-agent vs VoltAgent: a 3-dependency goal-driven core versus an observability-first TypeScript framework with a bundled OpenTelemetry stack.',
+      zh: 'open-multi-agent 对比 VoltAgent：3 个依赖、目标驱动的内核，对上可观测性优先、内置整套 OpenTelemetry 的 TypeScript 框架。',
     },
     lede: {
       en: 'Both are TypeScript-native agent frameworks. VoltAgent leads with built-in observability and a supervisor/sub-agent structure; open-multi-agent leads with a lean core and goal-driven decomposition.',
@@ -455,8 +455,8 @@ export const COMPARISONS: Comparison[] = [
     repo: 'https://github.com/inngest/agent-kit',
     keywords: ['inngest agentkit alternative', 'agentkit vs open multi agent', 'deterministic agent routing typescript', 'inngest agentkit alternative nodejs'],
     seoDescription: {
-      en: 'open-multi-agent vs Inngest AgentKit: runtime goal decomposition versus deterministic, state-based routing over agent networks running on Inngest. An honest, sourced comparison; and when each is the right call.',
-      zh: 'open-multi-agent 对比 Inngest AgentKit：运行时的目标拆解，对上跑在 Inngest 之上、对智能体网络做确定性状态路由。一份诚实、可溯源的对比，以及各自何时更合适。',
+      en: 'open-multi-agent vs Inngest AgentKit: runtime goal decomposition versus deterministic state-based routing over agent networks running on Inngest.',
+      zh: 'open-multi-agent 对比 Inngest AgentKit：运行时的目标拆解，对上跑在 Inngest 上、对智能体网络做确定性状态路由。',
     },
     lede: {
       en: 'Both build multi-agent systems in TypeScript. AgentKit routes a network of agents with deterministic, state-based logic on top of Inngest; open-multi-agent decomposes a goal into a task DAG at runtime.',
@@ -498,8 +498,8 @@ export const COMPARISONS: Comparison[] = [
     repo: 'https://github.com/langchain-ai/langchain',
     keywords: ['langchain alternative', 'langchain typescript alternative', 'langchain vs open multi agent', 'lightweight langchain alternative'],
     seoDescription: {
-      en: 'open-multi-agent vs LangChain: a lean, goal-driven TypeScript runtime versus the broad LangChain framework and ecosystem (chains, agents, integrations; multi-agent orchestration lives in LangGraph). An honest, sourced comparison.',
-      zh: 'open-multi-agent 对比 LangChain：精简、目标驱动的 TypeScript 运行时，对上庞大的 LangChain 框架与生态（链、智能体、集成；多智能体编排在 LangGraph 里）。一份诚实、可溯源的对比。',
+      en: 'open-multi-agent vs LangChain: a lean goal-driven TypeScript runtime versus a broad framework whose multi-agent orchestration lives in LangGraph.',
+      zh: 'open-multi-agent 对比 LangChain：精简、目标驱动的 TypeScript 运行时，对上庞大的框架生态——其多智能体编排在 LangGraph 里。',
     },
     lede: {
       en: 'LangChain is the broad framework and integration ecosystem; its multi-agent orchestration lives in LangGraph (compared separately). open-multi-agent is a focused, goal-driven, TypeScript-native runtime.',
@@ -540,8 +540,8 @@ export const COMPARISONS: Comparison[] = [
     repo: 'https://github.com/run-llama/llama_index',
     keywords: ['llamaindex alternative', 'llamaindex vs open multi agent', 'llamaindex agent workflow alternative', 'rag agent framework'],
     seoDescription: {
-      en: 'open-multi-agent vs LlamaIndex: an orchestration-first TypeScript runtime versus a RAG/data-first Python framework that grew agent workflows. An honest, sourced comparison; and when each is the right call.',
-      zh: 'open-multi-agent 对比 LlamaIndex：编排优先的 TypeScript 运行时，对上一个 RAG / 数据优先、后来长出智能体 workflow 的 Python 框架。一份诚实、可溯源的对比，以及各自何时更合适。',
+      en: 'open-multi-agent vs LlamaIndex: an orchestration-first TypeScript runtime versus a RAG-first Python framework that later grew agent workflows.',
+      zh: 'open-multi-agent 对比 LlamaIndex：编排优先的 TypeScript 运行时，对上 RAG 优先、后来才长出智能体 workflow 的 Python 框架。',
     },
     lede: {
       en: 'LlamaIndex started as a data/RAG framework and grew agent workflows on top; open-multi-agent starts from orchestration. If your problem is retrieval over your data, they lead from opposite ends.',
@@ -582,8 +582,8 @@ export const COMPARISONS: Comparison[] = [
     repo: 'https://github.com/pydantic/pydantic-ai',
     keywords: ['pydantic ai alternative', 'pydantic ai typescript alternative', 'pydantic ai vs open multi agent', 'type-safe agent framework'],
     seoDescription: {
-      en: 'open-multi-agent vs Pydantic AI: task-DAG orchestration in TypeScript versus a type-safe Python agent framework with OpenTelemetry instrumentation and usage limits. A sourced comparison of mechanisms, controls, and fit.',
-      zh: 'open-multi-agent 对比 Pydantic AI：TypeScript 任务 DAG 编排，对上一个类型安全、带 OpenTelemetry 埋点与用量上限的 Python 智能体框架。对机制、控制与适用场景做可溯源的对比。',
+      en: 'open-multi-agent vs Pydantic AI: task-DAG orchestration in TypeScript versus a type-safe Python agent framework with OpenTelemetry and usage limits.',
+      zh: 'open-multi-agent 对比 Pydantic AI：TypeScript 的任务 DAG 编排，对上类型安全、带 OpenTelemetry 与用量上限的 Python 智能体框架。',
     },
     lede: {
       en: 'Pydantic AI applies Pydantic validation to agents and instruments them through Logfire; open-multi-agent uses task DAGs in a TypeScript runtime. The main differences are language and orchestration model.',
@@ -624,8 +624,8 @@ export const COMPARISONS: Comparison[] = [
     repo: 'https://github.com/google/adk-python',
     keywords: ['google adk alternative', 'agent development kit alternative', 'google adk vs open multi agent', 'google adk typescript alternative'],
     seoDescription: {
-      en: 'open-multi-agent vs the Google Agent Development Kit (ADK): a lean, provider-neutral TypeScript runtime versus a code-first Python toolkit with explicit workflow agents and a Google Cloud deploy story. An honest, sourced comparison.',
-      zh: 'open-multi-agent 对比谷歌 Agent Development Kit（ADK）：精简、提供方中立的 TypeScript 运行时，对上一个 code-first、带显式 workflow 智能体与 Google Cloud 部署路径的 Python 工具包。一份诚实、可溯源的对比。',
+      en: 'open-multi-agent vs Google ADK: a provider-neutral TypeScript runtime versus a code-first Python toolkit built around a Google Cloud deploy story.',
+      zh: 'open-multi-agent 对比谷歌 ADK：提供方中立的 TypeScript 运行时，对上 code-first、围绕 Google Cloud 部署路径构建的 Python 工具包。',
     },
     lede: {
       en: 'Google’s ADK is a code-first Python toolkit with explicit workflow agents and a path to Vertex AI deployment; open-multi-agent is a TypeScript-native, provider-neutral runtime that plans the workflow from a goal.',
@@ -666,8 +666,8 @@ export const COMPARISONS: Comparison[] = [
     repo: 'https://github.com/microsoft/semantic-kernel',
     keywords: ['semantic kernel alternative', 'microsoft agent framework alternative', 'semantic kernel vs open multi agent', 'semantic kernel typescript alternative'],
     seoDescription: {
-      en: 'open-multi-agent vs Microsoft Semantic Kernel: a lean, TypeScript-native goal-driven runtime versus Microsoft’s enterprise LLM SDK (C#-first), now converging into the Microsoft Agent Framework. An honest, sourced comparison.',
-      zh: 'open-multi-agent 对比微软 Semantic Kernel：精简、TypeScript 原生、目标驱动的运行时，对上微软的企业级 LLM SDK（C# 优先），它正并入 Microsoft Agent Framework。一份诚实、可溯源的对比。',
+      en: 'open-multi-agent vs Semantic Kernel: a TypeScript-native goal-driven runtime versus Microsoft’s C#-first enterprise SDK, now folding into Agent Framework.',
+      zh: 'open-multi-agent 对比微软 Semantic Kernel：TypeScript 原生、目标驱动的运行时，对上 C# 优先、正并入 Agent Framework 的企业级 SDK。',
     },
     lede: {
       en: 'Semantic Kernel is Microsoft’s enterprise LLM SDK for .NET, Python, and Java; open-multi-agent is a TypeScript-native task-DAG runtime. Microsoft is now converging its agent work into the Microsoft Agent Framework.',

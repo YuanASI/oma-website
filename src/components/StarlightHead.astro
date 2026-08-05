@@ -13,14 +13,26 @@
 // `lang`) to the TechArticle below.
 import Default from '@astrojs/starlight/components/Head.astro';
 import LangInit from './LangInit.astro';
+import { AUTHOR, articleDates, publisher } from '../lib/schema';
 // Same font preloads as BaseLayout.astro (see the comment there) — docs pages
 // render the same two latin faces above the fold.
 import geistWoff2 from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
 import jbmWoff2 from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
 
-const { entry, lang } = Astro.locals.starlightRoute;
+const { entry, lang, lastUpdated } = Astro.locals.starlightRoute;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL('/github-social.png', Astro.site).href;
+
+// `lastUpdated` comes from git (enabled in astro.config.mjs) and is undefined
+// when history isn't available. Omit the field in that case — a docs page with
+// no date is honest; one stamped with the build date is not.
+//
+// datePublished has no Starlight equivalent, so it comes from the committed
+// git snapshot keyed by route. Prefer Starlight's live lastUpdated for
+// dateModified and fall back to the snapshot when the clone has no history.
+const snapshot = articleDates(Astro.url.pathname);
+const dateModified = lastUpdated ? lastUpdated.toISOString() : snapshot.dateModified;
+const datePublished = snapshot.datePublished;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -29,6 +41,11 @@ const jsonLd = {
   headline: entry.data.title,
   description: entry.data.description,
   url: canonical,
+  mainEntityOfPage: canonical,
+  ...(datePublished ? { datePublished } : {}),
+  ...(dateModified ? { dateModified } : {}),
+  author: AUTHOR,
+  publisher: publisher(Astro.site),
   isPartOf: { '@type': 'WebSite', name: 'Open Multi-Agent', url: 'https://open-multi-agent.com' },
 };
 ---

@@ -1,6 +1,6 @@
 ---
 title: "Plan preview & replay"
-description: "Decompose a goal into a task DAG without running it, freeze the plan as a serializable artifact, and replay the exact graph later without calling the coordinator again."
+description: "Decompose a goal into a task DAG without running it, freeze the plan as an artifact, and replay the exact graph later without the coordinator."
 ---
 
 `runTeam` normally decomposes a goal and executes it in a single call. You can split that in two: have the coordinator decompose the goal into a task DAG **without executing it**, freeze that plan as a serializable artifact, then **replay the exact same graph later without calling the coordinator again**.

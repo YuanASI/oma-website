@@ -54,3 +54,11 @@ jobs:
       - run: pnpm build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # SERP title / meta-description width budget. Runs against dist/ because
+      # those strings are assembled from an i18n dict, a data file and a template
+      # suffix — only the built HTML shows what a crawler actually receives, which
+      # is how 44 over-long titles and 64 over-long descriptions accumulated
+      # unnoticed. Must stay after `pnpm build`.
+      - name: Check SERP metadata lengths
+        run: pnpm check:meta-lengths

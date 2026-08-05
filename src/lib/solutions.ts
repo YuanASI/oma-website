@@ -46,8 +46,8 @@ export const SOLUTIONS: Solution[] = [
     slug: 'parallel-llm-calls',
     keywords: ['parallel llm calls typescript', 'run agents in parallel node', 'parallel llm requests', 'fan-out llm typescript'],
     seoDescription: {
-      en: 'Run LLM calls in parallel in TypeScript: several specialist agents work at once, return typed output, and an aggregator merges them — with open-multi-agent’s coordinator handling the fan-out.',
-      zh: '在 TypeScript 里并行跑 LLM 调用：多个专职智能体同时工作、返回带类型的结果，再由聚合器合并——由 open-multi-agent 的协调器处理这轮 fan-out。',
+      en: 'Run LLM calls in parallel in TypeScript: specialist agents work at once, return typed output, and an aggregator merges them.',
+      zh: '在 TypeScript 里并行跑 LLM 调用：多个专职智能体同时工作、返回带类型的结果，再由聚合器合并。',
     },
     navLabel: { en: 'Parallel LLM calls', zh: '并行 LLM 调用' },
     title: {
@@ -77,8 +77,8 @@ export const SOLUTIONS: Solution[] = [
     slug: 'goal-driven-orchestration',
     keywords: ['goal driven agent orchestration', 'task dag agents typescript', 'goal to dag', 'runtime agent planning'],
     seoDescription: {
-      en: 'Describe the goal instead of wiring the graph: open-multi-agent’s coordinator decomposes a goal into a task DAG at runtime and parallelizes it — no hand-built orchestration.',
-      zh: '描述目标，而非接线图：open-multi-agent 的协调器在运行时把目标拆解成任务 DAG 并并行化——无需手搭编排。',
+      en: 'Describe the goal instead of wiring the graph: the coordinator decomposes it into a task DAG at runtime and parallelizes it.',
+      zh: '描述目标，而非接线图：协调器在运行时把目标拆解成任务 DAG 并自动并行。',
     },
     navLabel: { en: 'Goal-driven orchestration', zh: '目标驱动编排' },
     title: {
@@ -108,8 +108,8 @@ export const SOLUTIONS: Solution[] = [
     slug: 'mixed-model-teams',
     keywords: ['mixed model agent team', 'multi provider llm typescript', 'mix claude gpt gemini', 'per-agent model'],
     seoDescription: {
-      en: 'Mix models in one agent team: each open-multi-agent agent names its own provider — Claude, GPT, Gemini, or a local model — and they cooperate in a single run, with cost and latency you can watch.',
-      zh: '在一个智能体团队里混编模型：每个 open-multi-agent 智能体各自指定提供方——Claude、GPT、Gemini 或本地模型——它们在一次运行里协作，成本与延迟你都看得见。',
+      en: 'Mix models in one agent team: each agent names its own provider — Claude, GPT, Gemini, or a local model — in a single run.',
+      zh: '在一个智能体团队里混编模型：每个智能体各自指定提供方——Claude、GPT、Gemini 或本地模型——在同一次运行里协作。',
     },
     navLabel: { en: 'Mixed-model teams', zh: '混编模型团队' },
     title: {
@@ -139,8 +139,8 @@ export const SOLUTIONS: Solution[] = [
     slug: 'local-agents-ollama',
     keywords: ['local multi-agent typescript', 'ollama agents', 'private llm agents', 'self-hosted agent team'],
     seoDescription: {
-      en: 'Run a multi-agent team fully on your own machine in TypeScript — even the coordinator on a local Ollama model, at $0 API cost — or a hybrid that keeps sensitive work local and bursts to the cloud.',
-      zh: '在自己的机器上用 TypeScript 跑一个完整的多智能体团队——连协调器都跑在本地 Ollama 模型上，$0 API 成本——或用混合模式，把敏感工作留在本地、需要时再上云。',
+      en: 'Run a full multi-agent team on your own machine in TypeScript, coordinator included, on a local Ollama model at $0 API cost.',
+      zh: '在自己的机器上用 TypeScript 跑完整的多智能体团队——连协调器都在本地 Ollama 模型上，$0 API 成本。',
     },
     navLabel: { en: 'Local & private agents', zh: '本地私有智能体' },
     title: {
@@ -170,8 +170,8 @@ export const SOLUTIONS: Solution[] = [
     slug: 'agent-memory',
     keywords: ['agent long-term memory typescript', 'agent memory store', 'cross-run agent memory', 'persistent agent state'],
     seoDescription: {
-      en: 'Persist namespaced shared state for TypeScript agent teams with MemoryStore, and connect a separate semantic-memory layer when you need retrieval across sessions.',
-      zh: '用 MemoryStore 为 TypeScript 智能体团队持久化带命名空间的共享状态；需要跨会话语义召回时，再接入独立的语义记忆层。',
+      en: 'Persist namespaced shared state across a TypeScript agent team with MemoryStore, and add semantic recall across sessions.',
+      zh: '用 MemoryStore 为 TypeScript 智能体团队持久化带命名空间的共享状态，并按需接入跨会话的语义召回。',
     },
     navLabel: { en: 'Durable shared memory', zh: '持久共享内存' },
     title: {
@@ -201,8 +201,8 @@ export const SOLUTIONS: Solution[] = [
     slug: 'vercel-ai-sdk-orchestration',
     keywords: ['vercel ai sdk multi-agent', 'add orchestration to vercel ai sdk', 'ai sdk agent orchestration', 'next.js multi-agent'],
     seoDescription: {
-      en: 'Add multi-agent orchestration to an existing Vercel AI SDK app: the AI SDK streams tokens and talks to models while open-multi-agent’s runTeam() decomposes the goal and coordinates the agents — sharing one API route.',
-      zh: '给现有的 Vercel AI SDK 应用加上多智能体编排：AI SDK 负责流式与对接模型，open-multi-agent 的 runTeam() 负责拆解目标、协调智能体——共用一条 API 路由。',
+      en: 'Add multi-agent orchestration to a Vercel AI SDK app: the SDK streams tokens, runTeam() decomposes the goal and coordinates.',
+      zh: '给现有 Vercel AI SDK 应用加上多智能体编排：SDK 负责流式与对接模型，runTeam() 负责拆解目标、协调智能体。',
     },
     navLabel: { en: 'Vercel AI SDK', zh: 'Vercel AI SDK 编排' },
     title: {
