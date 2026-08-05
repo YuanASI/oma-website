@@ -107,7 +107,7 @@ export const zh: UiDict = {
           h: '联系方式',
           body: [
             '缺陷反馈、功能建议和技术问题，请在 <a href="https://github.com/open-multi-agent/open-multi-agent/issues">GitHub</a> 提 issue 或发起 discussion——这是主要渠道，且回答对所有人可检索。',
-            '商业交付与咨询请访问 <a href="https://yuanasi.com">yuanasi.com</a>。',
+            '商业交付与咨询请访问 <a href="https://yuanasi.com">yuanasi.com</a>，也可以直接发邮件至 <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>。',
           ],
         },
       ],

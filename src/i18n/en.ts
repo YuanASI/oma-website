@@ -122,7 +122,7 @@ export const en = {
           h: 'Reaching us',
           body: [
             'For bugs, feature requests, and technical questions, open an issue or a discussion on <a href="https://github.com/open-multi-agent/open-multi-agent/issues">GitHub</a> — that is the primary channel and answers stay searchable for everyone.',
-            'For commercial delivery or consulting, see <a href="https://yuanasi.com/en">yuanasi.com</a>.',
+            'For commercial delivery or consulting, see <a href="https://yuanasi.com/en">yuanasi.com</a>, or email <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a> directly.',
           ],
         },
       ],

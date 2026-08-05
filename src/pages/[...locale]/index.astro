@@ -145,6 +145,14 @@ const jsonLd = {
       alternateName: '元定义科技',
       url: 'https://yuanasi.com',
       logo: new URL('/logo-mark-dark.svg', Astro.site).href,
+      // Same address the /about page publishes — one contact fact, two places.
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'customer service',
+        email: 'jack@yuanasi.com',
+        url: 'https://yuanasi.com',
+        availableLanguage: ['en', 'zh-CN'],
+      },
     },
     {
       '@type': 'SoftwareApplication',
