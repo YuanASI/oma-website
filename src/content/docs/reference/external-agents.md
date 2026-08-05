@@ -1,6 +1,6 @@
 ---
 title: "External agents"
-description: "Orchestrate external agents that run as local processes or over the Agent Client Protocol (ACP) — coding agents like Claude Code as first-class members of an OMA team."
+description: "Orchestrate external agents running as local processes or over the Agent Client Protocol (ACP) — Claude Code as a first-class OMA team member."
 ---
 
 OMA can orchestrate **external agents that run as local processes** alongside its

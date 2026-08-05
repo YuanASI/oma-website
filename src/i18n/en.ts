@@ -271,7 +271,10 @@ export const en = {
       description: 'Open-source, TypeScript-native AI agent framework: one goal in, a self-organizing agent team runs it in parallel, in your environment, cloud or fully offline.',
     },
     hero: {
-      eyebrow: 'open-source AI Agent framework, TypeScript-native',
+      // Word order matches the <title> so the head term reads as one phrase
+      // rather than two halves a crawler has to reassemble. "TypeScript-native"
+      // still carries the same claim further down (subtitle + meta description).
+      eyebrow: 'open-source TypeScript AI Agent framework',
       h1: 'A self-organizing agent team, ',
       h1Accent: 'in an environment you control.',
       subtitle: 'Start from a goal or an explicit task DAG. Route, approve, budget, trace, and resume at task boundaries—in your own environment.',
@@ -383,7 +386,10 @@ export const en = {
     },
     sectionFaq: {
       eyebrow: 'FAQ',
-      title: 'How the runtime behaves.',
+      // One qualifier added to the heading PR #89 settled on: every other H2 on
+      // the landing page is a positioning line, so before this the page had six
+      // subheadings and not one of them said what kind of thing this is.
+      title: 'How the TypeScript runtime behaves.',
       sub: 'Straight answers to the questions that come up most. The full reference lives in the docs.',
       viewAll: 'view all questions',
     },
@@ -417,7 +423,7 @@ export const en = {
   examples: {
     seo: {
       title: 'Examples — Open Multi-Agent',
-      description: 'Browse all Open Multi-Agent examples by goal: start here, use-case recipes, orchestration, production controls, stack integrations, and a compact models/providers directory.',
+      description: 'Browse every Open Multi-Agent example by goal: starting points, use-case recipes, orchestration, production controls, and stack integrations.',
     },
     hero: {
       eyebrow: 'examples',
@@ -520,7 +526,7 @@ export const en = {
   showcase: {
     seo: {
       title: 'Showcase — Open Multi-Agent',
-      description: 'Open-source projects built with Open Multi-Agent and tools that integrate with it — from a production WordPress security platform to PR review, agent memory, and observability.',
+      description: 'Open-source projects built with Open Multi-Agent and tools that integrate with it — WordPress security, PR review, agent memory, observability.',
     },
     hero: {
       eyebrow: 'Showcase',
@@ -544,7 +550,7 @@ export const en = {
   architecture: {
     seo: {
       title: 'How OMA works — architecture & runTeam() flow',
-      description: 'The Open Multi-Agent architecture and the runTeam() execution flow, diagrammed: a coordinator decomposes a goal into a task DAG, fans agents out in parallel over a shared MessageBus, and synthesizes the result.',
+      description: 'The Open Multi-Agent architecture and runTeam() flow, diagrammed: a coordinator turns a goal into a task DAG and fans agents out in parallel.',
     },
     hero: {
       eyebrow: 'how it works',
@@ -598,7 +604,7 @@ export const en = {
   capabilitiesPage: {
     seo: {
       title: 'Capabilities — Open Multi-Agent',
-      description: 'The released Open Multi-Agent runtime surface: execution routing, event-driven task scheduling, governance, approvals, recovery, evidence, evaluation, models, tools, MCP, and external agents.',
+      description: 'The released Open Multi-Agent runtime surface: execution routing, task scheduling, governance, approvals, recovery, evaluation, tools, and MCP.',
     },
     hero: {
       eyebrow: 'capabilities · v1.13.0',
@@ -684,7 +690,7 @@ export const en = {
 
   blog: {
     seo: {
-      title: 'Multi-agent application playbooks, field notes, and framework guides',
+      title: 'Multi-agent playbooks, field notes, and framework guides',
       description:
         'Workflow walkthroughs with runnable TypeScript examples, patterns from building them, and framework comparisons that cite their sources.',
     },
@@ -781,8 +787,8 @@ export const en = {
   // competitor's name at render time.
   compare: {
     seo: {
-      title: 'open-multi-agent vs LangGraph, CrewAI, Mastra, LangChain, Pydantic AI & more',
-      description: 'Sourced comparisons of open-multi-agent against the main AI Agent frameworks, including orchestration, deterministic controls, recovery, budgets, observability, and fit.',
+      title: 'open-multi-agent vs LangGraph, CrewAI, Mastra & more',
+      description: 'Sourced comparisons against the main AI agent frameworks: orchestration model, deterministic controls, recovery, budgets, and observability.',
     },
     hero: {
       eyebrow: 'compare',
@@ -835,7 +841,7 @@ export const en = {
     seo: {
       title: 'Claude dynamic workflows, self-hosted — open-multi-agent',
       description:
-        'Claude dynamic workflows and open-multi-agent make the same bet: the model plans the work at runtime. The difference is form factor — dynamic workflows run inside Claude Code; open-multi-agent is an open-source (MIT) TypeScript library that runs the same goal-to-DAG idea in your own backend, on any model.',
+        'Same bet — the model plans the work at runtime. Different form factor: dynamic workflows run inside Claude Code, open-multi-agent in your own backend.',
     },
     hero: {
       eyebrow: 'in context',
@@ -904,7 +910,7 @@ export const en = {
   solutions: {
     seo: {
       title: 'Use cases — AI Agent orchestration in TypeScript',
-      description: 'What you can build with open-multi-agent: parallel LLM calls, goal-driven task DAGs, mixed-model teams, local agents, durable shared state, and orchestration on top of the Vercel AI SDK.',
+      description: 'What you can build: parallel LLM calls, goal-driven task DAGs, mixed-model teams, local agents, and orchestration over the Vercel AI SDK.',
     },
     hero: {
       eyebrow: 'use cases',

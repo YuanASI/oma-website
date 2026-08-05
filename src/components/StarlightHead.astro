@@ -13,6 +13,7 @@
 // `lang`) to the TechArticle below.
 import Default from '@astrojs/starlight/components/Head.astro';
 import LangInit from './LangInit.astro';
+import { AUTHOR, articleDates, publisher } from '../lib/schema';
 // Same font preloads as BaseLayout.astro (see the comment there) — docs pages
 // render the same two latin faces above the fold.
 import geistWoff2 from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
@@ -22,6 +23,21 @@ const { entry, lang } = Astro.locals.starlightRoute;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL('/github-social.png', Astro.site).href;
 
+// Both dates come from the committed git snapshot, NOT from Starlight's own
+// `lastUpdated`.
+//
+// Starlight reads git during the build, and Cloudflare Pages clones shallow —
+// so on production it resolves every page to the deploy commit. It does not
+// return undefined, it returns a confidently wrong value, which is worse: a
+// fallback never fires and every doc claims it was revised on the day of the
+// last deploy. Verified on a preview deploy, where /reference/checkpoint/
+// reported the build timestamp instead of its real July revision date.
+//
+// The snapshot is generated from full history (scripts/page-dates.mjs) and
+// committed, so it is correct regardless of how the deploy clones. A path
+// missing from it emits no dates rather than a guess.
+const { datePublished, dateModified } = articleDates(Astro.url.pathname);
+
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'TechArticle',
@@ -29,6 +45,11 @@ const jsonLd = {
   headline: entry.data.title,
   description: entry.data.description,
   url: canonical,
+  mainEntityOfPage: canonical,
+  ...(datePublished ? { datePublished } : {}),
+  ...(dateModified ? { dateModified } : {}),
+  author: AUTHOR,
+  publisher: publisher(Astro.site),
   isPartOf: { '@type': 'WebSite', name: 'Open Multi-Agent', url: 'https://open-multi-agent.com' },
 };
 ---

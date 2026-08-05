@@ -359,7 +359,7 @@ export const zh: UiDict = {
     },
     sectionFaq: {
       eyebrow: '常见问题',
-      title: '运行时如何表现。',
+      title: 'TypeScript 运行时如何表现。',
       sub: '最常被问到的问题，直接回答。完整参考在文档里。',
       viewAll: '查看全部问题',
     },
@@ -888,7 +888,7 @@ export const zh: UiDict = {
 
   compare: {
     seo: {
-      title: 'open-multi-agent 对比 LangGraph、CrewAI、Mastra、LangChain、Pydantic AI 等',
+      title: 'open-multi-agent 对比 LangGraph、CrewAI、Mastra 等',
       description: '把 open-multi-agent 与主流多智能体框架做可溯源的对比，覆盖编排、确定性控制、恢复、预算、可观测性与适用场景。',
     },
     hero: {
@@ -939,7 +939,7 @@ export const zh: UiDict = {
     seo: {
       title: 'Claude 动态工作流，自托管 —— open-multi-agent',
       description:
-        'Claude 动态工作流与 open-multi-agent 押的是同一个赌注：让模型在运行时规划工作。区别在形态——动态工作流跑在 Claude Code 内部；open-multi-agent 是一个开源（MIT）TypeScript 库，把同样的目标到任务 DAG 的思路跑在你自己的后端、任意模型上。',
+        '同一个赌注——让模型在运行时规划工作；不同的形态：动态工作流跑在 Claude Code 内部，open-multi-agent 跑在你自己的后端、任意模型上。',
     },
     hero: {
       eyebrow: '背景',

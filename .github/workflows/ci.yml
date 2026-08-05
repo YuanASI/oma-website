@@ -17,7 +17,12 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      # Full history: `pnpm check` verifies src/data/page-dates.json against
+      # `git log`, and Starlight's `lastUpdated` reads commit dates too. The
+      # default depth-1 clone makes every page look authored today.
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
 
       # pnpm version is pinned by package.json "packageManager" (Corepack-style).
       # Do NOT add a `version:` input — action-setup errors if both are set.
@@ -54,3 +59,11 @@ jobs:
       - run: pnpm build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # SERP title / meta-description width budget. Runs against dist/ because
+      # those strings are assembled from an i18n dict, a data file and a template
+      # suffix — only the built HTML shows what a crawler actually receives, which
+      # is how 44 over-long titles and 64 over-long descriptions accumulated
+      # unnoticed. Must stay after `pnpm build`.
+      - name: Check SERP metadata lengths
+        run: pnpm check:meta-lengths

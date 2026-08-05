@@ -173,6 +173,15 @@ export default defineConfig({
 				zh: { label: '简体中文', lang: 'zh-CN' },
 				// ja: { label: '日本語', lang: 'ja' },  // future: this line + docs/ja/
 			},
+			// `lastUpdated` is deliberately NOT enabled. It reads git during the build,
+			// and Cloudflare Pages clones shallow — so in production it resolves every
+			// page to the deploy commit rather than returning nothing. That would put a
+			// wrong "Last updated" date in the docs footer on every deploy, and feed the
+			// same wrong value to the JSON-LD.
+			//
+			// Docs dates come from the committed snapshot instead, generated from full
+			// history by scripts/page-dates.mjs and consumed in StarlightHead.astro —
+			// the same source the custom pages under src/pages/ use.
 			// Keep docs chrome aligned with the custom pages. StarlightHead adds the
 			// missing social image + JSON-LD; SocialIcons adds the locale-aware
 			// enterprise pathway to desktop and mobile navigation; Footer mounts one

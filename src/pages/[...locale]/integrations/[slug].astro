@@ -13,6 +13,8 @@ import Footer from '../../../components/Footer.astro';
 import EnterpriseCta from '../../../components/EnterpriseCta.astro';
 import EnterpriseHeadCta from '../../../components/EnterpriseHeadCta.astro';
 import { ghStats } from '../../../lib/site';
+import { AUTHOR, articleDates, publisher } from '../../../lib/schema';
+import { withSuffix } from '../../../lib/seo';
 import { INTEGRATIONS, type Integration } from '../../../lib/integrations';
 import { type Loc } from '../../../lib/compare';
 import { locales, defaultLocale, toLocale, useTranslations, localizePath, type Locale } from '../../../i18n';
@@ -37,7 +39,8 @@ const starsK = (stats.stars / 1000).toFixed(1) + 'k';
 
 const path = `/integrations/${itg.slug}/`;
 const heading = pick(itg.title);
-const title = `${heading} — open-multi-agent`;
+// Brand suffix only when the heading leaves room for it (src/lib/seo.ts).
+const title = withSuffix(heading, ' — open-multi-agent');
 const description = pick(itg.seoDescription);
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const others = INTEGRATIONS.filter((i) => i.slug !== itg.slug);
@@ -53,7 +56,11 @@ const jsonLd = {
   headline: title,
   description,
   url: canonical,
+  mainEntityOfPage: canonical,
   keywords: itg.keywords.join(', '),
+  ...articleDates(path),
+  author: AUTHOR,
+  publisher: publisher(Astro.site),
   isPartOf: { '@type': 'WebSite', name: 'Open Multi-Agent', url: 'https://open-multi-agent.com' },
 };
 ---

@@ -16,6 +16,8 @@ import EnterpriseCta from '../../../components/EnterpriseCta.astro';
 import Nav from '../../../components/Nav.astro';
 import Footer from '../../../components/Footer.astro';
 import { ghStats } from '../../../lib/site';
+import { AUTHOR, publisher } from '../../../lib/schema';
+import { DESC_MAX, clamp, withSuffix } from '../../../lib/seo';
 import { getCollection, render } from 'astro:content';
 import { toLocale, useTranslations, localizePath, defaultLocale, blogLocaleOf, blogSlugOf } from '../../../i18n';
 
@@ -61,11 +63,16 @@ const evidenceKindLabels = {
   'release-note': bt.evidence.kinds.releaseNote,
 };
 
-const title = `${post.data.title} — Open Multi-Agent`;
-const description = post.data.description;
+// Post titles are written for the page, not the SERP, and several already fill
+// the width budget before the brand suffix is added — append it only when it
+// fits (src/lib/seo.ts).
+const title = withSuffix(post.data.title, ' — Open Multi-Agent');
+// The meta description is clamped; the full frontmatter description still
+// drives the blog-index card and the RSS summary, which have no width budget.
+// So the card keeps the whole thought and only the SERP snippet is trimmed.
+const description = clamp(post.data.description, DESC_MAX);
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL('/github-social.png', Astro.site).href;
-const orgId = new URL('/#organization', Astro.site).href;
 // The en original of a translation always lives at the root /blog/<slug>/.
 const enOriginal = `/blog/${slug}/`;
 // No counterpart → point the language switcher at the other locale's blog index
@@ -76,7 +83,9 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
   headline: post.data.title,
-  description,
+  // Structured data has no SERP width budget, so it carries the full
+  // description rather than the clamped meta-tag version.
+  description: post.data.description,
   inLanguage: locale === 'zh' ? 'zh-CN' : 'en',
   datePublished: post.data.pubDate.toISOString(),
   dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
@@ -85,13 +94,8 @@ const jsonLd = {
   image: ogImage,
   keywords: [...post.data.tags, ...post.data.useCases, ...post.data.industries].join(', '),
   articleSection: contentTypeLabels[post.data.contentType],
-  author: { '@type': 'Person', name: 'Jack Chen', url: 'https://dev.to/jackchenme' },
-  publisher: {
-    '@type': 'Organization',
-    '@id': orgId,
-    name: 'YuanASI',
-    logo: new URL('/logo-mark-dark.svg', Astro.site).href,
-  },
+  author: AUTHOR,
+  publisher: publisher(Astro.site),
 };
 ---
 

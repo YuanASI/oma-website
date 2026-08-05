@@ -15,6 +15,7 @@ import Footer from '../../../components/Footer.astro';
 import EnterpriseCta from '../../../components/EnterpriseCta.astro';
 import EnterpriseHeadCta from '../../../components/EnterpriseHeadCta.astro';
 import { ghStats } from '../../../lib/site';
+import { AUTHOR, articleDates, publisher } from '../../../lib/schema';
 import { AXES, COMPARISONS, OMA_CAPABILITIES, type Comparison, type Loc } from '../../../lib/compare';
 import { locales, defaultLocale, toLocale, useTranslations, localizePath, type Locale } from '../../../i18n';
 
@@ -67,7 +68,14 @@ const jsonLd = {
   headline: title,
   description,
   url: canonical,
+  mainEntityOfPage: canonical,
   keywords: comp.keywords.join(', '),
+  // Comparison pages live or die on being current — a reader weighing two
+  // frameworks needs to know when this was last checked against the source.
+  // Dates are git-derived per comparison entry, not per file.
+  ...articleDates(path),
+  author: AUTHOR,
+  publisher: publisher(Astro.site),
   isPartOf: { '@type': 'WebSite', name: 'Open Multi-Agent', url: 'https://open-multi-agent.com' },
 };
 ---
