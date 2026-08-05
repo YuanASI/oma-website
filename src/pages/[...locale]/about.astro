@@ -1,0 +1,16 @@
+---
+// /about and /zh/about — who builds OMA, how it stays funded, where to reach us.
+// One of the three footer-linked trust pages; the layout lives in TrustPage.
+import '@fontsource-variable/geist';
+import '@fontsource-variable/jetbrains-mono';
+import '../../styles/tokens.css';
+import '../../styles/landing.css';
+import '../../styles/blog.css';
+import TrustPage from '../../components/TrustPage.astro';
+import { localeStaticPaths, toLocale } from '../../i18n';
+
+export function getStaticPaths() { return localeStaticPaths(); }
+const locale = toLocale(Astro.params.locale);
+---
+
+<TrustPage locale={locale} page="about" path="/about/" schemaType="AboutPage" updated="2026-08-05" />

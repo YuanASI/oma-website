@@ -1,0 +1,16 @@
+---
+// /terms and /zh/terms — website terms. The software license itself stays in the
+// repository's LICENSE; this page points at it rather than restating it.
+import '@fontsource-variable/geist';
+import '@fontsource-variable/jetbrains-mono';
+import '../../styles/tokens.css';
+import '../../styles/landing.css';
+import '../../styles/blog.css';
+import TrustPage from '../../components/TrustPage.astro';
+import { localeStaticPaths, toLocale } from '../../i18n';
+
+export function getStaticPaths() { return localeStaticPaths(); }
+const locale = toLocale(Astro.params.locale);
+---
+
+<TrustPage locale={locale} page="terms" path="/terms/" schemaType="WebPage" updated="2026-08-05" />
