@@ -4,6 +4,7 @@
 // count (e.g. "6.4k"); `locale` localizes the labels and the in-site links; `path`
 // is this page's default-locale path, handed to the language switcher.
 import { REPO } from '../lib/site';
+import { latestRelease } from '../lib/release';
 import { getFeaturedUseCases, detailSlugs } from '../lib/examples';
 import { SOLUTIONS } from '../lib/solutions';
 import { useTranslations, localizePath, type Locale } from '../i18n';
@@ -21,6 +22,9 @@ interface Props {
 }
 const { current = 'home', starsK, locale = 'en', path } = Astro.props;
 const t = useTranslations(locale);
+// The capabilities menu names the current release line; it comes from the
+// changelog collection so the nav can never lag a release the site has shipped.
+const release = await latestRelease();
 const L = (p: string) => localizePath(p, locale);
 
 // The catalog's first featured use-case recipes. The exhaustive goal-grouped
@@ -53,7 +57,7 @@ const resourcesCurrent = current === 'blog' || current === 'changelog';
             <div class="nav-col-head">{t.nav.capabilityCols.build}</div>
             <a class="nav-menu-link nav-menu-link--page" href={L('/capabilities/')} aria-current={current === 'capabilities' ? 'page' : undefined}>
               <span class="pkg">{t.nav.capabilityMenu.overview.title}</span>
-              <span class="desc">{t.nav.capabilityMenu.overview.desc}</span>
+              <span class="desc">{t.nav.capabilityMenu.overview.desc(release)}</span>
             </a>
             <a class="nav-menu-link nav-menu-link--page" href={L('/getting-started/three-ways-to-run/')}>
               <span class="pkg">{t.nav.capabilityMenu.orchestration.title}</span>

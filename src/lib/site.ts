@@ -19,7 +19,13 @@ export interface GhStats {
 
 // Absolute floor, only if the committed snapshot is ever missing a field. In
 // practice the snapshot is always populated with real data, so this never shows.
-const STATS_FLOOR: GhStats = { stars: 6400, forks: 2391, contributors: 43, latestRelease: 'v1.13.0' };
+//
+// `latestRelease` has to be a literal here (this is the fallback that runs when
+// the derived value is unavailable), so it is the one version literal the site
+// keeps on purpose. scripts/check-version-drift.mjs asserts it still matches the
+// newest changelog entry — it sat a release behind before that gate existed.
+// Prose and page copy interpolate src/lib/release.ts instead.
+const STATS_FLOOR: GhStats = { stars: 6400, forks: 2391, contributors: 43, latestRelease: 'v1.14.0' };
 
 // Stats come from a committed snapshot (src/data/gh-stats.json), refreshed
 // out-of-band by .github/workflows/refresh-gh-data.yml — NOT fetched live during
