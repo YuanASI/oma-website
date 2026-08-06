@@ -3,6 +3,11 @@
 // 单跑 build 抓不到、会把缺键静默渲染成 undefined）。术语与已上线的中文文档站一致
 // （协调器 / 任务 DAG / 目标优先 / 编排 / 智能体 / 模型提供方 …）。
 // 保留不译：代码标识符、API 名、URL、包名；第三方背书引用按原文保留。
+//
+// 版本号不写死在文案里：需要点名当前版本的字符串接收 ReleaseRef 并插值，实参由
+// src/lib/release.ts 从 changelog 集合派生（scripts/check-version-drift.mjs 是 CI 闸）。
+// 描述"某个版本引入了什么"的句子（能力清单、示意图内容）则连插值也不做——换个数字
+// 只会把旧描述重新标上新版本。
 import type { UiDict } from './en';
 
 export const zh: UiDict = {
@@ -24,7 +29,7 @@ export const zh: UiDict = {
     forCompanies: '企业服务',
     capabilityCols: { build: '构建', operate: '可靠运行' },
     capabilityMenu: {
-      overview: { title: '能力总览', desc: '完整的 v1.13 运行时能力面' },
+      overview: { title: '能力总览', desc: (r) => `完整的 ${r.minor} 运行时能力面` },
       orchestration: { title: '多智能体编排', desc: '从目标自动规划任务 DAG，也支持显式任务图' },
       routing: { title: '路由与治理', desc: '执行模式、策略、审批与运行凭证' },
       scheduling: { title: '调度与派发', desc: '事件驱动 DAG、任务要求与任务级结果' },
@@ -670,7 +675,7 @@ export const zh: UiDict = {
       eyebrow: '结构',
       title: '架构。',
       sub: '自上而下五层：编排器；拓扑、治理与规划；并发和事件调度；Agent；以及模型循环与工具接口。图中表达的是已发布运行时边界，而不是一个托管产品控制面。',
-      imgAlt: 'OMA v1.13 架构。OpenMultiAgent 让运行经过团队协调与治理，从依赖图中调度就绪任务，通过模型与工具闸门执行 Agent，并产出任务结果和证据。',
+      imgAlt: 'OMA 架构。OpenMultiAgent 让运行经过团队协调与治理，从依赖图中调度就绪任务，通过模型与工具闸门执行 Agent，并产出任务结果和证据。',
     },
     structureLegend: [
       { k: '强调色描边', d: '用户入口——你实例化的那个类。每张图里有且仅有一个。' },
@@ -681,7 +686,7 @@ export const zh: UiDict = {
     control: {
       eyebrow: '控制与证据',
       title: '一次运行，是一串显式边界。',
-      sub: 'v1.13 把拓扑、派发、策略与证据分开，让应用可以分别控制，而不必接管整个运行时。',
+      sub: '运行时把拓扑、派发、策略与证据分开，让应用可以分别控制，而不必接管整个运行时。',
       items: [
         { tag: '路由', title: '选择单智能体或团队', body: '使用显式 mode、声明式治理，或自定义 ExecutionRouter。', href: '/reference/execution-routing/' },
         { tag: '调度', title: '派发就绪工作', body: '事件驱动调度器会在依赖完成后逐个释放符合条件的任务。', href: '/reference/task-scheduling/' },
@@ -693,7 +698,7 @@ export const zh: UiDict = {
       eyebrow: '执行',
       titleHtml: '一次 <code>runTeam()</code> 调用。',
       sub: '目标进，结果与凭证出。运行时选择拓扑、生成或接收任务 DAG，在依赖完成后派发就绪工作，并保存任务级证据。从左往右读——横轴是时间。',
-      imgAlt: 'v1.13 runTeam 流程。一个目标被路由为单智能体或团队拓扑，再规划为任务 DAG、按依赖就绪状态派发，最后返回任务结果、路由证据、角色、依赖边和用量。',
+      imgAlt: 'runTeam 流程。一个目标被路由为单智能体或团队拓扑，再规划为任务 DAG、按依赖就绪状态派发，最后返回任务结果、路由证据、角色、依赖边和用量。',
     },
     flowRead: [
       { k: '纵向 = 哪个智能体', d: '每个智能体有自己的一条水平轨道，像乐谱里的一个声部。' },
@@ -715,12 +720,12 @@ export const zh: UiDict = {
       description: 'Open Multi-Agent 已发布的运行时能力：执行路由、事件驱动任务调度、治理、审批、恢复、证据、评估、模型、工具、MCP 与外部智能体。',
     },
     hero: {
-      eyebrow: '能力 · v1.13.0',
+      eyebrow: (r) => `能力 · ${r.tag}`,
       title: ['从一个目标，', '到一次受治理的运行。'],
       lede: '同一套 TypeScript 运行时，同时承载目标驱动团队与显式任务 DAG。选择执行拓扑、调度就绪工作、为高影响操作设闸，并把证据留在你自己的环境里。',
-      release: '已发布 · @open-multi-agent/core@1.13.0',
+      release: (r) => `已发布 · @open-multi-agent/core@${r.version}`,
       quickStart: '运行零 Key Demo',
-      releaseNotes: 'v1.13 Release Notes',
+      releaseNotes: (r) => `${r.minor} Release Notes`,
     },
     flow: [
       { n: '01', tag: '输入', title: '目标或 DAG', body: '通过 runTeam() 从结果出发，或通过 runTasks() 直接提供任务图。' },
@@ -738,8 +743,8 @@ export const zh: UiDict = {
       {
         tag: '规划 · 路由',
         title: '选择执行拓扑。',
-        body: '从目标生成可审阅的任务 DAG，执行你定义的图，或把适合的工作直接交给一个智能体。显式 mode 与治理声明优先；自定义路由器保持建议性质，并能安全回退。',
-        proof: 'runTeam · runTasks · mode · ExecutionRouter · routingDecision',
+        body: '从目标生成可审阅的任务 DAG，执行你定义的图，或把适合的工作直接交给一个智能体。显式 mode 与治理声明优先；自定义路由器保持建议性质，并能安全回退。开启 hybrid 路由后，只有在确定性路由本会选择单智能体的位置才会做一次语义评估——做决定的仍是确定性策略。',
+        proof: 'runTeam · runTasks · mode · ExecutionRouter · TaskProfiler · routingDecision',
         link: '执行路由',
       },
       {
@@ -757,11 +762,11 @@ export const zh: UiDict = {
         link: '编排控制',
       },
       {
-        tag: '约束 · 恢复',
-        title: '停止新工作，安全收尾，按任务恢复。',
-        body: '重试、模型 fallback、超时、循环检测以及 token 或预估成本预算共同约束执行。检查点持久化已完成的任务边界，使 restore 能跳过已经完成的工作。',
-        proof: 'fallbacks · budgets · checkpoint · restore',
-        link: '检查点与恢复',
+        tag: '约束 · 恢复 · 修订',
+        title: '停止新工作，安全收尾，修订尚未执行的部分。',
+        body: '重试、模型 fallback、超时、循环检测以及 token 或预估成本预算共同约束执行。检查点持久化已完成的任务边界，使 restore 能跳过已经完成的工作。开启 repairable 恢复后，一次运行可以修订任务图中尚未执行的部分——每个补丁都先经校验与审批，再在任何原有下游任务启动之前原子应用。',
+        proof: 'fallbacks · budgets · checkpoint · restore · PlanPatch · onPlanPatch',
+        link: '自适应恢复',
       },
       {
         tag: '检查 · 评估',
@@ -783,8 +788,8 @@ export const zh: UiDict = {
       title: '这套运行时做什么，也明确不声称什么。',
       body: '官网跟随同时发布到 GitHub 与 npm 的最新包。只存在于 main 的开发功能，在正式发布前不会进入已交付能力面。',
       items: [
-        { label: '已发布', value: 'v1.13.0：路由、治理、事件驱动调度、派发审批、运行凭证、结构化 handoff 与模型 fallback。' },
-        { label: '恢复', value: '检查点从已完成任务边界恢复；它不是任务中途恢复，也不是具有 exactly-once 语义的权威 RunStore。' },
+        { label: '已发布', value: '路由、治理、事件驱动调度、派发审批、运行凭证、结构化 handoff、模型 fallback，以及可选开启的计划修订与混合语义路由，都在已发布的包里。' },
+        { label: '恢复', value: '检查点从已完成任务边界恢复；它不是任务中途恢复，也不是具有 exactly-once 语义的权威 RunStore。计划修订只向前：它追加替代任务，不会撤销某个任务已经产生的外部副作用。' },
         { label: '产品层', value: 'OMA 是自托管运行时库，不声称拥有托管的租户、项目、Thread、席位或 RBAC 控制面。' },
       ],
     },
@@ -792,7 +797,7 @@ export const zh: UiDict = {
       eyebrow: '从证据开始',
       title: '先运行本地 Demo，再检查整套运行时。',
       quickStart: '运行零 Key Demo',
-      architecture: '查看 v1.13 架构',
+      architecture: (r) => `查看 ${r.minor} 架构`,
     },
   },
 
@@ -899,7 +904,7 @@ export const zh: UiDict = {
     baseline: {
       eyebrow: '先看基线',
       title: '先知道 OMA 已经交付什么，再谈竞品。',
-      body: 'v1.13 在你的后端里选择执行拓扑、逐个派发就绪任务、管控高影响操作，并留下可检查的运行证据。',
+      body: 'OMA 在你的后端里选择执行拓扑、逐个派发就绪任务、管控高影响操作，并留下可检查的运行证据。',
       cta: '查看全部能力',
     },
     hub: {

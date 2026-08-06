@@ -8,6 +8,27 @@
 // API identifiers, URLs, and synchronized catalog data (example descriptions and
 // live GitHub stats). The third-party endorsement quote is a real attributed
 // citation and is kept verbatim in both locales.
+//
+// VERSION LITERALS DO NOT BELONG IN THIS FILE. A string that names the current
+// release takes a `ReleaseRef` and interpolates it; src/lib/release.ts supplies
+// one derived from the `changelog` collection at render time. Hand-written
+// version numbers went stale silently — /capabilities sat a full release behind
+// the landing hero and /changelog, on the same site — so a literal is now a
+// CI failure (scripts/check-version-drift.mjs). Copy that describes what a
+// specific version introduced (a feature list, a diagram's contents) must not
+// interpolate either: swapping the number would re-date the sentence without
+// making it true. Such copy states the behaviour without naming a version.
+
+/** The release forms copy interpolates. Supplied by src/lib/release.ts. */
+export interface ReleaseRef {
+  /** Tag form, e.g. `v1.14.0` — matches the GitHub release tag. */
+  tag: string;
+  /** Bare semver, e.g. `1.14.0` — the form that follows a package name. */
+  version: string;
+  /** Minor form, e.g. `v1.14` — for prose that names a line, not a patch. */
+  minor: string;
+}
+
 export const en = {
   nav: {
     brandAria: 'Open Multi-Agent — home',
@@ -35,7 +56,7 @@ export const en = {
     forCompanies: 'For Companies',
     capabilityCols: { build: 'Build', operate: 'Operate reliably' },
     capabilityMenu: {
-      overview: { title: 'Capabilities overview', desc: 'The complete v1.13 runtime surface' },
+      overview: { title: 'Capabilities overview', desc: (r: ReleaseRef) => `The complete ${r.minor} runtime surface` },
       orchestration: { title: 'Orchestration', desc: 'Goal-to-DAG teams and explicit task graphs' },
       routing: { title: 'Routing & governance', desc: 'Execution modes, policy, approvals, and receipts' },
       scheduling: { title: 'Scheduling & dispatch', desc: 'Event-driven DAGs, requirements, and task results' },
@@ -562,7 +583,10 @@ export const en = {
       eyebrow: 'structure',
       title: 'The architecture.',
       sub: 'Five layers, top to bottom: the orchestrator; topology, governance, and planning; concurrency plus event scheduling; the agent; and the model loop and tool interfaces. The diagram names the released runtime boundaries rather than a hosted product control plane.',
-      imgAlt: 'OMA v1.13 architecture. OpenMultiAgent routes a run through team coordination and governance, schedules ready tasks from the dependency graph, executes agents through model and tool gates, and produces task results and evidence.',
+      // No version in the alt text: it describes what this diagram draws, and the
+      // diagram is not redrawn on every release. Naming a version here would date
+      // the image to a release whose surface it may not depict.
+      imgAlt: 'OMA architecture. OpenMultiAgent routes a run through team coordination and governance, schedules ready tasks from the dependency graph, executes agents through model and tool gates, and produces task results and evidence.',
     },
     structureLegend: [
       { k: 'accent border', d: 'User entry point — the class you instantiate. Exactly one per diagram.' },
@@ -573,7 +597,7 @@ export const en = {
     control: {
       eyebrow: 'control and evidence',
       title: 'The run is a chain of explicit boundaries.',
-      sub: 'v1.13 separates topology, dispatch, policy, and proof, so an application can control each one without taking ownership of the whole runtime.',
+      sub: 'The runtime separates topology, dispatch, policy, and proof, so an application can control each one without taking ownership of the whole runtime.',
       items: [
         { tag: 'route', title: 'Choose single or team', body: 'Use an explicit mode, declared governance, or a custom ExecutionRouter.', href: '/reference/execution-routing/' },
         { tag: 'schedule', title: 'Dispatch ready work', body: 'The event-driven scheduler releases one eligible task at a time as dependencies complete.', href: '/reference/task-scheduling/' },
@@ -585,7 +609,7 @@ export const en = {
       eyebrow: 'execution',
       titleHtml: 'One <code>runTeam()</code> call.',
       sub: 'Goal in, result plus receipt out. The runtime chooses the topology, creates or accepts a task DAG, dispatches ready work as dependencies complete, and preserves task-level evidence. Read it left to right — the horizontal axis is time.',
-      imgAlt: 'The v1.13 runTeam flow. A goal is routed to a single or team topology, planned into a task DAG, dispatched by dependency readiness, and returned with task results, routing evidence, roles, dependency edges, and usage.',
+      imgAlt: 'The runTeam flow. A goal is routed to a single or team topology, planned into a task DAG, dispatched by dependency readiness, and returned with task results, routing evidence, roles, dependency edges, and usage.',
     },
     flowRead: [
       { k: 'vertical = which agent', d: 'Each agent gets its own horizontal track, like a voice in a music score.' },
@@ -607,12 +631,12 @@ export const en = {
       description: 'The released Open Multi-Agent runtime surface: execution routing, task scheduling, governance, approvals, recovery, evaluation, tools, and MCP.',
     },
     hero: {
-      eyebrow: 'capabilities · v1.13.0',
+      eyebrow: (r: ReleaseRef) => `capabilities · ${r.tag}`,
       title: ['From a goal', 'to a governed run.'],
       lede: 'One TypeScript runtime for goal-driven teams and explicit task DAGs. Route the topology, schedule ready work, gate consequential actions, and keep the evidence in your own environment.',
-      release: 'released · @open-multi-agent/core@1.13.0',
+      release: (r: ReleaseRef) => `released · @open-multi-agent/core@${r.version}`,
       quickStart: 'Run the no-key demo',
-      releaseNotes: 'v1.13 release notes',
+      releaseNotes: (r: ReleaseRef) => `${r.minor} release notes`,
     },
     flow: [
       { n: '01', tag: 'input', title: 'Goal or DAG', body: 'Start with an outcome through runTeam(), or supply the task graph through runTasks().' },
@@ -630,8 +654,8 @@ export const en = {
       {
         tag: 'plan · route',
         title: 'Choose the execution topology.',
-        body: 'Generate a reviewable task DAG from a goal, execute a graph you define, or short-circuit eligible work to one agent. Explicit mode and governance declarations win; custom routers remain advisory and fall back safely.',
-        proof: 'runTeam · runTasks · mode · ExecutionRouter · routingDecision',
+        body: 'Generate a reviewable task DAG from a goal, execute a graph you define, or short-circuit eligible work to one agent. Explicit mode and governance declarations win; custom routers remain advisory and fall back safely. Opt into hybrid routing and one semantic assessment runs only where the deterministic router would have settled for a single agent — the policy that decides stays deterministic.',
+        proof: 'runTeam · runTasks · mode · ExecutionRouter · TaskProfiler · routingDecision',
         link: 'Execution routing',
       },
       {
@@ -649,11 +673,11 @@ export const en = {
         link: 'Orchestration controls',
       },
       {
-        tag: 'bound · recover',
-        title: 'Stop new work, settle safely, resume by task.',
-        body: 'Retries, model fallbacks, timeouts, loop detection, and token or estimated-cost budgets bound execution. Checkpoints persist completed task boundaries so restore can skip work already done.',
-        proof: 'fallbacks · budgets · checkpoint · restore',
-        link: 'Checkpoint and resume',
+        tag: 'bound · recover · revise',
+        title: 'Stop new work, settle safely, revise what has not run.',
+        body: 'Retries, model fallbacks, timeouts, loop detection, and token or estimated-cost budgets bound execution. Checkpoints persist completed task boundaries so restore can skip work already done. Opt into repairable recovery and a run revises the part of its graph that has not executed yet — each patch validated, gated, and applied atomically before any original dependent starts.',
+        proof: 'fallbacks · budgets · checkpoint · restore · PlanPatch · onPlanPatch',
+        link: 'Adaptive recovery',
       },
       {
         tag: 'inspect · evaluate',
@@ -675,8 +699,11 @@ export const en = {
       title: 'What this runtime does—and what it does not claim.',
       body: 'The public site follows the latest package released on both GitHub and npm. Development-only main features stay out of the shipped surface until they are published.',
       items: [
-        { label: 'Published', value: 'v1.13.0: routing, governance, event-driven scheduling, dispatch approval, receipts, structured handoffs, and model fallbacks.' },
-        { label: 'Recovery', value: 'Checkpoint restore resumes at completed task boundaries. It is not mid-task recovery or an authoritative exactly-once RunStore.' },
+        // Deliberately unversioned. This names capabilities that are in the
+        // published package; it does not claim to be that release's full change
+        // list, so interpolating the current version would overstate it.
+        { label: 'Published', value: 'Routing, governance, event-driven scheduling, dispatch approval, receipts, structured handoffs, model fallbacks, opt-in plan revision, and opt-in hybrid semantic routing are all in the published package.' },
+        { label: 'Recovery', value: 'Checkpoint restore resumes at completed task boundaries. It is not mid-task recovery or an authoritative exactly-once RunStore. Plan revision is forward-only: it appends replacement work and never undoes a side effect a task already performed.' },
         { label: 'Product layer', value: 'OMA is a self-hosted runtime library. It does not claim a hosted tenant, project, thread, seat, or RBAC control plane.' },
       ],
     },
@@ -684,7 +711,7 @@ export const en = {
       eyebrow: 'start with evidence',
       title: 'Run the local demo, then inspect the runtime.',
       quickStart: 'Run the no-key demo',
-      architecture: 'See the v1.13 architecture',
+      architecture: (r: ReleaseRef) => `See the ${r.minor} architecture`,
     },
   },
 
@@ -798,7 +825,7 @@ export const en = {
     baseline: {
       eyebrow: 'start with the baseline',
       title: 'Know what OMA ships before comparing it.',
-      body: 'v1.13 routes execution topology, dispatches ready tasks event by event, gates consequential work, and produces inspectable evidence in your own backend.',
+      body: 'OMA routes execution topology, dispatches ready tasks event by event, gates consequential work, and produces inspectable evidence in your own backend.',
       cta: 'See all capabilities',
     },
     hub: {
