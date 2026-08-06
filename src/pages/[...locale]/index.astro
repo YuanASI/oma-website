@@ -85,8 +85,16 @@ const caseTr = (c: (typeof SHOWCASE)[number]) => scEntries[c.pkg] ?? { desc: c.d
 
 // Section copy lives in the per-locale dictionary (src/i18n); the markup below
 // renders it via `l`. Every API name / code identifier inside the copy stays
-// verbatim. The runtime surface is pinned to the public core v1.13.0 release;
-// main-only adaptive recovery and semantic routing stay out until published.
+// verbatim. Copy here describes the published release only — never something
+// that exists on the framework's main branch but has not shipped. For the
+// release this and the rest of the capability copy was last read against, see
+// CAPABILITY_COPY_REVIEWED_FOR in src/i18n/en.ts; that constant is the single
+// sign-off, so this comment does not carry a version of its own.
+//
+// These three cards are a deliberate summary of the core loop, not an inventory
+// of the surface — a new release does not automatically owe them an entry.
+// (Adaptive recovery and semantic routing were pending here while they were
+// main-only; both shipped in 1.14.0 and are now fair game for this copy.)
 const WHY = l.why;
 
 // The first three featured Use-case Recipes come from catalog featuredOrder.

@@ -5,9 +5,18 @@
 // HONESTY DISCIPLINE (red-line §1). Every competitor cell below was verified in
 // July 2026 against a PRIMARY source; the framework's own pyproject.toml /
 // package.json (dependency counts), its docs (paradigm, budget, tracing), and
-// the PyPI/npm registry (latest version, license); not from memory. OMA's
-// column was verified against open-multi-agent core v1.13.0 source + docs and
-// the compatible first-party optional @open-multi-agent/otel v0.1.0 package. The
+// the PyPI/npm registry (latest version, license); not from memory. Those
+// competitor cells have NOT been re-verified since; only OMA's column has.
+//
+// OMA's column was re-verified for core v1.14.0 on 2026-08-06, against the
+// vendored release notes (src/content/changelog/1.14.0.md) and the synced
+// reference docs — not against the framework source, which is why claims here
+// stay at the level those documents actually support. Nothing in the column was
+// found wrong; what it was missing was v1.14.0's two additions, hybrid semantic
+// routing and adaptive plan recovery, now folded into the paradigm axis and the
+// orchestration, governance, and scheduling capabilities. The optional
+// first-party @open-multi-agent/otel package is at 0.1.1, whose declared
+// core ^1.11.0 range covers this release. The
 // whole point of these pages is the fair "when the other tool is the better
 // choice" paragraph, so the competitor gets genuine credit and nothing is
 // rounded up. Where a value would be a guess, it is stated qualitatively, never
@@ -37,7 +46,7 @@ export const AXES: Axis[] = [
   {
     key: 'paradigm',
     label: { en: 'Orchestration model', zh: '编排范式' },
-    oma: { en: 'One agent, an explicit task DAG, or a goal the coordinator decomposes at runtime; explicit mode, governance policy, or an ExecutionRouter selects the topology', zh: '单智能体、显式任务 DAG，或由协调器在运行时拆解目标；显式 mode、治理策略或 ExecutionRouter 选择执行拓扑' },
+    oma: { en: 'One agent, an explicit task DAG, or a goal the coordinator decomposes at runtime; explicit mode, governance policy, or an ExecutionRouter selects the topology, and a run can revise its not-yet-executed tasks', zh: '单智能体、显式任务 DAG，或由协调器在运行时拆解目标；显式 mode、治理策略或 ExecutionRouter 选择执行拓扑，运行过程中还可以修订尚未执行的任务' },
   },
   {
     key: 'deps',
@@ -63,30 +72,30 @@ export const AXES: Axis[] = [
 
 export type OmaCapability = { title: Loc; body: Loc };
 
-// Shared OMA capability baseline, verified against the framework README,
-// packages/core/README.md, and the v1.13.0 reference docs. Every comparison page
+// Shared OMA capability baseline, verified against the vendored release notes
+// and the synced v1.14.0 reference docs (see the header). Every comparison page
 // renders this list so OMA is represented by its actual runtime surface, not
 // only by the six matrix axes.
 export const OMA_CAPABILITIES: OmaCapability[] = [
   {
     title: { en: 'Dynamic, explicit, and routed orchestration', zh: '动态、显式与路由编排' },
     body: {
-      en: '<code>runTeam()</code> builds a task DAG from a goal, <code>runTasks()</code> runs a graph you define, and <code>runAgent()</code> covers one agent. Explicit <code>mode</code>, governance declarations, or a custom <code>ExecutionRouter</code> choose Single or Team execution and expose a <code>routingDecision</code>. Plans remain previewable, reviewable, and replayable as data.',
-      zh: '<code>runTeam()</code> 从目标生成任务 DAG，<code>runTasks()</code> 运行你定义的任务图，<code>runAgent()</code> 覆盖单智能体场景。显式 <code>mode</code>、治理声明或自定义 <code>ExecutionRouter</code> 选择 Single 或 Team 执行并暴露 <code>routingDecision</code>；计划仍可作为数据预览、审阅和重放。',
+      en: '<code>runTeam()</code> builds a task DAG from a goal, <code>runTasks()</code> runs a graph you define, and <code>runAgent()</code> covers one agent. Explicit <code>mode</code>, governance declarations, or a custom <code>ExecutionRouter</code> choose Single or Team execution and expose a <code>routingDecision</code>. Opt-in hybrid routing adds one semantic assessment where the deterministic result would be Single — the policy that decides stays deterministic. Plans remain previewable, reviewable, and replayable as data.',
+      zh: '<code>runTeam()</code> 从目标生成任务 DAG，<code>runTasks()</code> 运行你定义的任务图，<code>runAgent()</code> 覆盖单智能体场景。显式 <code>mode</code>、治理声明或自定义 <code>ExecutionRouter</code> 选择 Single 或 Team 执行并暴露 <code>routingDecision</code>。可选开启的 hybrid 路由，只在确定性结果本会是 Single 的位置补一次语义评估——做决定的仍是确定性策略。计划仍可作为数据预览、审阅和重放。',
     },
   },
   {
     title: { en: 'Governance and approvals at distinct boundaries', zh: '位于不同边界的治理与审批' },
     body: {
-      en: 'Declare required or preferred roles, ordered review paths, and budget-aware degradation. Gate the plan with <code>onPlanReady</code>, one ready task with <code>onTaskDispatch</code>, and one consequential tool call with <code>onToolCall</code>; then inspect <code>governanceConclusion</code>.',
-      zh: '声明必需或偏好的角色、有序审阅路径与预算感知降级。分别用 <code>onPlanReady</code> 审批计划、<code>onTaskDispatch</code> 审批一个就绪任务、<code>onToolCall</code> 审批一次高影响工具调用，再检查 <code>governanceConclusion</code>。',
+      en: 'Declare required or preferred roles, ordered review paths, and budget-aware degradation. Gate the plan with <code>onPlanReady</code>, one ready task with <code>onTaskDispatch</code>, one consequential tool call with <code>onToolCall</code>, and any mid-run plan revision with <code>onPlanPatch</code>; then inspect <code>governanceConclusion</code>.',
+      zh: '声明必需或偏好的角色、有序审阅路径与预算感知降级。分别用 <code>onPlanReady</code> 审批计划、<code>onTaskDispatch</code> 审批一个就绪任务、<code>onToolCall</code> 审批一次高影响工具调用、<code>onPlanPatch</code> 审批运行中的每次计划修订，再检查 <code>governanceConclusion</code>。',
     },
   },
   {
     title: { en: 'Event-driven scheduling and task evidence', zh: '事件驱动调度与任务证据' },
     body: {
-      en: 'Ready dependents start as soon as prerequisites complete. Five assignment strategies can use capabilities and hard requirements; <code>taskResults</code> preserves unmerged task outputs and structured dependency payloads carry bounded provenance. Retries and checkpoints resume from completed task boundaries.',
-      zh: '依赖完成后，就绪的下游任务立即启动。五种指派策略可使用能力与硬性要求；<code>taskResults</code> 保留未经合并的任务输出，结构化依赖载荷携带受限的来源信息。重试与检查点从已完成任务边界恢复。',
+      en: 'Ready dependents start as soon as prerequisites complete. Hard task requirements are enforced across every assignment strategy, so an unsatisfiable task is rejected instead of dispatched to an ineligible agent; <code>taskResults</code> preserves unmerged task outputs and structured dependency payloads carry bounded provenance. Retries and checkpoints resume from completed task boundaries, and opt-in repairable recovery can append replacement work at an outcome barrier before any original dependent starts.',
+      zh: '依赖完成后，就绪的下游任务立即启动。硬性任务要求在每种指派策略下都会强制执行，无法满足的任务会被拒绝，而不是派发给不合格的智能体；<code>taskResults</code> 保留未经合并的任务输出，结构化依赖载荷携带受限的来源信息。重试与检查点从已完成任务边界恢复；可选开启的 repairable 恢复，还能在任务结果屏障处、于任何原有下游任务启动之前追加替代工作。',
     },
   },
   {
