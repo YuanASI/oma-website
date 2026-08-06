@@ -19,6 +19,18 @@
 // interpolate either: swapping the number would re-date the sentence without
 // making it true. Such copy states the behaviour without naming a version.
 
+// The release whose runtime surface the capability copy was last read against,
+// by a person. Not a displayed string and not a version to interpolate — it is a
+// sign-off, so bump it only after actually re-reading the release notes and
+// deciding what the capability groups and the truth-boundary items should say.
+//
+// This exists because version numbers now update themselves and capability
+// descriptions do not. Without it, /capabilities would relabel itself to the
+// next release while still describing the previous surface, silently.
+// scripts/check-version-drift.mjs reports (never fails on) a gap between this
+// and the newest release.
+export const CAPABILITY_COPY_REVIEWED_FOR = '1.14.0';
+
 /** The release forms copy interpolates. Supplied by src/lib/release.ts. */
 export interface ReleaseRef {
   /** Tag form, e.g. `v1.14.0` — matches the GitHub release tag. */

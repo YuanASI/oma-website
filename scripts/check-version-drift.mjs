@@ -9,20 +9,35 @@
 // Nothing in that chain was broken; the version simply was not derived from
 // anything. src/lib/release.ts derives it now, and this gate keeps it that way.
 //
-// Two checks:
-//   1. Version literals in copy and page templates must be the current release
-//      (or an allowlisted historical fact). Copy should interpolate a ReleaseRef
-//      instead — a literal that matches today is still a literal that will not
-//      move on its own, but it is at least loud when it goes stale.
-//   2. The site's two version sources must agree: src/data/gh-stats.json
-//      (refreshed by refresh-gh-data.yml, feeds the landing stat tile) and the
-//      changelog collection (written by sync-releases.yml, feeds everything
-//      else). One job running without the other shows two versions on one site.
+// One check fails the build:
+//   Version literals in copy and page templates must be the current release (or
+//   an allowlisted historical fact). Copy should interpolate a ReleaseRef
+//   instead — a literal that matches today is still a literal that will not move
+//   on its own, but it is at least loud when it goes stale.
+//
+// The rest is reported and never fatal, because each needs a person, and because
+// a gate that blocks the automation cannot be fixed by the automation:
+//   - The two version sources disagreeing: src/data/gh-stats.json (refreshed by
+//     refresh-gh-data.yml, feeds the landing stat tile) versus the changelog
+//     collection (written by sync-releases.yml, feeds everything else). This was
+//     briefly fatal and that was a mistake: BOTH workflows run `pnpm check`
+//     before opening their PR, so on the first cron after an upstream release
+//     whichever one ran first would fail its own gate, skip its PR, and discard
+//     its update — while the other stayed blocked waiting for it. A deadlock, in
+//     exchange for flagging a skew that heals on the next cron run.
+//   - Capability copy reviewed against an older release. Fatal here would
+//     deadlock sync-releases the same way: its PR is what delivers the new
+//     version, and copy cannot be reviewed before the release it describes.
+//   - Comments, and records of what something was verified against upstream.
+//     Renumbering a verification record without redoing the verification forges
+//     it, so a human has to do that.
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 const CHANGELOG_DIR = 'src/content/changelog';
 const GH_STATS = 'src/data/gh-stats.json';
+const COPY_SIGNOFF = 'src/i18n/en.ts';
+const SIGNOFF_NAME = 'CAPABILITY_COPY_REVIEWED_FOR';
 
 // A stale literal here breaks a reader-visible claim, so it fails the build.
 const ENFORCED = [
@@ -103,6 +118,15 @@ function readFrontMatter(file) {
   };
 }
 
+// The sign-off is a bare semver so it does not read as a version literal to the
+// scan below; findLiterals additionally skips the line that declares it.
+function copyReviewedFor() {
+  const source = readFileSync(COPY_SIGNOFF, 'utf8');
+  const match = source.match(new RegExp(`${SIGNOFF_NAME}\\s*=\\s*['"]([^'"]+)['"]`));
+  if (!match) throw new Error(`${COPY_SIGNOFF} no longer exports ${SIGNOFF_NAME}`);
+  return match[1];
+}
+
 function currentRelease() {
   const entries = readdirSync(CHANGELOG_DIR)
     .filter((f) => f.endsWith('.md'))
@@ -125,6 +149,7 @@ function findLiterals(file, current, { requireOwnPackage = false } = {}) {
     .split('\n');
   const hits = [];
   lines.forEach((line, i) => {
+    if (line.includes(SIGNOFF_NAME)) return;
     for (const match of line.matchAll(VERSION_PATTERN)) {
       const version = match[1] ?? match[2];
       // A two-part literal (v1.14) names the release line, not a patch.
@@ -146,9 +171,24 @@ const advisories = [
   ...ADVISORY.flatMap(listFiles).flatMap((f) => findLiterals(f, current, { requireOwnPackage: true })),
 ];
 
-// The two refresh jobs must not disagree about what the newest release is.
 const snapshot = JSON.parse(readFileSync(GH_STATS, 'utf8')).latestRelease;
 const sourcesAgree = snapshot === current.tag;
+const reviewedFor = copyReviewedFor();
+const copyIsCurrent = reviewedFor === current.version;
+
+if (!copyIsCurrent) {
+  console.warn(`\nCapability copy was last reviewed against ${reviewedFor}, current release is ${current.version}.`);
+  console.warn('  Version labels on /capabilities update themselves; the capability groups and');
+  console.warn('  truth-boundary items do not. Read the new release notes, decide what the copy');
+  console.warn(`  should say, then bump ${SIGNOFF_NAME} in ${COPY_SIGNOFF}.\n`);
+}
+
+if (!sourcesAgree) {
+  console.warn(`\nVersion sources disagree: ${GH_STATS} says ${snapshot}, newest changelog entry is ${current.tag}.`);
+  console.warn('  Expected right after an upstream release — refresh-gh-data.yml and');
+  console.warn('  sync-releases.yml run on separate schedules and each fixes its own side.');
+  console.warn('  Still showing after both have run means one of them is failing.\n');
+}
 
 if (advisories.length) {
   console.warn(`\nVersion claims to re-verify against ${current.tag} (advisory, not a failure):`);
@@ -158,13 +198,6 @@ if (advisories.length) {
   console.warn('  Each asserts upstream state or records the baseline something was checked');
   console.warn('  against. Re-verify against the framework, then update the text — renumbering');
   console.warn('  a verification record without redoing the verification forges it.\n');
-}
-
-if (!sourcesAgree) {
-  console.error(
-    `Version sources disagree: ${GH_STATS} says ${snapshot}, newest changelog entry is ${current.tag}.\n` +
-      '  One of refresh-gh-data.yml / sync-releases.yml has run without the other.',
-  );
 }
 
 if (failures.length) {
@@ -178,8 +211,10 @@ if (failures.length) {
   console.error('  a version at all — renumbering it would re-date the claim without checking it.');
 }
 
-if (failures.length || !sourcesAgree) {
+if (failures.length) {
   process.exitCode = 1;
-} else {
+} else if (copyIsCurrent && sourcesAgree) {
   console.log(`Version references are consistent with ${current.tag}.`);
+} else {
+  console.log(`No stale version literals. See the notices above for ${current.tag}.`);
 }
