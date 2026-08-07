@@ -3,8 +3,14 @@
 // and the runTeam() execution flow (Batch 6B) from the OMA brand spec, rendered
 // as the dedicated page the spec's deployment guide calls for ("/architecture
 // embed architecture.svg"). The diagrams are vendored into public/ from the
-// design system and updated to the released v1.13.0 runtime surface: execution
-// routing, declared governance, event-driven dispatch, task results, and receipts.
+// design system and depict the v1.13.0 runtime surface: execution routing,
+// declared governance, event-driven dispatch, task results, and receipts.
+//
+// They have NOT been redrawn for 1.14.0's adaptive plan recovery or hybrid
+// routing. scripts/check-version-drift.mjs reports this line on every run for
+// exactly that reason, and that report is correct: the diagrams trail the
+// runtime. Do not "fix" it by bumping the number — the number is an accurate
+// record of what these images actually draw. It clears when they are redrawn.
 import '@fontsource-variable/geist';
 import '@fontsource-variable/jetbrains-mono';
 import '../../styles/tokens.css';
