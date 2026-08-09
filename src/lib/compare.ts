@@ -6,7 +6,10 @@
 // July 2026 against a PRIMARY source; the framework's own pyproject.toml /
 // package.json (dependency counts), its docs (paradigm, budget, tracing), and
 // the PyPI/npm registry (latest version, license); not from memory. Those
-// competitor cells have NOT been re-verified since; only OMA's column has.
+// competitor cells have NOT been re-verified since; only OMA's column has. The
+// Claude Managed Agents entry is the exception: it was verified on 2026-08-09
+// against Anthropic's official agent setup, multiagent orchestration,
+// self-hosted sandbox, event-streaming, rate-limit, and security-model docs.
 //
 // OMA's column was re-verified for core v1.14.0 on 2026-08-06, against the
 // vendored release notes (src/content/changelog/1.14.0.md) and the synced
@@ -134,8 +137,12 @@ export type Comparison = {
   tier?: 'primary';
   /** Official repository, linked from the page. */
   repo: string;
+  /** Optional label when the primary source is official documentation, not a repository. */
+  sourceLabel?: Loc;
   /** Per-page meta description (title is templated from the name in the dict). */
   seoDescription: Loc;
+  /** Optional shorter title when the templated title would exceed SERP limits. */
+  seoTitle?: Loc;
   /** Target search terms; English, invariant (what people actually type). */
   keywords: string[];
   /** Hero sub-line. */
@@ -328,6 +335,79 @@ export const COMPARISONS: Comparison[] = [
     whenUs: {
       en: 'open-multi-agent fits when you want to stay provider-neutral; mix Anthropic, Gemini, OpenAI, local models, or any OpenAI-compatible endpoint in one team; and prefer decomposing a goal to wiring handoffs. It’s TypeScript-native, has three dependencies, and applies a run-level <code>maxTokenBudget</code> between model calls.',
       zh: 'open-multi-agent 适合你想保持提供方中立，在同一个团队里混用 Anthropic、Gemini、OpenAI、本地模型，或任何兼容 OpenAI 的端点，并且更愿意拆解目标、而非接线 handoff。它 TypeScript 原生、三个依赖，并在模型调用之间应用运行级 <code>maxTokenBudget</code>。',
+    },
+  },
+  {
+    slug: 'claude-managed-agents',
+    name: 'Claude Managed Agents',
+    repo: 'https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration',
+    sourceLabel: {
+      en: 'Claude Managed Agents documentation',
+      zh: 'Claude Managed Agents 官方文档',
+    },
+    keywords: [
+      'open-multi-agent vs claude managed agents',
+      'claude managed agents alternative',
+      'self hosted multi agent orchestration',
+      'provider neutral claude agents alternative',
+    ],
+    seoDescription: {
+      en: 'Compare open-multi-agent with Claude Managed Agents: own a provider-neutral runtime in your backend or use Anthropic’s managed Claude control plane.',
+      zh: 'open-multi-agent 对比 Claude Managed Agents：运行在你后端、由你持有且提供方中立的运行时，对上 Anthropic 托管的 Claude 控制面与云端或自托管工具执行。',
+    },
+    seoTitle: {
+      en: 'open-multi-agent vs Claude Managed Agents',
+      zh: 'open-multi-agent 对比 Claude Managed Agents',
+    },
+    lede: {
+      en: 'Both coordinate specialist agents in parallel. The decisive difference is ownership: Claude Managed Agents delivers orchestration as an Anthropic-operated service; open-multi-agent installs the complete, provider-neutral runtime in your backend.',
+      zh: '两者都能并行协调专业智能体。决定性的差别是所有权：Claude Managed Agents 把编排作为 Anthropic 运营的服务交付；open-multi-agent 则把完整、提供方中立的运行时装进你的后端。',
+    },
+    chooseThem: {
+      en: 'You are standardizing on Claude and want Anthropic to operate sessions, persistent threads, agent infrastructure, and Console tracing for you.',
+      zh: '你准备全面采用 Claude，并希望由 Anthropic 代你运营会话、持久线程、智能体基础设施与 Console 追踪。',
+    },
+    chooseUs: {
+      en: 'You want to own the coordinator, scheduler, plans, state, policies, and traces in your environment — while every role remains free to use a different cloud or local model.',
+      zh: '你要在自己的环境里持有协调器、调度器、计划、状态、策略与链路数据，同时让每个角色都能自由选择不同的云端或本地模型。',
+    },
+    them: {
+      language: {
+        en: 'Managed API with official SDKs for TypeScript, Python, Go, Java, C#, Ruby, and PHP; cloud or self-hosted Linux tool sandboxes',
+        zh: '托管 API，官方 SDK 覆盖 TypeScript、Python、Go、Java、C#、Ruby 与 PHP；工具可在云端或自托管 Linux sandbox 中执行',
+      },
+      paradigm: {
+        en: 'A coordinator delegates to a versioned agent roster; specialists run in isolated, persistent threads over a shared sandbox and filesystem',
+        zh: '协调器向版本化的智能体 roster 委派；专业智能体在隔离、持久的线程中运行，并共享 sandbox 与文件系统',
+      },
+      deps: {
+        en: 'Managed platform; your application uses an Anthropic SDK or CLI, with an optional self-hosted worker for tool execution',
+        zh: '托管平台；应用使用 Anthropic SDK 或 CLI，工具执行可选配自托管 worker',
+      },
+      mixedModel: {
+        en: 'Per-agent model selection within supported Claude 4.5+ models',
+        zh: '可按智能体选择模型，范围为受支持的 Claude 4.5+ 模型',
+      },
+      budget: {
+        en: 'Cumulative session token usage is exposed for application-side budget enforcement; platform spend and rate limits apply at organization or workspace level',
+        zh: '暴露会话累计 token 用量，供应用侧执行预算策略；平台支出与速率限制作用于组织或 workspace 层级',
+      },
+      observability: {
+        en: 'Persistent session and thread event streams plus Claude Console timelines with token usage and tool-call details',
+        zh: '持久会话与线程事件流，加上 Claude Console 时间线、token 用量与工具调用详情',
+      },
+    },
+    howDiffer: {
+      en: 'Both systems can fan work out to specialists and bring the results back together. Claude Managed Agents replaces the hand-written agent loop with an Anthropic-operated session and control plane; even when tool execution moves to a self-hosted sandbox, Anthropic operates that control plane while you operate and harden the worker. open-multi-agent ships the orchestration loop itself. Its coordinator, event-driven scheduler, execution routing, plan approval and replay, checkpoints, traces, and evaluation all run inside your application boundary. With cloud models, you choose which provider receives inference traffic; with local models, the complete run can stay offline or air-gapped. The architectural question is therefore not whether private tools are reachable, but whether the orchestration layer and model choice ultimately belong to the platform or to you.',
+      zh: '两套系统都能把工作扇出给专业智能体，再把结果汇拢。Claude Managed Agents 用 Anthropic 运营的会话与控制面替代手写 agent loop；即使工具执行迁到自托管 sandbox，控制面仍由 Anthropic 运营，worker 则由你运行和加固。open-multi-agent 交付的是编排循环本身：协调器、事件驱动调度、执行路由、计划审批与重放、检查点、链路追踪和评估全部运行在你的应用边界内。使用云端模型时，由你决定推理流量发往哪个提供方；使用本地模型时，完整运行可以留在离线或气隙环境。真正的架构问题不是私有工具能否被访问，而是编排层与模型选择最终归平台，还是归你。',
+    },
+    whenThem: {
+      en: 'Claude Managed Agents fits teams standardizing on Claude that want a managed path: versioned agent definitions, persistent sessions and threads, cloud sandboxes, optional self-hosted tool execution, event streams, and Console tracing. Anthropic operates the agent infrastructure while your application integrates through its API and SDKs.',
+      zh: 'Claude Managed Agents 适合全面采用 Claude、并希望走托管路径的团队：版本化智能体定义、持久会话与线程、云端 sandbox、可选的自托管工具执行、事件流与 Console 追踪。Anthropic 运营智能体基础设施，你的应用通过其 API 与 SDK 接入。',
+    },
+    whenUs: {
+      en: 'open-multi-agent fits when orchestration itself belongs inside your product boundary. Install the MIT-licensed TypeScript runtime in your Node.js backend and own the coordinator, scheduler, plan artifacts, checkpoints, governance hooks, traces, and evaluation data. Mix Anthropic, OpenAI, Gemini, Bedrock, OpenAI-compatible endpoints, and local models in one team; review and replay plans as data; enforce run-level token or estimated-cost ceilings; and inspect runs without a hosted control plane. Choose OMA when provider neutrality, offline or air-gapped operation, and end-to-end runtime ownership are architecture requirements.',
+      zh: '当编排本身就属于你的产品边界时，选 open-multi-agent。把 MIT 许可的 TypeScript 运行时装进 Node.js 后端，由你持有协调器、调度器、计划工件、检查点、治理钩子、链路数据与评估数据。同一团队可以混用 Anthropic、OpenAI、Gemini、Bedrock、OpenAI 兼容端点与本地模型；计划能作为数据审阅和重放；每次运行可设置 token 或估算成本上限；无需托管控制面也能检查运行。当提供方中立、离线或气隙运行、端到端运行时所有权是架构要求时，OMA 就是直接答案。',
     },
   },
   {

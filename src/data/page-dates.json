@@ -1,11 +1,11 @@
 {
   "/architecture/": {
     "published": "2026-06-25",
-    "modified": "2026-08-06"
+    "modified": "2026-08-07"
   },
   "/capabilities/": {
     "published": "2026-07-31",
-    "modified": "2026-08-06"
+    "modified": "2026-08-07"
   },
   "/compare/autogen/": {
     "published": "2026-07-04",
@@ -14,6 +14,10 @@
   "/compare/claude-dynamic-workflows/": {
     "published": "2026-07-12",
     "modified": "2026-08-06"
+  },
+  "/compare/claude-managed-agents/": {
+    "published": "2026-07-04",
+    "modified": "2026-08-09"
   },
   "/compare/crewai/": {
     "published": "2026-07-04",
@@ -40,8 +44,8 @@
     "modified": "2026-08-06"
   },
   "/compare/mastra/": {
-    "published": "2026-07-04",
-    "modified": "2026-08-06"
+    "published": "2026-07-11",
+    "modified": "2026-08-09"
   },
   "/compare/openai-agents-sdk/": {
     "published": "2026-07-04",
@@ -105,7 +109,7 @@
   },
   "/integrations/external-agents/": {
     "published": "2026-07-18",
-    "modified": "2026-08-06"
+    "modified": "2026-08-07"
   },
   "/integrations/gemini/": {
     "published": "2026-07-11",
@@ -125,7 +129,7 @@
   },
   "/integrations/opentelemetry/": {
     "published": "2026-07-11",
-    "modified": "2026-08-06"
+    "modified": "2026-08-07"
   },
   "/reference/adaptive-recovery/": {
     "published": "2026-08-02",
