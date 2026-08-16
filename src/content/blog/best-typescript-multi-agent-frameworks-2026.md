@@ -1,6 +1,6 @@
 ---
-title: "Best TypeScript Multi-Agent Frameworks in 2026: Choose by Workflow"
-description: "A source-backed guide to six TypeScript options for multi-agent systems, matched to explicit graphs, agent UIs, handoffs, routed networks, all-in-one apps, and goal-driven task DAGs."
+title: "6 Best TypeScript Multi-Agent Frameworks 2026 (Trade-offs)"
+description: "Six TypeScript multi-agent frameworks compared by workflow fit — explicit graphs, agent UIs, handoffs, routed networks, goal-driven task DAGs."
 pubDate: 2026-07-31
 tags: ["typescript", "multi-agent-frameworks", "framework-selection"]
 contentType: decision-guide
@@ -106,15 +106,15 @@ Open Multi-Agent exposes three levels from one TypeScript runtime:
 
 - `runAgent()` for one bounded agent loop.
 - `runTasks()` when the application already knows the task DAG.
-- `runTeam()` when a coordinator should turn a goal into a task DAG at runtime.
+- [`runTeam()`](/getting-started/quick-start/) when a coordinator should turn a goal into a task DAG at runtime.
 
-The distinguishing property is that moving between them is a decision the runtime records rather than a rewrite. An automatic `runTeam()` call resolves its topology through a documented precedence order — an explicit `mode`, then declared governance, then a per-run `ExecutionRouter`, then the orchestrator's, then the built-in `DeterministicRouter` — and reports the outcome in `result.routingDecision` with the reasons behind it, linked to trace evidence. That is Execution Routing, and it is deliberately separate from Model Routing, which picks the model for calls inside whichever topology won.
+The distinguishing property is that moving between them is a decision the runtime records rather than a rewrite. An automatic `runTeam()` call resolves its topology through a documented precedence order — an explicit `mode`, then declared governance, then a per-run `ExecutionRouter`, then the orchestrator's, then the built-in `DeterministicRouter` — and reports the outcome in `result.routingDecision` with the reasons behind it, linked to trace evidence. That is [Execution Routing](/reference/execution-routing/), and it is deliberately separate from [Model Routing](/reference/model-routing/), which picks the model for calls inside whichever topology won.
 
-Governance is declared rather than implied. `governanceIntent` with `requiredRoles` and `requiredOrder` states a role path the runtime checks against the executed topology, not against labels in agent prose, and reports `governanceConclusion`. An application may override a declared floor, but that returns `unsatisfied` with reason `overridden` rather than a clean success.
+Governance is declared rather than implied. [`governanceIntent`](/reference/tool-configuration/) with `requiredRoles` and `requiredOrder` states a role path the runtime checks against the executed topology, not against labels in agent prose, and reports `governanceConclusion`. An application may override a declared floor, but that returns `unsatisfied` with reason `overridden` rather than a clean success.
 
 Approval is three boundaries, not one: `onPlanReady` for the generated plan, `onTaskDispatch` for one ready task, and `onToolCall` for one tool invocation — the last running after input validation and before `execute`, so it inspects actual arguments. Tools that cause real side effects are marked `consequential: true`; that classification reads tool grants only and never scans goals, prompts, or model output.
 
-Scheduling is event-driven: a downstream task starts as soon as its own dependencies are satisfied. `dependencyPayload: 'structured'` passes a dependency's validated JSON instead of its prose, and `taskResults` keeps every task's unmerged result addressable by stable ID. Different agents can use different providers, including local OpenAI-compatible endpoints, and model routes support ordered fallbacks. Token and estimated-cost budgets, traces, the offline Run Viewer, versioned EvalSets, and task-grained checkpoint recovery all run without a hosted service.
+[Scheduling](/reference/task-scheduling/) is event-driven: a downstream task starts as soon as its own dependencies are satisfied. `dependencyPayload: 'structured'` passes a dependency's validated JSON instead of its prose, and `taskResults` keeps every task's unmerged result addressable by stable ID. Different agents can use different providers, including local OpenAI-compatible endpoints, and model routes support ordered fallbacks. Token and estimated-cost budgets, [traces](/reference/observability/), the offline Run Viewer, versioned [EvalSets](/reference/evaluation/), and task-grained [checkpoint](/reference/checkpoint/) recovery all run without a hosted service.
 
 Choose OMA when the key decision is not merely “one agent or many,” but **who owns the plan for this run, and what evidence remains afterward**. Stable support tickets can use a fixed DAG; variable escalations can use a coordinator without moving to a second framework, and the run itself records which path it took.
 

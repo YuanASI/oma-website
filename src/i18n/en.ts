@@ -298,17 +298,20 @@ export const en = {
 
   landing: {
     seo: {
-      title: 'Open Multi-Agent: open-source TypeScript AI Agent framework',
-      // 158 chars — stays inside the ~160 SERP truncation window so the
+      // "multi-agent framework" is the head term with historical ranking
+      // evidence; "AI agents" is the broader category. Each lives in one
+      // surface (title vs. h1/description) so neither query surface is lost.
+      title: 'Open Multi-Agent — TypeScript multi-agent framework',
+      // ~153 chars — stays inside the ~160 SERP truncation window so the
       // "cloud or fully offline" differentiator survives to the snippet.
-      description: 'Open-source, TypeScript-native AI agent framework: one goal in, a self-organizing agent team runs it in parallel, in your environment, cloud or fully offline.',
+      description: 'TypeScript-native multi-agent framework: one goal in, a self-organizing team of AI agents runs it in parallel — in your environment, cloud or fully offline.',
     },
     hero: {
       // Word order matches the <title> so the head term reads as one phrase
       // rather than two halves a crawler has to reassemble. "TypeScript-native"
       // still carries the same claim further down (subtitle + meta description).
-      eyebrow: 'open-source TypeScript AI Agent framework',
-      h1: 'A self-organizing agent team, ',
+      eyebrow: 'open-source TypeScript multi-agent framework',
+      h1: 'A self-organizing team of AI agents, ',
       h1Accent: 'in an environment you control.',
       subtitle: 'Start from a goal or an explicit task DAG. Route, approve, budget, trace, and resume at task boundaries—in your own environment.',
       audience: 'for TypeScript backend and AI platform teams',
