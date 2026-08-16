@@ -233,9 +233,9 @@ a { color: inherit; }
   text-transform: uppercase;
 }
 .hero-trust a:hover b { color: var(--oma-accent); }
-/* ── Command block — the copyable install command. In the hero it carries the
-   primary CTA styling (see the .hero-cta overrides below); in the closing CTA it
-   keeps this bordered chip look. ── */
+/* ── Command block (primary CTA) — the copyable install command. The terminal
+   chip itself is the CTA: bordered raised well, $ prompt, ghost copy icon. It
+   serves as the hero's primary action and again in the closing CTA band. ── */
 .cmd {
   display: inline-flex; align-items: center; gap: 14px;
   background: var(--oma-bg-3); border: 1px solid var(--border-strong);
@@ -293,26 +293,6 @@ a { color: inherit; }
 /* bg-3 is dark-first (a raised well on near-black); in light mode it inverts to the
    darkest warm surface and reads as a muddy tan for a standalone CTA — drop to bg-1. */
 :root[data-theme='light'] .cmd { background: var(--oma-bg-1); }
-/* In the hero the install command IS the primary CTA: the .cmd chip adopts the
-   solid accent fill of .btn-primary (the site's only solid button) while keeping
-   its copy affordance, and Quick Start drops to a quiet text-link below it. (The
-   closing CTA keeps the full .cmd chip beside its primary button.) The light-mode
-   selector must out-specify the :root[data-theme='light'] .cmd fill above. */
-.hero-cta .cmd {
-  background: var(--oma-accent);
-  border-color: transparent;
-  box-shadow: none;
-  font-weight: 600;
-  transition: background var(--duration-base) var(--ease-out),
-              box-shadow var(--duration-base) var(--ease-out);
-}
-:root[data-theme='light'] .hero-cta .cmd { background: var(--oma-accent); }
-.hero-cta .cmd:hover { background: var(--oma-accent-deep); border-color: transparent; box-shadow: var(--shadow-md); }
-.hero-cta .cmd .prompt, .hero-cta .cmd .text { color: var(--oma-accent-fg); font-size: 15px; }
-.hero-cta .cmd .copy { color: var(--oma-accent-fg); }
-.hero-cta .cmd:hover .copy { color: var(--oma-accent-fg); }
-.hero-cta .cmd .check-i { color: var(--oma-accent-fg); }
-.hero-cta .text-link { font-size: 15px; }
 .text-link {
   display: inline-flex; align-items: center; gap: 7px; text-decoration: none;
   font-family: var(--font-mono); font-size: 14px; color: var(--oma-fg-1);
@@ -329,10 +309,11 @@ a { color: inherit; }
 .case-link:hover .text-link .arrow { transform: translateX(3px); color: var(--oma-accent); }
 
 /* ── Primary button (filled accent) ──
-   The site's only solid button: an accent fill reserved for the page's primary
-   path, lifted above the understated text-links. Used for the landing hero's
-   install command (via the .hero-cta overrides), the closing CTA band, the
-   page-hero header row (right), and the EnterpriseCta component. */
+   The site's only solid button: an accent fill reserved for action CTAs
+   (navigation / enterprise), lifted above the understated text-links. The
+   hero's install command deliberately does NOT use it — the .cmd chip is that
+   CTA. Used for the closing CTA band, the page-hero header row (right), the
+   capabilities page CTAs, and the EnterpriseCta component. */
 .btn-primary {
   display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0;
   background: var(--oma-accent); color: var(--oma-accent-fg);
@@ -345,9 +326,6 @@ a { color: inherit; }
 .btn-primary:hover { background: var(--oma-accent-deep); box-shadow: var(--shadow-md); }
 .btn-primary .arrow { color: currentColor; transition: transform var(--duration-base) var(--ease-out); }
 .btn-primary:hover .arrow { transform: translateX(3px); }
-/* Hero primary CTA — sized a touch larger than the base button so the install
-   command reads as the strongest CTA, above the Quick Start text-link. */
-.hero-cta-primary { font-size: 15px; padding: 13px 22px; }
 
 /* ── Hero header row ──
    Pairs a page's H1 block (left) with the enterprise primary button (right),
@@ -1018,7 +996,6 @@ a { color: inherit; }
   .cmd-wrap { width: 100%; }
   .cap-code-wrap .text-link { white-space: normal; line-height: 1.5; }
   .hero-cta { gap: 18px; }
-  .hero-cta-primary { width: 100%; justify-content: center; }
   .hero-trust { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: none; }
   .hero-trust > a, .hero-trust > span { border-top: 1px solid var(--oma-border-0); }
   .hero-trust > :nth-child(-n + 2) { border-top: 0; }
