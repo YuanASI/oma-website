@@ -132,14 +132,37 @@ export default defineConfig({
 	redirects: {
 		'/github': 'https://github.com/open-multi-agent/open-multi-agent',
 	},
-	// Inline every page's CSS into its <html> instead of emitting <link
-	// rel="stylesheet"> chunks. The default ('auto') left two ~5KB-gz
-	// render-blocking CSS requests on the landing page — PageSpeed measured them
-	// at 90ms (desktop) to 950ms (mobile) of FCP/LCP delay. Cost: repeat
-	// visitors re-download each page's CSS inside the HTML (~5-12KB gz) instead
-	// of hitting the browser cache — the right trade for a mostly-first-visit
-	// marketing + docs site.
-	build: { inlineStylesheets: 'always' },
+	// Emit page CSS as <link rel="stylesheet"> chunks (Astro's default) instead of
+	// inlining it into every page's <html>.
+	//
+	// This reverses an earlier 'always'. Inlining removed the render-blocking CSS
+	// request and charged for it twice: no page could cache its stylesheet for the
+	// next page, and the stylesheet sat in front of the content. 62KB of <style>
+	// put the landing page's <h1> at byte 83,629 of 117,335 and a docs page's at
+	// 127,144 of 210,350, so anything reading the HTML on a byte budget met
+	// boilerplate first.
+	//
+	// Measured both settings, Lighthouse with simulated throttling, medians of 5
+	// (mobile) / 3 (desktop), spread within a few ms per cell:
+	//
+	//   landing, mobile    FCP  907 → 1059ms   LCP 1580 → 1659ms
+	//   landing, desktop   FCP  247 →  288ms   LCP  387 →  388ms
+	//   docs,   mobile     FCP 1059 → 1357ms   LCP 1809 → 1957ms
+	//
+	// The landing figures are /zh/, not /: LangInit bounces a zh-locale browser off
+	// `/` on first touch, and a client-side redirect inside the trace measures the
+	// redirect, not the page. Same template, same CSS bundles, one stable URL.
+	//
+	// Against that: HTML halves — landing 117,335 → 58,548 bytes (27.4 → 14.6KB
+	// gz), docs 210,350 → 126,248 (37.7 → 20.0KB gz), /404 87,401 → 22,128 — and
+	// the <h1> moves to byte 24,842 and 43,042. So a first view pays ~0.1s of
+	// mobile LCP, and every later page in the session ships half the HTML and
+	// takes the CSS from cache instead of re-downloading it inside the markup.
+	//
+	// 'auto' rather than 'never': 'never' externalizes the small per-page sheets
+	// too, turning the landing page's 2 render-blocking requests into 5 to move
+	// about 3KB.
+	build: { inlineStylesheets: 'auto' },
 	// Blog posts (src/content/blog) render monochrome code blocks styled in
 	// blog.css — disabling Astro's Shiki here keeps every code glyph at a
 	// controlled >=4.5:1 contrast. Starlight docs use Expressive Code (configured
