@@ -8,3 +8,11 @@
 # Historical product URL still linked from third-party sites. Preserve its
 # accumulated signals instead of leaving Search Console with a persistent 404.
 /developer  /getting-started/quick-start/  301
+
+# Conventional developer entry points. Agents (and people) probe /docs and
+# /developers before they read a nav, and both currently dead-end in a 404.
+# These live here rather than in astro.config.mjs `redirects` on purpose: the
+# static build turns that config into a meta-refresh stub page, which a non-JS
+# client sees as a 200 with no content — a real 301 is the whole point.
+/docs        /getting-started/introduction/   301
+/developers  /getting-started/quick-start/    301

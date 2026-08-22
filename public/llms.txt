@@ -131,6 +131,7 @@ Honest, sourced comparisons against the main multi-agent frameworks — language
 - [Examples by goal](https://open-multi-agent.com/examples/): start here, use-case recipes, orchestration, production controls, stack integrations, and models/providers.
 - [Showcase](https://open-multi-agent.com/showcase/): open-source projects built with OMA and tools that integrate with it.
 - [npm package](https://www.npmjs.com/package/@open-multi-agent/core)
+- [Contact](https://open-multi-agent.com/contact/): which channel to use for bugs, usage questions, security reports, and commercial work.
 
 ## Optional
 
