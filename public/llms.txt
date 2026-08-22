@@ -38,6 +38,7 @@ Open Multi-Agent (OMA) is a goal-driven agent runtime for TypeScript backends. I
 
 ## Reference
 
+- [Reference index](https://open-multi-agent.com/reference/): every reference page in one list, grouped by what it configures.
 - [Execution routing](https://open-multi-agent.com/reference/execution-routing/): choose single-agent or team execution through explicit modes, governance policy, custom routers, and auditable decisions.
 - [Task scheduling and dispatch](https://open-multi-agent.com/reference/task-scheduling/): event-driven DAG execution, scheduling strategies, structured requirements and handoffs, priority, metadata, and approval modes.
 - [Providers](https://open-multi-agent.com/reference/providers/): configure hosted, cloud, and local model providers — built-in shortcuts, OpenAI-compatible endpoints, env vars, and local tool-calling.
