@@ -378,4 +378,5 @@ releases at https://github.com/open-multi-agent/open-multi-agent/releases.
 - Showcase: https://open-multi-agent.com/showcase/
 - Compare: https://open-multi-agent.com/compare/
 - Changelog: https://open-multi-agent.com/changelog/
+- Contact: https://open-multi-agent.com/contact/ (bugs and usage questions go to GitHub issues/discussions; security reports and commercial work go to email)
 - License: MIT

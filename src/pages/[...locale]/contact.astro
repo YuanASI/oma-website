@@ -1,0 +1,20 @@
+---
+// /contact and /zh/contact — which channel fits which question. The fourth
+// footer-linked trust page; the layout lives in TrustPage.
+//
+// Every channel named here is one that exists and is watched: GitHub issues,
+// GitHub Discussions, and the published address. No contact form — the site is
+// static, and a form with nothing behind it is worse than an address.
+import '@fontsource-variable/geist';
+import '@fontsource-variable/jetbrains-mono';
+import '../../styles/tokens.css';
+import '../../styles/landing.css';
+import '../../styles/blog.css';
+import TrustPage from '../../components/TrustPage.astro';
+import { localeStaticPaths, toLocale } from '../../i18n';
+
+export function getStaticPaths() { return localeStaticPaths(); }
+const locale = toLocale(Astro.params.locale);
+---
+
+<TrustPage locale={locale} page="contact" path="/contact/" schemaType="ContactPage" updated="2026-08-22" />

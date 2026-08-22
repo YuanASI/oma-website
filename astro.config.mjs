@@ -250,6 +250,14 @@ export default defineConfig({
 					],
 				},
 				{
+					// The /reference/ landing page. `slug: 'reference'` (no sub-path) is
+					// also what keeps it out of the reference↔sidebar one-to-one check —
+					// it indexes the pages below, it is not one of them.
+					label: 'Reference overview',
+					translations: { 'zh-CN': '参考总览' },
+					slug: 'reference',
+				},
+				{
 					label: 'Configure models & tools',
 					translations: { 'zh-CN': '配置模型与工具' },
 					items: [
