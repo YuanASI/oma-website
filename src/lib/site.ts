@@ -56,10 +56,14 @@ export function ghStats(): GhStats {
   };
 }
 
-// Locale-matched enterprise landing on YUANASI. zh → the Chinese root; every other
-// locale → /en. One helper so the footer's Enterprise-support link, the
+// Locale-matched enterprise landing on YUANASI. zh → the Chinese homepage; every
+// other locale → /en. UTM params let YuanASI analytics tell the Chinese and
+// English CTA funnels apart (utm_campaign=zh/en) and attribute contacts back to
+// this site. One helper so the footer's Enterprise-support link, the
 // EnterpriseCta block, and the nav's For Companies entry all resolve the same
 // target — the URL contract lives here, not copied at each call site.
 export function yuanasiHref(locale: string): string {
-  return locale === 'zh' ? YUANASI : `${YUANASI}/en`;
+  const base = locale === 'zh' ? YUANASI : `${YUANASI}/en`;
+  const campaign = locale === 'zh' ? 'zh' : 'en';
+  return `${base}?utm_source=open-multi-agent.com&utm_medium=enterprise-cta&utm_campaign=${campaign}`;
 }

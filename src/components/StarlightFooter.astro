@@ -1,11 +1,9 @@
 ---
-// Mount the shared Chinese enterprise dialog once, after Starlight has rendered
-// both desktop and mobile enterprise triggers, and append the trust-page links
-// the custom pages carry in their own footer — the docs are the bulk of the
-// site's URLs, so About/Privacy/Terms have to be reachable from here too.
-// Starlight's own footer content (pagination, last-updated) stays untouched.
+// Append the trust-page links the custom pages carry in their own footer — the
+// docs are the bulk of the site's URLs, so About/Privacy/Terms have to be
+// reachable from here too. Starlight's own footer content (pagination,
+// last-updated) stays untouched.
 import Default from '@astrojs/starlight/components/Footer.astro';
-import EnterpriseContactDialog from './EnterpriseContactDialog.astro';
 import { useTranslations, localizePath, type Locale } from '../i18n';
 
 const locale: Locale = Astro.locals.starlightRoute.lang === 'zh-CN' ? 'zh' : 'en';
@@ -19,7 +17,6 @@ const L = (p: string) => localizePath(p, locale);
   <a href={L('/privacy/')}>{t.footer.legal.privacy}</a>
   <a href={L('/terms/')}>{t.footer.legal.terms}</a>
 </div>
-{locale === 'zh' && <EnterpriseContactDialog locale={locale} />}
 
 <style>
   .docs-legal {
