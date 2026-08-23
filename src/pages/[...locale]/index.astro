@@ -12,6 +12,10 @@ import '@fontsource-variable/geist';
 import '@fontsource-variable/jetbrains-mono';
 import '../../styles/tokens.css';
 import '../../styles/landing.css';
+// Landing-only blocks (hero DAG visual, FAQ, compact IA, endorsement). Split
+// out of landing.css so the other ~20 custom pages stop downloading them; see
+// the header of home.css for what belongs in which file.
+import '../../styles/home.css';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Badge from '../../components/ds/Badge.astro';
 import Card from '../../components/ds/Card.astro';
