@@ -10,9 +10,10 @@
 /developer  /getting-started/quick-start/  301
 
 # Conventional developer entry points. Agents (and people) probe /docs and
-# /developers before they read a nav, and both currently dead-end in a 404.
+# /developers before they read a nav. /docs lands on the Getting Started index
+# rather than a specific page, so the redirect stays right as that section grows.
 # These live here rather than in astro.config.mjs `redirects` on purpose: the
 # static build turns that config into a meta-refresh stub page, which a non-JS
 # client sees as a 200 with no content — a real 301 is the whole point.
-/docs        /getting-started/introduction/   301
+/docs        /getting-started/                301
 /developers  /getting-started/quick-start/    301

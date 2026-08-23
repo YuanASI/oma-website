@@ -258,6 +258,9 @@ export default defineConfig({
 					label: 'Getting Started',
 					translations: { 'zh-CN': '入门指南' },
 					items: [
+						// Section landing page (getting-started/index.md). Without it /getting-started/
+						// is a 404 — a URL people and agents reach by trimming a doc path.
+						{ label: 'Overview', slug: 'getting-started', translations: { 'zh-CN': '总览' } },
 						{ label: 'Introduction', slug: 'getting-started/introduction', translations: { 'zh-CN': '简介' } },
 						{ label: 'Quick Start', slug: 'getting-started/quick-start', translations: { 'zh-CN': '快速开始' } },
 						{ label: 'Choose a Run Mode', slug: 'getting-started/three-ways-to-run', translations: { 'zh-CN': '选择运行方式' } },
@@ -267,6 +270,7 @@ export default defineConfig({
 					label: 'Guides',
 					translations: { 'zh-CN': '指南' },
 					items: [
+						{ label: 'Overview', slug: 'guides', translations: { 'zh-CN': '总览' } },
 						{ label: 'Orchestration Controls', slug: 'guides/orchestration-controls', translations: { 'zh-CN': '编排控制' } },
 						{ label: 'Control costs & budgets', slug: 'guides/cost-budget-control', translations: { 'zh-CN': '控制成本与预算' } },
 						{ label: 'Production Checklist', slug: 'guides/production-checklist', translations: { 'zh-CN': '生产清单' } },
