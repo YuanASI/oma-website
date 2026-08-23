@@ -28,6 +28,8 @@ Open Multi-Agent (OMA) is a goal-driven agent runtime for TypeScript backends. I
 ## Docs
 
 - [Capabilities](https://open-multi-agent.com/capabilities/): the released runtime surface, from goal or DAG through routing, scheduling, governance, recovery, and evidence.
+- [Getting started](https://open-multi-agent.com/getting-started/): the three pages that take a project from install to a traced run, in order.
+- [Guides](https://open-multi-agent.com/guides/): task-shaped walkthroughs — orchestration controls, cost and budget limits, and the production checklist.
 - [Introduction](https://open-multi-agent.com/getting-started/introduction/): what open-multi-agent is, how goal-first orchestration differs from graph-first frameworks, and how the runtime is structured.
 - [Quick Start](https://open-multi-agent.com/getting-started/quick-start/): scaffold a project with npm create oma-app, or install the core package and run your first auto-orchestrated team.
 - [Three Ways to Run](https://open-multi-agent.com/getting-started/three-ways-to-run/): runAgent, runTeam, and runTasks — plus plan preview, plan replay, and consensus verification.
