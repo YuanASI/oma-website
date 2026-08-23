@@ -1,5 +1,9 @@
 {
   "_comment": "Translation drift anchor for Getting Started, Guides, and vendored Reference docs. Maps each `<section>/<slug>` to the sha256 of the English BODY (front-matter stripped) its zh translation was made from, plus the date. Written by scripts/update-translation-manifest.mjs; read by scripts/check-reference-drift.mjs in ordinary CI and the weekly Reference sync. See TRANSLATING.md.",
+  "getting-started/index": {
+    "enBodySha256": "91e286c0986011f202ab1bc470b25a3d77d9c9c41d3e9ca4ae09d1238aea6eb7",
+    "translatedAt": "2026-08-23"
+  },
   "getting-started/introduction": {
     "enBodySha256": "0618584e75190c5ee4272113fb5867ee6426e2650b0b150aa9e8a31ebf6fbcb0",
     "translatedAt": "2026-07-30"
@@ -15,6 +19,10 @@
   "guides/cost-budget-control": {
     "enBodySha256": "ad2c390f15939783d548db29905f10c723481fdfcf8b60b02d0a80643a7d99e6",
     "translatedAt": "2026-07-19"
+  },
+  "guides/index": {
+    "enBodySha256": "901215db2fa668c8a303e1ecedd4283e0b6f83793e15e13acb2e2a6ef829eb1d",
+    "translatedAt": "2026-08-23"
   },
   "guides/orchestration-controls": {
     "enBodySha256": "f492e7797e0bfb5dd3887cab6351691f3f05767929e7b62705b0952126a7719c",
@@ -55,6 +63,10 @@
   "reference/external-agents": {
     "enBodySha256": "a9ab82a32ee2ee78ccb197fa2d5c9510d4d333ed33188f77f9534ae327c03c25",
     "translatedAt": "2026-08-02"
+  },
+  "reference/index": {
+    "enBodySha256": "e77b8ecd83243acd35c476e2e0c39f5c3e93317ab586ae0ede8b0b8628a17625",
+    "translatedAt": "2026-08-22"
   },
   "reference/model-routing": {
     "enBodySha256": "cafa65c06d27359463094e270c12881de10a53baf1bf7e6c42ec49a0986f3314",

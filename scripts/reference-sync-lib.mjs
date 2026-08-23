@@ -16,6 +16,14 @@ export const EXCLUDE = new Set([
   'observability-release-readiness',
 ]);
 
+// The Reference section index (reference/index.md) is a hand-written hub for the
+// /reference/ URL: it links the pages under it, has no upstream counterpart in
+// the framework repo, and is reached through its own sidebar entry (`slug:
+// 'reference'`, not `reference/<slug>`). So it takes part in none of the sync
+// comparisons below — counting it would report phantom drift against upstream
+// and a phantom sidebar mismatch.
+const isSectionHub = (name) => name === 'index';
+
 export const stripH1 = (markdown) => markdown.replace(/^#\s+.*\n+/, '');
 
 export const stripFrontmatter = (markdown) =>
@@ -86,7 +94,9 @@ export function listLocalReferenceSlugs(dir = REFDIR, prefix = '') {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     if (entry.isDirectory()) return listLocalReferenceSlugs(join(dir, entry.name), `${prefix}${entry.name}/`);
     if (!entry.isFile() || !entry.name.endsWith('.md')) return [];
-    return [`${prefix}${entry.name.replace(/\.md$/, '')}`];
+    const slug = entry.name.replace(/\.md$/, '');
+    if (isSectionHub(slug)) return [];
+    return [`${prefix}${slug}`];
   }).sort();
 }
 
@@ -95,6 +105,7 @@ export function listLocalFlatReferences(dir = REFDIR) {
   return readdirSync(dir, { withFileTypes: true })
     .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
     .map((entry) => entry.name.replace(/\.md$/, ''))
+    .filter((name) => !isSectionHub(name))
     .sort();
 }
 

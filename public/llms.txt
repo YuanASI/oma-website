@@ -28,6 +28,8 @@ Open Multi-Agent (OMA) is a goal-driven agent runtime for TypeScript backends. I
 ## Docs
 
 - [Capabilities](https://open-multi-agent.com/capabilities/): the released runtime surface, from goal or DAG through routing, scheduling, governance, recovery, and evidence.
+- [Getting started](https://open-multi-agent.com/getting-started/): the three pages that take a project from install to a traced run, in order.
+- [Guides](https://open-multi-agent.com/guides/): task-shaped walkthroughs — orchestration controls, cost and budget limits, and the production checklist.
 - [Introduction](https://open-multi-agent.com/getting-started/introduction/): what open-multi-agent is, how goal-first orchestration differs from graph-first frameworks, and how the runtime is structured.
 - [Quick Start](https://open-multi-agent.com/getting-started/quick-start/): scaffold a project with npm create oma-app, or install the core package and run your first auto-orchestrated team.
 - [Three Ways to Run](https://open-multi-agent.com/getting-started/three-ways-to-run/): runAgent, runTeam, and runTasks — plus plan preview, plan replay, and consensus verification.
@@ -38,6 +40,7 @@ Open Multi-Agent (OMA) is a goal-driven agent runtime for TypeScript backends. I
 
 ## Reference
 
+- [Reference index](https://open-multi-agent.com/reference/): every reference page in one list, grouped by what it configures.
 - [Execution routing](https://open-multi-agent.com/reference/execution-routing/): choose single-agent or team execution through explicit modes, governance policy, custom routers, and auditable decisions.
 - [Task scheduling and dispatch](https://open-multi-agent.com/reference/task-scheduling/): event-driven DAG execution, scheduling strategies, structured requirements and handoffs, priority, metadata, and approval modes.
 - [Providers](https://open-multi-agent.com/reference/providers/): configure hosted, cloud, and local model providers — built-in shortcuts, OpenAI-compatible endpoints, env vars, and local tool-calling.
@@ -131,6 +134,7 @@ Honest, sourced comparisons against the main multi-agent frameworks — language
 - [Examples by goal](https://open-multi-agent.com/examples/): start here, use-case recipes, orchestration, production controls, stack integrations, and models/providers.
 - [Showcase](https://open-multi-agent.com/showcase/): open-source projects built with OMA and tools that integrate with it.
 - [npm package](https://www.npmjs.com/package/@open-multi-agent/core)
+- [Contact](https://open-multi-agent.com/contact/): which channel to use for bugs, usage questions, security reports, and commercial work.
 
 ## Optional
 

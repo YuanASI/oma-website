@@ -1,7 +1,7 @@
 ---
-// Shared shell for the three trust pages — /about, /privacy, /terms (plus their
-// /zh/ counterparts). They differ only in copy, schema type, and revision date,
-// so the page files stay thin and the layout lives here once.
+// Shared shell for the four trust pages — /about, /contact, /privacy, /terms
+// (plus their /zh/ counterparts). They differ only in copy, schema type, and
+// revision date, so the page files stay thin and the layout lives here once.
 //
 // Copy comes from the `legal` block in src/i18n; the only interpolation is the
 // About page's repo numbers, which are filled from the same committed GitHub
@@ -15,11 +15,11 @@ import { useTranslations, type Locale } from '../i18n';
 
 interface Props {
   locale: Locale;
-  page: 'about' | 'privacy' | 'terms';
+  page: 'about' | 'contact' | 'privacy' | 'terms';
   /** Default-locale path, e.g. '/about/' — drives canonical, hreflang, and the language switcher. */
   path: string;
   /** schema.org @type for this page. */
-  schemaType: 'AboutPage' | 'WebPage';
+  schemaType: 'AboutPage' | 'ContactPage' | 'WebPage';
   /** ISO date this copy was last revised — rendered, and emitted as dateModified. */
   updated: string;
 }

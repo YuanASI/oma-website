@@ -110,7 +110,7 @@ export const en = {
     resources: { head: 'Resources', docs: 'Docs', architecture: 'Architecture', examples: 'Examples', showcase: 'Showcase', compare: 'Compare', blog: 'Blog', changelog: 'Changelog' },
     project: { head: 'Project', github: 'GitHub', npm: 'npm', mitLicense: 'MIT license', llmsTxt: 'llms.txt', rss: 'RSS' },
     resourcesEnterprise: 'Enterprise support',
-    legal: { about: 'About', privacy: 'Privacy', terms: 'Terms' },
+    legal: { about: 'About', contact: 'Contact', privacy: 'Privacy', terms: 'Terms' },
     mitLicensed: 'MIT licensed · @open-multi-agent',
     builtBy: 'Built by',
   },
@@ -156,6 +156,49 @@ export const en = {
           body: [
             'For bugs, feature requests, and technical questions, open an issue or a discussion on <a href="https://github.com/open-multi-agent/open-multi-agent/issues">GitHub</a> — that is the primary channel and answers stay searchable for everyone.',
             'For commercial delivery or consulting, see <a href="https://yuanasi.com/en">yuanasi.com</a>, or email <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a> directly.',
+          ],
+        },
+      ],
+    },
+    contact: {
+      seo: {
+        title: 'Contact — Open Multi-Agent',
+        description: 'How to reach the Open Multi-Agent maintainers: GitHub issues for bugs, Discussions for usage questions, and email for security reports and commercial delivery.',
+      },
+      eyebrow: 'contact',
+      title: 'Contact.',
+      lede: 'Which channel fits which question — and what happens after you send it.',
+      sections: [
+        {
+          h: 'Bugs and feature requests',
+          body: [
+            'Open an issue on <a href="https://github.com/open-multi-agent/open-multi-agent/issues">GitHub</a>. Include the OMA version, the provider you ran against, and the smallest snippet that reproduces the behaviour — that is usually the difference between a fix and a thread of clarifying questions.',
+            'Triage happens in the open, and the queue is public, so you can see what sits ahead of your report instead of guessing. There is no support SLA on the open-source project.',
+          ],
+        },
+        {
+          h: 'Questions about using it',
+          body: [
+            'Ask in <a href="https://github.com/open-multi-agent/open-multi-agent/discussions">GitHub Discussions</a> rather than by email — answers there stay searchable for the next person with the same question.',
+            'Most of it is already written down: <a href="/getting-started/introduction/">Introduction</a> for the model, <a href="/getting-started/quick-start/">Quick start</a> for the first run, <a href="/reference/cli/">CLI reference</a> for the <code>oma</code> binary, and <a href="/examples/">Examples</a> for working recipes.',
+          ],
+        },
+        {
+          h: 'Security reports',
+          body: [
+            'If you think you have found a vulnerability in the runtime, email <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a> with <code>security</code> in the subject line instead of opening a public issue, so a fix can ship before the details are public.',
+          ],
+        },
+        {
+          h: 'Commercial delivery and support',
+          body: [
+            'Paid implementation, integration, and support are handled by 元定义科技 (YuanASI), a separate commercial entity — see <a href="https://yuanasi.com/en">yuanasi.com</a>, or email <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>. The framework stays MIT-licensed and free to use either way.',
+          ],
+        },
+        {
+          h: 'Everything else',
+          body: [
+            'Press, talks, and anything that fits none of the above: <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>. There is no phone line and no ticketing portal — GitHub and that address are the whole surface.',
           ],
         },
       ],

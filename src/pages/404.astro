@@ -1,0 +1,75 @@
+---
+// /404 — what Cloudflare Pages serves for any path that does not resolve, docs
+// routes included: an Astro page at src/pages/404.astro replaces Starlight's
+// built-in one for the whole site.
+//
+// Two audiences land here. A reader who mistyped a URL, and a crawler or agent
+// that followed a stale link — and the second one only recovers if the response
+// itself carries the way back. So the body lists the real entry points (docs,
+// examples, sitemap, llms.txt) instead of apologising and stopping at a search
+// box the non-JS client cannot use.
+//
+// Deliberately single-locale: one 404.html answers every path, /zh/ included, so
+// the copy is written once in English with a Chinese hand-off at the end rather
+// than being wired into i18n dictionaries this page cannot switch on.
+import '@fontsource-variable/geist';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/tokens.css';
+import '../styles/landing.css';
+import '../styles/blog.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { REPO, ghStats } from '../lib/site';
+
+const stats = await ghStats();
+const starsK = (stats.stars / 1000).toFixed(1) + 'k';
+
+const title = '404 — Open Multi-Agent';
+const description =
+  'That page does not exist. Entry points back into the Open Multi-Agent site: documentation, examples, the sitemap, and llms.txt.';
+---
+
+<BaseLayout locale="en" title={title} description={description} path="/404/" localized={false}>
+  {/* Nothing here should be indexed, but every link on it should still be
+      followed — that is what makes the page a recovery path rather than a dead
+      end for a crawler. */}
+  <meta slot="head" name="robots" content="noindex, follow" />
+  <Nav current="legal" starsK={starsK} locale="en" path="/" />
+  <main>
+    <section class="section">
+      <div class="container container--narrow">
+        <div class="section-head">
+          <div class="eyebrow"><span class="idx">//</span> 404</div>
+          <h1 class="section-title">This page does not exist.</h1>
+          <p class="section-sub">
+            The URL is wrong, or the page moved. Everything below is a working entry point into the site.
+          </p>
+        </div>
+        <div class="prose">
+          <h2>Start here</h2>
+          <ul>
+            <li><a href="/">Home</a> — what Open Multi-Agent is, in one screen.</li>
+            <li><a href="/getting-started/introduction/">Introduction</a> — how the runtime turns a goal into a task DAG.</li>
+            <li><a href="/getting-started/quick-start/">Quick start</a> — install the package and get a first run out.</li>
+            <li><a href="/reference/">Reference</a> — every runtime page, grouped; <a href="/reference/cli/">CLI</a> covers the <code>oma</code> binary.</li>
+            <li><a href="/examples/">Examples</a> — runnable recipes, each with its source.</li>
+            <li><a href="/capabilities/">Capabilities</a>, <a href="/compare/">Compare</a>, <a href="/blog/">Blog</a>, <a href="/changelog/">Changelog</a>.</li>
+          </ul>
+          <h2>Machine-readable entry points</h2>
+          <ul>
+            <li><a href="/sitemap-index.xml">/sitemap-index.xml</a> — every indexable URL on this site.</li>
+            <li><a href="/llms.txt">/llms.txt</a> — the site index written for LLMs; <a href="/llms-full.txt">/llms-full.txt</a> is the long form.</li>
+            <li><a href={REPO}>The GitHub repository</a> — source, issues, releases.</li>
+          </ul>
+          <h2>简体中文</h2>
+          <p>
+            中文站点在 <a href="/zh/">open-multi-agent.com/zh/</a>，文档从<a href="/zh/getting-started/introduction/">介绍</a
+            >开始，<a href="/zh/examples/">示例</a>提供可直接运行的配方。
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer locale="en" />
+</BaseLayout>

@@ -2,6 +2,14 @@
 // Used by both landing-style pages (index.astro, examples.astro) and the
 // shared Nav/Footer components — one source, no duplication.
 export const REPO = 'https://github.com/open-multi-agent/open-multi-agent';
+// The GitHub organization behind the project (its profile lists this site as its
+// website). Separate from REPO so JSON-LD can point at the org profile without
+// implying it is the repository.
+export const GITHUB_ORG = 'https://github.com/open-multi-agent';
+// Maintainer profiles, published so the homepage graph can link the person the
+// /about page names to accounts anyone can verify.
+export const MAINTAINER_GITHUB = 'https://github.com/JackChen-me';
+export const MAINTAINER_DEVTO = 'https://dev.to/jackchenme';
 export const FORGE = 'https://github.com/open-multi-agent/oma-forge';
 export const NPM = 'https://www.npmjs.com/package/@open-multi-agent/core';
 // Enterprise / commercial-support site (YuanASI). Separate business entity that

@@ -68,7 +68,7 @@ export const zh: UiDict = {
     resources: { head: '资源', docs: '文档', architecture: '架构', examples: '示例', showcase: '案例', compare: '对比', blog: '博客', changelog: '更新日志' },
     project: { head: '项目', github: 'GitHub', npm: 'npm', mitLicense: 'MIT 许可证', llmsTxt: 'llms.txt', rss: 'RSS' },
     resourcesEnterprise: '企业服务',
-    legal: { about: '关于', privacy: '隐私', terms: '条款' },
+    legal: { about: '关于', contact: '联系', privacy: '隐私', terms: '条款' },
     mitLicensed: 'MIT 许可 · @open-multi-agent',
     builtBy: '出自',
   },
@@ -113,6 +113,49 @@ export const zh: UiDict = {
           body: [
             '缺陷反馈、功能建议和技术问题，请在 <a href="https://github.com/open-multi-agent/open-multi-agent/issues">GitHub</a> 提 issue 或发起 discussion——这是主要渠道，且回答对所有人可检索。',
             '商业交付与咨询请访问 <a href="https://yuanasi.com">yuanasi.com</a>，也可以直接发邮件至 <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>。',
+          ],
+        },
+      ],
+    },
+    contact: {
+      seo: {
+        title: '联系 —— Open Multi-Agent',
+        description: '如何联系 Open Multi-Agent 的维护者：缺陷提 GitHub issue，使用问题去 Discussions，安全问题与商业交付走邮件。',
+      },
+      eyebrow: '联系',
+      title: '联系我们。',
+      lede: '什么问题走什么渠道，以及发出之后会发生什么。',
+      sections: [
+        {
+          h: '缺陷与功能建议',
+          body: [
+            '请在 <a href="https://github.com/open-multi-agent/open-multi-agent/issues">GitHub</a> 提 issue。附上 OMA 版本、你使用的模型供应商，以及能复现问题的最小代码片段——这通常决定了问题是被直接修复，还是要先来回澄清好几轮。',
+            '缺陷处理在公开渠道进行，队列公开可见，你可以看到自己的报告前面还排着哪些工作。开源项目本身不提供支持 SLA。',
+          ],
+        },
+        {
+          h: '使用问题',
+          body: [
+            '请到 <a href="https://github.com/open-multi-agent/open-multi-agent/discussions">GitHub Discussions</a> 提问，而不是发邮件——那里的回答对下一个遇到同样问题的人是可检索的。',
+            '大部分内容文档里已经写了：<a href="/zh/getting-started/introduction/">介绍</a>讲清运行模型，<a href="/zh/getting-started/quick-start/">快速开始</a>跑通第一次运行，<a href="/zh/reference/cli/">CLI 参考</a>说明 <code>oma</code> 命令，<a href="/zh/examples/">示例</a>提供可直接运行的配方。',
+          ],
+        },
+        {
+          h: '安全问题',
+          body: [
+            '如果你认为发现了运行时的安全漏洞，请发邮件至 <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>，主题中注明 <code>security</code>，不要直接开公开 issue——这样可以在细节公开之前先把修复发出去。',
+          ],
+        },
+        {
+          h: '商业交付与支持',
+          body: [
+            '付费实施、集成与技术支持由独立商业主体元定义科技（YuanASI）承接——见 <a href="https://yuanasi.com">yuanasi.com</a>，或直接发邮件至 <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>；站内「企业服务」入口中也附有微信二维码。无论是否走商业渠道，框架本身都保持 MIT 许可、免费使用。',
+          ],
+        },
+        {
+          h: '其他',
+          body: [
+            '媒体采访、分享邀约，以及不属于以上任何一类的事情：<a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>。项目没有电话热线，也没有工单系统——GitHub 和这个邮箱就是全部入口。',
           ],
         },
       ],
