@@ -55,6 +55,10 @@ explicitly requires a dependency change.
 - `src/data/hero-run*.json`: captured real OMA runs used by the landing page.
 - `scripts/`: content sync, translation drift, migration, and hero capture tools.
 - `TRANSLATING.md`: translation terminology and workflow requirements.
+- `ATTRIBUTION.md`: the registry of campaign values used on outbound links,
+  and the rule for when a link gets a `/go/` short link instead.
+- `public/_redirects`: Cloudflare Pages edge redirects, including those short
+  links. Copied verbatim at build time, so no check in this repository reads it.
 
 ## Working rules
 
@@ -99,6 +103,23 @@ comparisons belong under `/compare/`, not in documentation body content.
 - Keep localized metadata, canonical URLs, and hreflang behavior intact.
 - A localized hero run must be captured with the corresponding language through
   `scripts/capture-hero-dag.mjs`; do not hand-translate captured run JSON.
+
+### Tag outbound links from the registry
+
+`ATTRIBUTION.md` is the source of truth for which `utm_source` and `utm_medium`
+values exist and what each one means. Consult it before adding or changing any
+link that points at the site from outside it — including links that live in
+other repositories, in GitHub's own link fields, or anywhere else off this
+site. Reusing a value that already means something else, or coining a synonym
+for one that exists, is what stops the dashboard telling channels apart, and it
+cannot be repaired after the fact.
+
+Never put campaign parameters on a link between pages of this site: an internal
+link carrying them is recorded as a fresh external arrival.
+
+Short links belong to positions that render a link as the URL itself; a link
+with anchor text carries the canonical URL instead. `ATTRIBUTION.md` explains
+the distinction and how to verify a redirect, which no build check covers.
 
 ### Keep live data live
 

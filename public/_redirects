@@ -18,10 +18,16 @@
 /docs        /getting-started/                301
 /developers  /getting-started/quick-start/    301
 
-# Campaign short links. Outbound links carry UTM parameters so a channel that
-# strips the referrer — messaging apps, in-app webviews, email clients, QR
-# codes — is still attributable; these keep that from showing as a wall of
-# query string wherever the URL is visible.
+# Campaign short links, for positions that render a link as the URL itself —
+# where campaign parameters would otherwise sit in the open on a page built to
+# be looked at. Links with anchor text do not need one and should carry the
+# canonical URL instead.
+#
+# ATTRIBUTION.md at the repository root is the source of truth for which
+# utm_source and utm_medium values exist and what each means. Check it before
+# adding a link anywhere, including links that never reach this file: reusing
+# a value that already means something else, or inventing a synonym for one
+# that exists, is what stops the dashboard telling channels apart.
 #
 # 302, unlike every rule above. Those are permanent URL moves; these are not.
 # A campaign's destination changes (a new landing page, a new campaign tag),
@@ -32,16 +38,6 @@
 # Both the bare and trailing-slash forms are listed, because these rules match
 # the path exactly and Astro's `trailingSlash: 'always'` does not govern edge
 # redirects.
-#
-# The /go/{me,repo,org} three are GitHub's link fields: the profile sidebar,
-# a repository's About panel, and an organization's website. GitHub renders all
-# three as the URL itself — the About panel trims the scheme, the other two not
-# even that — so a query string sits in the open on pages built to be looked at.
-# Verified by reading the rendered pages, not assumed.
-#
-# Links inside README content do not need these: markdown gives them anchor
-# text, so the URL is never shown, and a canonical URL with parameters is
-# preferable there — it keeps working if this file ever loses the rule.
 
 /go/devto        /?utm_source=devto&utm_medium=referral       302
 /go/devto/       /?utm_source=devto&utm_medium=referral       302
