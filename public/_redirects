@@ -39,25 +39,31 @@
 # the path exactly and Astro's `trailingSlash: 'always'` does not govern edge
 # redirects.
 
-/go/devto        /?utm_source=devto&utm_medium=referral       302
-/go/devto/       /?utm_source=devto&utm_medium=referral       302
-/go/xhs          /?utm_source=xhs&utm_medium=social           302
-/go/xhs/         /?utm_source=xhs&utm_medium=social           302
-/go/wx           /?utm_source=wx&utm_medium=social            302
-/go/wx/          /?utm_source=wx&utm_medium=social            302
+/go/devto       /?utm_source=devto&utm_medium=referral       302
+/go/devto/      /?utm_source=devto&utm_medium=referral       302
+/go/xhs         /?utm_source=xhs&utm_medium=social           302
+/go/xhs/        /?utm_source=xhs&utm_medium=social           302
+/go/wx          /?utm_source=wx&utm_medium=social            302
+/go/wx/         /?utm_source=wx&utm_medium=social            302
 # Short link uses the current brand, the UTM value the name analytics tools
 # and years of prior data still use.
-/go/x            /?utm_source=twitter&utm_medium=social       302
-/go/x/           /?utm_source=twitter&utm_medium=social       302
-/go/email        /?utm_source=email&utm_medium=email          302
-/go/email/       /?utm_source=email&utm_medium=email          302
-/go/newsletter   /?utm_source=newsletter&utm_medium=email     302
-/go/newsletter/  /?utm_source=newsletter&utm_medium=email     302
-/go/yuanasi      /?utm_source=yuanasiweb&utm_medium=referral  302
-/go/yuanasi/     /?utm_source=yuanasiweb&utm_medium=referral  302
-/go/me           /?utm_source=github&utm_medium=user_profile  302
-/go/me/          /?utm_source=github&utm_medium=user_profile  302
-/go/repo         /?utm_source=github&utm_medium=repo_about    302
-/go/repo/        /?utm_source=github&utm_medium=repo_about    302
-/go/org          /?utm_source=github&utm_medium=org_profile   302
-/go/org/         /?utm_source=github&utm_medium=org_profile   302
+/go/x           /?utm_source=twitter&utm_medium=social       302
+/go/x/          /?utm_source=twitter&utm_medium=social       302
+/go/email       /?utm_source=email&utm_medium=email          302
+/go/email/      /?utm_source=email&utm_medium=email          302
+/go/newsletter  /?utm_source=newsletter&utm_medium=email     302
+/go/newsletter/ /?utm_source=newsletter&utm_medium=email     302
+/go/yuanasi     /?utm_source=yuanasiweb&utm_medium=referral  302
+/go/yuanasi/    /?utm_source=yuanasiweb&utm_medium=referral  302
+/go/me          /?utm_source=github&utm_medium=user_profile  302
+/go/me/         /?utm_source=github&utm_medium=user_profile  302
+/go/repo        /?utm_source=github&utm_medium=repo_about    302
+/go/repo/       /?utm_source=github&utm_medium=repo_about    302
+/go/org         /?utm_source=github&utm_medium=org_profile   302
+/go/org/        /?utm_source=github&utm_medium=org_profile   302
+/go/douyin      /?utm_source=douyin&utm_medium=social        302
+/go/douyin/     /?utm_source=douyin&utm_medium=social        302
+/go/wxmp        /?utm_source=wxmp&utm_medium=social          302
+/go/wxmp/       /?utm_source=wxmp&utm_medium=social          302
+/go/wxchannels  /?utm_source=wxchannels&utm_medium=social    302
+/go/wxchannels/ /?utm_source=wxchannels&utm_medium=social    302

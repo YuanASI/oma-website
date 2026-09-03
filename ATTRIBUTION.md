@@ -59,11 +59,14 @@ The only real difference is that a short link depends on its rule in
 | `npm` | An npm package page |
 | `devto` | dev.to |
 | `xhs` | Xiaohongshu |
-| `wx` | WeChat |
+| `wx` | WeChat, shared person to person — a chat, a group, a moment |
 | `twitter` | Twitter/X — the short link is `/go/x`, but the value stays `twitter`, which is what analytics tools call it and what the existing data uses |
 | `email` | One-to-one or business email |
 | `newsletter` | Broadcast newsletter |
 | `yuanasiweb` | yuanasi.com |
+| `douyin` | Douyin |
+| `wxmp` | A WeChat Official Account article (mp.weixin.qq.com) |
+| `wxchannels` | WeChat Channels — the video surface, 视频号 |
 
 ### utm_medium — which position within that source
 
@@ -119,10 +122,46 @@ uncorrectable from the server side.
 | `/go/me` | github / user_profile |
 | `/go/repo` | github / repo_about |
 | `/go/org` | github / org_profile |
+| `/go/douyin` | douyin / social |
+| `/go/wxmp` | wxmp / social |
+| `/go/wxchannels` | wxchannels / social |
 
 Each is listed twice, bare and with a trailing slash: the rules match the path
 exactly, and `trailingSlash: 'always'` governs generated pages, not edge
 redirects.
+
+## Adding a channel
+
+```bash
+node scripts/add-channel.mjs <name> <medium> [--source=<s>] [--desc="..."]
+```
+
+```bash
+node scripts/add-channel.mjs douyin social --desc="Douyin"
+node scripts/add-channel.mjs x social --source=twitter --desc="Twitter/X"
+```
+
+`name` is the path — `/go/<name>`. `--source` defaults to it and needs
+`--desc` when the value is new. Both files are updated together, and both
+spellings of the rule are written.
+
+`medium` has to be registered already. The mediums are a small closed set
+describing kinds of channel, so adding one is a deliberate edit to the table
+above rather than something a command does on the way past. If a new channel
+does not fit any of them, that is worth a moment's thought before inventing a
+value.
+
+Then:
+
+```bash
+pnpm check:attribution
+```
+
+This runs in `pnpm check`, so CI enforces it. It fails when a rule uses a
+value that is not registered, when a short link exists in one file but not the
+other, when a rule is not a 302, and when only one of the two spellings is
+present. That check is the reason this file can be trusted — nothing else
+reads `_redirects` at all, since `public/` is copied verbatim at build time.
 
 ## Rules
 
