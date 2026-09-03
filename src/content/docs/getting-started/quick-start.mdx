@@ -3,6 +3,8 @@ title: Quick Start
 description: "Run a real OMA task DAG in about five minutes with no API key, then switch the starter to a real model."
 ---
 
+import { CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
+
 :::tip[What you will finish]
 You will scaffold a project, exercise the real OMA scheduler with scripted model responses, and open the generated Markdown, JSON, and HTML reports. The first run needs no API key and makes no model request.
 :::
@@ -15,48 +17,68 @@ You will scaffold a project, exercise the real OMA scheduler with scripted model
 
 You do **not** need a provider account or API key for the first run.
 
-## 1. Create a starter
+## Your first run
+
+<Steps>
+
+1. ### Create a starter
+
+   ```bash
+   npm create oma-app@latest my-oma
+   ```
+
+   The interactive scaffolder asks for a starter and runtime. For the clearest introduction to scheduling, choose **Multi-agent DAG Demo**. The PR Review and Security Analysis starters show the same runtime in more opinionated workflows.
+
+2. ### What runs automatically
+
+   The interactive command installs dependencies and runs `npm run demo` for you. Scripted model responses drive the real task scheduler, parallel execution, aggregation, report writers, and offline Run Viewer.
+
+   The demo does not read a provider credential or make a model request. Installing the project still downloads packages from npm, and every generated report identifies the model responses as simulated.
+
+   To run the same demo again:
+
+   ```bash
+   cd my-oma
+   npm run demo
+   ```
+
+3. ### Check the result
+
+   A successful run gives you three views of the same execution:
+
+   - **Terminal progress** shows tasks starting, completing, and unblocking after their dependencies.
+   - **Markdown and JSON reports** under `reports/` make the result easy to read or process.
+   - **The HTML report** opens the offline Run Viewer, where you can inspect the executed task DAG and task-level evidence.
+
+   At this point you have exercised real OMA orchestration. Only the model responses were scripted.
+
+4. ### Switch to a real model
+
+   For a cloud or OpenAI-compatible starter, copy the environment template:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Add your credential and model configuration to `.env`, then start the run:
+
+   ```bash
+   npm run dev
+   ```
+
+   An Ollama starter uses your local Ollama service instead and needs no cloud API key. The scaffolder never downloads a model for you. See [Providers](/reference/providers/) for environment variables, compatible endpoints, and local tool-calling guidance.
+
+</Steps>
+
+## Control what the scaffolder runs
 
 ```bash
-npm create oma-app@latest my-oma
+# Write files only; do not install dependencies or run the demo.
+npm create oma-app@latest my-oma -- --no-install
+
+# Install dependencies, but do not run the demo.
+npm create oma-app@latest my-oma -- --no-run
 ```
-
-The interactive scaffolder asks for a starter and runtime. For the clearest introduction to scheduling, choose **Multi-agent DAG Demo**. The PR Review and Security Analysis starters show the same runtime in more opinionated workflows.
-
-## 2. Let the no-key demo run
-
-The interactive command installs dependencies and runs `npm run demo` automatically. Scripted model responses drive the real task scheduler, parallel execution, aggregation, report writers, and offline Run Viewer.
-
-The demo does not read a provider credential or make a model request. Installing the project still downloads packages from npm, and every generated report identifies the model responses as simulated.
-
-To run the same demo again:
-
-```bash
-cd my-oma
-npm run demo
-```
-
-## 3. Check the result
-
-A successful run gives you three views of the same execution:
-
-- **Terminal progress** shows tasks starting, completing, and unblocking after their dependencies.
-- **Markdown and JSON reports** under `reports/` make the result easy to read or process.
-- **The HTML report** opens the offline Run Viewer, where you can inspect the executed task DAG and task-level evidence.
-
-At this point you have exercised real OMA orchestration. Only the model responses were scripted.
-
-## 4. Switch to a real model
-
-For a cloud or OpenAI-compatible starter:
-
-```bash
-cp .env.example .env
-# Add your credential and model configuration to .env, then:
-npm run dev
-```
-
-An Ollama starter uses your local Ollama service instead and needs no cloud API key. The scaffolder never downloads a model for you. See [Providers](/reference/providers/) for environment variables, compatible endpoints, and local tool-calling guidance.
 
 ## Add OMA to an existing project
 
@@ -66,9 +88,11 @@ If you already have a TypeScript backend, install the library directly:
 npm install @open-multi-agent/core
 ```
 
+Migrating from `@jackchen_me/open-multi-agent`? That package is deprecated; install `@open-multi-agent/core` instead.
+
 Then define a small team and give it a goal:
 
-```typescript
+```typescript title="team.ts"
 import { OpenMultiAgent, type AgentConfig } from '@open-multi-agent/core'
 
 const model = process.env.OMA_MODEL ?? 'gpt-5.4'
@@ -86,20 +110,22 @@ console.log(result.success)
 
 Built-in tools are default-deny. Grant only the tools each agent needs; see [Tool configuration](/reference/tool-configuration/) before adding filesystem or shell access.
 
-## Control what the scaffolder runs
-
-```bash
-# Write files only; do not install dependencies or run the demo.
-npm create oma-app@latest my-oma -- --no-install
-
-# Install dependencies, but do not run the demo.
-npm create oma-app@latest my-oma -- --no-run
-```
-
-Migrating from `@jackchen_me/open-multi-agent`? That package is deprecated; install `@open-multi-agent/core` instead.
-
 ## Where next
 
-- [Choose a Run Mode](/getting-started/three-ways-to-run/) to decide between `runAgent()`, `runTeam()`, and `runTasks()`.
-- [Examples](/examples/) for complete workflows you can run or adapt.
-- [Providers](/reference/providers/) to configure hosted, OpenAI-compatible, or local models.
+<CardGrid>
+	<LinkCard
+		title="Choose a Run Mode"
+		href="/getting-started/three-ways-to-run/"
+		description="Decide between runAgent(), runTeam(), and runTasks()."
+	/>
+	<LinkCard
+		title="Examples"
+		href="/examples/"
+		description="Complete workflows you can run or adapt."
+	/>
+	<LinkCard
+		title="Providers"
+		href="/reference/providers/"
+		description="Configure hosted, OpenAI-compatible, or local models."
+	/>
+</CardGrid>
