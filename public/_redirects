@@ -17,3 +17,40 @@
 # client sees as a 200 with no content — a real 301 is the whole point.
 /docs        /getting-started/                301
 /developers  /getting-started/quick-start/    301
+
+# Campaign short links. Outbound links carry UTM parameters so a channel that
+# strips the referrer — messaging apps, in-app webviews, email clients, QR
+# codes — is still attributable; these keep that from showing as a wall of
+# query string wherever the URL is visible.
+#
+# 302, unlike every rule above. Those are permanent URL moves; these are not.
+# A campaign's destination changes (a new landing page, a new campaign tag),
+# and a 301 would be cached by browsers that already followed it — which is
+# how the launch-day redirect became uncorrectable. 302 also keeps these out
+# of the canonical picture: search engines credit the destination.
+#
+# Both the bare and trailing-slash forms are listed, because these rules match
+# the path exactly and Astro's `trailingSlash: 'always'` does not govern edge
+# redirects.
+#
+# Not for GitHub's About or organization website fields: those are read as the
+# project's official address and get copied onward, so a short link there would
+# attribute someone else's traffic to GitHub. Use the canonical URL with UTM
+# parameters instead.
+
+/go/devto        /?utm_source=devto&utm_medium=referral       302
+/go/devto/       /?utm_source=devto&utm_medium=referral       302
+/go/xhs          /?utm_source=xhs&utm_medium=social           302
+/go/xhs/         /?utm_source=xhs&utm_medium=social           302
+/go/wx           /?utm_source=wx&utm_medium=social            302
+/go/wx/          /?utm_source=wx&utm_medium=social            302
+# Short link uses the current brand, the UTM value the name analytics tools
+# and years of prior data still use.
+/go/x            /?utm_source=twitter&utm_medium=social       302
+/go/x/           /?utm_source=twitter&utm_medium=social       302
+/go/email        /?utm_source=email&utm_medium=email          302
+/go/email/       /?utm_source=email&utm_medium=email          302
+/go/newsletter   /?utm_source=newsletter&utm_medium=email     302
+/go/newsletter/  /?utm_source=newsletter&utm_medium=email     302
+/go/yuanasi      /?utm_source=yuanasiweb&utm_medium=referral  302
+/go/yuanasi/     /?utm_source=yuanasiweb&utm_medium=referral  302
