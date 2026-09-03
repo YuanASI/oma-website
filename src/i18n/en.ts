@@ -29,7 +29,7 @@
 // next release while still describing the previous surface, silently.
 // scripts/check-version-drift.mjs reports (never fails on) a gap between this
 // and the newest release.
-export const CAPABILITY_COPY_REVIEWED_FOR = '1.14.0';
+export const CAPABILITY_COPY_REVIEWED_FOR = '1.17.0';
 
 /** The release forms copy interpolates. Supplied by src/lib/release.ts. */
 export interface ReleaseRef {
@@ -677,7 +677,7 @@ export const en = {
       { n: '01', tag: 'input', title: 'Goal or DAG', body: 'Start with an outcome through runTeam(), or supply the task graph through runTasks().' },
       { n: '02', tag: 'route', title: 'Single or team', body: 'An explicit mode, governance policy, or ExecutionRouter selects the topology.' },
       { n: '03', tag: 'schedule', title: 'Ready work moves', body: 'The event-driven scheduler starts dependents as soon as their prerequisites complete.' },
-      { n: '04', tag: 'govern', title: 'Policy gates dispatch', body: 'Approve the plan, each ready task, and every consequential tool call at the right boundary.' },
+      { n: '04', tag: 'govern', title: 'Policy gates dispatch', body: 'Approve the plan, each ready task, and every consequential tool call at the right boundary — or suspend one and decide out of process.' },
       { n: '05', tag: 'evidence', title: 'A receipt closes the run', body: 'Routing, task results, traces, usage, and governance conclusions stay inspectable.' },
     ],
     section: {
@@ -703,29 +703,29 @@ export const en = {
       {
         tag: 'control · govern',
         title: 'Put policy at the right boundary.',
-        body: 'Declare required or preferred roles, ordered review paths, and budget-aware degradation. Gate plans, ready tasks, and consequential tools separately, then inspect governanceConclusion instead of inferring compliance.',
-        proof: 'governance · onPlanReady · onTaskDispatch · onToolCall',
+        body: 'Declare required or preferred roles, ordered review paths, and budget-aware degradation. Gate plans, ready tasks, and consequential tools separately, then inspect governanceConclusion instead of inferring compliance. A gate can also suspend: the pending request and the reviewer decision persist beside the checkpoint, so the decision happens outside the callback and the run resumes on exactly the content that was reviewed.',
+        proof: 'governance · onPlanReady · onTaskDispatch · onToolCall · decideApproval',
         link: 'Orchestration controls',
       },
       {
         tag: 'bound · recover · revise',
         title: 'Stop new work, settle safely, revise what has not run.',
-        body: 'Retries, model fallbacks, timeouts, loop detection, and token or estimated-cost budgets bound execution. Checkpoints persist completed task boundaries so restore can skip work already done. Opt into repairable recovery and a run revises the part of its graph that has not executed yet — each patch validated, gated, and applied atomically before any original dependent starts.',
-        proof: 'fallbacks · budgets · checkpoint · restore · PlanPatch · onPlanPatch',
+        body: 'Retries, model fallbacks, timeouts, loop detection, and token or estimated-cost budgets bound execution. Checkpoints persist safe runner boundaries as well as completed tasks, so restore skips finished work and replays a committed tool result rather than running that tool a second time. Opt into repairable recovery and a run revises the part of its graph that has not executed yet — each patch validated, gated, and applied atomically before any original dependent starts.',
+        proof: 'fallbacks · budgets · checkpoint · restore · toolCallId · PlanPatch · onPlanPatch',
         link: 'Adaptive recovery',
       },
       {
         tag: 'inspect · evaluate',
         title: 'Turn a run into reviewable evidence.',
-        body: 'Stable run identity, execution receipts, TraceStore, the offline Run Viewer, and optional OpenTelemetry make the run inspectable. EvalSets, Scorers, reports, and gates turn that evidence into regression checks.',
-        proof: 'receipt · TraceStore · renderRunViewer · EvalSet · GateVerdict',
+        body: 'Stable run identity, execution receipts, TraceStore, the offline Run Viewer, and optional OpenTelemetry make the run inspectable. An opt-in run journal adds the record telemetry cannot give you — every adapter call and the lineage of each block the model saw — and verifyRun() checks a finished journal cold. EvalSets, Scorers, reports, and gates turn that evidence into regression checks.',
+        proof: 'receipt · TraceStore · renderRunViewer · RunJournal · verifyRun · EvalSet',
         link: 'Observability and evaluation',
       },
       {
         tag: 'models · tools',
         title: 'Bring the environment you already use.',
-        body: 'Mix cloud and local models in one team, connect MCP servers as opt-in tools, and run external coding agents through ACP or process backends. Core remains an embeddable library, not a hosted service.',
-        proof: 'providers · MCP · ACP · process backend · default-deny',
+        body: 'Mix cloud and local models in one team, connect MCP servers as opt-in tools, and run external coding agents through ACP or process backends. Hand an agent prior turns and images as structured input, take images and files back from a tool, confine framework-owned model traffic to loopback or an origin allowlist, and choose where the built-in bash runs. Core remains an embeddable library, not a hosted service.',
+        proof: 'providers · MCP · ACP · modelOutput · egressPolicy · ShellExecutor',
         link: 'Integrations',
       },
     ],
@@ -737,8 +737,8 @@ export const en = {
         // Deliberately unversioned. This names capabilities that are in the
         // published package; it does not claim to be that release's full change
         // list, so interpolating the current version would overstate it.
-        { label: 'Published', value: 'Routing, governance, event-driven scheduling, dispatch approval, receipts, structured handoffs, model fallbacks, opt-in plan revision, and opt-in hybrid semantic routing are all in the published package.' },
-        { label: 'Recovery', value: 'Checkpoint restore resumes at completed task boundaries. It is not mid-task recovery or an authoritative exactly-once RunStore. Plan revision is forward-only: it appends replacement work and never undoes a side effect a task already performed.' },
+        { label: 'Published', value: 'Routing, governance, event-driven scheduling, dispatch approval, suspendable durable approvals, receipts, structured handoffs, model fallbacks, egress policy, pluggable shell execution, the opt-in run journal, plan revision, and hybrid semantic routing are all in the published package.' },
+        { label: 'Recovery', value: 'Checkpoint restore resumes at safe runner boundaries and replays committed tool results instead of re-running them, but external process and ACP backends stay task-grained, and a tool that ran without its result reaching the store runs again — use the exposed toolCallId as an idempotency key. The snapshot stays the recovery anchor: the run journal only extends it, and there is no authoritative exactly-once RunStore. Plan revision is forward-only: it appends replacement work and never undoes a side effect a task already performed.' },
         { label: 'Product layer', value: 'OMA is a self-hosted runtime library. It does not claim a hosted tenant, project, thread, seat, or RBAC control plane.' },
       ],
     },
@@ -746,7 +746,10 @@ export const en = {
       eyebrow: 'start with evidence',
       title: 'Run the local demo, then inspect the runtime.',
       quickStart: 'Run the no-key demo',
-      architecture: (r: ReleaseRef) => `See the ${r.minor} architecture`,
+      // No version: /architecture's diagrams are not redrawn per release (see
+      // the note in architecture.astro), so naming one here would date them to a
+      // surface they do not depict.
+      architecture: 'See the architecture',
     },
   },
 
