@@ -23,7 +23,7 @@ npm run build
 node packages/core/dist/cli/oma.js help
 ```
 
-在环境中设置好常用的 provider API 密钥（见 [README](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/README.md#quick-start)）；CLI 不从命令行参数读取密钥。MiniMax 还会读 `MINIMAX_BASE_URL` 来选择全球（`https://api.minimax.io/v1`）或中国（`https://api.minimaxi.com/v1`）端点。MiMo 还会读 `MIMO_BASE_URL` 来指定 Token Plan 集群端点，例如 `https://token-plan-cn.xiaomimimo.com/v1`。
+在环境中设置好常用的 provider API 密钥（见 [README](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/README.md#quick-start)）；CLI 不从命令行参数读取密钥。MiniMax 还会读 `MINIMAX_BASE_URL` 来选择全球（`https://api.minimax.io/v1`）或中国（`https://api.minimaxi.com/v1`）端点。MiMo 还会读 `MIMO_BASE_URL` 来指定 Token Plan 集群端点，例如 `https://token-plan-cn.xiaomimimo.com/v1`。
 
 OpenRouter 通过 OpenAI 兼容适配器工作：把 `provider` 设为 `openai`、`baseURL` 设为 `https://openrouter.ai/api/v1`，并把 `OPENROUTER_API_KEY` 作为 agent 或 orchestrator 的 `apiKey` 传入。
 

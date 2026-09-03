@@ -37,9 +37,9 @@ if (result.governanceConclusion !== 'satisfied') {
 `runFromPlan()` 执行。
 
 用 `governanceIntent: 'none'` 显式选择自动 `runTeam()` 路由；省略 `governanceIntent`
-效果相同。这条路径默认是 Hybrid：确定性的 Single 候选可能在一次语义 profile 调用后
-被升级。想要此前不带 Profiler 的行为，设置
-`executionRouting: { strategy: 'deterministic' }`。
+效果相同。这条路径默认是确定性的，不会发起语义 profile 调用。混合式语义路由需显式
+开启：设置 `executionRouting: { strategy: 'hybrid' }`，即可让一个确定性的 Single 候选
+在一次语义 profile 调用之后被升级。见[执行路由](/zh/reference/execution-routing/)。
 
 执行后，required 声明会针对 execution receipt 检查。`governanceConclusion` 为
 `satisfied`、`unsatisfied` 或 `not-applicable`；只有 `required` 被强制执行。
@@ -58,7 +58,7 @@ if (result.governanceConclusion !== 'satisfied') {
 4. 内置 `DeterministicRouter`；
 5. 语义 Profiler 与确定性策略，只作用于默认 / fallback 的 Single 候选。
 
-`single` 使用既有的最佳 Agent 路径；`team` 强制 Coordinator 生成 Team 计划。
+`single` 始终使用既有的最佳 Agent 路径；`team` 强制走 Coordinator 生成的 Team 路径，并绕过简单目标短路。
 `runAgent()` 与 `runTasks()` 本身仍是显式选择。`mode` 只声明拓扑偏好，不声明治理，
 因此不会绕过高影响操作确认。路由器也只能选择拓扑，不能覆盖结构化角色要求。
 TaskProfile 同样只是推断出来的路由证据。如果推断出的副作用或隔离需求，与实际的
@@ -75,6 +75,7 @@ const result = await orchestrator.runTeam(team, goal, {
   requiredOrder: ['reviewer', 'security'],
 })
 
+// The Single result is still returned, and runtime success keeps its existing meaning.
 result.governanceConclusion // 'unsatisfied'
 result.governanceReason     // 'overridden'
 result.flags                // includes 'governance-overridden'
@@ -83,15 +84,44 @@ result.flags                // includes 'governance-overridden'
 也就是“下限可以被显式覆盖，但不能静默覆盖”。即使显式模式取代治理拓扑，结构声明仍会
 在执行前校验。
 
-Token / 成本上限可以设在编排器或一次 `runTeam()` / `runTasks()` 调用上；单次运行
-不能放宽编排器上限，较低者生效。Required 运行若在完成所有执行事实前耗尽预算，
-`governanceConclusion` 为 `unsatisfied`、`governanceReason` 为 `budget`，既有
-`budget_exhausted` runtime 状态保持不变。
+Token 与成本上限可以设在编排器上，也可以设在一次 `runTeam()` / `runTasks()` 调用上。
+单次运行的取值不能放宽编排器的上限，较低者生效。这让应用能够把治理下限与预算上限一起
+声明，而无需引入另一套预算子系统：
 
-软偏好可设 `preferredUnderBudget: 'degrade'`：当存在有效上限且没有显式模式时选择
-Single，并添加 `review-skipped-due-to-budget`。默认 `attempt` 保留原行为。
-这是一项应用策略，不是成本预测；OMA 不会预估计划是否能装进预算，普通预算检查仍发生
-在模型轮次与任务边界。
+```typescript
+const result = await orchestrator.runTeam(team, goal, {
+  governanceIntent: 'required',
+  requiredRoles: ['reviewer', 'security'],
+  requiredOrder: ['reviewer', 'security'],
+  maxTokenBudget: 12_000,
+  maxCostBudget: 0.25, // requires orchestrator estimateCost
+})
+```
+
+如果一次 required 运行在观察到全部 required 角色 / 顺序事实之前就耗尽了该上限，既有的
+预算停止仍然生效，结果报告 `governanceConclusion: 'unsatisfied'` 与
+`governanceReason: 'budget'`。`result.success` 不会被挪用为治理字段；预算耗尽继续使用
+既有的 `budget_exhausted` 运行时状态。
+
+对于软偏好，应用可以预先声明「让上限胜出」，同时不把被跳过的评审当成一次治理违规：
+
+```typescript
+const result = await orchestrator.runTeam(team, goal, {
+  governanceIntent: 'preferred',
+  requiredRoles: ['reviewer', 'security'],
+  preferredUnderBudget: 'degrade',
+  maxTokenBudget: 4_000,
+})
+
+// Executes the Single path and discloses why independent review was skipped.
+result.governanceConclusion // 'not-applicable'
+result.flags                // includes 'review-skipped-due-to-budget'
+```
+
+`preferredUnderBudget` 默认为 `attempt`，保留既有的 preferred 角色行为。`degrade` 仅在
+存在有效的 token 或成本上限、且没有显式 `mode` 已经胜出时才适用。它是一项应用策略，而
+不是模型成本预测：OMA 刻意不预估一个计划在运行前是否装得下。普通的上限强制执行仍是
+反应式的，发生在模型轮次与任务边界。
 
 ## 未声明运行中的高影响工具
 
@@ -113,9 +143,18 @@ const rotateSecret = defineTool({
 
 对 `runAgent()` 与省略 `governanceIntent` 的自动 `runTeam()`，OMA 会在 preset、
 allowlist、denylist、自定义工具与默认 preset 全部解析后检查最终授权集。如果至少授予
-一个 consequential 工具，结果和 receipt 会带
-`consequential-no-independence` 标记。这个分类只看**工具授权**，不扫描 goal、
-prompt、模型输出、工具参数或敏感关键词。
+一个 consequential 工具，结果就会带有这个附加的、机器可读的标记：
+
+```typescript
+if (result.flags?.includes('consequential-no-independence')) {
+  // The run had consequential capability without a governance declaration.
+}
+
+const receipt = buildExecutionReceipt(result)
+// The same flag is copied to receipt.flags.
+```
+
+这个分类只看**工具授权**，不扫描 goal、prompt、模型输出、工具参数或敏感关键词。
 
 显式的 required / preferred / none `runTeam()` 不进入该 fallback；显式
 `runTasks()` DAG 与 `runFromPlan()` 也不进入。Fallback 不改变拓扑，也不把运行升级
@@ -138,7 +177,10 @@ const orchestrator = new OpenMultiAgent({
 })
 ```
 
-该闸门在输入校验后、`execute` 前运行。若没有可用的 per-call Gate，动态规划的
+该闸门与既有的逐次调用 `onToolCall` 网关组合使用，在输入校验后、`execute` 前运行。
+`allow` 继续执行；`deny` 不调用该工具，返回一个错误 `ToolResult`。在一个带检查点的
+任务内部，`suspend` 可以把这次确切的调用持久化下来，交由进程外做决定，之后再
+`restore()`；见[持久化审批门](/zh/reference/durable-approvals/)。若没有可用的 per-call Gate，动态规划的
 `runTeam()` 也可用已批准的 `onPlanReady` 提供审批；两者都没有时，工具不会执行，
 结果返回 `confirmationRequired: true` 且 `status.code === 'rejected'`。
 无论确认关闭、批准、待处理或拒绝，披露标记都会保留。
@@ -259,7 +301,7 @@ import type { ToolCallContext, ToolCallDecision } from '@open-multi-agent/core'
 const orchestrator = new OpenMultiAgent({
   // Orchestrator-level default, inherited by any agent that sets no gate of its own.
   onToolCall: async (ctx: ToolCallContext): Promise<ToolCallDecision> => {
-    // ctx: { toolName, input (post-validation), agentName, consequential?, runId?, taskId? }
+    // ctx: { toolName, input (post-validation), agentName, consequential?, runId?, taskId?, toolCallId? }
     if (ctx.toolName !== 'bash') return { action: 'allow' }
     if (/^\s*rm\b/.test(String(ctx.input.command))) {
       return { action: 'deny', reason: 'rm is blocked' }
@@ -272,13 +314,17 @@ const orchestrator = new OpenMultiAgent({
 关键语义：
 
 - **`deny` 返回一个结构化的错误 `ToolResult`；它绝不抛异常。** 模型会把 `reason` 当作一次普通的工具错误来看，可以据此调整（换一个更安全的命令、询问用户、停止），而不是让整个运行崩溃。一个抛异常或返回非法决定的门控，也会被转成错误结果（fail closed，出错即拒绝）。
-- **人工介入（human-in-the-loop）就发生在你的回调中。** 用 `await` 等你自己的 CLI 提示、Slack 按钮或网页对话框，然后返回 `allow` 或 `deny`。框架不规定任何审核渠道，从而把接口面保持得很小。
+- **`suspend` 是持久的，并把控制权交还。** 在一个带检查点的内置 LLM 任务中，`{ action: 'suspend' }` 会保存这次确切的调用，并返回一个顶层的 `suspended` 结果。用 `decideApproval()` 记录一个决定，然后调用 `restore()`。若没有可恢复的检查点与原子存储，该调用会失败即关闭，工具不会运行。见[持久化审批门](/zh/reference/durable-approvals/)。
+- **内联的人工介入（human-in-the-loop）仍然可用。** 用 `await` 等你自己的 CLI 提示、Slack 按钮或网页对话框，然后在同一个回调生命周期内返回 `allow` 或 `deny`。框架不规定任何审核渠道。
 - **智能体覆盖编排器。** 对某个智能体来说，`AgentConfig.onToolCall` 优先于 `OrchestratorConfig.onToolCall`，因此一个团队可以设定一条默认策略，同时让某个专职智能体把它收紧或放松。独立的 `new Agent({ ..., onToolCall })` 会把门控直接接进它的执行器。
 - **在基于名称的授予之后运行。** 默认拒绝 / 允许清单 / 拒绝清单的解析**先**执行；一个未被授予的工具在门控之前就已被拒绝，所以门控只会看到对那些已经可达的工具的调用。自定义工具和 MCP 工具都走同一个执行器，因此它们也会被门控。
+- **模型下发的调用 ID 在恢复过程中保持稳定。** `toolCallId` 标识这一次调用。如果一个
+  未提交的调用必须在检查点恢复之后再次运行，它会保持同一个 ID；而一个已提交的结果
+  会被回放，不会再次运行门控或工具。见[检查点恢复](/zh/reference/checkpoint/#任务中途的工具恢复)。
 - **与任务派发审批正交。** `OrchestratorConfig.onApproval` 为旧式任务轮次设闸，
   `onTaskDispatch` 在一个就绪任务派发前设闸，`onToolCall` 则管一次工具调用。
   三者位于不同层；两种任务级审批模式彼此互斥。
-- **可观测性。** 当门控运行时，`tool_call` 追踪事件会带有 `gated: true`、`gateAction: 'allow' | 'deny'`，以及（在 deny 时）一个 `gateReason`——它会像其它敏感的追踪文本一样被脱敏，因此 `onTrace` 的消费方可以审计每一个决定。
+- **可观测性。** 当门控运行时，`tool_call` 追踪事件会带有 `gated: true`、`gateAction: 'allow' | 'deny' | 'suspend'`，以及一个可选的、已脱敏的 `gateReason`。持久的决定来自审批账本，并可能在执行回执中被摘要；遥测不是它们的真相来源。
 
 > **不是安全边界。** 一个返回 `deny` 的门控仍然依赖于配合的代码；它是一个协调层，而不是隔离手段。`bash` 依旧没有沙箱（见下方标注）。面对一个真正不可信的 shell，请用进程级隔离（容器 / VM / seccomp）；门控负责的是*策略*，而非*隔离*。
 
@@ -307,7 +353,93 @@ const orchestrator = new OpenMultiAgent({
 
 复合命令会按 shell 分隔符（`&&`、`||`、`;`、`|`、替换）切段，取其中找到的**最高**风险，所以安全的前缀无法夹带破坏性的后缀（`ls && rm -rf /` 会变成 `high`）。带引号的片段会先被剥离，所以 `echo "rm -rf /"` 仍然是 `safe`。
 
-这个分类器是一个**浅层启发式，而不是解析器**；它可能被混淆手法骗过（变量间接引用、base64 解码后执行、奇异的引号用法）。它仅为便利之用：可以扩展这些表、封装一层，或将其整体替换。端到端的示例见 [`examples/patterns/risk-gated-bash.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/patterns/risk-gated-bash.ts)。
+这个分类器是一个**浅层启发式，而不是解析器**；它可能被混淆手法骗过（变量间接引用、base64 解码后执行、奇异的引号用法）。它仅为便利之用：可以扩展这些表、封装一层，或将其整体替换。端到端的示例见 [`examples/patterns/risk-gated-bash.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/patterns/risk-gated-bash.ts)。
+
+## Shell 执行器
+
+被授予的内置 `bash` 通过一个 `ShellExecutor` 来委派命令执行。未配置执行器时，OMA 使用
+`LocalShellExecutor`，它在宿主上保持既有的 `bash -c` 行为：
+
+```typescript
+import { OpenMultiAgent } from '@open-multi-agent/core'
+import type { AgentConfig } from '@open-multi-agent/core'
+import type { ShellExecutor } from '@open-multi-agent/core/shell'
+
+declare const sharedRemoteExecutor: ShellExecutor
+declare const specialistExecutor: ShellExecutor
+
+const orchestrator = new OpenMultiAgent({
+  // Inherited by agents that do not set shellExecutor.
+  defaultShellExecutor: sharedRemoteExecutor,
+})
+
+const agent: AgentConfig = {
+  name: 'builder',
+  model: 'claude-sonnet-4-6',
+  tools: ['bash'],
+  // Per-agent value wins over the orchestrator default.
+  shellExecutor: specialistExecutor,
+}
+```
+
+执行器改变的是**一条已被授予的命令在哪里运行**。它既不授予 `bash`，也不绕过
+`disallowedTools`；命令仍然只在 `onToolCall` 放行之后才执行。既有的默认拒绝与逐次调用
+门控规则保持不变。工具包装层还让面向模型的行为在各执行器之间保持一致：输入校验、
+30 秒的默认超时、stdout/stderr 的格式化、输出脱敏，以及退出码非零时的 `isError`。
+
+公开的类型约定可从 `@open-multi-agent/core/shell` 获得，且不带任何运行时导入：
+
+```typescript
+interface ShellExecutor {
+  start?(): Promise<void>
+  exec(command: string, options: ShellExecOptions): Promise<ShellExecResult>
+  dispose?(): Promise<void>
+}
+```
+
+`ShellExecOptions` 包含 `cwd`、`timeoutMs` 与 `abortSignal`。`ShellExecResult` 包含
+`stdout`、`stderr` 与 `exitCode`。执行器必须用退出码 `124` 表示超时、`130` 表示中止、
+`127` 表示进程或远程命令无法启动。工具包装层还加了一道短暂的截止时间兜底，使得一个
+忽略超时或中止的执行器无法无限期地卡住工具循环；但实现方仍然自行负责及时取消，并终止
+它所控制的进程、作业或远程会话。
+
+### 生命周期与并发使用
+
+一个执行器实例代表一个可复用的会话：
+
+- OMA 会惰性调用 `start()`，就在一次运行中第一次被放行的 `bash` 执行之前。一个被授予
+  但从未被调用（或被 `onToolCall` 拒绝）的工具不会创建会话。该次运行中后续的 shell
+  调用会复用它。
+- 无论运行成功、失败、被中止，还是某个流式消费方提前停止，OMA 总会尝试调用
+  `dispose()`。如果 `start()` 部分分配了资源随后又拒绝，OMA 同样会尝试 `dispose()`。
+- 如果多次重叠的运行共用同一个执行器实例（继承同一个 `defaultShellExecutor` 的智能体
+  就是如此），OMA 会对它们做引用计数：一次 `start()`，并在最后一次运行结束之后一次
+  `dispose()`。`exec()` 可以被并发调用，包括一个模型轮次请求多次 shell 调用的情形。
+  无法并发执行命令的执行器必须在内部串行化；当每个智能体都需要自己的会话时，请为它们
+  使用彼此独立的实例。
+- 进程崩溃无法执行 JavaScript 清理逻辑。远程适配器还应配置服务端的 TTL、租约过期或
+  带外的回收进程，以便崩溃后恢复。
+
+这些生命周期调用属于 Agent/编排器的运行。如果应用代码直接调用底层导出的
+`bashTool.execute()`，那么该调用方要自行在其工具调用前后负责 `start()` / `dispose()`。
+
+`LocalShellExecutor` 是无状态的。它保持既有的安全环境变量允许清单，捕获 stdout/stderr，
+在 POSIX 上于独立的进程组中运行命令，并在超时或中止时杀掉整棵进程树。它以宿主 Node.js
+进程的权限执行：**它不是沙箱，也不是安全边界**。一个自定义执行器的隔离程度，取决于它
+背后的环境与适配器实现；OMA 的 core 不附带 Docker、VM 或托管沙箱适配器。
+
+### 宿主与远程文件系统会分叉
+
+> **一个远程 shell 执行器并不会把内置的文件系统工具一并搬走。**
+> `file_read`、`file_write`、`file_edit`、`grep` 与 `glob` 仍然在宿主上、于
+> `AgentConfig.cwd` / `defaultCwd` 之内操作。传给 `bash` 的 `cwd` 则是在执行器的
+> 环境中解释的。例如，`file_write` 可能在宿主的 `.agent-workspace` 里创建
+> `report.md`，而随后一次远程 `bash` 调用 `wc -l report.md` 却看不到这个文件。
+> 除非应用自己提供一层同步机制，否则不要把宿主的文件系统工具与远程 shell 一并授予
+> 同一个智能体，或者明确地围绕这两套文件系统来设计。
+
+Shell 执行器只在正常的 LLM 运行器工具循环内部生效。进程与 ACP 智能体后端替换掉了那个
+循环，并继续自行管理它们的命令执行与 `cwd`；`shellExecutor` 不影响它们。
 
 ## 文件系统工作目录
 
@@ -434,7 +566,7 @@ const team = {
 > **注意——两个不同的 `outputSchema` 字段。** `defineTool()` /
 > `ToolDefinition` 上的那个（下面展示）校验单个**工具**的 `ToolResult.data`
 > ——它始终是 `ZodSchema<string>`，因为工具输出会序列化为
-> 文本。[`AgentConfig`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/patterns/structured-output.ts)
+> 文本。[`AgentConfig`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/patterns/structured-output.ts)
 > 上的 `outputSchema` 则不同：它把**智能体的最终答案**当作解析后的 JSON、
 > 对照一个任意的 Zod schema 来校验（见 `examples/` 中的 _Structured output_）。
 > 类型不同、作用域不同——当你将它们混淆时 TypeScript 不会警告你，
@@ -456,6 +588,100 @@ const jsonTool = defineTool({
   execute: async () => ({ data: '{"ok": true}' }),
 })
 ```
+
+### 富图像与文件结果
+
+`ToolResult` 把应用自己保留的值，与回送给模型的内容分开：
+
+```typescript
+const renderChart = defineTool({
+  name: 'render_chart',
+  description: 'Render a chart and return a preview.',
+  inputSchema: z.object({ metric: z.string() }),
+  outputSchema: z.object({ chartId: z.string(), storageKey: z.string() }),
+  execute: async ({ metric }) => ({
+    // Application-owned value: available to onToolResult; not serialized into
+    // the model conversation.
+    data: { chartId: 'chart-42', storageKey: `artifacts/${metric}.png` },
+
+    // Model-visible value: validated and copied before it enters the transcript.
+    modelOutput: [
+      { type: 'text', text: `Preview for ${metric}` },
+      {
+        type: 'image',
+        source: {
+          type: 'base64',
+          media_type: 'image/png',
+          data: pngBytes.toString('base64'),
+        },
+      },
+      {
+        type: 'file',
+        filename: 'report.pdf',
+        source: {
+          type: 'url',
+          media_type: 'application/pdf',
+          url: signedReportUrl,
+        },
+      },
+    ],
+  }),
+})
+```
+
+既有的 `{ data: 'plain text' }` 工具不受影响：省略 `modelOutput` 时，`data` 中的字符串
+沿用既有的 `maxOutputChars` 行为并发送给模型。非字符串的 `data` 取值必须配合
+`modelOutput`；OMA 绝不猜测某种 JSON 序列化方式。无效内容会变成一个普通的文本错误
+`ToolResult`（`isError: true`），使工具循环保持既有的错误行为。错误结果仍然只含文本。
+
+`modelOutput` 要么是一个字符串，要么是由 `text`、`image` 与 `file` 部件组成的非空数组。
+媒体来源要么是原始的 base64 字节（不是 `data:` URL），要么是一个绝对的 HTTP(S) 引用，
+并且必须带有不含参数的 MIME 类型。file 部件还需要一个用于展示的文件名。OMA 会在工具
+边界处、以及在回调能够影响模型对话记录之前，各做一次防御性的嵌套内容复制；`data` 仍
+归应用所有，不会被克隆。
+
+提供方转换要么忠实，要么显式——媒体绝不会被静默丢弃：
+
+| 适配器家族 | 映射 | 确定性的本地拒绝 |
+|---|---|---|
+| OpenAI Chat Completions、Azure OpenAI、Copilot 与内置的 OpenAI 兼容适配器 | 文本留在 `tool` 消息中；附件随后放进一条 `user` 消息。图像接受内联数据或 URL；文件接受内联数据。 | 文件的 URL 引用。 |
+| Anthropic | 图像留在 `tool_result` 中；PDF 文件作为相邻的 document 块。上述被映射的类型既接受内联数据，也接受 URL。 | 不受支持的图像 MIME 类型，以及非 PDF 的文件。 |
+| Gemini | 媒体以 `inlineData` 或 `fileData` 映射到 `functionResponse.parts`。 | 在共享校验之后没有额外的协议层拒绝。 |
+| Bedrock Converse | 内联图像与受支持的文档格式映射为原生的工具结果块。 | URL 媒体、未知的图像 MIME 类型，以及未被映射的文档 MIME 类型。 |
+| `AISdkAdapter` | 媒体映射为 AI SDK 的 `file-data` 或 `file-url` 内容。 | 在共享校验之后没有额外的协议层拒绝。 |
+
+这些是线缆格式的映射，并不承诺某个适配器背后的每个模型都接受每一种被映射的部件。
+所选的模型或 OpenAI 兼容端点仍可能拒绝本来合法的内容；那种提供方错误会向上传播，而
+不是回退成一个文本占位符。已知无法映射的部件，会在 SDK 请求之前抛出终态的
+`UnsupportedToolResultContentError`。当你希望的正是「回退为纯文本」时，请自行使用只含
+文本的 `modelOutput`。
+
+在内联数据与引用之间要做审慎选择：
+
+- 内联 base64 是自包含的，但它会让请求体膨胀，并被存进 `AgentRunResult.messages` 与
+  任务检查点。OMA 不施加框架层面的字节上限；提供方的请求与媒体限制依然适用。
+- HTTP(S) 引用能让对话记录更小，但提供方必须能够抓取它们。请把签名 URL、查询串中的
+  令牌、文件名以及被引用的内容，都视为向模型提供方披露的数据。
+- `maxOutputChars` 对隐式的字符串结果保留其原有含义。它不会重写显式的富 `modelOutput`；
+  请在工具内部、返回之前就为富负载设限或调整其尺寸。
+- 上下文摘要路径会用文本占位符替换旧媒体；`compressToolResults` 与 `compact` 可以把已
+  消费的富结果替换成一个标记。最新的那个结果保持完整。
+- 流式的 `tool_result` 事件、结果消息、`onToolResult` 与进度结果负载，都可能把完整的富
+  内容暴露给应用的处理函数。旧式的工具调用 trace 与 `ToolCallRecord.output` 使用一份
+  经过脱敏的文本 / 媒体摘要，其中略去内联字节与引用 URL。在线打分器收到的是正常的运行
+  结果，而被存储的评估负载仍遵循所配置的评估负载策略。
+
+任务检查点会把已完成的 `AgentRunResult.messages` 中模型可见的富内容做 JSON 序列化，
+因此恢复出的任务结果会保留它。检查点存储不在 trace 脱敏的覆盖范围内；当这个取舍合适
+时，请用 `RedactingStore` 封装该存储。任务中途的恢复仍是任务粒度的：一次被打断的、
+运行中的工具调用仍会按 [`checkpoint.md`](/zh/reference/checkpoint/#局限) 所述重新运行。
+
+当前的边界：原生的富内容约定不包含音频、本地文件系统路径、自动上传、尺寸调整、恶意
+软件扫描、URL 抓取或 MIME 嗅探。进程与 ACP 后端自行掌管其执行，不使用运行器的工具
+循环。适配器测试在不联系提供方 API 的前提下校验本地的线缆转换；在生产中依赖媒体支持
+之前，请先验证你打算实际运行的那个提供方 / 模型组合。
+
+可运行的示例见 [`rich-tool-results`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/patterns/rich-tool-results.ts)。
 
 **截断。** 把单个工具结果裁成头部 + 尾部的摘录，中间放一个标记：
 
@@ -509,6 +735,10 @@ await disconnect()
 - `@modelcontextprotocol/sdk` 是一个可选的 peer 依赖，仅在使用 MCP 时才需要。
 - 当前的传输支持是 stdio。
 - MCP 的输入校验委托给 MCP 服务器（`inputSchema` 是 `z.any()`）。
+- MCP 的文本输出保持既有的字符串行为。成功的 MCP `image` 块、内嵌的 blob 资源块，以及
+  HTTP(S) 的 `resource_link` 块，也会获得一份富 `modelOutput`；错误、音频、格式错误的
+  媒体与非 HTTP 的资源链接，则保留一份显式的文本表示。
 - 优先使用本地安装或固定版本的 MCP 服务器二进制文件，并只传入该服务器需要的环境变量。避免把 `process.env` 展开进 MCP 子进程。
+- `egressPolicy` 不约束 MCP 子进程内部、`bash` 或自定义工具所建立的连接。见[出网强制执行对照表](/zh/reference/egress-policy/#强制执行对照表)。
 
-完整可运行的配置见 [`integrations/mcp-github`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/mcp-github.ts)。
+完整可运行的配置见 [`integrations/mcp-github`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/mcp-github.ts)。

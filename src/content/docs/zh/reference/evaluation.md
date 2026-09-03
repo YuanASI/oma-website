@@ -172,7 +172,7 @@ const page = await onlineStore.query({ runId: [run.identity!.runId] })
 console.log(page.items[0]?.source) // online
 ```
 
-`runAgent`、`runTeam`、`runTasks`、`runFromPlan`、`runConsensus` 和 `restore` 都使用 `OpenMultiAgent` 实例拥有的同一个 evaluator。因此，其 `evalRunId` 在该实例生命周期内保持稳定。每个采样运行会为每个 scorer 产生一条 `source: 'online'` 的 `EvalRecord`，不含 EvalSet 或案例 ID，并带有包含准确逻辑运行与尝试次数的 `runRef`。
+`runAgent`、`runTeam`、`runTasks`、`runFromPlan`、`runConsensus` 和 `restore` 都使用 `OpenMultiAgent` 实例拥有的同一个 evaluator。因此，其 `evalRunId` 在该实例生命周期内保持稳定。每个采样运行会为每个 scorer 产生一条 `source: 'online'` 的 `EvalRecord`，不含 EvalSet 或案例 ID，并带有包含准确逻辑运行与尝试次数的 `runRef`。对于结构化的 `runAgent()` 输入，评估器收到的是调用方 `LLMMessage[]` 的一份防御性副本；字符串形式的调用保留其既有的字符串输入。负载的省略、限界、脱敏与持久化，仍遵循下文的 `storePayloads`。
 
 数值采样使用 `Math.random() < sample`。规则可以根据规范化状态和经过校验的运行元数据进行选择，无需实现尾部采样：
 

@@ -44,9 +44,9 @@ const result = await oma.runTeam(team, 'Add a slugify() utility with tests, then
 协调器根据 `coder` 的名册描述把编码工作路由给它；子进程执行文件编辑；`reviewer` 随后从共享内存读取结果。
 
 一个可运行的 `process` 版本见
-[`examples/integrations/external-agent-process.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/external-agent-process.ts)。
+[`examples/integrations/external-agent-process.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/external-agent-process.ts)。
 一个可运行的 ACP 版本见
-[`examples/integrations/external-agent-acp.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/external-agent-acp.ts)。
+[`examples/integrations/external-agent-acp.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/external-agent-acp.ts)。
 
 ## 安装
 
@@ -84,6 +84,13 @@ npm install @agentclientprotocol/sdk
 
 当设置了 `backend` 时，LLM 专属的字段（`model`、`provider`、`adapter`、采样、`tools`、上下文策略）都不适用——外部智能体运行它自己的循环，`model` 变为可选。智能体的 `systemPrompt` 是例外：它仍然会塑造外部智能体，因为 OMA——缺少任何 ACP 系统 prompt 字段——会把它前置到智能体的第一个 prompt 之前（每个会话一次），此外还会像对每个智能体那样用它为协调器的路由做引导。
 
+外部后端存在一条文本传输边界。它们的公开 Agent API 接受既有的字符串形式，但会在拉起
+进程或开启 ACP 会话之前，以 `InvalidMessageError` 拒绝结构化的 `LLMMessage[]` /
+`ContentBlock[]` 参数。这可以避免静默丢弃图像内容块或调用方自有的历史。
+`beforeRun.prompt` 仍然受支持；出于同样的原因，改动 `beforeRun.messages` 会被拒绝。
+`AgentConfig.history` 不会为进程或 ACP 会话注入内容；它只为由 LLM 支撑的 `prompt()`
+对话恢复消息。见[结构化智能体输入](/zh/reference/structured-input/)。
+
 对于 `process`，OMA 每次运行都启动一个全新的子进程。对于从 stdin 读取 prompt 的命令，使用 `input: 'stdin'`；当命令期望把 prompt 作为最后一个参数时，使用 `input: 'argument'`；对于从文件或环境推导其工作内容的固定适配器，使用 `input: 'none'`。
 
 ### ACP 权限
@@ -109,6 +116,8 @@ backend: {
 > 限定在一个你信任该后端的项目里。ACP 后端可以用 `permission` 来
 > 把关协议层的权限提示；process 后端没有协议级的
 > 权限提示，因此要约束所配置的 command、args、env 和 cwd。
+> `egressPolicy` 只治理可强制执行的、由框架发起的 LLM 请求；它不约束
+> 进程或 ACP 子进程发出的网络调用。见[出网强制执行对照表](/zh/reference/egress-policy/#强制执行对照表)。
 
 ## 工作原理
 
