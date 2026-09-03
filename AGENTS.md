@@ -56,7 +56,9 @@ explicitly requires a dependency change.
 - `scripts/`: content sync, translation drift, migration, and hero capture tools.
 - `TRANSLATING.md`: translation terminology and workflow requirements.
 - `ATTRIBUTION.md`: the registry of campaign values used on outbound links,
-  and the rule for when a link gets a `/go/` short link instead.
+  and the rule for when a link gets a `/go/` short link instead. Add a channel
+  with `pnpm add:channel`, which updates it and `public/_redirects` together;
+  `pnpm check:attribution` holds the two in agreement and runs in `pnpm check`.
 - `public/_redirects`: Cloudflare Pages edge redirects, including those short
   links. Copied verbatim at build time, so no check in this repository reads it.
 
@@ -120,6 +122,11 @@ link carrying them is recorded as a fresh external arrival.
 Short links belong to positions that render a link as the URL itself; a link
 with anchor text carries the canonical URL instead. `ATTRIBUTION.md` explains
 the distinction and how to verify a redirect, which no build check covers.
+
+Add a short link with `pnpm add:channel` rather than editing the two files by
+hand — it writes both, in both spellings a rule needs. `pnpm check:attribution`
+fails on a value that is not registered, a link present in one file but not the
+other, a rule that is not a 302, or a rule missing one of its two spellings.
 
 ### Keep live data live
 
