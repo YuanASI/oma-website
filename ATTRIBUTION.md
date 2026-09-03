@@ -70,22 +70,35 @@ The only real difference is that a short link depends on its rule in
 | Value | Position |
 | --- | --- |
 | `readme` | The framework repository's README |
-| `package_readme` | A package README, as rendered on its npm page |
+| `package_readme` | A package README — see below on which source it takes |
 | `repo_about` | A repository's About panel |
 | `org_profile` | The organization's website field |
+| `org_readme` | Links in the organization's profile README |
 | `user_profile` | A personal profile's sidebar link |
 | `social` | Social platforms |
 | `referral` | Another site linking here |
 | `email` | Email |
 
-`package_readme` and `npm` are registered for the framework repository's
-`packages/*/README.md` files. Note the limit: the same file renders on both
-npmjs.com and GitHub, and a single tag cannot distinguish the two. It is
-attributed to npm because that is the page the file is written for.
+`package_readme` takes a different `utm_source` depending on where the file is
+actually readable, which is decided by what ships in the published tarball:
 
-`org_profile` currently covers two different things — the organization's
-website field and the four anchor links in its profile README. To separate
-them, move the README links to a distinct value rather than reusing this one.
+| File | Source | Why |
+| --- | --- | --- |
+| `packages/core/README.md` | `npm` | Ships in the tarball, so it is the package page's content. It is browsable on GitHub too, and one file can carry only one source; npm wins because that page is its audience. |
+| `packages/core/README_zh.md` | `github` | Not in the tarball, so GitHub is the only place it renders. |
+
+Check the tarball rather than assuming, with `npm pack --dry-run` in the
+package directory. As of 2026-09-03 only `README.md` and `LICENSE` ship.
+
+`org_profile` and `org_readme` were one value until 2026-09-03, which made a
+visit that began in the organization's sidebar indistinguishable from one that
+began in the body of its profile README. They are separate now. The same split
+is worth making anywhere a surface has both a link field and body content.
+
+Note that the organization's profile README also links to yuanasi.com carrying
+`utm_medium=org_profile`. That is a different domain with its own analytics —
+this site's data covers only open-multi-agent.com — so that value belongs to
+that system's naming and is not governed by this file.
 
 ## Short links
 
