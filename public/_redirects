@@ -33,10 +33,15 @@
 # the path exactly and Astro's `trailingSlash: 'always'` does not govern edge
 # redirects.
 #
-# Not for GitHub's About or organization website fields: those are read as the
-# project's official address and get copied onward, so a short link there would
-# attribute someone else's traffic to GitHub. Use the canonical URL with UTM
-# parameters instead.
+# The /go/{me,repo,org} three are GitHub's link fields: the profile sidebar,
+# a repository's About panel, and an organization's website. GitHub renders all
+# three as the URL itself — the About panel trims the scheme, the other two not
+# even that — so a query string sits in the open on pages built to be looked at.
+# Verified by reading the rendered pages, not assumed.
+#
+# Links inside README content do not need these: markdown gives them anchor
+# text, so the URL is never shown, and a canonical URL with parameters is
+# preferable there — it keeps working if this file ever loses the rule.
 
 /go/devto        /?utm_source=devto&utm_medium=referral       302
 /go/devto/       /?utm_source=devto&utm_medium=referral       302
@@ -54,3 +59,9 @@
 /go/newsletter/  /?utm_source=newsletter&utm_medium=email     302
 /go/yuanasi      /?utm_source=yuanasiweb&utm_medium=referral  302
 /go/yuanasi/     /?utm_source=yuanasiweb&utm_medium=referral  302
+/go/me           /?utm_source=github&utm_medium=user_profile  302
+/go/me/          /?utm_source=github&utm_medium=user_profile  302
+/go/repo         /?utm_source=github&utm_medium=repo_about    302
+/go/repo/        /?utm_source=github&utm_medium=repo_about    302
+/go/org          /?utm_source=github&utm_medium=org_profile   302
+/go/org/         /?utm_source=github&utm_medium=org_profile   302
