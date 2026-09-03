@@ -11,12 +11,14 @@ description: "参考文档索引——模型与工具配置、编排控制、可
 
 - [模型提供方](/zh/reference/providers/) —— 托管、云端与本地模型：内置快捷方式、OpenAI 兼容端点、环境变量，以及本地工具调用。
 - [工具配置](/zh/reference/tool-configuration/) —— 默认拒绝的工具授权、预设与允许列表、文件系统沙箱、自定义工具与 MCP。
+- [结构化输入](/zh/reference/structured-input/) —— 传入完整的 `LLMMessage` 数组而非字符串：既有对话轮次、图像内容块、运行时校验与防御性复制。
 - [外部智能体](/zh/reference/external-agents/) —— 在任务 DAG 中运行本地进程或 ACP 编码智能体，并明确权限、用量与生命周期边界。
 
 ## 控制编排
 
 - [执行路由](/zh/reference/execution-routing/) —— 通过显式模式、治理策略、自定义路由器与可审计的决策，在单智能体与团队执行之间选择。
 - [任务调度](/zh/reference/task-scheduling/) —— 事件驱动的 DAG 执行、调度策略、结构化的需求与交接、优先级与审批模式。
+- [持久化审批门](/zh/reference/durable-approvals/) —— 在计划、轮次、派发或工具调用的关卡上挂起一次带检查点的运行，在回调之外做决定，再从完全相同的受审内容恢复。
 - [共识](/zh/reference/consensus/) —— `runConsensus` 的提议者到裁判验证、按任务的 verify 钩子，以及共享 token 预算的不变量。
 - [模型路由](/zh/reference/model-routing/) —— 可选的确定性策略，按阶段、智能体、任务角色、优先级或叶子节点把编排阶段路由到不同模型。
 - [计划预览与重放](/zh/reference/plan-replay/) —— 用 `createPlanArtifact` 冻结已审阅的任务 DAG，之后用 `runFromPlan` 执行，无需再次调用协调器。
@@ -27,10 +29,12 @@ description: "参考文档索引——模型与工具配置、编排控制、可
 - [可观测性](/zh/reference/observability/) —— TraceRecord v2 sink、TraceStore 实现、可选的 OpenTelemetry 导出，以及离线的运行后 Run Viewer。
 - [可观测性迁移](/zh/reference/observability-migration/) —— 分阶段、可回退地从 `onTrace` 迁移到 sink、store 与 OpenTelemetry，且不改变运行结果。
 - [可观测性性能](/zh/reference/observability-performance/) —— 可复现的性能预算、基准测试方法，以及当前版本的实测快照。
+- [运行事件日志](/zh/reference/run-journal/) —— 可选开启的仅追加日志，记录哪些内容进入了上下文、哪些工具运行过，以及计划与任务状态如何变化。
 - [检查点与恢复](/zh/reference/checkpoint/) —— 基于任意 `MemoryStore` 的可选按运行快照：持久化任务进度，并在崩溃、中止或重启后恢复。
 - [自适应恢复](/zh/reference/adaptive-recovery/) —— 在某个结果产生后，修订任务图中尚未执行的部分，采用经校验、可审批、仅追加的计划补丁。
 - [上下文管理](/zh/reference/context-management/) —— 用上下文策略、工具结果压缩与跨提供方推理，把长时间运行控制在 token 上限之内。
 - [评估](/zh/reference/evaluation/) —— 为 EvalSet 与打分器做版本管理、持久化结果、在 CI 设质量闸，并对已完成的生产运行采样，且不改变业务结果。
+- [出网策略](/zh/reference/egress-policy/) —— 限制内置 LLM 适配器可以访问的源，并在编排器、单次运行与智能体三个作用域上取交集。
 
 ## 命令行
 

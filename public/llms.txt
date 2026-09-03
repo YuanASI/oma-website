@@ -43,11 +43,14 @@ Open Multi-Agent (OMA) is a goal-driven agent runtime for TypeScript backends. I
 - [Reference index](https://open-multi-agent.com/reference/): every reference page in one list, grouped by what it configures.
 - [Execution routing](https://open-multi-agent.com/reference/execution-routing/): choose single-agent or team execution through explicit modes, governance policy, custom routers, and auditable decisions.
 - [Task scheduling and dispatch](https://open-multi-agent.com/reference/task-scheduling/): event-driven DAG execution, scheduling strategies, structured requirements and handoffs, priority, metadata, and approval modes.
+- [Durable approval gates](https://open-multi-agent.com/reference/durable-approvals/): suspend a checkpointed run at a plan, round, dispatch, or tool-call gate, decide out of band, and resume from exactly the reviewed content.
 - [Providers](https://open-multi-agent.com/reference/providers/): configure hosted, cloud, and local model providers — built-in shortcuts, OpenAI-compatible endpoints, env vars, and local tool-calling.
 - [Tool configuration](https://open-multi-agent.com/reference/tool-configuration/): grant built-in tools (default-deny), presets and allowlists, the filesystem sandbox, custom tools, and MCP.
+- [Structured input](https://open-multi-agent.com/reference/structured-input/): pass a complete LLMMessage array instead of a string to run(), stream(), and runAgent() — prior turns, image blocks, validation, and defensive copies.
 - [Observability](https://open-multi-agent.com/reference/observability/): TraceRecord v2 sinks, TraceStore implementations, optional OpenTelemetry export, and the offline post-run Run Viewer.
 - [Observability migration](https://open-multi-agent.com/reference/observability-migration/): move from onTrace to sinks, stores, and OpenTelemetry in reversible stages without changing runtime results.
 - [Observability performance](https://open-multi-agent.com/reference/observability-performance/): reproducible performance budgets, benchmark method, and the current release snapshot.
+- [Run event journal](https://open-multi-agent.com/reference/run-journal/): an opt-in append-only log of what entered the context, which tools ran, and how the plan and task states moved.
 - [Shared memory](https://open-multi-agent.com/reference/shared-memory/): a namespaced key-value store shared across a team, in-process or via a custom MemoryStore backend.
 - [Checkpoint & resume](https://open-multi-agent.com/reference/checkpoint/): opt-in per-run snapshots over any MemoryStore — persist task progress and resume after a crash, abort, or restart with restore().
 - [Adaptive recovery](https://open-multi-agent.com/reference/adaptive-recovery/): revise the not-yet-executed part of a task graph after an outcome, with validated, approvable, append-only plan patches.
@@ -57,6 +60,7 @@ Open Multi-Agent (OMA) is a goal-driven agent runtime for TypeScript backends. I
 - [Model routing](https://open-multi-agent.com/reference/model-routing/): opt-in deterministic policy that routes orchestration phases to different models by phase, agent, task role, priority, or leaf.
 - [External agents](https://open-multi-agent.com/reference/external-agents/): run local processes or ACP coding agents inside an OMA task DAG, with explicit permission, usage, and lifecycle boundaries.
 - [Evaluation](https://open-multi-agent.com/reference/evaluation/): version EvalSets and scorers, persist results, gate CI, and sample completed production runs without changing business results.
+- [Egress policy](https://open-multi-agent.com/reference/egress-policy/): restrict which origins the built-in LLM adapters may reach — allowlist or offline mode, intersected across orchestrator, run, and agent scope.
 - [CLI](https://open-multi-agent.com/reference/cli/): the JSON-first oma binary for shell and CI — commands, config files, output, and exit codes.
 
 ## Solutions

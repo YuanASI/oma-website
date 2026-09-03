@@ -10,7 +10,7 @@ For an existing callback integration, follow the staged
 [`onTrace` migration guide](/reference/observability-migration/). Release engineering
 and benchmark evidence are recorded in
 [`observability-performance.md`](/reference/observability-performance/) and
-[`observability-release-readiness.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/docs/observability-release-readiness.md).
+[`observability-release-readiness.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/docs/observability-release-readiness.md).
 
 ## Run identity and outcome
 
@@ -30,7 +30,7 @@ result.errorInfo // redacted, JSON-safe details on failures
 characters). `attempt` starts at 1. Each execution attempt gets a new 32-hex
 `traceId` and 16-hex `rootSpanId`. Restore preserves `runId`, increments
 `attempt`, generates new trace/root IDs, and links to the previous attempt when
-restoring a v2 checkpoint.
+restoring an identity-aware v2 or v3 checkpoint.
 
 Status codes are `ok`, `error`, `cancelled`, `timeout`, `budget_exhausted`,
 `rejected`, and `skipped`. Existing `success` fields remain available and are
@@ -453,11 +453,31 @@ exported to OTel or another vendor.
 |---|---|---|
 | Run Viewer | static post-run task DAG plus span Waterfall, timing, token/cost facts, and safe details | derived artifact; no live delivery or authoritative state |
 | TraceStore | append/query telemetry, retention, and trace deletion | best-effort; no CAS, lease, suspend, or resume |
-| CheckpointStore | task-grained execution snapshot consumed by `restore()` | execution recovery state; not a trace query system |
+| CheckpointStore | safe-boundary execution snapshot consumed by `restore()` | execution recovery state; not a trace query system |
+| RunJournal | opt-in append-only record of what happened and what each model call saw | execution state; best-effort writes, never required to recover |
 | future RunStore | authoritative durable run state machine | not implemented by Observability v2 |
 
 Losing telemetry must not roll back a durable run. Deleting traces must not
 delete checkpoints, shared memory, or remotely exported OTel data.
+
+### Journal versus telemetry
+
+The optional [run journal](/reference/run-journal/) describes the same run these records
+describe and is deliberately not part of this stack. Traces are **telemetry**:
+sampling, batching, export, and retention deletion may all discard them, and
+none of that may change a run. Journal events are **execution state**: they
+record what the run did and what each model call saw, and `restore()` can fold
+them back into a conversation.
+
+The separation is structural, not conventional — `journal/` does not import from
+`observability/` — and it runs to the failure signals as well: a trace delivery
+failure and a `journal_append_failed` progress event report on separate records,
+and neither implies the other. Journal events carry `traceId` and `spanId` when a
+trace runtime is active, which is enough to join the two streams after the fact.
+Reach for traces when the question is where the time and tokens went, and for the
+journal when it is why the model saw what it saw; the
+[run journal guide](/reference/run-journal/) has the event vocabulary and the `verifyRun()`
+audit.
 
 ## Optional OpenTelemetry package
 
@@ -484,6 +504,10 @@ when it supports that operation. Provider shutdown is skipped by default, even
 when available: set `shutdownOnShutdown: true` only when the adapter owns that
 provider's lifecycle. Rejection/timeout maps to the OBS-2 exporter result and
 diagnostics, never to an Agent/Task/Run failure.
+
+`egressPolicy` does not wrap the application-owned provider or its exporters.
+Use the provider/exporter transport configuration or infrastructure controls
+for telemetry egress; see the [egress enforcement matrix](/reference/egress-policy/#enforcement-matrix).
 
 OMA run/agent/task/LLM/tool/consensus/checkpoint records become spans;
 retry, verdict, first-chunk, and stream records become `oma.*` events. DAG,
@@ -524,7 +548,7 @@ The first release intentionally provides no OTLP convenience subpath. The
 application selects its own OTel SDK and OTLP/exporter implementation, avoiding
 eager OTLP imports, implicit global-provider configuration, and a second
 SDK/exporter compatibility matrix. See
-[`packages/otel/README.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/otel/README.md) for the full API and
+[`packages/otel/README.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/otel/README.md) for the full API and
 mapping table.
 
 ## Flush and shutdown
@@ -630,7 +654,7 @@ const orchestrator = new OpenMultiAgent({
 })
 ```
 
-Forward trace spans to OpenTelemetry, Datadog, Honeycomb, Langfuse, or your own run database only after deciding what data is safe for that sink. See [`integrations/trace-observability`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/trace-observability.ts) for a runnable example.
+Forward trace spans to OpenTelemetry, Datadog, Honeycomb, Langfuse, or your own run database only after deciding what data is safe for that sink. See [`integrations/trace-observability`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/trace-observability.ts) for a runnable example.
 
 Every `runTeam()` topology choice emits a `routing_decision` legacy event and
 a v2 span with kind `routing` named `decide_execution_route`. The

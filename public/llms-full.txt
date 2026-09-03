@@ -319,11 +319,14 @@ Guides:
 Reference:
 - Execution routing: https://open-multi-agent.com/reference/execution-routing/
 - Task scheduling and dispatch: https://open-multi-agent.com/reference/task-scheduling/
+- Durable approval gates: https://open-multi-agent.com/reference/durable-approvals/
 - Providers: https://open-multi-agent.com/reference/providers/
 - Tool configuration: https://open-multi-agent.com/reference/tool-configuration/
+- Structured input: https://open-multi-agent.com/reference/structured-input/
 - Observability: https://open-multi-agent.com/reference/observability/
 - Observability migration: https://open-multi-agent.com/reference/observability-migration/
 - Observability performance: https://open-multi-agent.com/reference/observability-performance/
+- Run event journal: https://open-multi-agent.com/reference/run-journal/
 - Shared memory: https://open-multi-agent.com/reference/shared-memory/
 - Checkpoint & resume: https://open-multi-agent.com/reference/checkpoint/
 - Adaptive recovery: https://open-multi-agent.com/reference/adaptive-recovery/
@@ -333,6 +336,7 @@ Reference:
 - Model routing: https://open-multi-agent.com/reference/model-routing/
 - External agents: https://open-multi-agent.com/reference/external-agents/
 - Evaluation: https://open-multi-agent.com/reference/evaluation/
+- Egress policy: https://open-multi-agent.com/reference/egress-policy/
 - CLI: https://open-multi-agent.com/reference/cli/
 
 ## Blog

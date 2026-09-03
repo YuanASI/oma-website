@@ -24,6 +24,40 @@ const agent: AgentConfig = {
 | `compact` | Rule-based: truncate large assistant text blocks and tool results, keep recent turns intact. No extra LLM call. |
 | `custom` | Supply your own `compress(messages, estimatedTokens)` function. |
 
+## Auditing What a Strategy Replaced
+
+Every strategy above rewrites the conversation destructively: the messages it
+produces are what the next request carries, and the originals are gone from the
+working conversation. With a [run journal](/reference/run-journal/) enabled, each
+application also emits one `context/replace` event recording what was removed
+and what took its place, so the conversation the model actually saw stays
+reconstructable after the fact.
+
+```typescript
+const journal = new InMemoryRunJournal()
+await orchestrator.runTasks(team, tasks, { journal })
+
+for (const event of await journal.readFrom(0)) {
+  if (event.type !== 'context/replace') continue
+  console.log(event.strategy, event.replacements.length, event.dropped?.sourceEventSeqs)
+}
+```
+
+| Strategy | `strategy` | What the event records |
+|---|---|---|
+| `sliding-window` | `'sliding-window'` | `dropped` names every block of every removed turn; one replacement carries the truncation notice, sourced from the dropped turns and the message it was merged into. `detail: { droppedTurns }`. |
+| `summarize` | `'summarize'` | One replacement carrying the `[Conversation summary]` block, sourced from the old turns it condensed. `detail` names the summary model and its usage. The summary model call itself is not journaled as a turn — it is an implementation detail of this rewrite. |
+| `compact` | `'compact'` | One replacement per rewritten block (truncated text, `[Image compacted]`, `[Tool result: …, compacted]`), each naming the single block it replaced. Untouched blocks keep their own lineage. |
+| `compressToolResults` | `'compress-tool-results'` | One replacement per **newly** compressed result. Already-compressed markers are skipped, so a long run records one event per result, not one per request. |
+| `custom` | `'custom'` | Any block your function invented, stored verbatim with the whole input conversation as its lineage. Blocks you passed through by reference keep theirs. |
+
+Each derived block's lineage is the single sequence of the event that carries
+it, and the block is stored as-is rather than as a description of how to rebuild
+it — which is what makes `enforceLineage: true` pass with every built-in
+strategy. A pass that changes nothing emits nothing, and `summarize`'s memo
+cache reuses the event that first recorded a summary rather than writing it
+twice.
+
 ## Compressing Tool Results
 
 Tool outputs persist in the conversation history across turns even after the agent has acted on them. In long runs this can consume a significant portion of the context budget.
@@ -50,11 +84,19 @@ const agent: AgentConfig = {
 **Notes:**
 - Error tool results are never compressed.
 - Delegation `tool_result` blocks (from `delegate_to_agent`) are exempt — the parent agent always retains the full sub-agent output.
+- Rich image/file results use an estimated size for the threshold. Consumed
+  rich results can become a text marker; the newest rich result stays intact.
+- The `summarize` strategy replaces rich media bytes and URLs with descriptive
+  placeholders before asking the summary model to compress old turns.
 - Works alongside `contextStrategy`; combine both for maximum context headroom.
 
 ## Truncating Tool Output
 
-`maxToolOutputChars` caps the raw output length for every tool used by an agent. Outputs longer than the limit are truncated to a head + tail excerpt with a marker in between. This applies at execution time, before the result enters the conversation.
+`maxToolOutputChars` caps the raw output length for implicit string tool
+results. Outputs longer than the limit are truncated to a head + tail excerpt
+with a marker in between. Explicit rich `modelOutput` is not rewritten; resize
+or bound it inside the tool. This applies at execution time, before the result
+enters the conversation.
 
 ```typescript
 const agent: AgentConfig = {
@@ -103,6 +145,6 @@ Redacted reasoning (Anthropic safety-filtered) emits the placeholder `<thinking>
 **Notes:**
 - Disabled by default to avoid silently inflating prompt tokens.
 - Default-on truncation (`compressReasoningText`) is mandatory for safety on long chain-of-thought; disable only when debugging.
-- Some local OpenAI-compatible models may echo `<thinking>` text back into their assistant response, which can trip the loop detector. See [`examples/patterns/cross-provider-reasoning.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/patterns/cross-provider-reasoning.ts) for the failure mode and mitigations.
+- Some local OpenAI-compatible models may echo `<thinking>` text back into their assistant response, which can trip the loop detector. See [`examples/patterns/cross-provider-reasoning.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/patterns/cross-provider-reasoning.ts) for the failure mode and mitigations.
 - Bedrock has `capabilities.echoesReasoning === 'own-issued'`: signed reasoning blocks (`reasoningContent.reasoningText.signature`) and redacted blocks (`reasoningContent.redactedContent`) round-trip natively on both `chat()` and `stream()`, in both inbound extraction and outbound serialization (see #223).
 - `'tool-use-only'` (DeepSeek V4) is the only capability where same-provider echo works **without** the user opting into `preserveReasoningAsText` — it's forced on internally because the DeepSeek API requires it.

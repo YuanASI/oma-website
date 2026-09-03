@@ -27,6 +27,22 @@ Task failure and skip propagation still belong to `TaskQueue`. A failed or
 skipped task cascades to its dependents immediately, while unrelated branches
 continue.
 
+## Task retry boundaries
+
+Task retry is opt-in through `maxRetries`. The executor prefers the stable
+`AgentRunResult.errorInfo.retryable` classification and falls back to the
+in-process `error` object when needed. Validation, caller cancellation, and
+budget exhaustion are terminal; provider rate limits, server failures, network
+errors, and call timeouts remain retryable. This classification survives hooks
+or serialization seams that do not retain the original Error instance.
+
+An agent configured with `outputSchema` has a separate, single in-run
+correction: if its first response is invalid, the same agent receives schema
+feedback once. If that correction also fails, OMA returns
+`StructuredOutputValidationError`; task-level retry does not restart the whole
+prompt. Whole-run timeout, caller cancellation, and the cumulative token budget
+remain authoritative across both structured-output attempts.
+
 ## Task results and dependency payloads
 
 `TeamRunResult.agentResults` remains keyed by agent name and preserves its
@@ -179,9 +195,12 @@ This prevents a task from being reported as skipped while its agent continues
 running. Budget state is checked before dispatch and again after each completion.
 Crossing a budget stops new tasks; already-started work still settles.
 
-Checkpointing remains per completion. Writes are serialized through the
-existing save chain, and restore does not rerun tasks already recorded as
-completed.
+Checkpointing persists safe built-in-runner turn/tool boundaries as well as
+task completions. Writes are serialized through the existing save chain;
+restore skips tasks already recorded as completed, replays committed tool
+results without re-executing them, and conservatively runs calls that have no
+commit record. External agent backends remain task-grained because they own
+their private execution loops.
 
 ## Progress-event migration
 
@@ -196,7 +215,7 @@ If a UI must retain round grouping during migration, configure `onApproval` and
 return `true`.
 
 See
-[`examples/patterns/event-driven-dag.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/patterns/event-driven-dag.ts)
+[`examples/patterns/event-driven-dag.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/patterns/event-driven-dag.ts)
 for a no-key deferred-promise demonstration. It shows only the supported claim:
 the downstream task starts when its dependency is satisfied, without waiting
 for an unrelated task from the same ready set.

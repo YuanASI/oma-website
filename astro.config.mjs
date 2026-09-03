@@ -290,6 +290,7 @@ export default defineConfig({
 					items: [
 						{ label: 'Providers', slug: 'reference/providers', translations: { 'zh-CN': '模型提供方' } },
 						{ label: 'Tool configuration', slug: 'reference/tool-configuration', translations: { 'zh-CN': '工具配置' } },
+						{ label: 'Structured input', slug: 'reference/structured-input', translations: { 'zh-CN': '结构化输入' } },
 						{ label: 'External agents', slug: 'reference/external-agents', translations: { 'zh-CN': '外部智能体' } },
 					],
 				},
@@ -299,6 +300,7 @@ export default defineConfig({
 						items: [
 							{ label: 'Execution routing', slug: 'reference/execution-routing', translations: { 'zh-CN': '执行路由' } },
 							{ label: 'Task scheduling', slug: 'reference/task-scheduling', translations: { 'zh-CN': '任务调度' } },
+							{ label: 'Durable approval gates', slug: 'reference/durable-approvals', translations: { 'zh-CN': '持久化审批门' } },
 							{ label: 'Consensus', slug: 'reference/consensus', translations: { 'zh-CN': '共识' } },
 							{ label: 'Model routing', slug: 'reference/model-routing', translations: { 'zh-CN': '模型路由' } },
 						{ label: 'Plan preview & replay', slug: 'reference/plan-replay', translations: { 'zh-CN': '计划预览与重放' } },
@@ -312,10 +314,12 @@ export default defineConfig({
 						{ label: 'Observability', slug: 'reference/observability', translations: { 'zh-CN': '可观测性' } },
 						{ label: 'Observability migration', slug: 'reference/observability-migration', translations: { 'zh-CN': '可观测性迁移' } },
 						{ label: 'Observability performance', slug: 'reference/observability-performance', translations: { 'zh-CN': '可观测性性能' } },
+						{ label: 'Run event journal', slug: 'reference/run-journal', translations: { 'zh-CN': '运行事件日志' } },
 						{ label: 'Checkpoint & resume', slug: 'reference/checkpoint', translations: { 'zh-CN': '检查点与恢复' } },
 						{ label: 'Adaptive recovery', slug: 'reference/adaptive-recovery', translations: { 'zh-CN': '自适应恢复' } },
 						{ label: 'Context management', slug: 'reference/context-management', translations: { 'zh-CN': '上下文管理' } },
 						{ label: 'Evaluation', slug: 'reference/evaluation', translations: { 'zh-CN': '评估' } },
+						{ label: 'Egress policy', slug: 'reference/egress-policy', translations: { 'zh-CN': '出网策略' } },
 					],
 				},
 				{

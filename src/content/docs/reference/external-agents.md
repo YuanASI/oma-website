@@ -55,9 +55,9 @@ The coordinator routes the coding work to `coder` based on its roster descriptio
 subprocess does the file edits; `reviewer` then reads the result from shared memory.
 
 A runnable `process` version is at
-[`examples/integrations/external-agent-process.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/external-agent-process.ts).
+[`examples/integrations/external-agent-process.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/external-agent-process.ts).
 A runnable ACP version is at
-[`examples/integrations/external-agent-acp.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/external-agent-acp.ts).
+[`examples/integrations/external-agent-acp.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/external-agent-acp.ts).
 
 ## Installation
 
@@ -104,6 +104,15 @@ still shapes the external agent because OMA — lacking any ACP system-prompt fi
 prepends it to the agent's first prompt (once per session), on top of seeding the
 coordinator's routing as it does for every agent.
 
+External backends have a text transport boundary. Their public Agent APIs accept
+the existing string form, but reject structured `LLMMessage[]` / `ContentBlock[]`
+arguments with `InvalidMessageError` before spawning a process or opening an ACP
+session. This avoids silently dropping image blocks or caller-owned history.
+`beforeRun.prompt` remains supported; changing `beforeRun.messages` is rejected
+for the same reason. `AgentConfig.history` does not seed a process or ACP
+session; it restores messages only for LLM-backed `prompt()` conversations. See
+[Structured Agent Input](/reference/structured-input/).
+
 For `process`, OMA starts a fresh subprocess per run. Use `input: 'stdin'` for
 commands that read a prompt from stdin, `input: 'argument'` when the command
 expects the prompt as the final argument, and `input: 'none'` for fixed adapters
@@ -136,6 +145,9 @@ The callback receives a minimal, SDK-agnostic `{ title, kind, optionKinds }` and
 > to a project you trust the backend with. ACP backends can use `permission` to
 > gate protocol permission prompts; process backends do not have protocol-level
 > permission prompts, so constrain the configured command, args, env, and cwd.
+> `egressPolicy` governs enforceable framework-owned LLM requests only; it does
+> not constrain network calls made by process or ACP children. See the
+> [egress enforcement matrix](/reference/egress-policy/#enforcement-matrix).
 
 ## How it works
 

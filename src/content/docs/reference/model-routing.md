@@ -116,4 +116,4 @@ Two guarantees keep routing safe to leave configured:
 
 ## Cost-tiered example
 
-[`examples/patterns/cost-tiered-pipeline.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/patterns/cost-tiered-pipeline.ts) runs the same four-stage pipeline twice (all-flagship vs. a tiered mix) and prints the per-model token and USD breakdown, so you can see what a routing policy saves before adopting one.
+[`examples/patterns/cost-tiered-pipeline.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/patterns/cost-tiered-pipeline.ts) runs the same four-stage pipeline twice (all-flagship vs. a tiered mix) and prints the per-model token and USD breakdown, so you can see what a routing policy saves before adopting one.
