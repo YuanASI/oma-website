@@ -62,7 +62,19 @@ for (const [label, value] of [["name", name], ["source", source], ["medium", med
 let redirects = readFileSync(redirectsPath, "utf8");
 let registry = readFileSync(registryPath, "utf8");
 
-if (new RegExp(`^/go/${name}\\b`, "m").test(redirects)) {
+// Compared as strings rather than by building a pattern from an argument.
+// The arguments are validated above, so a crafted value cannot reach here —
+// but a regex assembled from input is worth avoiding on its own terms, and
+// prefix matching says what this means more plainly than an escaped pattern.
+const existingLinks = new Set(
+    redirects
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line.startsWith("/go/"))
+        .map((line) => line.split(/\s+/)[0].slice(4).replace(/\/$/, "")),
+);
+
+if (existingLinks.has(name)) {
     die(`/go/${name} already exists in public/_redirects`);
 }
 
@@ -71,9 +83,11 @@ const registered = (heading, value) => {
     if (start === -1) return false;
     const body = registry.slice(start + heading.length);
     const end = body.indexOf("\n## ");
-    return new RegExp(`^\\| \`${value}\` \\|`, "m").test(
-        end === -1 ? body : body.slice(0, end),
-    );
+    const section = end === -1 ? body : body.slice(0, end);
+    const prefix = `| \`${value}\` |`;
+    return section
+        .split("\n")
+        .some((line) => line.trimStart().startsWith(prefix));
 };
 
 if (!registered("### utm_medium", medium)) {
