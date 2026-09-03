@@ -7,7 +7,7 @@ Observability v2 是一条增量演进路径。既有的 `onTrace` 集成可以�
 传输、存储与 OpenTelemetry，无需一次性重写全部代码。
 
 本页可直接复制的代码片段与仅用于编译检查的
-[`public-snippets.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/observability-v2/public-snippets.ts)
+[`public-snippets.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/observability-v2/public-snippets.ts)
 fixture 保持一致，并在 Node 20/22/24 测试矩阵中接受类型检查。
 
 ## 兼容性契约
@@ -91,7 +91,7 @@ const oma = new OpenMultiAgent({ observability: { sinks: [sink] } })
 超时、队列溢出和永久失败会出现在 `getStats()`、diagnostic 与 flush 结果中，但绝不会
 改变业务结果。
 
-可运行版本：[`batching-exporter.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/observability-v2/batching-exporter.ts)。
+可运行版本：[`batching-exporter.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/observability-v2/batching-exporter.ts)。
 
 ### 阶段 3A：选择 TraceStore
 
@@ -110,8 +110,8 @@ const sink = new BatchingTraceSink(new TraceStoreExporter(store))
 持久化本地文件、CLI 和规模不大的单进程服务。它不是共享数据库，不得让两个进程写入
 同一路径。
 
-可运行版本：[`in-memory-store.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/observability-v2/in-memory-store.ts)
-和 [`file-trace-store.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/observability-v2/file-trace-store.ts)。
+可运行版本：[`in-memory-store.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/observability-v2/in-memory-store.ts)
+和 [`file-trace-store.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/observability-v2/file-trace-store.ts)。
 
 ### 阶段 3B：选择 OpenTelemetry adapter
 
@@ -131,7 +131,7 @@ const oma = new OpenMultiAgent({ observability: { sinks: [sink] } })
 provider、processor、sampler、resource 与 exporter 均由应用构造。adapter 不使用全局
 provider。默认不会关闭 provider；排空 OMA sink 后，由应用关闭它所拥有的 provider。
 
-可运行的内存 provider 版本：[`otel-provider.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/observability-v2/otel-provider.ts)。
+可运行的内存 provider 版本：[`otel-provider.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/observability-v2/otel-provider.ts)。
 
 ### 阶段 4：显式管理生命周期
 
@@ -143,9 +143,9 @@ provider。默认不会关闭 provider；排空 OMA sink 后，由应用关闭�
 
 OMA 不会安装信号处理器、调用 `process.exit()`、关闭传入的 store，也不会关闭应用拥有的
 provider。请参阅可运行的
-[`CLI`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/observability-v2/cli-lifecycle.ts)、
-[`SIGTERM server`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/observability-v2/server-lifecycle.ts)
-和 [`FaaS`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/observability-v2/serverless-lifecycle.ts)
+[`CLI`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/observability-v2/cli-lifecycle.ts)、
+[`SIGTERM server`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/observability-v2/server-lifecycle.ts)
+和 [`FaaS`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/observability-v2/serverless-lifecycle.ts)
 示例。
 
 ## 需要考虑的隐私差异

@@ -23,6 +23,19 @@ description: "用分配策略、能力要求、结构化交接、逐任务审批
 任务失败与跳过传播仍由 `TaskQueue` 负责。失败或跳过会立即级联到依赖任务，
 无关分支则继续执行。
 
+## 任务重试边界
+
+任务重试通过 `maxRetries` 按需开启。执行器优先采用稳定的
+`AgentRunResult.errorInfo.retryable` 分类，必要时回退到进程内的 `error` 对象。
+校验失败、调用方取消与预算耗尽是终态；提供方限流、服务端故障、网络错误与调用
+超时仍可重试。这一分类能够跨越那些不保留原始 Error 实例的钩子或序列化接缝而
+存续。
+
+配置了 `outputSchema` 的智能体另有一次独立的、单次的运行内纠正：如果它的第一次
+响应无效，同一个智能体会收到一次 schema 反馈。如果该次纠正同样失败，OMA 返回
+`StructuredOutputValidationError`；任务级重试不会重启整个 prompt。整次运行的
+超时、调用方取消与累计 token 预算，在两次结构化输出尝试之间始终具有权威性。
+
 ## 任务结果与依赖载荷
 
 `TeamRunResult.agentResults` 继续以 Agent 名称为键，并在一个 Agent 执行多个任务时
@@ -156,8 +169,10 @@ Abort、预算耗尽与审批拒绝共享一条 **drain-then-skip** 路径：
 这样可避免任务已被报告为 skipped、其 Agent 却仍在运行。派发前与每次完成后都会
 检查预算。越过预算会停止新任务；已经启动的工作仍会结束。
 
-Checkpoint 仍在每个任务完成时写入。写操作通过现有 save chain 串行化；
-restore 不会重跑已经记录为 completed 的任务。
+Checkpoint 除了任务完成之外，也会持久化内置运行器安全的轮次 / 工具边界。
+写操作通过现有 save chain 串行化；restore 会跳过已经记录为 completed 的任务，
+回放已提交的工具结果而不重新执行它们，并保守地运行那些没有提交记录的调用。
+外部 Agent 后端仍是任务粒度的，因为它们自己掌管其私有的执行循环。
 
 ## Progress event 迁移
 
@@ -170,6 +185,6 @@ restore 不会重跑已经记录为 completed 的任务。
 `onApproval` 并返回 `true`。
 
 无需 Key 的 deferred-promise 演示见
-[`examples/patterns/event-driven-dag.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/patterns/event-driven-dag.ts)。
+[`examples/patterns/event-driven-dag.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/patterns/event-driven-dag.ts)。
 它只展示受支持的结论：一个下游任务会在自己的依赖满足后启动，不等待同一就绪集合中
 与它无关的任务。

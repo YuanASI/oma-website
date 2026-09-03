@@ -9,7 +9,7 @@ description: "三个遥测层：onProgress 事件、带 TraceStore 和可选 Ope
 [`onTrace` 迁移指南](/zh/reference/observability-migration/)。发布工程
 与基准测试证据记录在
 [`observability-performance.md`](/zh/reference/observability-performance/) 以及
-[`observability-release-readiness.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/docs/observability-release-readiness.md) 中。
+[`observability-release-readiness.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/docs/observability-release-readiness.md) 中。
 
 ## 运行标识与结果
 
@@ -28,7 +28,7 @@ result.errorInfo // redacted, JSON-safe details on failures
 `runId` 标识一次逻辑运行，可由调用方提供（1-128 个字符）。`attempt` 从 1
 开始。每一次执行尝试都会获得一个新的 32 位十六进制 `traceId` 和 16 位十六进制
 `rootSpanId`。恢复会保留 `runId`、递增 `attempt`、生成新的 trace/root ID，
-并在恢复 v2 检查点时链接到上一次尝试。
+并在恢复一个带执行标识的 v2 或 v3 检查点时链接到上一次尝试。
 
 状态码有 `ok`、`error`、`cancelled`、`timeout`、`budget_exhausted`、
 `rejected` 和 `skipped`。既有的 `success` 字段仍然可用，且由
@@ -383,11 +383,26 @@ TraceStore 的保留策略只影响该存储。它无法删除已经导出到 OT
 |---|---|---|
 | Run Viewer | 运行后的静态任务 DAG 加上 span Waterfall、计时、token/成本事实和安全详情 | 派生产物；无实时投递或权威状态 |
 | TraceStore | 追加/查询遥测、保留策略和 trace 删除 | 尽力而为；无 CAS、租约、挂起或恢复 |
-| CheckpointStore | 由 `restore()` 消费的任务粒度执行快照 | 执行恢复状态；不是一个 trace 查询系统 |
+| CheckpointStore | 由 `restore()` 消费的、按安全边界的执行快照 | 执行恢复状态；不是一个 trace 查询系统 |
+| RunJournal | 按需开启的仅追加记录，记录发生了什么、以及每次模型调用看到了什么 | 执行状态；写入尽力而为，恢复从不要求有它 |
 | 未来的 RunStore | 权威的、持久的运行状态机 | Observability v2 未实现 |
 
 丢失遥测绝不能回滚一次持久的运行。删除 trace 绝不能删除检查点、共享内存或已远程
 导出的 OTel 数据。
+
+### 日志与遥测的区别
+
+可选的[运行事件日志](/zh/reference/run-journal/)描述的是这些记录所描述的同一次运行，
+并且刻意不属于这一套栈。trace 是**遥测**：采样、批处理、导出与保留期删除都可能把
+它们丢弃，而这一切都不得改变一次运行。日志事件是**执行状态**：它们记录该次运行做了
+什么、以及每次模型调用看到了什么，而 `restore()` 可以把它们折叠回一份对话。
+
+这种分离是结构性的，而非约定俗成的——`journal/` 不从 `observability/` 导入——并且
+一直贯彻到失败信号：一次 trace 投递失败与一个 `journal_append_failed` 进度事件报告的
+是彼此独立的记录，二者互不蕴含。当 trace 运行时处于活动状态时，日志事件会携带
+`traceId` 与 `spanId`，这已足以在事后把两条流连接起来。当问题是「时间与 token 花在了
+哪里」时使用 trace，当问题是「模型为什么会看到这些」时使用日志；[运行事件日志指南](/zh/reference/run-journal/)
+给出了事件词汇表与 `verifyRun()` 审计。
 
 ## 可选的 OpenTelemetry 包
 
@@ -412,6 +427,9 @@ const orchestrator = new OpenMultiAgent({ observability: { sinks: [sink] } })
 操作时，`forceFlush()` 会委托给它。默认情况下会跳过 provider 的 shutdown，即使它
 可用：仅当适配器拥有该 provider 的生命周期时，才设置 `shutdownOnShutdown: true`。
 拒绝/超时会映射为 OBS-2 的 exporter 结果和诊断，绝不会映射为 Agent/Task/Run 的失败。
+
+`egressPolicy` 不会包裹由应用拥有的 provider 或它的 exporter。遥测出网请使用
+provider / exporter 的传输配置或基础设施层面的控制手段；见[出网强制执行对照表](/zh/reference/egress-policy/#强制执行对照表)。
 
 OMA 的 run/agent/task/LLM/tool/consensus/checkpoint 记录会变成 span；retry、
 verdict、first-chunk 和 stream 记录会变成 `oma.*` 事件。DAG、委派、
@@ -446,7 +464,7 @@ run/task/tenant/request 字段变成指标标签。
 首个版本有意不提供 OTLP 便利子路径。应用自行选择其 OTel SDK 和 OTLP/exporter 实现，
 从而避免过早的 OTLP 导入、隐式的全局 provider 配置，以及第二套 SDK/exporter
 兼容性矩阵。完整的 API 和映射表见
-[`packages/otel/README.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/otel/README.md)。
+[`packages/otel/README.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/otel/README.md)。
 
 ## Flush 与 shutdown
 
@@ -546,7 +564,7 @@ const orchestrator = new OpenMultiAgent({
 
 把 trace span 转发给 OpenTelemetry、Datadog、Honeycomb、Langfuse，或你自己的运行
 数据库——但要先判断哪些数据进入该 sink 是安全的。可运行的示例见
-[`integrations/trace-observability`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/integrations/trace-observability.ts)。
+[`integrations/trace-observability`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/trace-observability.ts)。
 
 每次 `runTeam()` 拓扑选择都会发出旧版 `routing_decision` event，以及一个 kind
 为 `routing`、名为 `decide_execution_route` 的 v2 span。记录包括决策时的

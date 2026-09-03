@@ -114,4 +114,4 @@ Fallback 需显式开启，并复用每个任务现有的重试设置，因此 `
 
 ## 成本分层示例
 
-[`examples/patterns/cost-tiered-pipeline.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/patterns/cost-tiered-pipeline.ts) 把同一条四阶段流水线跑两遍（全旗舰 vs. 分层混搭），并打印按模型分的 token 与美元开销明细，让你在采用某条路由策略之前就能看清它能省下多少。
+[`examples/patterns/cost-tiered-pipeline.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/patterns/cost-tiered-pipeline.ts) 把同一条四阶段流水线跑两遍（全旗舰 vs. 分层混搭），并打印按模型分的 token 与美元开销明细，让你在采用某条路由策略之前就能看清它能省下多少。

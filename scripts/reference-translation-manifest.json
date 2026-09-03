@@ -41,8 +41,8 @@
     "translatedAt": "2026-09-03"
   },
   "reference/cli": {
-    "enBodySha256": "99ce949be4de074d8f67fd06cf33adf75636530bfbcd2fbc0fd58a45c16d1b3c",
-    "translatedAt": "2026-08-02"
+    "enBodySha256": "c8042e22153557d149bec7b9231b9612a1fdb5075c71aeec6a616c043c88c01a",
+    "translatedAt": "2026-09-03"
   },
   "reference/consensus": {
     "enBodySha256": "3aebc5b0d0264b05c55c3995b89221d396eb37a6b8ae9c4cbb66e65f8c35feb1",
@@ -61,32 +61,32 @@
     "translatedAt": "2026-09-03"
   },
   "reference/evaluation": {
-    "enBodySha256": "9973bc27f69c5fff6018ac284e17982d4cf5d6f117bccc8a1ce73a484d68d9f1",
-    "translatedAt": "2026-08-02"
+    "enBodySha256": "ee2469f7c7f34cf876abb2cec228b3fb71c0e7191361e3147e8490c2d7cc22c8",
+    "translatedAt": "2026-09-03"
   },
   "reference/execution-routing": {
     "enBodySha256": "e0d9c6c3583e61b15dad6a159ec1e6ad3c31e67ba4404c7a75ff7a4462f37c48",
     "translatedAt": "2026-08-02"
   },
   "reference/external-agents": {
-    "enBodySha256": "a9ab82a32ee2ee78ccb197fa2d5c9510d4d333ed33188f77f9534ae327c03c25",
-    "translatedAt": "2026-08-02"
+    "enBodySha256": "54801aa395717c7577ab6e4b0308d43e3c9a2fb65ec75f8eb76d6cfe761e39b8",
+    "translatedAt": "2026-09-03"
   },
   "reference/index": {
     "enBodySha256": "4537a9d5ca1f953a1bf711061653a3274f9ffd478d1d5b2237a80c917d28b6c9",
     "translatedAt": "2026-09-03"
   },
   "reference/model-routing": {
-    "enBodySha256": "cafa65c06d27359463094e270c12881de10a53baf1bf7e6c42ec49a0986f3314",
-    "translatedAt": "2026-08-02"
+    "enBodySha256": "291f4aef44de1e840eb3c7aa30459d57e9c41c327ac1bf19e2bd41e50c80e36d",
+    "translatedAt": "2026-09-03"
   },
   "reference/observability": {
-    "enBodySha256": "3baa50fed6e582e5dcd827d32bc36f429952837af315585300cbffe72572bf83",
-    "translatedAt": "2026-08-02"
+    "enBodySha256": "3567db64bae2a46df3226bf48a6c36885affebb2ed07f902004139ddf0cdf337",
+    "translatedAt": "2026-09-03"
   },
   "reference/observability-migration": {
-    "enBodySha256": "483b58773336b7bd884c4dcb7682c7d6feb86d0ba61ffc8535f864fdefde6612",
-    "translatedAt": "2026-08-02"
+    "enBodySha256": "3d601c19b7319517b4d4ab96e83bcd18b034597989ba72442c769b387d8cdc39",
+    "translatedAt": "2026-09-03"
   },
   "reference/observability-performance": {
     "enBodySha256": "1ba6d380fa3f88c77d1230423a215c23536c176f983a7bda85e4e7de4fa0fb4e",
@@ -97,8 +97,8 @@
     "translatedAt": "2026-07-18"
   },
   "reference/providers": {
-    "enBodySha256": "83a36ded3f29bef9526b4629bc48798e2ddb0c08592bc817ede8afab7f629cb2",
-    "translatedAt": "2026-08-02"
+    "enBodySha256": "c61f0f6bf27f9ee4ae98896eb39bcbe0a507f1cc58e92a87340bce959dab3d12",
+    "translatedAt": "2026-09-03"
   },
   "reference/run-journal": {
     "enBodySha256": "921956faad0e75badc6bf7fdd2bc5e46b0104bc00a808971c2ae304a68af0bc7",
@@ -113,11 +113,11 @@
     "translatedAt": "2026-09-03"
   },
   "reference/task-scheduling": {
-    "enBodySha256": "72db7ea5164d3381264f982f2ca2f8784481f6505e001f4ba68c0396fa41222d",
-    "translatedAt": "2026-08-02"
+    "enBodySha256": "c910b631230a2c0a8886bfdbf241bfabc801564eec9f4df4c63afdafab54446a",
+    "translatedAt": "2026-09-03"
   },
   "reference/tool-configuration": {
-    "enBodySha256": "e5a9fe4c5298d6946c3559afbc575fdcab6d3d9ea42a003b9a02a8fe82639d84",
-    "translatedAt": "2026-08-02"
+    "enBodySha256": "4a8151514077195def8e23348acb7b9ee7f6fc99a250f52f8cd7b1bc54b7b131",
+    "translatedAt": "2026-09-03"
   }
 }
