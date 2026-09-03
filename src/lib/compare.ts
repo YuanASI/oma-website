@@ -11,15 +11,25 @@
 // against Anthropic's official agent setup, multiagent orchestration,
 // self-hosted sandbox, event-streaming, rate-limit, and security-model docs.
 //
-// OMA's column was re-verified for core v1.14.0 on 2026-08-06, against the
-// vendored release notes (src/content/changelog/1.14.0.md) and the synced
+// OMA's column was re-verified for core v1.17.0 on 2026-09-03, against the
+// vendored release notes (1.15.0 / 1.16.0 / 1.16.1 / 1.17.0) and the synced
 // reference docs — not against the framework source, which is why claims here
-// stay at the level those documents actually support. Nothing in the column was
-// found wrong; what it was missing was v1.14.0's two additions, hybrid semantic
-// routing and adaptive plan recovery, now folded into the paradigm axis and the
-// orchestration, governance, and scheduling capabilities. The optional
-// first-party @open-multi-agent/otel package is at 0.1.1, whose declared
-// core ^1.11.0 range covers this release. The
+// stay at the level those documents actually support. One claim was found
+// WRONG rather than merely thin: the scheduling capability said retries and
+// checkpoints "resume from completed task boundaries", which stopped being true
+// in 1.15.0, when mid-task recovery began replaying committed tool results
+// instead of re-running their tools. Understating a shipped capability in a
+// comparison is the same defect as overstating one. What the column was missing
+// is 1.15.0's suspendable durable approvals, 1.16.0's egress policy and
+// pluggable shell execution, and 1.17.0's run journal, now folded into the
+// governance, production-control, observability, and evidence entries.
+//
+// (Previously re-verified for v1.14.0 on 2026-08-06, which added hybrid
+// semantic routing and adaptive plan recovery to the paradigm axis.)
+//
+// The optional first-party @open-multi-agent/otel package is at 0.1.2, whose
+// declared core ^1.11.0 dependency range covers this release (npm registry,
+// checked 2026-09-03). The
 // whole point of these pages is the fair "when the other tool is the better
 // choice" paragraph, so the competitor gets genuine credit and nothing is
 // rounded up. Where a value would be a guess, it is stated qualitatively, never
@@ -69,7 +79,7 @@ export const AXES: Axis[] = [
   {
     key: 'observability',
     label: { en: 'Observability', zh: '可观测性' },
-    oma: { en: 'TraceRecord v2 + TraceStore, stable run identity, an optional first-party OTel adapter, and an offline post-run Run Viewer — no hosted service required', zh: 'TraceRecord v2 + TraceStore、稳定运行标识、可选的一方 OTel 适配器，以及离线的运行后 Run Viewer——无需任何托管服务' },
+    oma: { en: 'TraceRecord v2 + TraceStore, stable run identity, an opt-in run journal recording what each model call actually saw, a first-party OTel adapter, and an offline post-run Run Viewer — no hosted service required', zh: 'TraceRecord v2 + TraceStore、稳定运行标识、可选开启的运行事件日志（记录每次模型调用实际看到了什么）、一方 OTel 适配器，以及离线的运行后 Run Viewer——无需任何托管服务' },
   },
 ];
 
@@ -90,22 +100,22 @@ export const OMA_CAPABILITIES: OmaCapability[] = [
   {
     title: { en: 'Governance and approvals at distinct boundaries', zh: '位于不同边界的治理与审批' },
     body: {
-      en: 'Declare required or preferred roles, ordered review paths, and budget-aware degradation. Gate the plan with <code>onPlanReady</code>, one ready task with <code>onTaskDispatch</code>, one consequential tool call with <code>onToolCall</code>, and any mid-run plan revision with <code>onPlanPatch</code>; then inspect <code>governanceConclusion</code>.',
-      zh: '声明必需或偏好的角色、有序审阅路径与预算感知降级。分别用 <code>onPlanReady</code> 审批计划、<code>onTaskDispatch</code> 审批一个就绪任务、<code>onToolCall</code> 审批一次高影响工具调用、<code>onPlanPatch</code> 审批运行中的每次计划修订，再检查 <code>governanceConclusion</code>。',
+      en: 'Declare required or preferred roles, ordered review paths, and budget-aware degradation. Gate the plan with <code>onPlanReady</code>, one ready task with <code>onTaskDispatch</code>, one consequential tool call with <code>onToolCall</code>, and any mid-run plan revision with <code>onPlanPatch</code>; then inspect <code>governanceConclusion</code>. A gate can also suspend rather than answer inline: the request and the reviewer decision persist beside the checkpoint, so the decision happens out of process and the run resumes on exactly the content that was reviewed.',
+      zh: '声明必需或偏好的角色、有序审阅路径与预算感知降级。分别用 <code>onPlanReady</code> 审批计划、<code>onTaskDispatch</code> 审批一个就绪任务、<code>onToolCall</code> 审批一次高影响工具调用、<code>onPlanPatch</code> 审批运行中的每次计划修订，再检查 <code>governanceConclusion</code>。关卡也可以挂起而不是就地作答：请求与审阅者的决定与检查点一同持久化，于是决定发生在进程之外，运行随后从完全相同的受审内容恢复。',
     },
   },
   {
     title: { en: 'Event-driven scheduling and task evidence', zh: '事件驱动调度与任务证据' },
     body: {
-      en: 'Ready dependents start as soon as prerequisites complete. Hard task requirements are enforced across every assignment strategy, so an unsatisfiable task is rejected instead of dispatched to an ineligible agent; <code>taskResults</code> preserves unmerged task outputs and structured dependency payloads carry bounded provenance. Retries and checkpoints resume from completed task boundaries, and opt-in repairable recovery can append replacement work at an outcome barrier before any original dependent starts.',
-      zh: '依赖完成后，就绪的下游任务立即启动。硬性任务要求在每种指派策略下都会强制执行，无法满足的任务会被拒绝，而不是派发给不合格的智能体；<code>taskResults</code> 保留未经合并的任务输出，结构化依赖载荷携带受限的来源信息。重试与检查点从已完成任务边界恢复；可选开启的 repairable 恢复，还能在任务结果屏障处、于任何原有下游任务启动之前追加替代工作。',
+      en: 'Ready dependents start as soon as prerequisites complete. Hard task requirements are enforced across every assignment strategy, so an unsatisfiable task is rejected instead of dispatched to an ineligible agent; <code>taskResults</code> preserves unmerged task outputs and structured dependency payloads carry bounded provenance. Retries and checkpoints resume from safe runner boundaries, replaying a committed tool result rather than running that tool a second time, and opt-in repairable recovery can append replacement work at an outcome barrier before any original dependent starts.',
+      zh: '依赖完成后，就绪的下游任务立即启动。硬性任务要求在每种指派策略下都会强制执行，无法满足的任务会被拒绝，而不是派发给不合格的智能体；<code>taskResults</code> 保留未经合并的任务输出，结构化依赖载荷携带受限的来源信息。重试与检查点从运行器的安全边界恢复，会回放一个已提交的工具结果，而不是把那个工具再跑一次；可选开启的 repairable 恢复，还能在任务结果屏障处、于任何原有下游任务启动之前追加替代工作。',
     },
   },
   {
     title: { en: 'Production controls', zh: '生产控制' },
     body: {
-      en: 'Bound each run with turn, token, estimated-cost, timeout, context, and loop limits. <code>maxTokenBudget</code> and <code>maxCostBudget</code> stop further calls after a boundary check; one in-flight model turn can cross the ceiling. Model routes support ordered fallbacks. Built-in tools are default-deny, and trace payloads redact detected secrets on a best-effort basis.',
-      zh: '用轮次、token、估算成本、超时、上下文与循环上限约束每次运行。<code>maxTokenBudget</code> 与 <code>maxCostBudget</code> 在边界检查后停止后续调用；一个已在途的模型回合可能越过上限。模型路由支持有序 fallback。内置工具默认拒绝授权，链路数据以尽力而为方式脱敏检测到的敏感信息。',
+      en: 'Bound each run with turn, token, estimated-cost, timeout, context, and loop limits. <code>maxTokenBudget</code> and <code>maxCostBudget</code> stop further calls after a boundary check; one in-flight model turn can cross the ceiling. Model routes support ordered fallbacks. Built-in tools are default-deny, framework-owned model traffic can be confined to loopback or an origin allowlist, the built-in shell runs through an executor you choose, and trace payloads redact detected secrets on a best-effort basis.',
+      zh: '用轮次、token、估算成本、超时、上下文与循环上限约束每次运行。<code>maxTokenBudget</code> 与 <code>maxCostBudget</code> 在边界检查后停止后续调用；一个已在途的模型回合可能越过上限。模型路由支持有序 fallback。内置工具默认拒绝授权，框架自有的模型流量可以被限制在回环地址或一份源允许清单内，内置 shell 通过你选择的执行器运行，链路数据则以尽力而为方式脱敏检测到的敏感信息。',
     },
   },
   {
@@ -118,8 +128,8 @@ export const OMA_CAPABILITIES: OmaCapability[] = [
   {
     title: { en: 'Inspect, trace, and evaluate', zh: '检查、追踪与评估' },
     body: {
-      en: 'Stable run identity, routing decisions, privacy-preserving execution receipts, TraceStore, and the offline Run Viewer work with no hosted service. Score quality with versioned <code>EvalSets</code> and <code>GateVerdict</code>, including a routing-stability gate, then connect runs to production telemetry through the optional OTel adapter.',
-      zh: '稳定运行标识、路由决策、保护隐私的 execution receipt、TraceStore 与离线 Run Viewer 均无需托管服务。用版本化的 <code>EvalSet</code> 与 <code>GateVerdict</code> 评估质量，包括路由稳定性闸门，再通过可选 OTel 适配器把运行接入生产遥测。',
+      en: 'Stable run identity, routing decisions, privacy-preserving execution receipts, TraceStore, and the offline Run Viewer work with no hosted service. An opt-in append-only run journal records every adapter call and the lineage of each block the model saw, and <code>verifyRun()</code> checks a finished journal cold. Score quality with versioned <code>EvalSets</code> and <code>GateVerdict</code>, including a routing-stability gate, then connect runs to production telemetry through the optional OTel adapter.',
+      zh: '稳定运行标识、路由决策、保护隐私的 execution receipt、TraceStore 与离线 Run Viewer 均无需托管服务。可选开启的仅追加运行事件日志会记录每一次适配器调用，以及模型看到的每个块的来源，<code>verifyRun()</code> 则可对一份已完成的日志做冷校验。用版本化的 <code>EvalSet</code> 与 <code>GateVerdict</code> 评估质量，包括路由稳定性闸门，再通过可选 OTel 适配器把运行接入生产遥测。',
     },
   },
 ];

@@ -6,11 +6,21 @@
 // design system and depict the v1.13.0 runtime surface: execution routing,
 // declared governance, event-driven dispatch, task results, and receipts.
 //
-// They have NOT been redrawn for 1.14.0's adaptive plan recovery or hybrid
-// routing. scripts/check-version-drift.mjs reports this line on every run for
-// exactly that reason, and that report is correct: the diagrams trail the
-// runtime. Do not "fix" it by bumping the number — the number is an accurate
-// record of what these images actually draw. It clears when they are redrawn.
+// Re-checked against the v1.17.0 release notes on 2026-09-03: still not
+// redrawn, and the gap is now four releases wide — 1.14.0's adaptive plan
+// recovery and hybrid routing, 1.15.0's durable approvals and mid-task tool
+// recovery, 1.16.0's egress policy and pluggable shell execution, and 1.17.0's
+// run journal. Every one of those hangs off a layer the diagram already draws
+// rather than adding one, which is why the page still reads true; what the
+// images do not show is what has been added around those layers since.
+// scripts/check-version-drift.mjs reports this line on every run for exactly
+// that reason, and that report is correct: the diagrams trail the runtime. Do
+// not "fix" it by bumping the number — the number is an accurate record of what
+// these images actually draw. It clears when they are redrawn.
+//
+// The /capabilities CTA pointing here dropped its version label for the same
+// reason (src/i18n/en.ts): it named the current release while these images
+// depict the older surface recorded above.
 import '@fontsource-variable/geist';
 import '@fontsource-variable/jetbrains-mono';
 import '../../styles/tokens.css';
