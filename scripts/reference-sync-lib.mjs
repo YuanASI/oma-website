@@ -14,6 +14,14 @@ export const EXCLUDE = new Set([
   'featured-partner',
   // Release-audit evidence, rather than a user-facing product guide.
   'observability-release-readiness',
+  // Sponsor onboarding: voucher codes that are claimed one by one plus a
+  // sponsorship disclosure. It changes on the sponsor's clock, not the
+  // release's, so it stays upstream where an edit needs no site deploy.
+  'providers-atlascloud',
+  // Upstream's own Chinese copy of that page. Nothing under src/content/docs/zh
+  // is vendored — translations are produced here per TRANSLATING.md — and the
+  // flat sync model has no notion of a locale-suffixed upstream file.
+  'providers-atlascloud_zh',
 ]);
 
 // The Reference section index (reference/index.md) is a hand-written hub for the

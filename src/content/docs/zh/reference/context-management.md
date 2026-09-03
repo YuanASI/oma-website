@@ -24,6 +24,30 @@ const agent: AgentConfig = {
 | `compact` | 基于规则：截断大段 assistant 文本和工具结果，最近轮次原样保留。不额外调用 LLM。 |
 | `custom` | 提供你自己的 `compress(messages, estimatedTokens)` 函数。 |
 
+## 审计策略替换了什么
+
+上面每种策略都会破坏性地重写对话：它产出的消息就是下一次请求所携带的内容，而原始内容已从工作对话中消失。启用[运行事件日志](/zh/reference/run-journal/)后，每次应用策略还会发出一个 `context/replace` 事件，记录移除了什么、以及取而代之的是什么，因此模型实际看到的对话在事后依然可以重建。
+
+```typescript
+const journal = new InMemoryRunJournal()
+await orchestrator.runTasks(team, tasks, { journal })
+
+for (const event of await journal.readFrom(0)) {
+  if (event.type !== 'context/replace') continue
+  console.log(event.strategy, event.replacements.length, event.dropped?.sourceEventSeqs)
+}
+```
+
+| 策略 | `strategy` | 该事件记录了什么 |
+|---|---|---|
+| `sliding-window` | `'sliding-window'` | `dropped` 点名每个被移除轮次的每个块；一条替换项承载截断提示，其来源是被丢弃的那些轮次以及它被并入的那条消息。`detail: { droppedTurns }`。 |
+| `summarize` | `'summarize'` | 一条替换项承载 `[Conversation summary]` 块，其来源是被它压缩的那些旧轮次。`detail` 点名摘要模型及其用量。摘要模型自身的调用不会作为一轮被记入日志——它是这次重写的实现细节。 |
+| `compact` | `'compact'` | 每个被重写的块一条替换项（截断后的文本、`[Image compacted]`、`[Tool result: …, compacted]`），每条只点名它所替换的那一个块。未被触碰的块保留各自的来源。 |
+| `compressToolResults` | `'compress-tool-results'` | 每个**新近**被压缩的结果一条替换项。已压缩过的标记会被跳过，因此一次长时运行是每个结果一个事件，而不是每次请求一个。 |
+| `custom` | `'custom'` | 你的函数新造出来的任何块，都会原样存储，并以整个输入对话作为其来源。你按引用透传的块保留各自的来源。 |
+
+每个派生块的来源，就是承载它的那个事件的单一序号；而且该块按原样存储，而不是存成「如何重建它」的描述——这正是 `enforceLineage: true` 能在每种内置策略下都通过的原因。一次什么都没有改变的处理不会发出任何事件；`summarize` 的备忘缓存会复用首次记录该摘要的那个事件，而不是再写一遍。
+
 ## 压缩工具结果
 
 工具输出会跨轮次留在对话历史中，即便智能体已经据此行动过。在长时运行中，这会占用相当大一部分上下文预算。
@@ -50,11 +74,13 @@ const agent: AgentConfig = {
 **说明：**
 - 错误类工具结果永不压缩。
 - 委派的 `tool_result` 块（来自 `delegate_to_agent`）豁免——父智能体始终保留子智能体的完整输出。
+- 富媒体的图像/文件结果按估算大小来判断阈值。已消费的富结果可能变成一个文本标记；最新的那个富结果保持完整。
+- `summarize` 策略在请求摘要模型压缩旧轮次之前，会先把富媒体的字节与 URL 替换成描述性占位符。
 - 与 `contextStrategy` 协同工作；两者结合可获得最大的上下文余量。
 
 ## 截断工具输出
 
-`maxToolOutputChars` 为某个智能体使用的每个工具限制原始输出长度。超过限制的输出会被截断成「头部 + 尾部」摘录，中间放一个标记。这发生在执行时、结果进入对话之前。
+`maxToolOutputChars` 为隐式的字符串型工具结果限制原始输出长度。超过限制的输出会被截断成「头部 + 尾部」摘录，中间放一个标记。显式的富 `modelOutput` 不会被重写；请在工具内部调整其尺寸或为它设限。这发生在执行时、结果进入对话之前。
 
 ```typescript
 const agent: AgentConfig = {
@@ -103,6 +129,6 @@ const agent: AgentConfig = {
 **说明：**
 - 默认禁用，以免静默膨胀 prompt token。
 - 默认开启的截断（`compressReasoningText`）在长链式思考上是强制的安全措施；只在调试时才关闭。
-- 某些本地 OpenAI 兼容模型可能把 `<thinking>` 文本重新输出到自己的 assistant 回复中，这可能触发循环检测器。失败模式与缓解办法见 [`examples/patterns/cross-provider-reasoning.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.14.0/packages/core/examples/patterns/cross-provider-reasoning.ts)。
+- 某些本地 OpenAI 兼容模型可能把 `<thinking>` 文本重新输出到自己的 assistant 回复中，这可能触发循环检测器。失败模式与缓解办法见 [`examples/patterns/cross-provider-reasoning.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/patterns/cross-provider-reasoning.ts)。
 - Bedrock 的 `capabilities.echoesReasoning === 'own-issued'`：带签名的推理块（`reasoningContent.reasoningText.signature`）和脱敏块（`reasoningContent.redactedContent`）在 `chat()` 和 `stream()` 上都能原生往返，入站提取与出站序列化两侧皆然（见 #223）。
 - `'tool-use-only'`（DeepSeek V4）是唯一一种**无需**用户启用 `preserveReasoningAsText` 就能做同提供方回传的能力——它在内部被强制开启，因为 DeepSeek API 要求如此。

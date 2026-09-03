@@ -37,8 +37,8 @@
     "translatedAt": "2026-08-02"
   },
   "reference/checkpoint": {
-    "enBodySha256": "3d49baace901cd51761cc03c98585a495bb97d1ba82166cbd285093a8e3d8113",
-    "translatedAt": "2026-07-30"
+    "enBodySha256": "9ba39aa8d619582fef7fc6733c89d5e022a91e9a96886e82fed636f29c08c86b",
+    "translatedAt": "2026-09-03"
   },
   "reference/cli": {
     "enBodySha256": "99ce949be4de074d8f67fd06cf33adf75636530bfbcd2fbc0fd58a45c16d1b3c",
@@ -49,8 +49,16 @@
     "translatedAt": "2026-07-18"
   },
   "reference/context-management": {
-    "enBodySha256": "1ffeb25dc2ffb29a85e714fdaa9ca0cf90b91b686f23003579e0bb1241563880",
-    "translatedAt": "2026-08-02"
+    "enBodySha256": "38eee37ef88af1823b64fdd7595d0baa5123c0ae25e50197b2b16fecc3c67252",
+    "translatedAt": "2026-09-03"
+  },
+  "reference/durable-approvals": {
+    "enBodySha256": "18b758c005f094d9c08d420ee10c9855fad35a853f7114407861cf505e08e5a3",
+    "translatedAt": "2026-09-03"
+  },
+  "reference/egress-policy": {
+    "enBodySha256": "9064b7134668e3c83ebe7d23ae6f98acd090d6971f9331fc09db9f1104918750",
+    "translatedAt": "2026-09-03"
   },
   "reference/evaluation": {
     "enBodySha256": "9973bc27f69c5fff6018ac284e17982d4cf5d6f117bccc8a1ce73a484d68d9f1",
@@ -65,8 +73,8 @@
     "translatedAt": "2026-08-02"
   },
   "reference/index": {
-    "enBodySha256": "e77b8ecd83243acd35c476e2e0c39f5c3e93317ab586ae0ede8b0b8628a17625",
-    "translatedAt": "2026-08-22"
+    "enBodySha256": "4537a9d5ca1f953a1bf711061653a3274f9ffd478d1d5b2237a80c917d28b6c9",
+    "translatedAt": "2026-09-03"
   },
   "reference/model-routing": {
     "enBodySha256": "cafa65c06d27359463094e270c12881de10a53baf1bf7e6c42ec49a0986f3314",
@@ -92,9 +100,17 @@
     "enBodySha256": "83a36ded3f29bef9526b4629bc48798e2ddb0c08592bc817ede8afab7f629cb2",
     "translatedAt": "2026-08-02"
   },
+  "reference/run-journal": {
+    "enBodySha256": "921956faad0e75badc6bf7fdd2bc5e46b0104bc00a808971c2ae304a68af0bc7",
+    "translatedAt": "2026-09-03"
+  },
   "reference/shared-memory": {
     "enBodySha256": "16cec06d3a1045c8dbc37c756fb195feb946b35c06ddae3d83bd5613dcc341eb",
     "translatedAt": "2026-07-18"
+  },
+  "reference/structured-input": {
+    "enBodySha256": "5b7adda68d15cf8e4466add76ae38aa665f69ff4986fe4855ec95f9206afa301",
+    "translatedAt": "2026-09-03"
   },
   "reference/task-scheduling": {
     "enBodySha256": "72db7ea5164d3381264f982f2ca2f8784481f6505e001f4ba68c0396fa41222d",
