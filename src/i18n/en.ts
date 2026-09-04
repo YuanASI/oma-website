@@ -334,8 +334,9 @@ export const en = {
       h1: 'A self-organizing team of AI agents, ',
       h1Accent: 'in an environment you control.',
       // Two sentences, in this order on purpose: what it does for you, then what
-      // you keep hold of. The previous version was the second half only — a list
-      // of runtime verbs a first-time reader had no frame for.
+      // you keep hold of. Kept to two lines of the hero column — the resume
+      // guarantee this used to carry is made in full in the Why OMA section,
+      // where checkpoint has the room to say what a task boundary is.
       //
       // Every verb is a published behaviour, not a positioning word:
       // plans → reference/execution-routing (the Coordinator builds a Team plan);
@@ -343,46 +344,38 @@ export const en = {
       // runs → reference/task-scheduling (the event-driven DAG executor);
       // approvals → reference/durable-approvals; budgets → maxTokenBudget /
       // maxCostBudget (see the FAQ and /compare); trace → reference/observability
-      // (onTrace spans, TraceStore); resume at task boundaries →
-      // reference/checkpoint (snapshots at safe boundaries, restore()).
-      subtitle: 'Give it a goal or an explicit task DAG; it plans, routes, and runs the work in your own environment. You hold approvals, budgets, and trace; runs resume at task boundaries.',
+      // (onTrace spans, TraceStore).
+      subtitle: 'Give it a goal or a task DAG; it plans, routes, and runs the work in your environment. You hold approvals, budgets, and trace.',
       audience: 'for TypeScript backend and AI platform teams',
-      // Right-hand end of the audience row: the one enterprise doorway on the
-      // homepage's first screen. Deliberately quiet — the install chip is the
-      // primary action, and a reader who is not buying should be able to skip
-      // this without it ever having competed for their attention.
-      enterprise: 'Building agent products for your company?',
       meta: ['cloud + local models', 'MIT license'],
-      quickStart: 'Run no-key demo',
       demoNote: 'No signup · no API key · no model request.',
-      // Four measurable facts, each one checkable from the cell it sits in:
-      // stars and release link to GitHub, downloads to the npm package page.
-      // The old fourth cell rendered "0 / no signup" — a `0` in a row of
-      // metrics reads as a metric that is zero, which is the opposite of the
-      // claim. Weekly downloads say the same thing (people are installing it,
-      // no account required) with a number that means what it looks like.
-      trust: { stars: 'GitHub stars', release: 'latest release', license: 'license', downloads: 'npm downloads / week' },
-      // Hero panel, top layer: the input side of the run. The excerpt is a
-      // faithful abbreviation of scripts/capture-hero-dag.mjs — the same script
-      // that produced the DAG below it — so the caption names the file and the
-      // link goes to the whole thing rather than asking to be trusted.
+      // Three measurable facts, each one checkable from the cell it sits in:
+      // stars and release link to GitHub, and the licence is the repo's own.
+      // No `0 / no signup` cell — a `0` in a row of metrics reads as a metric
+      // that is zero, which is the opposite of the claim.
+      trust: { stars: 'GitHub stars', release: 'latest release', license: 'license' },
+      // Hero panel, input block. Collapsed it is the call plus the goal's first
+      // sentence; expanded it is the excerpt of scripts/capture-hero-dag.mjs —
+      // the same script that produced the run below it — and the captured goal
+      // in full, with a link to the whole script rather than a request to be
+      // trusted.
       ioExcerpt: 'team.ts · excerpt',
       fullScript: 'full script',
       capturedGoal: 'captured goal',
-      expandGoal: 'view full',
-      collapseGoal: 'collapse',
+      expandInput: 'view full',
+      collapseInput: 'collapse',
       decomposesInto: 'decomposes into',
       parallel: 'parallel',
-      expandTasks: '{count} more tasks · expand full DAG',
+      // Prefix on a row that waited: the count is `dependsOn.length` from the
+      // capture, so it says how many tasks really had to finish first.
+      afterDeps: 'after {count}',
       // Panel footer: the receipt. Every field is read out of the capture file
-      // — model, task count, wall clock, tokens, run id, capture date — so a
-      // reader can check the claim against src/data/hero-run.json. It is a
-      // recorded run, not a live one: no "live", no "in production".
+      // — model, task count, wall clock, run id — so a reader can check the
+      // claim against src/data/hero-run.json. It is a recorded run, not a live
+      // one: no "live", no "in production".
       runReal: 'real run',
       runTasks: 'tasks',
-      runTokens: 'tokens',
       runIdLabel: 'run',
-      runCaptured: 'captured',
       replay: 'replay',
     },
     copy: 'copy',
