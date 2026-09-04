@@ -552,10 +552,15 @@ const jsonLd = {
         else addEventListener('load', () => fn(), { once: true });
       };
 
-      // Counterscale's current browser API records pageviews only. Keep CTA
-      // measurement on the existing Baidu event channel and expose a DOM event
-      // so another first-party collector can subscribe later without changing
-      // the markup again.
+      // CTA clicks report to Counterscale — the same first-party, cookieless
+      // collector that already counts pageviews (insights.open-multi-agent.com),
+      // so the first-step funnel and the traffic it comes from can be read off
+      // one dataset. The tag is loaded `defer` from BaseLayout, so the global may
+      // not exist yet when an impatient visitor clicks: every hop is optional and
+      // the whole call is wrapped, because a measurement miss must never break a
+      // CTA. The `oma:landing-event` DOM event stays as the local seam another
+      // collector can subscribe to without touching the markup again.
+      type CounterscaleGlobal = { trackEvent?: (name: string) => void };
       document.addEventListener('click', (event) => {
         const target = event.target instanceof Element
           ? event.target.closest<HTMLElement>('[data-landing-event]')
@@ -564,8 +569,12 @@ const jsonLd = {
         if (!name) return;
         const detail = { name, locale: document.documentElement.lang || 'en' };
         window.dispatchEvent(new CustomEvent('oma:landing-event', { detail }));
-        const baiduQueue = (window as typeof window & { _hmt?: unknown[][] })._hmt;
-        baiduQueue?.push(['_trackEvent', 'landing', name, detail.locale]);
+        try {
+          (window as typeof window & { Counterscale?: CounterscaleGlobal })
+            .Counterscale?.trackEvent?.(name);
+        } catch {
+          // Analytics is best-effort; a failed report is not the visitor's problem.
+        }
       });
 
       type LiveCounts = { stars: number; forks: number };
