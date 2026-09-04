@@ -299,10 +299,6 @@ a { color: inherit; }
   font-family: var(--font-mono); font-size: 11px; line-height: 1.4;
   color: var(--oma-danger);
 }
-.cmd-note {
-  font-family: var(--font-mono); font-size: 11px; line-height: 1.45;
-  color: var(--oma-fg-2); letter-spacing: 0.01em;
-}
 .cmd.copied + .copy-feedback { color: var(--oma-accent); }
 /* bg-3 is dark-first (a raised well on near-black); in light mode it inverts to the
    darkest warm surface and reads as a muddy tan for a standalone CTA — drop to bg-1. */
@@ -478,7 +474,6 @@ a { color: inherit; }
 .cta-final-title--zh .cta-final-title-line { white-space: nowrap; }
 .cta-actions { display: flex; flex-direction: column; align-items: center; gap: 22px; margin-top: 40px; }
 .cta-actions .cmd-wrap { justify-items: center; }
-.cta-actions .cmd-note { text-align: center; }
 
 /* ── Footer ── */
 .footer { border-top: 1px solid var(--border-subtle); padding: 40px 0; }

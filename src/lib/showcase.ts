@@ -1,6 +1,6 @@
 // Ecosystem entries — the single source for both the landing "production proof"
 // section (the `featured` subset) and the /showcase page (all of them). Mirrors
-// the framework README "## Ecosystem" section; each entry was checked with
+// the framework README "## Built with OMA" section; each entry was checked with
 // `gh api` (repo exists + actually uses OMA) per the §5 honesty discipline.
 //
 // The `practitioner` kind (Mark Galyan / apollo-mg) is not a project but a named
@@ -34,18 +34,23 @@ export const SHOWCASE: ShowcaseEntry[] = [
   },
   {
     pkg: 'temodar-agent', by: 'by xeloxa', href: 'https://github.com/xeloxa/temodar-agent',
-    desc: 'WordPress security analysis platform. Runs OMA built-in tools (bash, file ops, grep) inside a Docker runtime.',
+    desc: 'WordPress security analysis platform. Runs OMA\'s built-in bash, file, and grep tools inside Docker.',
     tone: 'accent', tag: 'security', status: 'on Docker Hub', kind: 'built-with', featured: true,
   },
   {
     pkg: 'PR-Copilot', by: 'by kidoom', href: 'https://github.com/kidoom/PR-Copilot',
-    desc: 'AI pull-request review assistant. Runs an OMA review team — a coordinator plus scoped reviewer agents — with custom tools and token-aware diff compression.',
+    desc: 'AI pull-request reviewer. A coordinator plus scoped reviewer agents, with custom tools and token-aware diff compression.',
     tone: 'info', tag: 'code review', status: 'built with OMA', kind: 'built-with',
   },
   {
     pkg: 'StuFlow', by: 'by znc15', href: 'https://github.com/znc15/StuFlow',
-    desc: 'Terminal AI coding assistant. Drives an OMA team through runAgent / runTasks / runTeam with a custom RunTeamOptions coordinator, paired with DeepSeek.',
+    desc: 'Terminal coding assistant. Drives an OMA team through runAgent, runTasks, and runTeam with a custom coordinator, on DeepSeek.',
     tone: 'neutral', tag: 'coding agent', status: 'built with OMA', kind: 'built-with',
+  },
+  {
+    pkg: 'Reports to Charts Studio', by: 'NARNIX0/Evident-Project', href: 'https://github.com/NARNIX0/Evident-Project',
+    desc: 'Turns documents and research tables into slide-ready charts. A five-role extraction council — segmenter, planner, extractor, validator, curator — runs each role through runAgent with schema-validated structured outputs.',
+    tone: 'info', tag: 'data extraction', status: 'built with OMA', kind: 'built-with',
   },
   {
     pkg: 'Engram', by: 'engram-memory.com', href: 'https://github.com/Agentscreator/engram-memory',
@@ -61,5 +66,15 @@ export const SHOWCASE: ShowcaseEntry[] = [
     pkg: 'CodingScaffold', by: 'JRS1986/CodingScaffold', href: 'https://github.com/JRS1986/CodingScaffold',
     desc: 'Agentic-coding scaffold that lists OMA as an optional orchestration backend, with a runTeam workflow template.',
     tone: 'info', tag: 'scaffold', status: 'optional backend', kind: 'integration',
+  },
+  {
+    pkg: 'Bilig WorkPaper', by: 'proompteng/bilig', href: 'https://github.com/proompteng/bilig',
+    desc: 'Formula-workbook MCP server. An OMA agent connects it through connectMCPTools() to edit inputs, recalculate formulas, verify readback, and persist WorkPaper JSON without driving a spreadsheet UI.',
+    tone: 'neutral', tag: 'mcp · spreadsheets', status: 'MCP server', kind: 'integration',
+  },
+  {
+    pkg: 'baize-oma', by: 'timywel/baize-oma', href: 'https://github.com/timywel/baize-oma',
+    desc: 'HTTP adapter that exposes OMA runAgent() and runTeam() as Baize slot capabilities, so a Baize loop can call an OMA team across processes.',
+    tone: 'info', tag: 'http adapter', status: 'adapter', kind: 'integration',
   },
 ];

@@ -192,13 +192,13 @@ export const en = {
         {
           h: 'Commercial delivery and support',
           body: [
-            'Paid implementation, integration, and support are handled by 元定义科技 (YuanASI), a separate commercial entity — see <a href="https://yuanasi.com/en">yuanasi.com</a>, or email <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>. The framework stays MIT-licensed and free to use either way.',
+            'Paid implementation, integration, and support are handled by 元定义科技 (YuanASI), a separate commercial entity — see <a href="https://yuanasi.com/en">yuanasi.com</a>, email <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>, or message <a href="https://wa.me/8613760249135">WhatsApp</a>. The framework stays MIT-licensed and free to use either way.',
           ],
         },
         {
           h: 'Everything else',
           body: [
-            'Press, talks, and anything that fits none of the above: <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>. There is no phone line and no ticketing portal — GitHub and that address are the whole surface.',
+            'Press, talks, and anything that fits none of the above: <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>. There is no ticketing portal — GitHub, that address, and WhatsApp for commercial enquiries are the whole surface.',
           ],
         },
       ],
@@ -347,7 +347,6 @@ export const en = {
       // maxCostBudget (see the FAQ and /compare).
       subtitle: 'Every seam, an interface. Every run, a record. Describe the goal; the coordinator plans the rest, and every step stays in your hands.',
       meta: ['cloud + local models', 'MIT license'],
-      demoNote: 'No signup · no API key · no model request.',
       // Three measurable facts, each one checkable from the cell it sits in:
       // stars and release link to GitHub, and the licence is the repo's own.
       // No `0 / no signup` cell — a `0` in a row of metrics reads as a metric
@@ -378,47 +377,73 @@ export const en = {
     sectionWhy: {
       eyebrow: 'Why OMA',
       title: 'From intent to a controlled, inspectable run.',
-      sub: 'Choose the topology, move ready work, put policy at the right boundaries, and keep the evidence.',
+      sub: 'Choose the topology, move ready work, gate or suspend at the right boundary, recover and revise, and keep evidence you can verify.',
     },
+    // Six cards, one per pillar of the framework README's "Why OMA" section, so
+    // the homepage and the README tell the same story and drift together
+    // rather than apart. Every identifier is a published export or option,
+    // read against the vendored release notes up to
+    // CAPABILITY_COPY_REVIEWED_FOR. Limits that the copy must not round up:
+    // egressPolicy bounds only the built-in LLM adapters (not MCP, bash, or
+    // custom tools); LocalShellExecutor is not a security boundary; the run
+    // journal is opt-in and best-effort; process and ACP backends restore at
+    // task granularity, so "safe boundary" is the honest phrase, not "exactly
+    // where it stopped".
     why: [
       {
         tag: 'plan → route',
         title: 'Start from an outcome—or an explicit graph.',
-        desc: 'Use runTeam() to generate a reviewable task DAG, or runTasks() to execute the graph you define. Explicit mode, governance, or an ExecutionRouter chooses single-agent or team execution.',
-        proof: 'runTeam · runTasks · mode · routingDecision',
+        desc: 'Give runTeam() a goal and get a reviewable task DAG, or hand runTasks() the graph you wrote. Mode, governance, or an ExecutionRouter decides single agent or team.',
+        proof: "runTeam · runTasks · mode · strategy: 'hybrid'",
         ref: '/reference/execution-routing/',
         refLabel: 'Review execution routing',
       },
       {
         tag: 'schedule → dispatch',
         title: 'Move work as soon as dependencies are ready.',
-        desc: 'The event-driven scheduler removes unrelated round barriers. Match tasks by capability, validate hard requirements, approve each ready dispatch, and preserve unmerged task results.',
-        proof: 'event-driven · onTaskDispatch · taskResults',
+        desc: 'Downstream tasks start the moment their dependencies finish, with no round barriers. Approve each dispatch, and a task no agent can satisfy is rejected before it runs.',
+        proof: 'event-driven · onTaskDispatch · requires · taskResults',
         ref: '/reference/task-scheduling/',
         refLabel: 'Open task scheduling',
       },
       {
-        tag: 'govern → evidence',
-        title: 'Put policy at the boundary it governs.',
-        desc: 'Declare roles and review paths, confirm consequential tools, bound further calls at turn and task boundaries, then inspect governance conclusions, receipts, traces, and evaluation gates.',
-        proof: 'governance · onToolCall · receipt · EvalSet',
-        ref: '/guides/orchestration-controls/',
-        refLabel: 'Review the controls',
+        tag: 'approve → suspend',
+        title: 'Gate each boundary, decide out of process.',
+        desc: 'Gate the plan, a ready task, or a consequential tool call, each at its own boundary. Return { action: \'suspend\' } and the decision waits in the checkpoint store until another process makes it.',
+        proof: "onPlanReady · onToolCall · { action: 'suspend' } · decideApproval · restore",
+        ref: '/reference/durable-approvals/',
+        refLabel: 'Open durable approvals',
+      },
+      {
+        tag: 'recover → revise',
+        title: 'Resume from the last safe boundary, revise what has not run.',
+        desc: 'Restore resumes from the last safe boundary and replays committed tool results instead of re-running them. In repairable mode, a validated PlanPatch revises the part of the graph that has not run.',
+        proof: "checkpoint · toolCallId · recovery.mode: 'repairable' · PlanPatch · maxCostBudget",
+        ref: '/reference/adaptive-recovery/',
+        refLabel: 'Open adaptive recovery',
+      },
+      {
+        tag: 'inspect → verify',
+        title: 'Turn a run into evidence you can check.',
+        desc: 'Receipts, traces, and the offline Run Viewer show what each run did. Turn on the run journal and verifyRun() proves what the model saw from the events alone; the same records feed EvalSets and CI gates.',
+        proof: 'receipt · TraceStore · RunJournal · verifyRun · EvalSet',
+        ref: '/reference/run-journal/',
+        refLabel: 'Open the run journal',
       },
       {
         tag: 'your environment',
         title: 'Run where your data already lives.',
-        desc: 'Use cloud providers, a local endpoint, or an air-gapped deployment on your credentials. Tools are default-deny, and core has only three runtime dependencies.',
-        proof: 'offline · default-deny tools · 3 runtime deps',
-        ref: '/guides/production-checklist/',
-        refLabel: 'Open the production checklist',
+        desc: 'Cloud, local, or air-gapped models on your credentials, with three runtime dependencies. Tools are default-deny, egress policy bounds the built-in adapters, and Claude Code, Codex, or Gemini CLI join the DAG over ACP.',
+        proof: 'default-deny tools · egressPolicy · ShellExecutor · ACP',
+        ref: '/reference/egress-policy/',
+        refLabel: 'Open the egress policy',
       },
     ],
     whyViewer: {
       eyebrow: 'Run evidence',
       title: 'Inspect what happened after every run.',
-      body: 'The offline Run Viewer turns a completed run into reviewable evidence, without sending it to a hosted OMA service.',
-      points: ['Task DAG and assignees', 'Model, provider, token, and cost rollups', 'Tool calls, status, and safe evidence details'],
+      body: 'The offline Run Viewer turns a completed run into reviewable evidence, without sending it to a hosted OMA service. With the run journal on, verifyRun() checks the same run again from its own events.',
+      points: ['Task DAG and assignees', 'Model, provider, token, and cost rollups', 'Tool calls, status, and safe evidence details', 'Journaled runs: every adapter call and every block the model saw'],
       link: 'Open the observability reference',
     },
     dashboard: {
@@ -434,20 +459,20 @@ export const en = {
     },
     sectionBuild: {
       eyebrow: 'Use cases',
-      title: 'Three workflows, three explicit orchestration choices.',
-      sub: 'Start from the outcome you need, then open a runnable recipe with the orchestration choice made explicit.',
+      title: 'Three workflows, three orchestration choices.',
+      sub: 'Pick the outcome, open the recipe, run it.',
       seeCode: 'see code',
       viewAll: 'browse all examples',
     },
     builds: {
-      'adaptive-customer-support': { primitive: 'goal-driven · runTeam()', scenario: 'support · escalation', title: 'Adaptive customer support', desc: 'A coordinator selects the specialists needed for a shipping or billing escalation, then synthesizes their evidence.', outcome: 'A grounded response shaped around the actual support goal.' },
-      'contract-review-dag': { primitive: 'explicit DAG · runTasks()', scenario: 'legal ops · review', title: 'Contract review', desc: 'Extract clauses once, run compliance and summary work in parallel, then wait for both before producing the notification.', outcome: 'A complete Markdown review with step-level retry.' },
-      'incident-postmortem-dag': { primitive: 'explicit DAG · runTasks()', scenario: 'sre · operations', title: 'Incident postmortem', desc: 'Three fixture-backed investigations start in parallel, then feed a root-cause hypothesis and final postmortem.', outcome: 'A traceable Markdown artifact with timing and token-cost evidence.' },
+      'adaptive-customer-support': { primitive: 'goal-driven · runTeam()', scenario: 'support · escalation', title: 'Adaptive customer support', desc: 'A coordinator picks the specialists a shipping or billing escalation needs and synthesizes their evidence.', outcome: 'A grounded response to the actual goal.' },
+      'contract-review-dag': { primitive: 'explicit DAG · runTasks()', scenario: 'legal ops · review', title: 'Contract review', desc: 'Extract clauses once, check compliance and summarize in parallel, then notify.', outcome: 'A full Markdown review with step-level retry.' },
+      'incident-postmortem-dag': { primitive: 'explicit DAG · runTasks()', scenario: 'sre · operations', title: 'Incident postmortem', desc: 'Three investigations run in parallel, then feed a root-cause hypothesis and the postmortem.', outcome: 'A traceable Markdown report with timing and token cost.' },
     },
     sectionProof: {
       eyebrow: 'Adoption',
       title: 'Open source, live from the repo.',
-      sub: 'Repository signals and real projects, kept compact enough to verify without turning the homepage into a catalog.',
+      sub: 'Repository numbers and three real projects, each one checkable.',
       liveTag: 'live · synced from registry',
       watchMention: 'watch the mention',
       stats: { stars: 'stars', forks: 'forks', contributors: 'contributors', latestRelease: 'latest release', license: 'license' },
@@ -462,14 +487,19 @@ export const en = {
       viewAll: 'view all questions',
     },
     faqs: [
-      { q: 'How does the coordinator turn a goal into a DAG?', a: 'A coordinator agent plans the work: it breaks the goal into discrete tasks, infers dependencies between them, and emits a directed acyclic graph. Independent nodes run concurrently; dependent nodes wait on their inputs. Pass planOnly to inspect the DAG before any agent executes.' },
-      { q: 'Can agents in one team use different model providers?', a: 'Yes. Each agent declares its own model, so a single team can mix a frontier cloud model, a self-hosted endpoint, and a local Ollama instance. The coordinator routes each task to the agent, and therefore the model, assigned to it.' },
+      { q: 'How does the coordinator turn a goal into a DAG?', a: 'It plans before any agent runs. The coordinator breaks the goal into tasks, infers their dependencies, and emits a directed acyclic graph. Independent tasks run in parallel; dependent ones wait for their inputs. Pass planOnly to review the graph first.' },
+      { q: 'Can agents in one team use different model providers?', a: 'Yes. Each agent declares its own model, so one team can mix a cloud model, a self-hosted endpoint, and a local Ollama instance. The coordinator routes each task to its agent, and the model follows.' },
       { q: 'How do tools get exposed to an agent?', a: 'Default-deny. An agent only has the tools it explicitly lists in its tools array; everything else is unavailable. External systems are connected through MCP servers under the same opt-in contract.' },
-      { q: 'What happens when a node fails?', a: 'A failed node is retried under its task policy when the error may be transient. Budget exhaustion, malformed input, deliberate aborts, and non-retryable client errors skip pointless retries. Persistent failures surface on the node with FAILED state and an error, downstream dependents are held, and independent branches can continue.' },
-      { q: 'How do I keep a multi-agent run from going off the rails?', a: 'Layered controls, all opt-in. onPlanReady gates the plan, onTaskDispatch gates one ready task (or onApproval retains legacy round gates), and onToolCall can require confirmation for one consequential action. Declared governance verifies required roles and order after execution; runConsensus and loop detection add result and behavior checks.' },
-      { q: 'How do I cap what a run costs?', a: 'Use maxCostBudget with estimateCost. Your estimator owns the per-model USD price table; OMA accumulates that estimate across the run and stops issuing further calls once the cap is crossed. The check happens at turn and task boundaries, so it can overshoot by one model turn rather than stopping mid-call. maxTokenBudget provides the parallel cumulative-token ceiling, and modelRouting can put cheaper models on leaf tasks.' },
+      { q: 'What happens when a node fails?', a: 'It is retried when the error may be transient, and marked FAILED when it is not. Budget exhaustion, malformed input, deliberate aborts, and non-retryable client errors skip the retry. A FAILED node holds its dependents; independent branches keep running. In recovery.mode: \'repairable\', a Replanner can revise the unexecuted part of the graph instead of carrying it forward.' },
+      { q: 'How do I keep a multi-agent run from going off the rails?', a: 'Layered controls, all opt-in. onPlanReady gates the plan, onTaskDispatch gates one ready task (or onApproval retains legacy round gates), and onToolCall can require confirmation for one consequential action. Declared governance verifies required roles and order after execution; runConsensus and loop detection add result and behavior checks. Any of these gates can return { action: \'suspend\' } to persist the request and decide from another process.' },
+      { q: 'How do I cap what a run costs?', a: 'Set maxCostBudget with your own estimateCost price table. OMA accumulates the estimate across the run and stops issuing calls once the cap is crossed. The check runs at turn and task boundaries, so it can overshoot by one model turn. maxTokenBudget caps tokens the same way, and modelRouting puts cheaper models on leaf tasks.' },
       { q: 'Does it stream, or only return at the end?', a: 'Both. You can stream tokens and node-state transitions as the DAG fills, or simply await runTeam() for a typed, schema-validated result object once the graph resolves.' },
       { q: "How does open-multi-agent relate to Claude Code's dynamic workflows?", a: "They make the same bet: the model plans the work at runtime instead of you wiring a fixed graph. Claude's dynamic workflows run inside Claude Code, where Claude writes its own orchestration scripts and fans out parallel subagents in a session. open-multi-agent embeds that same goal-to-DAG idea in your own Node.js backend as an MIT library, on any provider, with the plan kept as inspectable, replayable data. The two also compose: over ACP an open-multi-agent team can run Claude Code itself as one of its agents." },
+      // The one non-engineering question on the page. Contact facts match
+      // /contact and the enterprise CTA; the links themselves are attached in
+      // index.astro (ENTERPRISE_LINKS) so the yuanasi.com href keeps its
+      // locale-aware campaign parameters.
+      { q: 'We do not have an engineering team. How do we get this into production?', a: '元定义科技 (YuanASI) delivers it for you. We scope the use case, build the agent team on OMA, connect it to your systems, and support it after launch. The framework stays MIT-licensed and free to run yourself. Reach us at yuanasi.com, by email, or on WhatsApp.' },
     ],
     endorse: {
       eyebrow: 'mentioned',

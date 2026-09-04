@@ -23,7 +23,7 @@ import heroRunEn from '../../data/hero-run.json';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import EnterpriseLink from '../../components/EnterpriseLink.astro';
-import { REPO, NPM, GITHUB_ORG, MAINTAINER_GITHUB, MAINTAINER_DEVTO, ghStats } from '../../lib/site';
+import { REPO, NPM, GITHUB_ORG, MAINTAINER_GITHUB, MAINTAINER_DEVTO, CONTACT_EMAIL, WHATSAPP, ghStats, yuanasiHref } from '../../lib/site';
 import { SHOWCASE } from '../../lib/showcase';
 import { detailSlugs, getFeaturedUseCases } from '../../lib/examples';
 import { computeReplaySchedule } from '../../lib/hero-replay';
@@ -195,10 +195,10 @@ const caseTr = (c: (typeof SHOWCASE)[number]) => scEntries[c.pkg] ?? { desc: c.d
 // CAPABILITY_COPY_REVIEWED_FOR in src/i18n/en.ts; that constant is the single
 // sign-off, so this comment does not carry a version of its own.
 //
-// These three cards are a deliberate summary of the core loop, not an inventory
-// of the surface — a new release does not automatically owe them an entry.
-// (Adaptive recovery and semantic routing were pending here while they were
-// main-only; both shipped in 1.14.0 and are now fair game for this copy.)
+// Six cards, one per pillar of the framework README's "Why OMA" section — the
+// homepage tells the README's story, so a release that changes the README's
+// pillars owes this list a matching edit, and one that does not can leave it
+// alone. The per-card limits the copy must respect are in the dictionary.
 const WHY = l.why;
 
 // The first three featured Use-case Recipes come from catalog featuredOrder.
@@ -218,10 +218,24 @@ const BUILDS = getFeaturedUseCases().flatMap((example) => {
   }];
 });
 
-// Keep the visible set focused on runtime decisions not already answered by the
-// capability cards. In particular, the cost answer must surface maxCostBudget;
-// model mixing is already covered in capability 02 and the stack section.
-const FAQS = [l.faqs[0], l.faqs[3], l.faqs[5]];
+// Five questions, read as an evaluator rather than an implementer: what the
+// runtime does with a goal, whether it runs on the models you already have,
+// what happens when something fails, how spend is capped, and who delivers it
+// when there is no engineering team. Tool exposure, streaming, the "off the
+// rails" controls, and the Claude Code comparison stay in the pool — card 06
+// already says default-deny, card 03 covers the gates, and /compare carries
+// the Claude Code page.
+//
+// The enterprise answer carries its channels as links so a reader can act on
+// it. The yuanasi.com link keeps the same campaign parameters as every other
+// enterprise CTA on the site; WhatsApp renders only when a number is set.
+const ENTERPRISE_LINKS = [
+  { label: 'yuanasi.com', href: yuanasiHref(locale) },
+  { label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` },
+  ...(WHATSAPP ? [{ label: 'WhatsApp', href: WHATSAPP }] : []),
+];
+type Faq = { q: string; a: string; links?: { label: string; href: string }[] };
+const FAQS: Faq[] = [l.faqs[0], l.faqs[1], l.faqs[3], l.faqs[5], { ...l.faqs[8], links: ENTERPRISE_LINKS }];
 
 const title = l.seo.title;
 const description = l.seo.description;
@@ -558,7 +572,13 @@ const jsonLd = {
                   <button type="button" class="faq-q" id={`faq-trigger-${i}`} aria-expanded="false" aria-controls={`faq-panel-${i}`}>
                     <span>{f.q}</span><span class="faq-icon" aria-hidden="true">+</span>
                   </button>
-                  <div class="faq-a" id={`faq-panel-${i}`} role="region" aria-labelledby={`faq-trigger-${i}`} aria-hidden="true"><div class="faq-a-inner">{f.a}</div></div>
+                  <div class="faq-a" id={`faq-panel-${i}`} role="region" aria-labelledby={`faq-trigger-${i}`} aria-hidden="true"><div class="faq-a-inner">{f.a}{f.links && (
+                    <div class="faq-links">
+                      {f.links.map((link) => (
+                        <a class="text-link" href={link.href} target={link.href.startsWith('http') ? '_blank' : undefined} rel={link.href.startsWith('http') ? 'noreferrer' : undefined} data-landing-event="enterprise-faq-link"><span>{link.label}</span><span class="arrow" aria-hidden="true">→</span></a>
+                      ))}
+                    </div>
+                  )}</div></div>
                 </div>
               ))}
             </div>
@@ -581,7 +601,6 @@ const jsonLd = {
                 <span class="sr-only">{l.copy} </span><span class="prompt">$</span><span class="text">{HERO_INSTALL}</span><span class="copy" aria-hidden="true" title={l.copy}><svg class="copy-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="check-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>
               </button>
               <span class="copy-feedback" aria-live="polite"></span>
-              <span class="cmd-note">{l.hero.demoNote}</span>
             </div>
           </div>
         </div>
