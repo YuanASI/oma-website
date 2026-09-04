@@ -21,13 +21,24 @@
   border-radius: var(--radius-lg); padding: 16px;
   box-shadow: var(--shadow-md);
 }
-/* Caption for the excerpt below it. Not uppercased: it names a file
-   (team.ts), and TEAM.TS is not that file. */
-.io-cap {
-  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
-  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em;
-  color: var(--oma-fg-2); margin-bottom: 8px;
+/* The input side of the run: the code that produced it, always open. Peer
+   landing pages put a syntax-highlighted artifact in the hero and so do we —
+   ours is an abbreviation of the script that captured the run underneath it,
+   not a decorative sample. Editor chrome (a tab naming the file, the link to
+   the whole of it) rather than a caption, because it is a file. */
+.io-code {
+  background: var(--oma-bg-3); border: 1px solid var(--oma-border-0);
+  border-radius: var(--radius-md); overflow: hidden;
 }
+.io-tab {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 8px 12px; background: var(--oma-bg-2);
+  border-bottom: 1px solid var(--oma-border-0);
+  font-family: var(--font-mono); font-size: 11px; line-height: 15px;
+  letter-spacing: 0.04em; color: var(--oma-fg-2);
+}
+/* Not uppercased: it names a file (team.ts), and TEAM.TS is not that file. */
+.io-tab-name { color: var(--oma-fg-1); }
 .io-cap-link {
   display: inline-flex; align-items: center; gap: 5px; flex: none;
   color: var(--oma-fg-2); text-decoration: none;
@@ -36,138 +47,122 @@
 .io-cap-link:hover { color: var(--oma-accent); }
 .io-cap-link .arrow { transition: transform var(--duration-base) var(--ease-out); }
 .io-cap-link:hover .arrow { transform: translateX(2px); }
-/* The input side of the panel: six lines abbreviating the capture script that
-   produced the DAG underneath. Fixed content, so it is a plain <pre> rather
-   than the full CodeBlock — that component's 44px title bar would repeat the
-   caption above and cost the panel a row it does not have to spare. */
+/* Seven lines abbreviating the capture script that produced the run underneath.
+   Fixed content, so it is a plain <pre> rather than the full CodeBlock — the
+   token colours are the site's own (--code-*, see tokens.css), so the block
+   reads the same as every CodeBlock elsewhere. */
 .io-excerpt {
-  margin: 0 0 12px; padding: 10px 12px; overflow-x: auto;
-  background: var(--oma-bg-3); border: 1px solid var(--oma-border-0);
-  border-radius: var(--radius-md);
-  font-family: var(--font-mono); font-size: 11px; line-height: 1.5;
+  margin: 0; padding: 10px 12px; overflow-x: auto;
+  font-family: var(--font-mono); font-size: 12px; line-height: 20px;
   color: var(--oma-fg-1); tab-size: 2;
 }
 .io-excerpt .kw { color: var(--code-keyword); }
 .io-excerpt .str { color: var(--code-string); }
 .io-excerpt .num { color: var(--code-number); }
 .io-excerpt .cmt { color: var(--code-comment); }
-.artifact-goal {
-  position: relative; background: var(--oma-bg-3);
-  border: 1px solid var(--oma-border-0); border-radius: var(--radius-md);
-}
-.artifact-goal summary {
-  display: block; padding: 12px 14px; cursor: pointer; list-style: none;
-}
-.artifact-goal summary::-webkit-details-marker { display: none; }
-.artifact-goal-head {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; margin-bottom: 6px;
-}
-.artifact-goal-label {
-  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--code-string);
-}
-.artifact-goal-action {
-  display: inline-flex; align-items: center; gap: 6px; flex: none;
-  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.06em;
-  text-transform: uppercase; color: var(--oma-fg-2);
-}
-.artifact-goal-icon {
-  display: inline-grid; place-items: center; width: 15px; height: 15px;
-  border: 1px solid var(--border-strong); border-radius: 50%;
-  color: var(--oma-accent); font-size: 12px; line-height: 1;
-  transition: transform var(--duration-base) var(--ease-out);
-}
-.artifact-goal-collapse { display: none; }
-.artifact-goal[open] .artifact-goal-expand { display: none; }
-.artifact-goal[open] .artifact-goal-collapse { display: inline; }
-.artifact-goal[open] .artifact-goal-icon { transform: rotate(45deg); }
-/* Collapsed, the preview is the goal's first sentence on a single line; the
-   whole goal is one click away, verbatim, in .artifact-goal-full. */
-.artifact-goal-preview {
-  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
-  overflow: hidden; margin: 0; color: var(--oma-fg-0);
-  font-family: var(--font-mono); font-size: 12px; line-height: 1.5;
-}
-.artifact-goal-full {
-  display: none; position: absolute; z-index: 20;
-  top: calc(100% + 8px); left: -1px; right: -1px;
-  max-height: min(360px, 55vh); overflow: auto;
-  padding: 14px; background: var(--oma-bg-1);
-  border: 1px solid var(--border-strong); border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-}
-.artifact-goal[open] .artifact-goal-full { display: block; }
-.artifact-goal summary:hover .artifact-goal-action { color: var(--oma-accent); }
-.artifact-goal summary:hover .artifact-goal-icon { border-color: var(--oma-accent-line); }
-.artifact-goal-full p {
-  margin: 0; white-space: pre-wrap; color: var(--oma-fg-0);
-  font-family: var(--font-mono); font-size: 12px; line-height: 1.65;
-}
-@media (min-width: 921px) {
-  .artifact-goal-full { max-height: none; overflow: visible; }
-}
 .io-connector {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em;
-  text-transform: uppercase; color: var(--oma-fg-2); padding: 7px 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 10px; line-height: 12px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--oma-fg-2); padding: 6px 0;
 }
-.io-connector .line { width: 1px; height: 16px; background: var(--border-strong); }
-.io-connector span:not(.line) { white-space: nowrap; }
-.dag-stack {
-  display: flex; flex-direction: column; gap: 0;
-}
-.dag-desktop { display: block; }
-.dag-mobile { display: none; }
 
-.dag-link { width: 1px; height: 10px; background: var(--border-strong); margin: 0 auto; }
-.dag-parallel {
-  position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;
-  border: 1px dashed var(--border-strong); border-radius: var(--radius-md);
-  padding: 12px; margin: 0;
+/* ── The run, as a log: one row per captured task ──
+   Rows, not cards: four cards cost the panel ~300px to say what four 38px
+   rows say, and a log is also the shape the reader already knows from a
+   terminal. Every value in a row is read out of src/data/hero-run.json. */
+.run-log { display: grid; }
+/* A level with more than one task ran in parallel — the bracket is that fact,
+   and the tag carries the count from the capture rather than a fixed word. */
+.run-group {
+  display: grid; border-left: 2px solid var(--oma-accent-line); padding-left: 10px;
 }
-.dag-parallel-tag {
-  position: absolute; top: -8px; left: 14px; background: var(--oma-bg-1);
-  padding: 0 8px; font-family: var(--font-mono); font-size: 10px;
+.run-group-tag {
+  font-family: var(--font-mono); font-size: 10px; line-height: 18px;
   letter-spacing: 0.08em; text-transform: uppercase; color: var(--oma-accent);
+  margin-bottom: 2px;
 }
+.run-log > .run-row { padding-left: 12px; }
+.run-row + .run-row,
+.run-group + .run-row { border-top: 1px solid var(--border-subtle); }
+.run-row {
+  display: grid; align-items: center; gap: 0 10px;
+  grid-template-columns: 12px 70px minmax(0, 1fr) minmax(0, auto) 50px;
+  padding: 10px 0; font-family: var(--font-mono); line-height: 18px;
+}
+.run-glyph { font-size: 12px; text-align: center; }
+.run-row[data-status='done'] .run-glyph { color: var(--oma-accent); }
+.run-row[data-status='running'] .run-glyph { color: var(--oma-warning); }
+.run-row[data-status='queued'] .run-glyph { color: var(--oma-fg-3); }
+.run-id { font-size: 11px; letter-spacing: 0.04em; color: var(--oma-fg-2); }
+/* The title is the clause before the first colon; the captured string in full
+   is in the row's title attribute and in visually-hidden text. It never wraps
+   — a row that grows to two lines is a card again. */
+.run-title {
+  display: flex; align-items: baseline; gap: 6px; min-width: 0;
+  font-size: 14px; color: var(--oma-fg-0);
+}
+.run-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.run-after { flex: none; font-size: 11px; color: var(--oma-accent); }
+.run-who {
+  font-size: 11px; color: var(--oma-fg-3);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.run-dur {
+  font-size: 11px; color: var(--oma-fg-2); text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.run-row[data-status='queued'] .run-title { color: var(--oma-fg-3); }
+/* Replay variants: the served status is the visible one, the other two wait
+   for the client script to flip data-status. Served completed, so with JS off
+   the reader sees the finished run. */
+.run-row [data-when] { display: none; }
+.run-row[data-status='queued'] [data-when='queued'],
+.run-row[data-status='running'] [data-when='running'],
+.run-row[data-status='done'] [data-when='done'] { display: inline; }
+
 /* The receipt. Every field is read out of src/data/hero-run.json, which is why
-   it sits at the foot of the panel at reading size rather than as a caption:
-   it is the panel's whole claim (a real recorded run, not a mockup) and the
-   means to check it — model, task count, wall clock, tokens, run id, date. */
+   it sits at the foot of the panel: it is the panel's whole claim (a real
+   recorded run, not a mockup) and the means to check it. One line at the
+   panel's width is the budget; the run's token total and capture date are in
+   the capture file rather than here. */
 .dag-meta {
-  display: flex; align-items: baseline; gap: 8px; margin-top: 14px;
-  padding-top: 12px; border-top: 1px solid var(--border-subtle);
-  font-family: var(--font-mono); font-size: 12px; line-height: 1.5;
+  display: flex; align-items: center; gap: 8px; margin-top: 10px;
+  padding-top: 9px; border-top: 1px solid var(--border-subtle);
+  font-family: var(--font-mono); font-size: 11px; line-height: 1.45;
   letter-spacing: 0.01em; color: var(--oma-fg-1);
 }
-.dag-meta-line { min-width: 0; }
-.dag-meta code { font-family: var(--font-mono); font-size: 12px; color: var(--oma-fg-0); }
+.dag-meta-line { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dag-meta code { font-family: var(--font-mono); font-size: 11px; color: var(--oma-fg-0); }
 .dag-meta-dot {
   width: 6px; height: 6px; border-radius: 50%; background: var(--oma-accent);
-  flex: none; transform: translateY(-1px);
+  flex: none;
 }
 /* Counts up during a replay and lands on the captured wall clock, which is also
    what it reads when nothing is playing. Fixed width so the receipt does not
    reflow on every frame. */
 .dag-elapsed { display: inline-block; min-width: 4ch; font-variant-numeric: tabular-nums; }
 .dag-replay {
-  margin-left: auto; flex: none; padding: 2px 6px;
+  margin-left: auto; flex: none;
+  display: inline-grid; place-items: center; width: 22px; height: 22px; padding: 0;
   background: none; border: none; border-radius: var(--radius-sm); cursor: pointer;
-  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em;
   color: var(--oma-fg-2);
   transition: color var(--duration-base) var(--ease-out);
 }
+.dag-replay svg { width: 13px; height: 13px; }
 .dag-replay:hover { color: var(--oma-accent); }
 .dag-replay:focus-visible { outline: 2px solid var(--oma-accent); outline-offset: 2px; }
 
 @media (max-width: 920px) {
-  /* The DAG collapses into <details> at this width; the excerpt stays open but
-     gives back the type size, and the receipt — the panel's proof line — is a
-     sibling of that <details>, so it is visible in the collapsed state. */
-  .io-excerpt { font-size: 10px; padding: 9px 10px; }
-  .dag-meta { font-size: 11px; }
-  .dag-meta code { font-size: 11px; }
+  .io-excerpt { font-size: 11px; line-height: 18px; padding: 9px 10px; }
+}
+@media (max-width: 640px) {
+  /* The rows still fit at 375px once the assignee steps out; the id, the
+     title, the status and the duration all stay. */
+  .run-row { grid-template-columns: 12px 62px minmax(0, 1fr) 46px; }
+  .run-who { display: none; }
+  .run-title { font-size: 12px; }
+  .io-excerpt { font-size: 10px; }
 }
 
 /* ── FAQ (two-column: sticky head left, questions right) ── */

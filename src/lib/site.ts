@@ -22,6 +22,14 @@ export interface GhStats {
   stars: number;
   forks: number;
   contributors: number;
+  /**
+   * How many releases the repository has published. Optional for the same
+   * reason as `npmWeeklyDownloads` below: `0` is a real count, so it cannot
+   * double as "unknown", and a call site must omit the figure rather than
+   * publish a zero if the snapshot predates the field. The refresh script keeps
+   * the last-good number, so this is only ever undefined on an old snapshot.
+   */
+  releaseCount?: number;
   latestRelease: string;
   /**
    * Last-week downloads of `@open-multi-agent/core` from the npm registry
@@ -61,6 +69,7 @@ export function ghStats(): GhStats {
     stars: typeof s.stars === 'number' ? s.stars : STATS_FLOOR.stars,
     forks: typeof s.forks === 'number' ? s.forks : STATS_FLOOR.forks,
     contributors: typeof s.contributors === 'number' ? s.contributors : STATS_FLOOR.contributors,
+    releaseCount: typeof s.releaseCount === 'number' ? s.releaseCount : undefined,
     latestRelease: typeof s.latestRelease === 'string' ? s.latestRelease : STATS_FLOOR.latestRelease,
     npmWeeklyDownloads: typeof s.npmWeeklyDownloads === 'number' ? s.npmWeeklyDownloads : undefined,
   };

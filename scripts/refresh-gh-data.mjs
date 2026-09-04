@@ -24,8 +24,8 @@ const SLUG = 'open-multi-agent/open-multi-agent';
 const API = `https://api.github.com/repos/${SLUG}`;
 // The one figure in this snapshot that does not come from GitHub. The registry's
 // downloads API is public and unauthenticated; it is a soft sub-part like
-// contributors and latestRelease, so a failure keeps the previous committed
-// number rather than failing the refresh or writing a zero.
+// contributors, releaseCount and latestRelease, so a failure keeps the
+// previous committed number rather than failing the refresh or writing a zero.
 const NPM_DOWNLOADS_API =
   'https://api.npmjs.org/downloads/point/last-week/@open-multi-agent/core';
 
@@ -35,6 +35,7 @@ const STATS_FLOOR = {
   stars: 6400,
   forks: 2391,
   contributors: 43,
+  releaseCount: 23,
   latestRelease: 'v1.13.0',
 };
 
@@ -46,6 +47,34 @@ export function ghApiHeaders() {
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
   if (token) headers.Authorization = `Bearer ${token}`;
   return headers;
+}
+
+// Count every item in a paginated list endpoint. GitHub caps per_page at 100,
+// so this walks `Link: rel="next"` and sums the page lengths rather than
+// trusting any single response. Returns null — never 0 — when the count cannot
+// be established, so callers can keep their last-good value: a repository with
+// genuinely zero contributors or releases is not a case this site has to tell
+// apart from an outage, but "0 stars-worth of contributors" on the homepage
+// would be a visible lie.
+//
+// PAGE_CAP bounds the walk. At 100 per page it covers 2,000 items; past that
+// the count is incomplete, so it reports null rather than a silent undercount.
+const PAGE_CAP = 20;
+
+async function countPaginated(url, headers, fetchImpl) {
+  let next = url;
+  let total = 0;
+  for (let page = 0; page < PAGE_CAP && next; page += 1) {
+    const response = await fetchImpl(next, { headers });
+    if (!response.ok) return null;
+    const items = await response.json();
+    if (!Array.isArray(items)) return null;
+    total += items.length;
+    const link = response.headers.get('link') || '';
+    const match = link.match(/<([^>]+)>;\s*rel="next"/);
+    next = match ? match[1] : null;
+  }
+  return next ? null : total;
 }
 
 async function readJson(file) {
@@ -68,11 +97,25 @@ export async function fetchStats(previous, fetchImpl = fetch) {
   }
   const repository = await response.json();
 
+  // anon=0: people with GitHub accounts only. Anonymous (email-only) commit
+  // authors are real contributions but not profiles a reader can go and look at,
+  // and the homepage cell links straight to the contributors graph.
   let contributors = floor.contributors;
   try {
-    const contributorResponse = await fetchImpl(`${API}/contributors?per_page=1&anon=true`, { headers });
-    const match = (contributorResponse.headers.get('link') || '').match(/[?&]page=(\d+)>;\s*rel="last"/);
-    if (match) contributors = Number.parseInt(match[1], 10);
+    const counted = await countPaginated(
+      `${API}/contributors?per_page=100&anon=0`,
+      headers,
+      fetchImpl,
+    );
+    if (counted !== null) contributors = counted;
+  } catch {
+    // Keep the last-good value for this soft sub-part.
+  }
+
+  let releaseCount = floor.releaseCount;
+  try {
+    const counted = await countPaginated(`${API}/releases?per_page=100`, headers, fetchImpl);
+    if (counted !== null) releaseCount = counted;
   } catch {
     // Keep the last-good value for this soft sub-part.
   }
@@ -109,6 +152,7 @@ export async function fetchStats(previous, fetchImpl = fetch) {
     stars: repository.stargazers_count ?? floor.stars,
     forks: repository.forks_count ?? floor.forks,
     contributors,
+    releaseCount,
     latestRelease,
     npmWeeklyDownloads,
   };
@@ -135,7 +179,8 @@ export async function refreshSnapshots() {
   const inventory = examples.inventory;
   console.log(
     `[refresh] stats: stars=${stats.stars} forks=${stats.forks} ` +
-      `contributors=${stats.contributors} release=${stats.latestRelease}`,
+      `contributors=${stats.contributors} releases=${stats.releaseCount} ` +
+      `release=${stats.latestRelease}`,
   );
   console.log(
     `[refresh] examples: ${inventory.entries.length} catalog entries at ` +

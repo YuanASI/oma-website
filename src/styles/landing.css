@@ -142,11 +142,8 @@ a { color: inherit; }
 .nav-mobile-toggle:focus-visible,
 .cmd:focus-visible,
 .text-link:focus-visible,
-.hero-enterprise-link:focus-visible,
 .btn-primary:focus-visible,
-.faq-q:focus-visible,
-.artifact-goal summary:focus-visible,
-.dag-mobile summary:focus-visible {
+.faq-q:focus-visible {
   outline: 2px solid var(--oma-accent);
   outline-offset: 3px;
 }
@@ -175,7 +172,13 @@ a { color: inherit; }
 .home-section > .container > .section-head { margin-bottom: 40px; }
 
 /* ── Hero ── */
-.hero { padding: 52px 0 56px; }
+/* Sized so the next section's eyebrow just clears the fold at 1440x900:
+   65 (sticky nav + its rule) + 108 + ~500 (the hero row: the left column runs
+   ~500px, the run panel ~465) + 112 + 80 (.home-section padding-top) = 865,
+   which puts `01 Why OMA` at 865-880 with the fold at 900. Anything smaller
+   left a dead band under the hero; the 920px breakpoint below keeps its own
+   value, where the columns stack and the fold arithmetic no longer applies. */
+.hero { padding: 108px 0 112px; }
 .hero-grid {
   display: grid; grid-template-columns: 0.92fr 1.08fr; gap: 52px; align-items: center;
 }
@@ -195,9 +198,9 @@ a { color: inherit; }
    "A self-organizing agent team," / "in an environment you control."
    (zh already breaks here). */
 .hero h1 .accent { color: var(--oma-accent); display: block; }
-/* 52ch, not 46: the two-sentence subtitle is 172 characters, and the hero's
+/* 52ch, not 46: the subtitle is 133 characters, and the hero's
    left column is ~490px wide at the 1160px container — wide enough for 52ch of
-   16px Geist (~430px) — so the tighter cap was buying a fifth line for nothing. */
+   16px Geist (~430px), so the sentence lands in three lines rather than four. */
 .hero-sub {
   margin: 18px 0 0; max-width: 52ch; font-size: 16px; line-height: 1.62;
   color: var(--oma-fg-2);
@@ -205,40 +208,30 @@ a { color: inherit; }
 /* zh sub is two sentences forced onto their own lines with <br />; drop the
    ch cap so the longer first clause holds one line in the hero column. */
 :root[lang='zh-CN'] .hero-sub { max-width: none; }
-/* Audience anchor: a quiet mono line that lets TypeScript platform teams
-   self-identify without competing with the headline. It doubles as the row
-   that carries the enterprise doorway, so the commercial path is reachable
-   from the first screen without a second band or a competing button. */
-.hero-audience {
-  display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 20px;
-  margin: 22px 0 0; font-family: var(--font-mono); font-size: 13px;
-  line-height: 1.5; letter-spacing: 0.03em; color: var(--oma-fg-2);
-}
-/* lowercase belongs to the audience phrase alone — the enterprise question is a
-   sentence and keeps its capital. */
-.hero-audience-who { text-transform: lowercase; }
-/* `margin-left: auto` rather than `justify-content: space-between`: the hero
-   column is narrow enough that the two usually sit on separate rows, and an
-   auto margin still right-aligns the link on a row of its own, where
-   space-between would drop it back to the left. */
-.hero-enterprise { margin-left: auto; }
-.hero-enterprise-link {
-  display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
-  font: inherit; color: var(--oma-fg-3);
-  transition: color var(--duration-fast) var(--ease-out);
-}
-.hero-enterprise-link:hover { color: var(--oma-fg-1); }
-.hero-enterprise-link .arrow { transition: transform var(--duration-base) var(--ease-out); }
-.hero-enterprise-link:hover .arrow { transform: translateX(3px); color: var(--oma-accent); }
-.hero-cta { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin-top: 28px; }
+/* The install chip is the whole of the hero's action, so it sits close under
+   the subtitle rather than floating in a band of its own. */
+.hero-cta { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin-top: 24px; }
+/* Four cells take their natural width and pack against the left edge, so the
+   facts read as one group instead of drifting apart across equal columns; the
+   free space collects on the right. No top/bottom rules — the dividers between
+   cells carry the grouping on their own, and the strip sits quieter under the
+   command chip without a boxed band. minmax(0, max-content) keeps the ellipsis
+   fallback if a label ever outgrows its column, so the row can never overflow.
+
+   Widths at 375px (the tightest case): the 8px uppercase labels are the widest
+   line in every cell — 12 + 12 + 8 + 7 characters of JetBrains Mono at 0.6em
+   plus 0.06em tracking is ~206px, and the mobile padding below adds ~56px, so
+   the row needs ~265px against the 335px a 20px-padded container leaves. One
+   row, with room to spare. */
 .hero-trust {
-  display: grid; grid-template-columns: repeat(var(--trust-cols, 4), minmax(0, 1fr));
-  max-width: 560px; margin-top: 24px;
-  border-top: 1px solid var(--oma-border-1);
-  border-bottom: 1px solid var(--oma-border-1);
+  display: grid; grid-template-columns: repeat(4, minmax(0, max-content));
+  justify-content: start;
+  max-width: 560px; margin-top: 16px;
 }
+/* 14px each side = 28px between cells across the divider; the first cell's left
+   padding is dropped below so the strip starts flush with the column. */
 .hero-trust > a, .hero-trust > span {
-  display: grid; gap: 4px; min-width: 0; padding: 11px 12px;
+  display: grid; gap: 4px; min-width: 0; padding: 11px 14px;
   border-left: 1px solid var(--oma-border-0); text-decoration: none;
 }
 .hero-trust > :first-child { border-left: 0; padding-left: 0; }
@@ -296,8 +289,6 @@ a { color: inherit; }
 .cmd.copied .copy .check-i polyline { stroke-dashoffset: 0; }
 @media (prefers-reduced-motion: reduce) {
   .cmd .copy svg, .cmd .copy .check-i polyline,
-  .artifact-goal-icon,
-  .dag-mobile summary::after,
   .io-cap-link, .io-cap-link .arrow, .dag-replay,
   .faq-icon,
   .live-dot::after { transition: none; animation: none; }
@@ -541,30 +532,6 @@ a { color: inherit; }
   .why-grid { grid-template-columns: 1fr; }
   .why-viewer { grid-template-columns: 1fr; }
 
-  .dag-desktop { display: none; }
-  .dag-mobile {
-    display: block; margin: 0;
-    border: 1px solid var(--border-default); border-radius: var(--radius-md);
-    background: var(--oma-bg-2); overflow: hidden;
-  }
-  .dag-mobile summary {
-    position: relative; display: grid; grid-template-columns: 1fr auto;
-    align-items: center; gap: 16px; min-height: 64px; padding: 12px 44px 12px 14px;
-    cursor: pointer; list-style: none;
-  }
-  .dag-mobile summary::-webkit-details-marker { display: none; }
-  .dag-mobile summary::after {
-    content: '+'; position: absolute; right: 16px;
-    font-family: var(--font-mono); font-size: 18px; color: var(--oma-accent);
-    transition: transform var(--duration-base) var(--ease-out);
-  }
-  .dag-mobile[open] summary { border-bottom: 1px solid var(--border-default); }
-  .dag-mobile[open] summary::after { transform: rotate(45deg); }
-  .dag-mobile-task { display: grid; gap: 3px; min-width: 0; }
-  .dag-mobile-task code { font-family: var(--font-mono); font-size: 10px; color: var(--oma-fg-2); }
-  .dag-mobile-task b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; color: var(--oma-fg-0); }
-  .dag-mobile-more { font-family: var(--font-mono); font-size: 10px; line-height: 1.4; color: var(--oma-fg-2); text-align: right; }
-  .dag-mobile > .dag-stack { padding: 14px; }
 
   .endorse-grid { grid-template-columns: 1fr; gap: 36px; }
   .faq-grid { grid-template-columns: 1fr; gap: 36px; }
@@ -606,8 +573,6 @@ a { color: inherit; }
   .stat:nth-child(odd) { border-right: 1px solid var(--border-subtle); }
   .stat:last-child { grid-column: 1 / -1; border-right: none; }
 
-  .dag-parallel { grid-template-columns: 1fr; }
-
   .build-desc, .case-desc { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
   .build-desc { -webkit-line-clamp: 3; }
 
@@ -616,17 +581,11 @@ a { color: inherit; }
   .cmd .text { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
   .cmd-wrap { width: 100%; }
 
-  /* One column: the enterprise link sits under the audience line and aligns
-     with it, rather than being pushed to a right edge that no longer reads as
-     a separate column. */
-  .hero-audience { flex-direction: column; align-items: flex-start; gap: 10px; }
-  .hero-enterprise { margin-left: 0; }
-
   .hero-cta { gap: 18px; }
-  .hero-trust { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: none; }
-  .hero-trust > a, .hero-trust > span { border-top: 1px solid var(--oma-border-0); }
-  .hero-trust > :nth-child(-n + 2) { border-top: 0; }
-  .hero-trust > :nth-child(odd) { border-left: 0; padding-left: 0; }
+  /* Four cells still fit one row at 375px (see the width note above), so the
+     strip is only released from its 560px cap here — no reflow to two rows. */
+  .hero-trust { max-width: none; }
+  .hero-trust > a, .hero-trust > span { padding: 11px 8px; }
   .proof-head { gap: 16px; }
   .cta-actions > .btn-primary { width: 100%; }
   .io-panel { min-width: 0; }
