@@ -302,7 +302,7 @@ export const zh: UiDict = {
       {
         tag: '规划 → 路由',
         title: '从结果出发，也可以直接给图。',
-        desc: '用 runTeam() 生成可审阅的任务 DAG，或用 runTasks() 执行你定义的图。显式 mode、治理策略或 ExecutionRouter 决定单智能体还是团队执行；混合策略会在确定性路由选择单智能体时，再补一次语义评估。',
+        desc: '把目标交给 runTeam() 得到可审阅的任务 DAG，或把你写好的图交给 runTasks()。mode、治理策略或 ExecutionRouter 决定单智能体还是团队执行。',
         proof: "runTeam · runTasks · mode · strategy: 'hybrid'",
         ref: '/reference/execution-routing/',
         refLabel: '查看执行路由',
@@ -310,15 +310,15 @@ export const zh: UiDict = {
       {
         tag: '调度 → 派发',
         title: '依赖一就绪，工作就移动。',
-        desc: '事件驱动调度器去掉无关的轮次屏障；按能力匹配任务、审批每次就绪派发，并保留任务级结果。没有任何智能体满足硬性要求的任务会在执行前被拒绝，而不是派给不合适的智能体。',
+        desc: '下游任务在依赖一完成就启动，没有轮次屏障。每次派发都可审批；没有智能体能满足要求的任务在执行前就被拒绝。',
         proof: '事件驱动 · onTaskDispatch · requires · taskResults',
         ref: '/reference/task-scheduling/',
         refLabel: '打开任务调度',
       },
       {
         tag: '审批 → 挂起',
-        title: '为计划、任务或工具调用设闸，并在进程外做决定。',
-        desc: '用 onPlanReady 审批计划，用 onTaskDispatch 审批一个就绪任务，用 onToolCall 审批一次高影响工具调用。返回 { action: \'suspend\' }，待决请求就与检查点一同持久化，决定在另一个进程里做出，运行只恢复经过审阅的内容。声明式治理会在运行后验证角色与审阅顺序。',
+        title: '每个边界都可设闸，决定可在进程外做。',
+        desc: '在各自的边界为计划、就绪任务或高影响工具调用设闸。返回 { action: \'suspend\' }，决定就留在检查点存储里，等另一个进程来做。',
         proof: "onPlanReady · onToolCall · { action: 'suspend' } · decideApproval · restore",
         ref: '/reference/durable-approvals/',
         refLabel: '打开持久化审批',
@@ -326,7 +326,7 @@ export const zh: UiDict = {
       {
         tag: '恢复 → 修订',
         title: '从最近的安全边界恢复，修订尚未执行的部分。',
-        desc: '检查点除了已完成的任务，也持久化运行器的安全边界，因此 restore 会按 toolCallId 回放已提交的工具结果，而不是把那个工具再跑一次。开启 recovery.mode: \'repairable\'，经过校验、只追加的 PlanPatch 就能在任务结果边界修订图中尚未执行的部分。重试、模型 fallback 以及 token 或成本预算约束其余部分。',
+        desc: 'restore 从最近的安全边界恢复，回放已提交的工具结果而不是重跑。开启可修复模式后，经校验的 PlanPatch 会修订图中尚未执行的部分。',
         proof: "checkpoint · toolCallId · recovery.mode: 'repairable' · PlanPatch · maxCostBudget",
         ref: '/reference/adaptive-recovery/',
         refLabel: '打开自适应恢复',
@@ -334,7 +334,7 @@ export const zh: UiDict = {
       {
         tag: '检查 → 核验',
         title: '把一次运行变成可以核验的证据。',
-        desc: '稳定的运行标识、运行凭证、TraceStore、离线 Run Viewer 与可选的 OpenTelemetry 让每次运行都可检查。可选开启的只追加运行事件日志记录每一次适配器调用和模型实际看到的每一块内容，verifyRun() 可以离线复核一份已完成的日志。同一批记录还会喂给带版本的 EvalSet 与 CI 闸门。',
+        desc: '运行凭证、trace 和离线 Run Viewer 展示每次运行做了什么。开启运行事件日志后，verifyRun() 仅凭事件就能证明模型看到了什么；同一批记录还喂给 EvalSet 与 CI 闸门。',
         proof: 'receipt · TraceStore · RunJournal · verifyRun · EvalSet',
         ref: '/reference/run-journal/',
         refLabel: '打开运行事件日志',
@@ -342,7 +342,7 @@ export const zh: UiDict = {
       {
         tag: '你的环境',
         title: '跑在数据所在的地方。',
-        desc: '用你自己的凭证连接云端提供方、本地端点或气隔环境，只有三个运行时依赖。工具默认拒绝，offline 或 allowlist 的 egressPolicy 约束内置 LLM 适配器的出网，ShellExecutor 决定 bash 在哪里运行，Claude Code、Codex 或 Gemini CLI 通过 ACP 加入同一张任务 DAG。',
+        desc: '云端、本地或气隔模型，用你的凭证，只有三个运行时依赖。工具默认拒绝，出网策略约束内置适配器，Claude Code、Codex 或 Gemini CLI 通过 ACP 加入同一张 DAG。',
         proof: '工具默认拒绝 · egressPolicy · ShellExecutor · ACP',
         ref: '/reference/egress-policy/',
         refLabel: '打开出网策略',

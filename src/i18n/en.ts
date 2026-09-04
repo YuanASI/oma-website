@@ -393,7 +393,7 @@ export const en = {
       {
         tag: 'plan → route',
         title: 'Start from an outcome—or an explicit graph.',
-        desc: 'Use runTeam() to generate a reviewable task DAG, or runTasks() to execute the graph you define. Explicit mode, governance, or an ExecutionRouter chooses single-agent or team execution, and the hybrid strategy adds one semantic assessment where the deterministic router would pick a single agent.',
+        desc: 'Give runTeam() a goal and get a reviewable task DAG, or hand runTasks() the graph you wrote. Mode, governance, or an ExecutionRouter decides single agent or team.',
         proof: "runTeam · runTasks · mode · strategy: 'hybrid'",
         ref: '/reference/execution-routing/',
         refLabel: 'Review execution routing',
@@ -401,15 +401,15 @@ export const en = {
       {
         tag: 'schedule → dispatch',
         title: 'Move work as soon as dependencies are ready.',
-        desc: 'The event-driven scheduler removes unrelated round barriers. Match tasks by capability, approve each ready dispatch, and keep task-scoped results. A task whose hard requirements no agent satisfies is rejected before execution, never dispatched to the wrong agent.',
+        desc: 'Downstream tasks start the moment their dependencies finish, with no round barriers. Approve each dispatch, and a task no agent can satisfy is rejected before it runs.',
         proof: 'event-driven · onTaskDispatch · requires · taskResults',
         ref: '/reference/task-scheduling/',
         refLabel: 'Open task scheduling',
       },
       {
         tag: 'approve → suspend',
-        title: 'Gate the plan, the task, or the tool call—and decide out of process.',
-        desc: 'Approve the plan with onPlanReady, one ready task with onTaskDispatch, and a consequential tool call with onToolCall. Return { action: \'suspend\' } and the pending request persists beside the checkpoint, the decision happens in another process, and the run resumes only the reviewed content. Declared governance verifies roles and review order after the run.',
+        title: 'Gate each boundary, decide out of process.',
+        desc: 'Gate the plan, a ready task, or a consequential tool call, each at its own boundary. Return { action: \'suspend\' } and the decision waits in the checkpoint store until another process makes it.',
         proof: "onPlanReady · onToolCall · { action: 'suspend' } · decideApproval · restore",
         ref: '/reference/durable-approvals/',
         refLabel: 'Open durable approvals',
@@ -417,7 +417,7 @@ export const en = {
       {
         tag: 'recover → revise',
         title: 'Resume from the last safe boundary, revise what has not run.',
-        desc: 'Checkpoints persist safe runner boundaries as well as completed tasks, so restore replays a committed tool result by toolCallId instead of running that tool again. Opt into recovery.mode: \'repairable\' and a validated, append-only PlanPatch revises the unexecuted part of the graph at a task-outcome barrier. Retries, model fallbacks, and token or cost budgets bound the rest.',
+        desc: 'Restore resumes from the last safe boundary and replays committed tool results instead of re-running them. In repairable mode, a validated PlanPatch revises the part of the graph that has not run.',
         proof: "checkpoint · toolCallId · recovery.mode: 'repairable' · PlanPatch · maxCostBudget",
         ref: '/reference/adaptive-recovery/',
         refLabel: 'Open adaptive recovery',
@@ -425,7 +425,7 @@ export const en = {
       {
         tag: 'inspect → verify',
         title: 'Turn a run into evidence you can check.',
-        desc: 'Stable run identity, execution receipts, TraceStore, the offline Run Viewer, and optional OpenTelemetry make every run inspectable. An opt-in append-only run journal records each adapter call and the blocks the model actually saw, and verifyRun() checks a finished journal cold. The same records feed versioned EvalSets and CI gates.',
+        desc: 'Receipts, traces, and the offline Run Viewer show what each run did. Turn on the run journal and verifyRun() proves what the model saw from the events alone; the same records feed EvalSets and CI gates.',
         proof: 'receipt · TraceStore · RunJournal · verifyRun · EvalSet',
         ref: '/reference/run-journal/',
         refLabel: 'Open the run journal',
@@ -433,7 +433,7 @@ export const en = {
       {
         tag: 'your environment',
         title: 'Run where your data already lives.',
-        desc: 'Cloud providers, a local endpoint, or an air-gapped deployment on your credentials, with three runtime dependencies. Tools are default-deny, an offline or allowlist egressPolicy bounds the built-in LLM adapters, a ShellExecutor decides where bash runs, and Claude Code, Codex, or Gemini CLI join the same task DAG over ACP.',
+        desc: 'Cloud, local, or air-gapped models on your credentials, with three runtime dependencies. Tools are default-deny, egress policy bounds the built-in adapters, and Claude Code, Codex, or Gemini CLI join the DAG over ACP.',
         proof: 'default-deny tools · egressPolicy · ShellExecutor · ACP',
         ref: '/reference/egress-policy/',
         refLabel: 'Open the egress policy',
