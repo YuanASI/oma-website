@@ -22,6 +22,12 @@ const SOURCE_FILE = join(DATA_DIR, 'examples-source.json');
 
 const SLUG = 'open-multi-agent/open-multi-agent';
 const API = `https://api.github.com/repos/${SLUG}`;
+// The one figure in this snapshot that does not come from GitHub. The registry's
+// downloads API is public and unauthenticated; it is a soft sub-part like
+// contributors and latestRelease, so a failure keeps the previous committed
+// number rather than failing the refresh or writing a zero.
+const NPM_DOWNLOADS_API =
+  'https://api.npmjs.org/downloads/point/last-week/@open-multi-agent/core';
 
 // Absolute floor — only used the first time, before any snapshot exists. Soft
 // sub-parts use the previous committed snapshot after the first successful run.
@@ -82,11 +88,29 @@ export async function fetchStats(previous, fetchImpl = fetch) {
     // Keep the last-good value for this soft sub-part.
   }
 
+  // npm registry, not GitHub: no auth, and deliberately no headers of ours.
+  // Only a numeric `downloads` replaces the last-good value — a shape change or
+  // an outage leaves the committed number in place, and a missing previous value
+  // stays missing so the site omits the figure instead of publishing a zero.
+  let npmWeeklyDownloads = floor.npmWeeklyDownloads;
+  try {
+    const downloadsResponse = await fetchImpl(NPM_DOWNLOADS_API);
+    if (downloadsResponse.ok) {
+      const point = await downloadsResponse.json();
+      if (typeof point.downloads === 'number' && Number.isFinite(point.downloads)) {
+        npmWeeklyDownloads = point.downloads;
+      }
+    }
+  } catch {
+    // Keep the last-good value for this soft sub-part.
+  }
+
   return {
     stars: repository.stargazers_count ?? floor.stars,
     forks: repository.forks_count ?? floor.forks,
     contributors,
     latestRelease,
+    npmWeeklyDownloads,
   };
 }
 

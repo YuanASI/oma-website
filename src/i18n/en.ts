@@ -333,12 +333,35 @@ export const en = {
       eyebrow: 'open-source TypeScript multi-agent framework',
       h1: 'A self-organizing team of AI agents, ',
       h1Accent: 'in an environment you control.',
-      subtitle: 'Start from a goal or an explicit task DAG. Route, approve, budget, trace, and resume at task boundaries—in your own environment.',
+      // Two sentences, in this order on purpose: what it does for you, then what
+      // you keep hold of. The previous version was the second half only — a list
+      // of runtime verbs a first-time reader had no frame for.
+      //
+      // Every verb is a published behaviour, not a positioning word:
+      // plans → reference/execution-routing (the Coordinator builds a Team plan);
+      // routes → reference/execution-routing + reference/model-routing;
+      // runs → reference/task-scheduling (the event-driven DAG executor);
+      // approvals → reference/durable-approvals; budgets → maxTokenBudget /
+      // maxCostBudget (see the FAQ and /compare); trace → reference/observability
+      // (onTrace spans, TraceStore); resume at task boundaries →
+      // reference/checkpoint (snapshots at safe boundaries, restore()).
+      subtitle: 'Give it a goal or an explicit task DAG; it plans, routes, and runs the work in your own environment. You hold approvals, budgets, and trace; runs resume at task boundaries.',
       audience: 'for TypeScript backend and AI platform teams',
+      // Right-hand end of the audience row: the one enterprise doorway on the
+      // homepage's first screen. Deliberately quiet — the install chip is the
+      // primary action, and a reader who is not buying should be able to skip
+      // this without it ever having competed for their attention.
+      enterprise: 'Building agent products for your company?',
       meta: ['cloud + local models', 'MIT license'],
       quickStart: 'Run no-key demo',
       demoNote: 'No signup · no API key · no model request.',
-      trust: { stars: 'GitHub stars', release: 'latest release', license: 'license', signup: 'no signup' },
+      // Four measurable facts, each one checkable from the cell it sits in:
+      // stars and release link to GitHub, downloads to the npm package page.
+      // The old fourth cell rendered "0 / no signup" — a `0` in a row of
+      // metrics reads as a metric that is zero, which is the opposite of the
+      // claim. Weekly downloads say the same thing (people are installing it,
+      // no account required) with a number that means what it looks like.
+      trust: { stars: 'GitHub stars', release: 'latest release', license: 'license', downloads: 'npm downloads / week' },
       runtime: {
         mode: 'mode',
         modeValue: 'team',

@@ -1,7 +1,8 @@
 name: Refresh GitHub snapshot
 
-# Refreshes the committed GitHub snapshot the site builds against —
-# src/data/gh-stats.json (stars/forks/contributors/release) and
+# Refreshes the committed snapshot the site builds against —
+# src/data/gh-stats.json (stars/forks/contributors/release from GitHub, plus
+# last-week downloads of @open-multi-agent/core from the npm registry) and
 # src/data/examples{,-source}.json (the /examples inventory and details). See
 # scripts/refresh-gh-data.mjs.
 #
