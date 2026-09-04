@@ -34,10 +34,34 @@ test('accepts a real-shaped adaptive security DAG', () => {
   assert.deepEqual(validateHeroRun(validRun(), 'en'), [])
 })
 
-test('rejects a synthesizer that skips a review', () => {
+// The planner is no longer told the topology, so a capture is not required to
+// use every agent or to fan in exactly three branches. What it still has to show
+// is the shape the hero draws: a parallel level, and a task joining it back.
+test('accepts a smaller decomposition the planner chose on its own', () => {
   const run = validRun()
-  run.tasks[3].dependsOn = [ids.attack, ids.data]
-  assert.ok(validateHeroRun(run, 'en').includes('synthesizer must depend directly on all three reviews'))
+  run.tasks = run.tasks.filter((task) => task.id !== ids.supply)
+  run.tasks[2].dependsOn = [ids.attack, ids.data]
+  assert.deepEqual(validateHeroRun(run, 'en'), [])
+})
+
+test('rejects a serial chain with no parallel level', () => {
+  const run = validRun()
+  run.tasks[1].dependsOn = [ids.attack]
+  run.tasks[2].dependsOn = [ids.data]
+  run.tasks[3].dependsOn = [ids.supply]
+  assert.ok(validateHeroRun(run, 'en').includes('capture must have at least one level of parallel tasks'))
+})
+
+test('rejects a fan-out that never joins back', () => {
+  const run = validRun()
+  run.tasks[3].dependsOn = [ids.attack]
+  assert.ok(validateHeroRun(run, 'en').includes('capture must end in a task that joins at least two earlier tasks'))
+})
+
+test('rejects an assignee that is not on the team', () => {
+  const run = validRun()
+  run.tasks[0].assignee = 'compliance-reviewer'
+  assert.ok(validateHeroRun(run, 'en').includes('task 1 must be assigned to a real team agent'))
 })
 
 test('rejects a cyclic task graph', () => {

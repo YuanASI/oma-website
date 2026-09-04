@@ -1,12 +1,17 @@
 export const HERO_SCENARIO = 'security-analysis'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-const REQUIRED_ASSIGNEES = [
+// The coordinator is no longer told how many tasks to create, who gets them, or
+// how they depend on each other (see scripts/capture-hero-dag.mjs), so this file
+// no longer asserts one particular topology — that would only re-prescribe the
+// DAG at validation time. It still refuses any assignee that is not on the team
+// roster below, which is what keeps a capture provably a real run of THIS team.
+const TEAM_AGENTS = new Set([
   'attack-surface-reviewer',
   'data-security-reviewer',
   'supply-chain-reviewer',
   'synthesizer',
-]
+])
 
 function isRecord(value) {
   return value !== null && typeof value === 'object' && !Array.isArray(value)
@@ -39,7 +44,7 @@ export function validateHeroRun(run, locale) {
       && run.totalTokenUsage.output_tokens > 0,
     'real input and output token usage must be positive',
   )
-  add(Array.isArray(run.tasks) && run.tasks.length >= 4 && run.tasks.length <= 7, 'capture must contain 4-7 tasks')
+  add(Array.isArray(run.tasks) && run.tasks.length >= 3 && run.tasks.length <= 6, 'capture must contain 3-6 tasks')
 
   if (!Array.isArray(run.tasks)) return errors
 
@@ -51,7 +56,7 @@ export function validateHeroRun(run, locale) {
     add(!ids.has(task.id), `task id ${task.id} must be unique`)
     ids.add(task.id)
     add(typeof task.title === 'string' && task.title.trim().length > 0, `task ${index + 1} must have a title`)
-    add(typeof task.assignee === 'string' && task.assignee.length > 0, `task ${index + 1} must have an assignee`)
+    add(typeof task.assignee === 'string' && TEAM_AGENTS.has(task.assignee), `task ${index + 1} must be assigned to a real team agent`)
     add(task.status === 'completed', `task ${index + 1} must be completed`)
     add(Array.isArray(task.dependsOn), `task ${index + 1} must have a dependsOn array`)
     add(Number.isFinite(task.durationMs) && task.durationMs > 0, `task ${index + 1} must have a real duration`)
@@ -66,30 +71,16 @@ export function validateHeroRun(run, locale) {
   }
 
   const assigned = new Set(run.tasks.map((task) => task?.assignee))
-  for (const assignee of REQUIRED_ASSIGNEES) {
-    add(assigned.has(assignee), `capture must include ${assignee}`)
-  }
+  add(assigned.size >= 2, 'capture must spread the work over at least two agents')
 
-  // The zh hero renders the coordinator's own task titles, so they must come out
-  // in Chinese (the English-heavy code fixture can otherwise steer the model to
-  // English titles even from a Chinese goal — the coordinator prompt asks for
-  // Chinese, and this makes shipping English titles a loud failure, not a silent one).
+  // The zh hero renders the planner's own task titles, so they must come out in
+  // Chinese. The English-heavy code fixture can steer the model to English titles
+  // even from a Chinese goal; this makes shipping those a loud failure rather than
+  // a silent one. Re-run the capture — never translate the JSON by hand.
   add(
     locale !== 'zh' || run.tasks.every((task) => /[㐀-鿿]/u.test(task?.title ?? '')),
     'the zh capture task titles must be Chinese',
   )
-
-  const roots = run.tasks.filter((task) => Array.isArray(task?.dependsOn) && task.dependsOn.length === 0)
-  add(roots.length >= 3, 'the three security reviews must run as parallel root tasks')
-
-  const synthTasks = run.tasks.filter((task) => task?.assignee === 'synthesizer')
-  add(synthTasks.length === 1, 'capture must contain exactly one synthesizer task')
-  if (synthTasks.length === 1) {
-    add(
-      Array.isArray(synthTasks[0].dependsOn) && synthTasks[0].dependsOn.length >= 3,
-      'synthesizer must depend directly on all three reviews',
-    )
-  }
 
   const byId = new Map(run.tasks.filter(isRecord).map((task) => [task.id, task]))
   const done = new Set()
@@ -109,6 +100,34 @@ export function validateHeroRun(run, locale) {
     done.add(id)
   }
   for (const id of byId.keys()) visit(id)
+
+  // Shape checks, not topology: the hero draws dependency levels and labels a
+  // level with more than one task "parallel". A capture is only worth shipping if
+  // the planner actually found concurrency and then joined it back together —
+  // which agent it picked for which branch, and how many branches there are, is
+  // the planner's call.
+  const hasCycle = errors.some((message) => message.startsWith('task graph contains a cycle'))
+  if (!hasCycle) {
+    const depthCache = new Map()
+    const depthOf = (id) => {
+      if (depthCache.has(id)) return depthCache.get(id)
+      depthCache.set(id, 0)
+      const dependencies = (byId.get(id)?.dependsOn ?? []).filter((dependency) => byId.has(dependency))
+      const depth = dependencies.length === 0 ? 0 : 1 + Math.max(...dependencies.map(depthOf))
+      depthCache.set(id, depth)
+      return depth
+    }
+    const widths = new Map()
+    for (const id of byId.keys()) {
+      const depth = depthOf(id)
+      widths.set(depth, (widths.get(depth) ?? 0) + 1)
+    }
+    add([...widths.values()].some((width) => width >= 2), 'capture must have at least one level of parallel tasks')
+    add(
+      run.tasks.some((task) => Array.isArray(task?.dependsOn) && task.dependsOn.filter((id) => byId.has(id)).length >= 2),
+      'capture must end in a task that joins at least two earlier tasks',
+    )
+  }
 
   return errors
 }

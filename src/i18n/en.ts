@@ -362,26 +362,28 @@ export const en = {
       // claim. Weekly downloads say the same thing (people are installing it,
       // no account required) with a number that means what it looks like.
       trust: { stars: 'GitHub stars', release: 'latest release', license: 'license', downloads: 'npm downloads / week' },
-      runtime: {
-        mode: 'mode',
-        modeValue: 'team',
-        route: 'route',
-        routeValue: 'deterministic',
-        schedule: 'schedule',
-        scheduleValue: 'event-driven',
-        evidence: 'evidence',
-        evidenceValue: 'receipt + trace',
-      },
-      ioInput: 'input · team.ts',
-      ioGoal: 'goal',
+      // Hero panel, top layer: the input side of the run. The excerpt is a
+      // faithful abbreviation of scripts/capture-hero-dag.mjs — the same script
+      // that produced the DAG below it — so the caption names the file and the
+      // link goes to the whole thing rather than asking to be trusted.
+      ioExcerpt: 'team.ts · excerpt',
+      fullScript: 'full script',
       capturedGoal: 'captured goal',
       expandGoal: 'view full',
       collapseGoal: 'collapse',
       decomposesInto: 'decomposes into',
       parallel: 'parallel',
       expandTasks: '{count} more tasks · expand full DAG',
-      runReal: 'real',
+      // Panel footer: the receipt. Every field is read out of the capture file
+      // — model, task count, wall clock, tokens, run id, capture date — so a
+      // reader can check the claim against src/data/hero-run.json. It is a
+      // recorded run, not a live one: no "live", no "in production".
+      runReal: 'real run',
       runTasks: 'tasks',
+      runTokens: 'tokens',
+      runIdLabel: 'run',
+      runCaptured: 'captured',
+      replay: 'replay',
     },
     copy: 'copy',
     copied: '✓ copied',

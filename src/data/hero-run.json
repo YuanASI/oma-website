@@ -1,53 +1,53 @@
 {
-  "capturedAt": "2026-07-19T10:06:44.608Z",
-  "runId": "ff05dd0f-36e7-4c89-af5c-26f9fd133405",
+  "capturedAt": "2026-09-04T09:22:24.276Z",
+  "runId": "8412d609-c9a4-4c44-ad71-a9ab3b2a20dc",
   "scenario": "security-analysis",
   "locale": "en",
   "goal": "Review this service for security vulnerabilities and produce a triaged report.\n\nEvidence — a small Node.js/Express service:\n\nFILE: src/server.ts\napp.get('/admin/users', (req, res) =>\n  res.json(db.query(\"SELECT * FROM users WHERE name = '\" + req.query.name + \"'\")))\n\nFILE: .env.example\nADMIN_API_KEY=[REDACTED generic-secret]\n\nDependency manifest: express ^4.17.0; the start script runs src/server.js.\nSecret signal: .env.example:1 generic-secret.\n\nComplete four coordinated deliverables:\n1. Review the attack surface: auth, exposed endpoints, and trust boundaries.\n2. Review data security: injection, secret handling, and sensitive data.\n3. Review the supply chain: dependencies, configuration, and deployment.\n4. Synthesize a deduplicated, severity-ranked security report.",
   "provider": "deepseek",
   "model": "deepseek-v4-flash",
   "success": true,
-  "wallMs": 35956,
+  "wallMs": 122174,
   "totalTokenUsage": {
-    "input_tokens": 5610,
-    "output_tokens": 5176
+    "input_tokens": 7798,
+    "output_tokens": 21561
   },
   "tasks": [
     {
-      "id": "4be5c70b-7576-4d1b-b248-895a983e1357",
-      "title": "Attack Surface Review",
+      "id": "4f90f545-2661-4ef0-9334-2e5f0cbc0523",
+      "title": "Attack surface review: authentication, endpoints, and trust boundaries",
       "assignee": "attack-surface-reviewer",
       "status": "completed",
       "dependsOn": [],
-      "durationMs": 5158
+      "durationMs": 10682
     },
     {
-      "id": "a3e8c689-5ea9-454b-8c22-86bd9d174070",
-      "title": "Data Security Review",
+      "id": "b47191e7-1be4-48bc-9023-faa2516a9fd1",
+      "title": "Data security review: injection, secret handling, and sensitive data",
       "assignee": "data-security-reviewer",
       "status": "completed",
       "dependsOn": [],
-      "durationMs": 6829
+      "durationMs": 34784
     },
     {
-      "id": "eec506da-a3b1-4c7f-8aeb-e15ecf2d1664",
-      "title": "Supply Chain Review",
+      "id": "d1c1ab67-1b99-42a0-8580-278a017f0453",
+      "title": "Supply chain review: dependencies, configuration, and deployment",
       "assignee": "supply-chain-reviewer",
       "status": "completed",
       "dependsOn": [],
-      "durationMs": 5613
+      "durationMs": 40842
     },
     {
-      "id": "4f36bf14-a06a-4d18-ba0d-d2fe722115ae",
-      "title": "Synthesize Security Report",
+      "id": "168862ba-8a78-4d26-87ca-463bd4f802f1",
+      "title": "Synthesize severity-ranked security report",
       "assignee": "synthesizer",
       "status": "completed",
       "dependsOn": [
-        "4be5c70b-7576-4d1b-b248-895a983e1357",
-        "a3e8c689-5ea9-454b-8c22-86bd9d174070",
-        "eec506da-a3b1-4c7f-8aeb-e15ecf2d1664"
+        "4f90f545-2661-4ef0-9334-2e5f0cbc0523",
+        "b47191e7-1be4-48bc-9023-faa2516a9fd1",
+        "d1c1ab67-1b99-42a0-8580-278a017f0453"
       ],
-      "durationMs": 9787
+      "durationMs": 51290
     }
   ]
 }

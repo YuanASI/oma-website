@@ -27,6 +27,7 @@ import EnterpriseLink from '../../components/EnterpriseLink.astro';
 import { REPO, NPM, GITHUB_ORG, MAINTAINER_GITHUB, MAINTAINER_DEVTO, ghStats } from '../../lib/site';
 import { SHOWCASE } from '../../lib/showcase';
 import { detailSlugs, getFeaturedUseCases } from '../../lib/examples';
+import { computeReplaySchedule } from '../../lib/hero-replay';
 import { localeStaticPaths, toLocale, useTranslations, localizePath } from '../../i18n';
 
 export function getStaticPaths() { return localeStaticPaths(); }
@@ -75,7 +76,15 @@ const heroDownloads =
 // The compact artifact still renders the exact captured goal. Newlines in the
 // localized capture collapse to spaces only for display; the underlying run
 // data and every task node remain unchanged.
-const heroGoalSummary = heroRun.goal.replace(/\s+/g, ' ').trim();
+//
+// Collapsed, the summary is the goal's first sentence and nothing else: one
+// line the eye can take in beside the excerpt above it. The rest of the goal —
+// the evidence files, the four deliverables — is one click away, verbatim, in
+// .artifact-goal-full. Nothing is paraphrased or shortened in place.
+const heroGoalSummary = (() => {
+  const flat = heroRun.goal.replace(/\s+/g, ' ').trim();
+  return flat.match(/^[\s\S]*?[.。！？!?](?=\s|$)/)?.[0] ?? flat;
+})();
 
 // Group the captured tasks into dependency levels (depth = longest path from a
 // root). Same-depth tasks ran in parallel; this drives the DAG layout below.
@@ -99,6 +108,52 @@ const heroStatusMap: Record<string, 'done' | 'running' | 'queued' | 'failed' | '
 const heroDur = (ms: number | null) => (ms == null ? null : (ms / 1000).toFixed(1) + 's');
 const heroNodeId = (id: string) => '#' + id.slice(0, 8);
 const heroWallS = Math.round(heroRun.wallMs / 1000);
+
+// ── Panel footer receipt. Every field is read straight out of the capture, so
+//    a reader can check the line against src/data/hero-run.json: run id, the
+//    date it was captured, and the run's own token total. ──
+const heroRunShort = heroRun.runId.slice(0, 8);
+const heroCapturedDate = heroRun.capturedAt.slice(0, 10);
+const heroTokensK = (
+  (heroRun.totalTokenUsage.input_tokens + heroRun.totalTokenUsage.output_tokens) / 1000
+).toFixed(1);
+
+// ── Panel replay. computeReplaySchedule derives a start/end for every task
+//    from that task's own captured durationMs and dependsOn edges (see
+//    src/lib/hero-replay.ts for the full model and scripts/hero-replay.test.mjs
+//    for the arithmetic). The schedule is computed here, at build time, and
+//    handed to the browser as data; the client script only walks it. Without
+//    JS the DAG below stays exactly as it is served — every task completed. ──
+const heroReplay = computeReplaySchedule(heroRun.tasks, heroRun.wallMs);
+
+// ── Panel input layer: a faithful abbreviation of the capture script's own
+//    calls. Every identifier below appears in scripts/capture-hero-dag.mjs —
+//    the constructor, createTeam with its agents array, and the runTeam that
+//    produced the DAG underneath. Where the script has more (the other three
+//    agents, their prompts) the excerpt says so with an ellipsis rather than
+//    silently dropping it, and nothing the script does not call is shown. ──
+const HERO_CAPTURE_SCRIPT = 'https://github.com/YuanASI/oma-website/blob/main/scripts/capture-hero-dag.mjs';
+const HERO_EXCERPT = [
+  "const oma = new OpenMultiAgent({ maxConcurrency: 3 })",
+  "const team = oma.createTeam('security-analysis-team', { agents: [",
+  "  { name: 'attack-surface-reviewer', systemPrompt: '…', maxTurns: 2 },",
+  '  // … data-security-reviewer, supply-chain-reviewer, synthesizer',
+  '] })',
+  'const result = await oma.runTeam(team, goal)',
+];
+// Build-time tokenizer, deliberately tiny: this excerpt is six fixed lines, not
+// arbitrary user code, so it needs strings, the three keywords it actually
+// uses, numbers, and a whole-line comment — nothing more.
+const heroTok = (line: string): { t: string; c: string | null }[] => {
+  const comment = line.indexOf('//');
+  if (comment >= 0) {
+    return [{ t: line.slice(0, comment), c: null }, { t: line.slice(comment), c: 'cmt' }].filter((p) => p.t);
+  }
+  return line
+    .split(/('[^']*'|\b(?:const|new|await)\b|\b\d+\b)/g)
+    .filter(Boolean)
+    .map((t) => ({ t, c: t.startsWith("'") ? 'str' : /^\d+$/.test(t) ? 'num' : /^(const|new|await)$/.test(t) ? 'kw' : null }));
+};
 
 // ── Production proof uses the three "Built with OMA" apps from the shared
 //    showcase list. The full inventory, integrations, and practitioner spotlight
@@ -269,19 +324,12 @@ const jsonLd = {
             </div>
           </div>
           <div>
-            <div class="io-panel">
-              <div class="io-cap"><span>team.ts · goal</span><span style="color:var(--oma-accent);">{l.hero.ioGoal}</span></div>
-              <div class="runtime-path">
-                <div class="runtime-path-steps">
-                  <span><small>{l.hero.runtime.mode}</small><b>{l.hero.runtime.modeValue}</b></span>
-                  <i>→</i>
-                  <span><small>{l.hero.runtime.route}</small><b>{l.hero.runtime.routeValue}</b></span>
-                  <i>→</i>
-                  <span><small>{l.hero.runtime.schedule}</small><b>{l.hero.runtime.scheduleValue}</b></span>
-                  <i>→</i>
-                  <span><small>{l.hero.runtime.evidence}</small><b>{l.hero.runtime.evidenceValue}</b></span>
-                </div>
+            <div class="io-panel" data-hero-replay={JSON.stringify(heroReplay)}>
+              <div class="io-cap">
+                <span>{l.hero.ioExcerpt}</span>
+                <a class="io-cap-link" href={HERO_CAPTURE_SCRIPT} target="_blank" rel="noreferrer"><span>{l.hero.fullScript}</span><span class="arrow" aria-hidden="true">→</span></a>
               </div>
+              <pre class="io-excerpt" tabindex="0">{HERO_EXCERPT.map((line) => <div>{line === '' ? ' ' : heroTok(line).map((tok) => (tok.c ? <span class={tok.c}>{tok.t}</span> : tok.t))}</div>)}</pre>
               <details class="artifact-goal">
                 <summary>
                   <span class="artifact-goal-head">
@@ -308,11 +356,11 @@ const jsonLd = {
                         <div class="dag-parallel">
                           <span class="dag-parallel-tag">{l.hero.parallel}</span>
                           {level.map((t) => (
-                            <TaskNode compact id={heroNodeId(t.id)} title={t.title} status={heroStatusMap[t.status] ?? 'done'} duration={heroDur(t.durationMs)} role={t.assignee} locale={locale} />
+                            <TaskNode compact alignTitle replayId={t.id} id={heroNodeId(t.id)} title={t.title} status={heroStatusMap[t.status] ?? 'done'} duration={heroDur(t.durationMs)} role={t.assignee} locale={locale} />
                           ))}
                         </div>
                       ) : (
-                        <TaskNode compact id={heroNodeId(level[0].id)} title={level[0].title} status={heroStatusMap[level[0].status] ?? 'done'} duration={heroDur(level[0].durationMs)} role={level[0].assignee} locale={locale} />
+                        <TaskNode compact replayId={level[0].id} id={heroNodeId(level[0].id)} title={level[0].title} status={heroStatusMap[level[0].status] ?? 'done'} duration={heroDur(level[0].durationMs)} role={level[0].assignee} locale={locale} />
                       )}
                     </Fragment>
                   ))}
@@ -331,11 +379,11 @@ const jsonLd = {
                         <div class="dag-parallel">
                           <span class="dag-parallel-tag">{l.hero.parallel}</span>
                           {level.map((t) => (
-                            <TaskNode compact id={heroNodeId(t.id)} title={t.title} status={heroStatusMap[t.status] ?? 'done'} duration={heroDur(t.durationMs)} role={t.assignee} locale={locale} />
+                            <TaskNode compact alignTitle replayId={t.id} id={heroNodeId(t.id)} title={t.title} status={heroStatusMap[t.status] ?? 'done'} duration={heroDur(t.durationMs)} role={t.assignee} locale={locale} />
                           ))}
                         </div>
                       ) : (
-                        <TaskNode compact id={heroNodeId(level[0].id)} title={level[0].title} status={heroStatusMap[level[0].status] ?? 'done'} duration={heroDur(level[0].durationMs)} role={level[0].assignee} locale={locale} />
+                        <TaskNode compact replayId={level[0].id} id={heroNodeId(level[0].id)} title={level[0].title} status={heroStatusMap[level[0].status] ?? 'done'} duration={heroDur(level[0].durationMs)} role={level[0].assignee} locale={locale} />
                       )}
                     </Fragment>
                   ))}
@@ -343,7 +391,8 @@ const jsonLd = {
               </details>
               <div class="dag-meta">
                 <span class="dag-meta-dot"></span>
-                <span>{l.hero.runReal} <code>runTeam()</code> · {heroRun.model} · {heroRun.tasks.length} {l.hero.runTasks} · {heroWallS}s</span>
+                <span class="dag-meta-line">{l.hero.runReal}{' · '}<code>runTeam()</code>{' · '}{heroRun.model}{' · '}{heroRun.tasks.length} {l.hero.runTasks}{' · '}<span class="dag-elapsed" data-hero-elapsed>{heroWallS}s</span>{' · '}{heroTokensK}k {l.hero.runTokens}{' · '}{l.hero.runIdLabel} <code>{heroRunShort}</code>{' · '}{l.hero.runCaptured} {heroCapturedDate}</span>
+                <button type="button" class="dag-replay" data-landing-event="hero-replay" data-hero-replay-button hidden>{l.hero.replay}</button>
               </div>
             </div>
           </div>
@@ -709,5 +758,100 @@ const jsonLd = {
         }, { rootMargin: '400px' });
         io.observe(v);
       });
+    </script>
+
+    <script>
+      // ── Hero DAG replay ──
+      // Replays the captured run: each task moves queued → running → done on the
+      // schedule computed at build time from its own durationMs and dependsOn
+      // edges (src/lib/hero-replay.ts), and the wall-clock field in the receipt
+      // counts up to the run's real wallMs. No timing is invented here — this
+      // code only reads the clock and walks segments the page was served.
+      //
+      // Progressive enhancement: the DAG is served completed, so with JS off,
+      // with the panel absent, or under prefers-reduced-motion, the reader sees
+      // the finished run and nothing ever moves. The replay button is served
+      // hidden and only revealed once this script can honour it.
+      type Segment = { id: string; startMs: number; endMs: number };
+      type Schedule = { segments: Segment[]; totalMs: number; wallMs: number; targetMs: number };
+
+      const heroPanel = document.querySelector<HTMLElement>('[data-hero-replay]');
+      const heroSpec: Schedule | null = (() => {
+        try {
+          return heroPanel ? (JSON.parse(heroPanel.dataset.heroReplay || 'null') as Schedule) : null;
+        } catch {
+          return null;
+        }
+      })();
+
+      if (heroPanel && heroSpec && heroSpec.segments.length > 0 && heroSpec.totalMs > 0) {
+        const nodes = new Map<string, HTMLElement[]>();
+        heroPanel.querySelectorAll<HTMLElement>('[data-replay-id]').forEach((el) => {
+          const key = el.dataset.replayId!;
+          // The same captured task is rendered twice — once in the desktop DAG,
+          // once inside the mobile <details> — so a task id maps to a list.
+          nodes.set(key, [...(nodes.get(key) ?? []), el]);
+        });
+        const elapsedEl = heroPanel.querySelector<HTMLElement>('[data-hero-elapsed]');
+        const replayButton = heroPanel.querySelector<HTMLButtonElement>('[data-hero-replay-button]');
+        const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+        const seconds = (ms: number) => Math.round(ms / 1000) + 's';
+
+        const paint = (atMs: number) => {
+          for (const seg of heroSpec.segments) {
+            const state = atMs < seg.startMs ? 'queued' : atMs < seg.endMs ? 'running' : 'done';
+            for (const el of nodes.get(seg.id) ?? []) el.dataset.status = state;
+          }
+          if (elapsedEl) elapsedEl.textContent = seconds(Math.min(atMs, heroSpec.wallMs));
+        };
+        const settle = () => paint(heroSpec.totalMs);
+
+        let frame = 0;
+        const play = () => {
+          cancelAnimationFrame(frame);
+          if (reduceMotion.matches) {
+            settle();
+            return;
+          }
+          // Captured milliseconds per real millisecond: a two-minute run reads
+          // in about targetMs (4s) without any duration being restated.
+          const speed = heroSpec.totalMs / heroSpec.targetMs;
+          const started = performance.now();
+          const step = (now: number) => {
+            const at = Math.min((now - started) * speed, heroSpec.totalMs);
+            paint(at);
+            if (at < heroSpec.totalMs) frame = requestAnimationFrame(step);
+            else settle();
+          };
+          frame = requestAnimationFrame(step);
+        };
+
+        if (!reduceMotion.matches) {
+          if (replayButton) {
+            replayButton.hidden = false;
+            replayButton.addEventListener('click', play);
+          }
+          // Play once when the panel is actually on screen. The hero is above
+          // the fold, so in practice this fires immediately; the observer only
+          // stops the run from being spent while the tab is scrolled elsewhere.
+          const io = new IntersectionObserver((entries, obs) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              obs.disconnect();
+              play();
+            }
+          }, { threshold: 0.25 });
+          io.observe(heroPanel);
+        }
+
+        // A reader who turns reduced motion on mid-visit gets the final state,
+        // not a frozen half-finished DAG.
+        reduceMotion.addEventListener('change', () => {
+          if (!reduceMotion.matches) return;
+          cancelAnimationFrame(frame);
+          settle();
+          if (replayButton) replayButton.hidden = true;
+        });
+      }
     </script>
 </BaseLayout>
