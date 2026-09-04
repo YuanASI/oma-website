@@ -23,6 +23,15 @@ export interface GhStats {
   forks: number;
   contributors: number;
   latestRelease: string;
+  /**
+   * Last-week downloads of `@open-multi-agent/core` from the npm registry
+   * (api.npmjs.org). Optional on purpose: it is the one figure here that does
+   * not come from GitHub, and a call site must render nothing rather than a
+   * zero when the snapshot predates the field or the refresh could not reach
+   * the registry. `0` is a real download count, so it can never double as
+   * "unknown" — hence `undefined`, and hence no floor value for it below.
+   */
+  npmWeeklyDownloads?: number;
 }
 
 // Absolute floor, only if the committed snapshot is ever missing a field. In
@@ -53,6 +62,7 @@ export function ghStats(): GhStats {
     forks: typeof s.forks === 'number' ? s.forks : STATS_FLOOR.forks,
     contributors: typeof s.contributors === 'number' ? s.contributors : STATS_FLOOR.contributors,
     latestRelease: typeof s.latestRelease === 'string' ? s.latestRelease : STATS_FLOOR.latestRelease,
+    npmWeeklyDownloads: typeof s.npmWeeklyDownloads === 'number' ? s.npmWeeklyDownloads : undefined,
   };
 }
 
