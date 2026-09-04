@@ -352,7 +352,7 @@ export const en = {
       // stars and release link to GitHub, and the licence is the repo's own.
       // No `0 / no signup` cell — a `0` in a row of metrics reads as a metric
       // that is zero, which is the opposite of the claim.
-      trust: { stars: 'GitHub stars', release: 'latest release', license: 'license' },
+      trust: { stars: 'GitHub stars', contributors: 'contributors', releases: 'releases', license: 'license' },
       // Hero panel, code block. The tab names the file it abbreviates —
       // team.ts, a filename, so it is not translated and not in this
       // dictionary — and this link goes to the whole of the script that

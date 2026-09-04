@@ -281,7 +281,7 @@ export const zh: UiDict = {
       subtitle: '万物皆接口，每次运行皆可回溯。你只描述目标，协调者规划其余，每一步仍由你掌控。',
       meta: ['端云模型混用', 'MIT 许可'],
       demoNote: '无需注册 · 无需 API Key · 不会请求模型',
-      trust: { stars: 'GitHub Star', release: '最新版本', license: '许可证' },
+      trust: { stars: 'GitHub Star', contributors: '贡献者', releases: '发布次数', license: '许可证' },
       fullScript: '完整脚本',
       decomposesInto: '拆解为',
       parallel: '并行',

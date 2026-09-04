@@ -46,6 +46,12 @@ const heroRun = (locale === 'zh' ? (heroRunZhFiles['../../data/hero-run.zh.json'
 // Nav/Footer components and the /examples page). FORGE is only used by Nav.
 const stats = await ghStats();
 const fmt = (n: number) => n.toLocaleString('en-US');
+// Soft counts for the hero trust strip. `0` is a real count, so it can never
+// stand in for "unknown" — a cell whose number is missing or non-finite is
+// dropped from the strip rather than rendered as a zero.
+const count = (n: number | undefined) => (typeof n === 'number' && Number.isFinite(n) ? n : null);
+const trustContributors = count(stats.contributors);
+const trustReleases = count(stats.releaseCount);
 const starsK = (stats.stars / 1000).toFixed(1) + 'k';
 
 // The copyable command behind both terminal chips (hero + closing CTA). One
@@ -330,7 +336,8 @@ const jsonLd = {
             </div>
             <div class="hero-trust" aria-label={l.hero.trust.stars}>
               <a href={REPO} target="_blank" rel="noreferrer"><b>★ {fmt(stats.stars)}</b><span>{l.hero.trust.stars}</span></a>
-              <a href={REPO + '/releases'} target="_blank" rel="noreferrer"><b>{stats.latestRelease}</b><span>{l.hero.trust.release}</span></a>
+              {trustContributors !== null && <a href={REPO + '/graphs/contributors'} target="_blank" rel="noreferrer"><b>{fmt(trustContributors)}</b><span>{l.hero.trust.contributors}</span></a>}
+              {trustReleases !== null && <a href={REPO + '/releases'} target="_blank" rel="noreferrer"><b>{fmt(trustReleases)}</b><span>{l.hero.trust.releases}</span></a>}
               <span><b>MIT</b><span>{l.hero.trust.license}</span></span>
             </div>
           </div>

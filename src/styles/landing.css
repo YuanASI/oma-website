@@ -198,7 +198,7 @@ a { color: inherit; }
    "A self-organizing agent team," / "in an environment you control."
    (zh already breaks here). */
 .hero h1 .accent { color: var(--oma-accent); display: block; }
-/* 52ch, not 46: the two-sentence subtitle is 126 characters, and the hero's
+/* 52ch, not 46: the subtitle is 133 characters, and the hero's
    left column is ~490px wide at the 1160px container — wide enough for 52ch of
    16px Geist (~430px), so the sentence lands in three lines rather than four. */
 .hero-sub {
@@ -211,17 +211,22 @@ a { color: inherit; }
 /* The install chip is the whole of the hero's action, so it sits close under
    the subtitle rather than floating in a band of its own. */
 .hero-cta { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin-top: 24px; }
-/* Cells take their natural width and pack against the left edge, so the three
-   facts read as one group instead of drifting apart across equal thirds; the
-   free space collects on the right. minmax(0, max-content) keeps the ellipsis
-   fallback if a label ever outgrows the column. The rules stay on the container,
-   so they still span the full strip width rather than shrinking to the cells. */
+/* Four cells take their natural width and pack against the left edge, so the
+   facts read as one group instead of drifting apart across equal columns; the
+   free space collects on the right. No top/bottom rules — the dividers between
+   cells carry the grouping on their own, and the strip sits quieter under the
+   command chip without a boxed band. minmax(0, max-content) keeps the ellipsis
+   fallback if a label ever outgrows its column, so the row can never overflow.
+
+   Widths at 375px (the tightest case): the 8px uppercase labels are the widest
+   line in every cell — 12 + 12 + 8 + 7 characters of JetBrains Mono at 0.6em
+   plus 0.06em tracking is ~206px, and the mobile padding below adds ~56px, so
+   the row needs ~265px against the 335px a 20px-padded container leaves. One
+   row, with room to spare. */
 .hero-trust {
-  display: grid; grid-template-columns: repeat(3, minmax(0, max-content));
+  display: grid; grid-template-columns: repeat(4, minmax(0, max-content));
   justify-content: start;
   max-width: 560px; margin-top: 16px;
-  border-top: 1px solid var(--oma-border-1);
-  border-bottom: 1px solid var(--oma-border-1);
 }
 /* 14px each side = 28px between cells across the divider; the first cell's left
    padding is dropped below so the strip starts flush with the column. */
@@ -577,8 +582,8 @@ a { color: inherit; }
   .cmd-wrap { width: 100%; }
 
   .hero-cta { gap: 18px; }
-  /* Three cells, so the strip stays one row at 375px rather than leaving a
-     half-width gap in a two-column grid. */
+  /* Four cells still fit one row at 375px (see the width note above), so the
+     strip is only released from its 560px cap here — no reflow to two rows. */
   .hero-trust { max-width: none; }
   .hero-trust > a, .hero-trust > span { padding: 11px 8px; }
   .proof-head { gap: 16px; }
