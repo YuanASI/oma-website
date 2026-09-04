@@ -4,11 +4,14 @@
 // resolved by yuanasiHref. Keeping the behavior in this one component prevents
 // CTA drift between the nav, footer, homepage, and shared enterprise bands.
 //
-// Clicks are also reported to Baidu Analytics (百度统计) as events, so the
-// enterprise CTA funnel is measurable per locale — the pageview-only
-// Counterscale tag has no custom-event support. The anchor opens in a new tab,
-// so the page (and the analytics script) stays alive long enough to send the
-// event before the user navigates away.
+// Clicks are also reported to Counterscale — the same first-party, cookieless
+// collector that counts pageviews — so the enterprise funnel sits in the dataset
+// that already holds the traffic it came from. The event carries the name only;
+// the locale split reads off the page path Counterscale records alongside it
+// (`/…` vs `/zh/…`). The anchor opens in a new tab, so the page (and the
+// tracker) stays alive long enough to send the event before the user leaves.
+// The tracker is loaded `defer`, so every hop is optional-chained: a click
+// before it lands is a lost measurement, never a broken link.
 import { yuanasiHref } from '../lib/site';
 import type { Locale } from '../i18n';
 
@@ -19,7 +22,7 @@ interface Props {
 }
 
 const { locale = 'en', class: className, style } = Astro.props;
-const trackClick = `window._hmt?.push(['_trackEvent', 'enterprise-cta', 'click', '${locale}'])`;
+const trackClick = "window.Counterscale?.trackEvent?.('enterprise-cta')";
 ---
 
 <a

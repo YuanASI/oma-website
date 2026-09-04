@@ -222,7 +222,7 @@ export const en = {
         {
           h: 'First-party analytics',
           body: [
-            'Page views are counted by <a href="https://github.com/benvinegar/counterscale">Counterscale</a>, self-hosted by us at <code>insights.open-multi-agent.com</code>. It is cookieless and stores aggregate counts only — page path, referrer, country, browser, device type. No cookie is set, no identifier persists between visits, and nothing follows you to other sites.',
+            'Page views are counted by <a href="https://github.com/benvinegar/counterscale">Counterscale</a>, self-hosted by us at <code>insights.open-multi-agent.com</code>. It is cookieless and stores aggregate counts only — page path, referrer, country, browser, device type, and the name of a homepage call-to-action when one is clicked. No cookie is set, no identifier persists between visits, and nothing follows you to other sites.',
           ],
         },
         {

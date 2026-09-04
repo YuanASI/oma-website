@@ -179,7 +179,7 @@ export const zh: UiDict = {
         {
           h: '第一方分析',
           body: [
-            '页面访问量由 <a href="https://github.com/benvinegar/counterscale">Counterscale</a> 统计，由我们自托管在 <code>insights.open-multi-agent.com</code>。它不使用 Cookie，只保存聚合数据——页面路径、来源、国家/地区、浏览器、设备类型。不设置 Cookie，不在多次访问间保留标识符，也不会跨站点追踪你。',
+            '页面访问量由 <a href="https://github.com/benvinegar/counterscale">Counterscale</a> 统计，由我们自托管在 <code>insights.open-multi-agent.com</code>。它不使用 Cookie，只保存聚合数据——页面路径、来源、国家/地区、浏览器、设备类型，以及首页某个行动按钮被点击时的名称。不设置 Cookie，不在多次访问间保留标识符，也不会跨站点追踪你。',
           ],
         },
         {
