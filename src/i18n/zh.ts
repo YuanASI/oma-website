@@ -278,7 +278,7 @@ export const zh: UiDict = {
       eyebrow: '开源多智能体框架，TypeScript 原生',
       h1: '自动分工的智能体团队，',
       h1Accent: '跑在你自己的环境里。',
-      subtitle: '给它一个目标，或一张任务 DAG；它规划、路由并在你的环境里跑完这些工作。审批、预算与 trace 都在你手里。',
+      subtitle: '万物皆接口，每次运行皆可回溯。你只描述目标，协调者规划其余，每一步仍由你掌控。',
       meta: ['端云模型混用', 'MIT 许可'],
       demoNote: '无需注册 · 无需 API Key · 不会请求模型',
       trust: { stars: 'GitHub Star', release: '最新版本', license: '许可证' },

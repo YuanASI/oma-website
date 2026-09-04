@@ -333,19 +333,19 @@ export const en = {
       eyebrow: 'open-source TypeScript multi-agent framework',
       h1: 'A self-organizing team of AI agents, ',
       h1Accent: 'in an environment you control.',
-      // Two sentences, in this order on purpose: what it does for you, then what
-      // you keep hold of. Kept to two lines of the hero column — the resume
-      // guarantee this used to carry is made in full in the Why OMA section,
-      // where checkpoint has the room to say what a task boundary is.
+      // The README's principle line, then what it means for you. The two
+      // fragments come first because they are the design stance; the closing
+      // sentence spends the remaining room on what the reader does with it.
+      // Fits three lines of the hero column at the 52ch cap.
       //
-      // Every verb is a published behaviour, not a positioning word:
-      // plans → reference/execution-routing (the Coordinator builds a Team plan);
-      // routes → reference/execution-routing + reference/model-routing;
-      // runs → reference/task-scheduling (the event-driven DAG executor);
-      // approvals → reference/durable-approvals; budgets → maxTokenBudget /
-      // maxCostBudget (see the FAQ and /compare); trace → reference/observability
-      // (onTrace spans, TraceStore).
-      subtitle: 'Give it a goal or a task DAG; it plans, routes, and runs the work in your environment. You hold approvals, budgets, and trace.',
+      // Each clause is a published behaviour, not a positioning word:
+      // seam/interface → reference/execution-routing + tool and model
+      // boundaries; record → reference/observability (onTrace spans,
+      // TraceStore) and the run journal; the coordinator plans →
+      // reference/execution-routing (the Coordinator builds a Team plan);
+      // stays in your hands → reference/durable-approvals plus maxTokenBudget /
+      // maxCostBudget (see the FAQ and /compare).
+      subtitle: 'Every seam, an interface. Every run, a record. Describe the goal; the coordinator plans the rest, and every step stays in your hands.',
       meta: ['cloud + local models', 'MIT license'],
       demoNote: 'No signup · no API key · no model request.',
       // Three measurable facts, each one checkable from the cell it sits in:
