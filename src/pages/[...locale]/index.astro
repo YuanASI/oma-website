@@ -23,7 +23,7 @@ import heroRunEn from '../../data/hero-run.json';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import EnterpriseLink from '../../components/EnterpriseLink.astro';
-import { REPO, NPM, GITHUB_ORG, MAINTAINER_GITHUB, MAINTAINER_DEVTO, ghStats } from '../../lib/site';
+import { REPO, NPM, GITHUB_ORG, MAINTAINER_GITHUB, MAINTAINER_DEVTO, CONTACT_EMAIL, WHATSAPP, ghStats, yuanasiHref } from '../../lib/site';
 import { SHOWCASE } from '../../lib/showcase';
 import { detailSlugs, getFeaturedUseCases } from '../../lib/examples';
 import { computeReplaySchedule } from '../../lib/hero-replay';
@@ -218,12 +218,24 @@ const BUILDS = getFeaturedUseCases().flatMap((example) => {
   }];
 });
 
-// Show every question the capability cards do not already answer: how the
-// DAG comes to exist, mixing providers in one team, how tools are exposed,
-// what a failed node does, the cost cap (maxCostBudget), streaming, and how
-// OMA relates to Claude Code's dynamic workflows. The one left in the pool is
-// "off the rails" — card 03 restates its answer (gates and suspend) verbatim.
-const FAQS = [l.faqs[0], l.faqs[1], l.faqs[2], l.faqs[3], l.faqs[5], l.faqs[6], l.faqs[7]];
+// Five questions, read as an evaluator rather than an implementer: what the
+// runtime does with a goal, whether it runs on the models you already have,
+// what happens when something fails, how spend is capped, and who delivers it
+// when there is no engineering team. Tool exposure, streaming, the "off the
+// rails" controls, and the Claude Code comparison stay in the pool — card 06
+// already says default-deny, card 03 covers the gates, and /compare carries
+// the Claude Code page.
+//
+// The enterprise answer carries its channels as links so a reader can act on
+// it. The yuanasi.com link keeps the same campaign parameters as every other
+// enterprise CTA on the site; WhatsApp renders only when a number is set.
+const ENTERPRISE_LINKS = [
+  { label: 'yuanasi.com', href: yuanasiHref(locale) },
+  { label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` },
+  ...(WHATSAPP ? [{ label: 'WhatsApp', href: WHATSAPP }] : []),
+];
+type Faq = { q: string; a: string; links?: { label: string; href: string }[] };
+const FAQS: Faq[] = [l.faqs[0], l.faqs[1], l.faqs[3], l.faqs[5], { ...l.faqs[8], links: ENTERPRISE_LINKS }];
 
 const title = l.seo.title;
 const description = l.seo.description;
@@ -560,7 +572,13 @@ const jsonLd = {
                   <button type="button" class="faq-q" id={`faq-trigger-${i}`} aria-expanded="false" aria-controls={`faq-panel-${i}`}>
                     <span>{f.q}</span><span class="faq-icon" aria-hidden="true">+</span>
                   </button>
-                  <div class="faq-a" id={`faq-panel-${i}`} role="region" aria-labelledby={`faq-trigger-${i}`} aria-hidden="true"><div class="faq-a-inner">{f.a}</div></div>
+                  <div class="faq-a" id={`faq-panel-${i}`} role="region" aria-labelledby={`faq-trigger-${i}`} aria-hidden="true"><div class="faq-a-inner">{f.a}{f.links && (
+                    <div class="faq-links">
+                      {f.links.map((link) => (
+                        <a class="text-link" href={link.href} target={link.href.startsWith('http') ? '_blank' : undefined} rel={link.href.startsWith('http') ? 'noreferrer' : undefined} data-landing-event="enterprise-faq-link"><span>{link.label}</span><span class="arrow" aria-hidden="true">→</span></a>
+                      ))}
+                    </div>
+                  )}</div></div>
                 </div>
               ))}
             </div>

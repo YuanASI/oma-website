@@ -192,13 +192,13 @@ export const en = {
         {
           h: 'Commercial delivery and support',
           body: [
-            'Paid implementation, integration, and support are handled by 元定义科技 (YuanASI), a separate commercial entity — see <a href="https://yuanasi.com/en">yuanasi.com</a>, or email <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>. The framework stays MIT-licensed and free to use either way.',
+            'Paid implementation, integration, and support are handled by 元定义科技 (YuanASI), a separate commercial entity — see <a href="https://yuanasi.com/en">yuanasi.com</a>, email <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>, or message <a href="https://wa.me/8613760249135">WhatsApp</a>. The framework stays MIT-licensed and free to use either way.',
           ],
         },
         {
           h: 'Everything else',
           body: [
-            'Press, talks, and anything that fits none of the above: <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>. There is no phone line and no ticketing portal — GitHub and that address are the whole surface.',
+            'Press, talks, and anything that fits none of the above: <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>. There is no ticketing portal — GitHub, that address, and WhatsApp for commercial enquiries are the whole surface.',
           ],
         },
       ],
@@ -487,14 +487,19 @@ export const en = {
       viewAll: 'view all questions',
     },
     faqs: [
-      { q: 'How does the coordinator turn a goal into a DAG?', a: 'A coordinator agent plans the work: it breaks the goal into discrete tasks, infers dependencies between them, and emits a directed acyclic graph. Independent nodes run concurrently; dependent nodes wait on their inputs. Pass planOnly to inspect the DAG before any agent executes.' },
-      { q: 'Can agents in one team use different model providers?', a: 'Yes. Each agent declares its own model, so a single team can mix a frontier cloud model, a self-hosted endpoint, and a local Ollama instance. The coordinator routes each task to the agent, and therefore the model, assigned to it.' },
+      { q: 'How does the coordinator turn a goal into a DAG?', a: 'It plans before any agent runs. The coordinator breaks the goal into tasks, infers their dependencies, and emits a directed acyclic graph. Independent tasks run in parallel; dependent ones wait for their inputs. Pass planOnly to review the graph first.' },
+      { q: 'Can agents in one team use different model providers?', a: 'Yes. Each agent declares its own model, so one team can mix a cloud model, a self-hosted endpoint, and a local Ollama instance. The coordinator routes each task to its agent, and the model follows.' },
       { q: 'How do tools get exposed to an agent?', a: 'Default-deny. An agent only has the tools it explicitly lists in its tools array; everything else is unavailable. External systems are connected through MCP servers under the same opt-in contract.' },
-      { q: 'What happens when a node fails?', a: 'A failed node is retried under its task policy when the error may be transient. Budget exhaustion, malformed input, deliberate aborts, and non-retryable client errors skip pointless retries. Persistent failures surface on the node with FAILED state and an error, downstream dependents are held, and independent branches can continue. With recovery.mode: \'repairable\', a Replanner can propose an append-only PlanPatch at that outcome barrier, so the unexecuted part of the graph is revised instead of carried forward.' },
+      { q: 'What happens when a node fails?', a: 'It is retried when the error may be transient, and marked FAILED when it is not. Budget exhaustion, malformed input, deliberate aborts, and non-retryable client errors skip the retry. A FAILED node holds its dependents; independent branches keep running. In recovery.mode: \'repairable\', a Replanner can revise the unexecuted part of the graph instead of carrying it forward.' },
       { q: 'How do I keep a multi-agent run from going off the rails?', a: 'Layered controls, all opt-in. onPlanReady gates the plan, onTaskDispatch gates one ready task (or onApproval retains legacy round gates), and onToolCall can require confirmation for one consequential action. Declared governance verifies required roles and order after execution; runConsensus and loop detection add result and behavior checks. Any of these gates can return { action: \'suspend\' } to persist the request and decide from another process.' },
-      { q: 'How do I cap what a run costs?', a: 'Use maxCostBudget with estimateCost. Your estimator owns the per-model USD price table; OMA accumulates that estimate across the run and stops issuing further calls once the cap is crossed. The check happens at turn and task boundaries, so it can overshoot by one model turn rather than stopping mid-call. maxTokenBudget provides the parallel cumulative-token ceiling, and modelRouting can put cheaper models on leaf tasks.' },
+      { q: 'How do I cap what a run costs?', a: 'Set maxCostBudget with your own estimateCost price table. OMA accumulates the estimate across the run and stops issuing calls once the cap is crossed. The check runs at turn and task boundaries, so it can overshoot by one model turn. maxTokenBudget caps tokens the same way, and modelRouting puts cheaper models on leaf tasks.' },
       { q: 'Does it stream, or only return at the end?', a: 'Both. You can stream tokens and node-state transitions as the DAG fills, or simply await runTeam() for a typed, schema-validated result object once the graph resolves.' },
       { q: "How does open-multi-agent relate to Claude Code's dynamic workflows?", a: "They make the same bet: the model plans the work at runtime instead of you wiring a fixed graph. Claude's dynamic workflows run inside Claude Code, where Claude writes its own orchestration scripts and fans out parallel subagents in a session. open-multi-agent embeds that same goal-to-DAG idea in your own Node.js backend as an MIT library, on any provider, with the plan kept as inspectable, replayable data. The two also compose: over ACP an open-multi-agent team can run Claude Code itself as one of its agents." },
+      // The one non-engineering question on the page. Contact facts match
+      // /contact and the enterprise CTA; the links themselves are attached in
+      // index.astro (ENTERPRISE_LINKS) so the yuanasi.com href keeps its
+      // locale-aware campaign parameters.
+      { q: 'We do not have an engineering team. How do we get this into production?', a: '元定义科技 (YuanASI) delivers it for you. We scope the use case, build the agent team on OMA, connect it to your systems, and support it after launch. The framework stays MIT-licensed and free to run yourself. Reach us at yuanasi.com, by email, or on WhatsApp.' },
     ],
     endorse: {
       eyebrow: 'mentioned',

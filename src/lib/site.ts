@@ -15,6 +15,11 @@ export const NPM = 'https://www.npmjs.com/package/@open-multi-agent/core';
 // Enterprise / commercial-support site (YuanASI). Separate business entity that
 // offers paid delivery + consulting on OMA; the OSS site stays zero-commercial.
 export const YUANASI = 'https://yuanasi.com';
+// Commercial contact channels shown on the homepage FAQ. The email is the one
+// /contact publishes. WHATSAPP is a wa.me link; leave it empty and the link is
+// simply not rendered — never a placeholder number.
+export const CONTACT_EMAIL = 'jack@yuanasi.com';
+export const WHATSAPP = 'https://wa.me/8613760249135';
 
 import statsSnapshot from '../data/gh-stats.json';
 
