@@ -34,17 +34,17 @@ export const SHOWCASE: ShowcaseEntry[] = [
   },
   {
     pkg: 'temodar-agent', by: 'by xeloxa', href: 'https://github.com/xeloxa/temodar-agent',
-    desc: 'WordPress security analysis platform. Runs OMA built-in tools (bash, file ops, grep) inside a Docker runtime.',
+    desc: 'WordPress security analysis platform. Runs OMA\'s built-in bash, file, and grep tools inside Docker.',
     tone: 'accent', tag: 'security', status: 'on Docker Hub', kind: 'built-with', featured: true,
   },
   {
     pkg: 'PR-Copilot', by: 'by kidoom', href: 'https://github.com/kidoom/PR-Copilot',
-    desc: 'AI pull-request review assistant. Runs an OMA review team — a coordinator plus scoped reviewer agents — with custom tools and token-aware diff compression.',
+    desc: 'AI pull-request reviewer. A coordinator plus scoped reviewer agents, with custom tools and token-aware diff compression.',
     tone: 'info', tag: 'code review', status: 'built with OMA', kind: 'built-with',
   },
   {
     pkg: 'StuFlow', by: 'by znc15', href: 'https://github.com/znc15/StuFlow',
-    desc: 'Terminal AI coding assistant. Drives an OMA team through runAgent / runTasks / runTeam with a custom RunTeamOptions coordinator, paired with DeepSeek.',
+    desc: 'Terminal coding assistant. Drives an OMA team through runAgent, runTasks, and runTeam with a custom coordinator, on DeepSeek.',
     tone: 'neutral', tag: 'coding agent', status: 'built with OMA', kind: 'built-with',
   },
   {
