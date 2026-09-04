@@ -211,14 +211,22 @@ a { color: inherit; }
 /* The install chip is the whole of the hero's action, so it sits close under
    the subtitle rather than floating in a band of its own. */
 .hero-cta { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin-top: 24px; }
+/* Cells take their natural width and pack against the left edge, so the three
+   facts read as one group instead of drifting apart across equal thirds; the
+   free space collects on the right. minmax(0, max-content) keeps the ellipsis
+   fallback if a label ever outgrows the column. The rules stay on the container,
+   so they still span the full strip width rather than shrinking to the cells. */
 .hero-trust {
-  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: grid; grid-template-columns: repeat(3, minmax(0, max-content));
+  justify-content: start;
   max-width: 560px; margin-top: 16px;
   border-top: 1px solid var(--oma-border-1);
   border-bottom: 1px solid var(--oma-border-1);
 }
+/* 14px each side = 28px between cells across the divider; the first cell's left
+   padding is dropped below so the strip starts flush with the column. */
 .hero-trust > a, .hero-trust > span {
-  display: grid; gap: 4px; min-width: 0; padding: 11px 12px;
+  display: grid; gap: 4px; min-width: 0; padding: 11px 14px;
   border-left: 1px solid var(--oma-border-0); text-decoration: none;
 }
 .hero-trust > :first-child { border-left: 0; padding-left: 0; }
