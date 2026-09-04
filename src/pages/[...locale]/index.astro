@@ -63,14 +63,12 @@ const HERO_INSTALL = 'npm install @open-multi-agent/core';
 //    rendered from src/data/hero-run.json, produced by a real provider run
 //    (scripts/capture-hero-dag.mjs) — no hand-built mockup (PRD §4.1 ①). The
 //    snippet's goal is the exact goal that produced the DAG shown. ──
-// The compact artifact still renders the exact captured goal. Newlines in the
-// localized capture collapse to spaces only for display; the underlying run
-// data and every task row remain unchanged.
-//
-// Collapsed, the panel's input block shows one call line and the goal's first
-// sentence, ellipsized. The rest — the six-line excerpt, the evidence files,
-// the four deliverables — is one click away, verbatim, in .io-input-full.
-// Nothing is paraphrased or shortened in place.
+// The panel's top block is the input, always open: the code that produced the
+// run below it, with the captured goal as the string literal it really is.
+// Newlines in the localized capture collapse to spaces only for display; the
+// underlying run data and every task row remain unchanged. The goal line shows
+// the goal's first sentence, ellipsized to the excerpt's column budget — the
+// captured goal in full is that line's title attribute, never paraphrased.
 const heroGoalSummary = (() => {
   const flat = heroRun.goal.replace(/\s+/g, ' ').trim();
   return flat.match(/^[\s\S]*?[.。！？!?](?=\s|$)/)?.[0] ?? flat;
@@ -129,17 +127,39 @@ const heroReplay = computeReplaySchedule(heroRun.tasks, heroRun.wallMs);
 //    agents, their prompts) the excerpt says so with an ellipsis rather than
 //    silently dropping it, and nothing the script does not call is shown. ──
 const HERO_CAPTURE_SCRIPT = 'https://github.com/YuanASI/oma-website/blob/main/scripts/capture-hero-dag.mjs';
-const HERO_EXCERPT = [
-  "const oma = new OpenMultiAgent({ maxConcurrency: 3 })",
-  "const team = oma.createTeam('security-analysis-team', { agents: [",
-  "  { name: 'attack-surface-reviewer', systemPrompt: '…', maxTurns: 2 },",
-  '  // … data-security-reviewer, supply-chain-reviewer, synthesizer',
-  '] })',
-  'const result = await oma.runTeam(team, goal)',
+// The goal line carries the capture's own goal as the literal it is in the
+// script. It is ellipsized to a column budget that keeps the whole line inside
+// the widest of the other six (69 columns), so the block never scrolls
+// sideways in the panel; the captured goal in full is that line's title. CJK
+// counts double — the zh capture's goal is Chinese and this is a fixed pitch
+// grid — and the ellipsis is inside the budget, never added on top of it.
+const HERO_GOAL_COLS = 50;
+const heroCols = (s: string) =>
+  [...s].reduce((n, ch) => n + (/[\u2e80-\u9fff\uff01-\uff60]/.test(ch) ? 2 : 1), 0);
+const heroGoalLiteral = (() => {
+  if (heroCols(heroGoalSummary) <= HERO_GOAL_COLS) return heroGoalSummary;
+  let out = '';
+  for (const ch of heroGoalSummary) {
+    if (heroCols(out + ch) > HERO_GOAL_COLS - 1) break;
+    out += ch;
+  }
+  // Cut back to a word boundary only when the cut landed inside a word: the
+  // Latin capture separates words with spaces, the Chinese one does not.
+  const next = heroGoalSummary.slice(out.length, out.length + 1);
+  if (/\S/.test(next) && !/[\u2e80-\u9fff]/.test(next) && out.includes(' ')) {
+    out = out.slice(0, out.lastIndexOf(' '));
+  }
+  return out.trimEnd() + '…';
+})();
+const HERO_EXCERPT: { text: string; title?: string }[] = [
+  { text: 'const oma = new OpenMultiAgent({ maxConcurrency: 3 })' },
+  { text: "const team = oma.createTeam('security-analysis-team', { agents: [" },
+  { text: "  { name: 'attack-surface-reviewer', systemPrompt: '…', maxTurns: 2 }," },
+  { text: '  // … data-security-reviewer, supply-chain-reviewer, synthesizer' },
+  { text: '] })' },
+  { text: `const goal = '${heroGoalLiteral}'`, title: heroRun.goal },
+  { text: 'const result = await oma.runTeam(team, goal)' },
 ];
-// Collapsed, the input block shows the one call that produced the DAG below —
-// the tail of the excerpt's last line, not a paraphrase of it.
-const HERO_CALL = 'await oma.runTeam(team, goal)';
 // Build-time tokenizer, deliberately tiny: this excerpt is six fixed lines, not
 // arbitrary user code, so it needs strings, the three keywords it actually
 // uses, numbers, and a whole-line comment — nothing more.
@@ -300,9 +320,6 @@ const jsonLd = {
             <div class="eyebrow"><span class="idx">//</span> {l.hero.eyebrow}</div>
             <h1>{l.hero.h1}<span class="accent">{l.hero.h1Accent}</span></h1>
             <p class="hero-sub" set:html={l.hero.subtitle}></p>
-            <div class="hero-audience">
-              <span class="hero-audience-who">{l.hero.audience}</span>
-            </div>
             <div class="hero-cta">
               <div class="cmd-wrap">
                 <button type="button" class="cmd" data-cmd={HERO_INSTALL} data-copied={l.copied} data-failed={l.copyFailed} data-landing-event="copy-command-hero">
@@ -319,32 +336,18 @@ const jsonLd = {
           </div>
           <div>
             <div class="io-panel" data-hero-replay={JSON.stringify(heroReplay)}>
-              {/* Input: one collapsible block. Collapsed it is the call that
-                  produced the run and the goal's first sentence — two lines.
-                  Expanded it is the six-line excerpt of the capture script and
-                  the captured goal in full, neither of them abridged. */}
-              <details class="io-input">
-                <summary>
-                  <span class="io-input-lines">
-                    <code class="io-input-call">{HERO_CALL}</code>
-                    <span class="io-input-goal" aria-hidden="true">{heroGoalSummary}</span>
-                  </span>
-                  <span class="io-input-action">
-                    <span class="io-input-expand">{l.hero.expandInput}</span>
-                    <span class="io-input-collapse">{l.hero.collapseInput}</span>
-                    <span class="io-input-icon" aria-hidden="true">+</span>
-                  </span>
-                </summary>
-                <div class="io-input-full">
-                  <div class="io-cap">
-                    <span>{l.hero.ioExcerpt}</span>
-                    <a class="io-cap-link" href={HERO_CAPTURE_SCRIPT} target="_blank" rel="noreferrer"><span>{l.hero.fullScript}</span><span class="arrow" aria-hidden="true">→</span></a>
-                  </div>
-                  <pre class="io-excerpt" tabindex="0">{HERO_EXCERPT.map((line) => <div>{line === '' ? ' ' : heroTok(line).map((tok) => (tok.c ? <span class={tok.c}>{tok.t}</span> : tok.t))}</div>)}</pre>
-                  <div class="io-cap io-cap-goal"><span>{l.hero.capturedGoal}</span></div>
-                  <p class="io-goal-text">{heroRun.goal}</p>
+              {/* Input: the code that produced the run below, open. An
+                  editor tab names the file it abbreviates and links to the
+                  whole of it; the goal is the string literal it is in the
+                  script, ellipsized to the block's width with the captured
+                  goal in full on the line's title. */}
+              <div class="io-code">
+                <div class="io-tab">
+                  <span class="io-tab-name">team.ts</span>
+                  <a class="io-cap-link" href={HERO_CAPTURE_SCRIPT} target="_blank" rel="noreferrer"><span>{l.hero.fullScript}</span><span class="arrow" aria-hidden="true">→</span></a>
                 </div>
-              </details>
+                <pre class="io-excerpt" tabindex="0">{HERO_EXCERPT.map((line) => <div title={line.title}>{heroTok(line.text).map((tok) => (tok.c ? <span class={tok.c}>{tok.t}</span> : tok.t))}</div>)}</pre>
+              </div>
               <div class="io-connector">{l.hero.decomposesInto}</div>
               {/* The run, one row per captured task: status glyph, node id,
                   title, the agent it was assigned to, and its own duration. A

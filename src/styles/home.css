@@ -21,64 +21,24 @@
   border-radius: var(--radius-lg); padding: 16px;
   box-shadow: var(--shadow-md);
 }
-/* The input side of the run, in one collapsible block. Collapsed it is two
-   lines — the call that produced the run below, and the captured goal's first
-   sentence — so the panel spends ~56px on its input rather than a third of its
-   height. Expanded it is the six-line excerpt of the capture script and the
-   goal in full: nothing is paraphrased, only deferred. */
-.io-input {
-  position: relative; background: var(--oma-bg-3);
-  border: 1px solid var(--oma-border-0); border-radius: var(--radius-md);
+/* The input side of the run: the code that produced it, always open. Peer
+   landing pages put a syntax-highlighted artifact in the hero and so do we —
+   ours is an abbreviation of the script that captured the run underneath it,
+   not a decorative sample. Editor chrome (a tab naming the file, the link to
+   the whole of it) rather than a caption, because it is a file. */
+.io-code {
+  background: var(--oma-bg-3); border: 1px solid var(--oma-border-0);
+  border-radius: var(--radius-md); overflow: hidden;
 }
-.io-input summary {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; padding: 9px 12px; cursor: pointer; list-style: none;
+.io-tab {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 8px 12px; background: var(--oma-bg-2);
+  border-bottom: 1px solid var(--oma-border-0);
+  font-family: var(--font-mono); font-size: 11px; line-height: 15px;
+  letter-spacing: 0.04em; color: var(--oma-fg-2);
 }
-.io-input summary::-webkit-details-marker { display: none; }
-.io-input-lines { display: grid; gap: 3px; min-width: 0; }
-.io-input-call,
-.io-input-goal {
-  font-family: var(--font-mono); line-height: 1.4;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.io-input-call { font-size: 12px; color: var(--oma-fg-0); }
-.io-input-goal { font-size: 11px; color: var(--oma-fg-2); }
-.io-input-action {
-  display: inline-flex; align-items: center; gap: 6px; flex: none;
-  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.06em;
-  text-transform: uppercase; color: var(--oma-fg-2);
-}
-.io-input-icon {
-  display: inline-grid; place-items: center; width: 15px; height: 15px;
-  border: 1px solid var(--border-strong); border-radius: 50%;
-  color: var(--oma-accent); font-size: 12px; line-height: 1;
-  transition: transform var(--duration-base) var(--ease-out);
-}
-.io-input-collapse { display: none; }
-.io-input[open] .io-input-expand { display: none; }
-.io-input[open] .io-input-collapse { display: inline; }
-.io-input[open] .io-input-icon { transform: rotate(45deg); }
-.io-input summary:hover .io-input-action { color: var(--oma-accent); }
-.io-input summary:hover .io-input-icon { border-color: var(--oma-accent-line); }
-/* An overlay rather than an in-flow panel: opening the input should not shove
-   the run log and its receipt down the first screen. */
-.io-input-full {
-  display: none; position: absolute; z-index: 20;
-  top: calc(100% + 8px); left: -1px; right: -1px;
-  max-height: min(420px, 62vh); overflow: auto;
-  padding: 14px; background: var(--oma-bg-1);
-  border: 1px solid var(--border-strong); border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-}
-.io-input[open] .io-input-full { display: block; }
-/* Caption above the excerpt. Not uppercased: it names a file (team.ts), and
-   TEAM.TS is not that file. */
-.io-cap {
-  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
-  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em;
-  color: var(--oma-fg-2); margin-bottom: 8px;
-}
-.io-cap-goal { margin-top: 14px; }
+/* Not uppercased: it names a file (team.ts), and TEAM.TS is not that file. */
+.io-tab-name { color: var(--oma-fg-1); }
 .io-cap-link {
   display: inline-flex; align-items: center; gap: 5px; flex: none;
   color: var(--oma-fg-2); text-decoration: none;
@@ -87,32 +47,28 @@
 .io-cap-link:hover { color: var(--oma-accent); }
 .io-cap-link .arrow { transition: transform var(--duration-base) var(--ease-out); }
 .io-cap-link:hover .arrow { transform: translateX(2px); }
-/* Six lines abbreviating the capture script that produced the run underneath.
-   Fixed content, so it is a plain <pre> rather than the full CodeBlock. */
+/* Seven lines abbreviating the capture script that produced the run underneath.
+   Fixed content, so it is a plain <pre> rather than the full CodeBlock — the
+   token colours are the site's own (--code-*, see tokens.css), so the block
+   reads the same as every CodeBlock elsewhere. */
 .io-excerpt {
   margin: 0; padding: 10px 12px; overflow-x: auto;
-  background: var(--oma-bg-3); border: 1px solid var(--oma-border-0);
-  border-radius: var(--radius-md);
-  font-family: var(--font-mono); font-size: 11px; line-height: 1.5;
+  font-family: var(--font-mono); font-size: 12px; line-height: 20px;
   color: var(--oma-fg-1); tab-size: 2;
 }
 .io-excerpt .kw { color: var(--code-keyword); }
 .io-excerpt .str { color: var(--code-string); }
 .io-excerpt .num { color: var(--code-number); }
 .io-excerpt .cmt { color: var(--code-comment); }
-.io-goal-text {
-  margin: 0; white-space: pre-wrap; color: var(--oma-fg-0);
-  font-family: var(--font-mono); font-size: 12px; line-height: 1.65;
-}
 .io-connector {
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-mono); font-size: 10px; line-height: 1.2;
+  font-family: var(--font-mono); font-size: 10px; line-height: 12px;
   letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--oma-fg-2); padding: 3px 0;
+  color: var(--oma-fg-2); padding: 6px 0;
 }
 
 /* ── The run, as a log: one row per captured task ──
-   Rows, not cards: four cards cost the panel ~300px to say what four 30px
+   Rows, not cards: four cards cost the panel ~300px to say what four 38px
    rows say, and a log is also the shape the reader already knows from a
    terminal. Every value in a row is read out of src/data/hero-run.json. */
 .run-log { display: grid; }
@@ -122,7 +78,7 @@
   display: grid; border-left: 2px solid var(--oma-accent-line); padding-left: 10px;
 }
 .run-group-tag {
-  font-family: var(--font-mono); font-size: 10px; line-height: 16px;
+  font-family: var(--font-mono); font-size: 10px; line-height: 18px;
   letter-spacing: 0.08em; text-transform: uppercase; color: var(--oma-accent);
   margin-bottom: 2px;
 }
@@ -130,30 +86,30 @@
 .run-row + .run-row,
 .run-group + .run-row { border-top: 1px solid var(--border-subtle); }
 .run-row {
-  display: grid; align-items: center; gap: 0 8px;
-  grid-template-columns: 12px 64px minmax(0, 1fr) minmax(0, auto) 46px;
-  padding: 6px 0; font-family: var(--font-mono); line-height: 18px;
+  display: grid; align-items: center; gap: 0 10px;
+  grid-template-columns: 12px 70px minmax(0, 1fr) minmax(0, auto) 50px;
+  padding: 10px 0; font-family: var(--font-mono); line-height: 18px;
 }
-.run-glyph { font-size: 11px; text-align: center; }
+.run-glyph { font-size: 12px; text-align: center; }
 .run-row[data-status='done'] .run-glyph { color: var(--oma-accent); }
 .run-row[data-status='running'] .run-glyph { color: var(--oma-warning); }
 .run-row[data-status='queued'] .run-glyph { color: var(--oma-fg-3); }
-.run-id { font-size: 10px; letter-spacing: 0.04em; color: var(--oma-fg-2); }
+.run-id { font-size: 11px; letter-spacing: 0.04em; color: var(--oma-fg-2); }
 /* The title is the clause before the first colon; the captured string in full
    is in the row's title attribute and in visually-hidden text. It never wraps
    — a row that grows to two lines is a card again. */
 .run-title {
   display: flex; align-items: baseline; gap: 6px; min-width: 0;
-  font-size: 12px; color: var(--oma-fg-0);
+  font-size: 14px; color: var(--oma-fg-0);
 }
 .run-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.run-after { flex: none; font-size: 10px; color: var(--oma-accent); }
+.run-after { flex: none; font-size: 11px; color: var(--oma-accent); }
 .run-who {
-  font-size: 10px; color: var(--oma-fg-3);
+  font-size: 11px; color: var(--oma-fg-3);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .run-dur {
-  font-size: 10px; color: var(--oma-fg-2); text-align: right;
+  font-size: 11px; color: var(--oma-fg-2); text-align: right;
   font-variant-numeric: tabular-nums;
 }
 .run-row[data-status='queued'] .run-title { color: var(--oma-fg-3); }
@@ -198,14 +154,15 @@
 .dag-replay:focus-visible { outline: 2px solid var(--oma-accent); outline-offset: 2px; }
 
 @media (max-width: 920px) {
-  .io-excerpt { font-size: 10px; padding: 9px 10px; }
+  .io-excerpt { font-size: 11px; line-height: 18px; padding: 9px 10px; }
 }
 @media (max-width: 640px) {
   /* The rows still fit at 375px once the assignee steps out; the id, the
      title, the status and the duration all stay. */
-  .run-row { grid-template-columns: 12px 58px minmax(0, 1fr) 42px; }
+  .run-row { grid-template-columns: 12px 62px minmax(0, 1fr) 46px; }
   .run-who { display: none; }
-  .run-title { font-size: 11px; }
+  .run-title { font-size: 12px; }
+  .io-excerpt { font-size: 10px; }
 }
 
 /* ── FAQ (two-column: sticky head left, questions right) ── */

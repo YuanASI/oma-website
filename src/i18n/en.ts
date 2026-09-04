@@ -346,7 +346,6 @@ export const en = {
       // maxCostBudget (see the FAQ and /compare); trace → reference/observability
       // (onTrace spans, TraceStore).
       subtitle: 'Give it a goal or a task DAG; it plans, routes, and runs the work in your environment. You hold approvals, budgets, and trace.',
-      audience: 'for TypeScript backend and AI platform teams',
       meta: ['cloud + local models', 'MIT license'],
       demoNote: 'No signup · no API key · no model request.',
       // Three measurable facts, each one checkable from the cell it sits in:
@@ -354,16 +353,11 @@ export const en = {
       // No `0 / no signup` cell — a `0` in a row of metrics reads as a metric
       // that is zero, which is the opposite of the claim.
       trust: { stars: 'GitHub stars', release: 'latest release', license: 'license' },
-      // Hero panel, input block. Collapsed it is the call plus the goal's first
-      // sentence; expanded it is the excerpt of scripts/capture-hero-dag.mjs —
-      // the same script that produced the run below it — and the captured goal
-      // in full, with a link to the whole script rather than a request to be
-      // trusted.
-      ioExcerpt: 'team.ts · excerpt',
+      // Hero panel, code block. The tab names the file it abbreviates —
+      // team.ts, a filename, so it is not translated and not in this
+      // dictionary — and this link goes to the whole of the script that
+      // produced the run below it, rather than asking to be trusted.
       fullScript: 'full script',
-      capturedGoal: 'captured goal',
-      expandInput: 'view full',
-      collapseInput: 'collapse',
       decomposesInto: 'decomposes into',
       parallel: 'parallel',
       // Prefix on a row that waited: the count is `dependsOn.length` from the
