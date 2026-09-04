@@ -347,7 +347,6 @@ export const en = {
       // maxCostBudget (see the FAQ and /compare).
       subtitle: 'Every seam, an interface. Every run, a record. Describe the goal; the coordinator plans the rest, and every step stays in your hands.',
       meta: ['cloud + local models', 'MIT license'],
-      demoNote: 'No signup · no API key · no model request.',
       // Three measurable facts, each one checkable from the cell it sits in:
       // stars and release link to GitHub, and the licence is the repo's own.
       // No `0 / no signup` cell — a `0` in a row of metrics reads as a metric
@@ -378,47 +377,73 @@ export const en = {
     sectionWhy: {
       eyebrow: 'Why OMA',
       title: 'From intent to a controlled, inspectable run.',
-      sub: 'Choose the topology, move ready work, put policy at the right boundaries, and keep the evidence.',
+      sub: 'Choose the topology, move ready work, gate or suspend at the right boundary, recover and revise, and keep evidence you can verify.',
     },
+    // Six cards, one per pillar of the framework README's "Why OMA" section, so
+    // the homepage and the README tell the same story and drift together
+    // rather than apart. Every identifier is a published export or option,
+    // read against the vendored release notes up to
+    // CAPABILITY_COPY_REVIEWED_FOR. Limits that the copy must not round up:
+    // egressPolicy bounds only the built-in LLM adapters (not MCP, bash, or
+    // custom tools); LocalShellExecutor is not a security boundary; the run
+    // journal is opt-in and best-effort; process and ACP backends restore at
+    // task granularity, so "safe boundary" is the honest phrase, not "exactly
+    // where it stopped".
     why: [
       {
         tag: 'plan → route',
         title: 'Start from an outcome—or an explicit graph.',
-        desc: 'Use runTeam() to generate a reviewable task DAG, or runTasks() to execute the graph you define. Explicit mode, governance, or an ExecutionRouter chooses single-agent or team execution.',
-        proof: 'runTeam · runTasks · mode · routingDecision',
+        desc: 'Use runTeam() to generate a reviewable task DAG, or runTasks() to execute the graph you define. Explicit mode, governance, or an ExecutionRouter chooses single-agent or team execution, and the hybrid strategy adds one semantic assessment where the deterministic router would pick a single agent.',
+        proof: "runTeam · runTasks · mode · strategy: 'hybrid'",
         ref: '/reference/execution-routing/',
         refLabel: 'Review execution routing',
       },
       {
         tag: 'schedule → dispatch',
         title: 'Move work as soon as dependencies are ready.',
-        desc: 'The event-driven scheduler removes unrelated round barriers. Match tasks by capability, validate hard requirements, approve each ready dispatch, and preserve unmerged task results.',
-        proof: 'event-driven · onTaskDispatch · taskResults',
+        desc: 'The event-driven scheduler removes unrelated round barriers. Match tasks by capability, approve each ready dispatch, and keep task-scoped results. A task whose hard requirements no agent satisfies is rejected before execution, never dispatched to the wrong agent.',
+        proof: 'event-driven · onTaskDispatch · requires · taskResults',
         ref: '/reference/task-scheduling/',
         refLabel: 'Open task scheduling',
       },
       {
-        tag: 'govern → evidence',
-        title: 'Put policy at the boundary it governs.',
-        desc: 'Declare roles and review paths, confirm consequential tools, bound further calls at turn and task boundaries, then inspect governance conclusions, receipts, traces, and evaluation gates.',
-        proof: 'governance · onToolCall · receipt · EvalSet',
-        ref: '/guides/orchestration-controls/',
-        refLabel: 'Review the controls',
+        tag: 'approve → suspend',
+        title: 'Gate the plan, the task, or the tool call—and decide out of process.',
+        desc: 'Approve the plan with onPlanReady, one ready task with onTaskDispatch, and a consequential tool call with onToolCall. Return { action: \'suspend\' } and the pending request persists beside the checkpoint, the decision happens in another process, and the run resumes only the reviewed content. Declared governance verifies roles and review order after the run.',
+        proof: "onPlanReady · onToolCall · { action: 'suspend' } · decideApproval · restore",
+        ref: '/reference/durable-approvals/',
+        refLabel: 'Open durable approvals',
+      },
+      {
+        tag: 'recover → revise',
+        title: 'Resume from the last safe boundary, revise what has not run.',
+        desc: 'Checkpoints persist safe runner boundaries as well as completed tasks, so restore replays a committed tool result by toolCallId instead of running that tool again. Opt into recovery.mode: \'repairable\' and a validated, append-only PlanPatch revises the unexecuted part of the graph at a task-outcome barrier. Retries, model fallbacks, and token or cost budgets bound the rest.',
+        proof: "checkpoint · toolCallId · recovery.mode: 'repairable' · PlanPatch · maxCostBudget",
+        ref: '/reference/adaptive-recovery/',
+        refLabel: 'Open adaptive recovery',
+      },
+      {
+        tag: 'inspect → verify',
+        title: 'Turn a run into evidence you can check.',
+        desc: 'Stable run identity, execution receipts, TraceStore, the offline Run Viewer, and optional OpenTelemetry make every run inspectable. An opt-in append-only run journal records each adapter call and the blocks the model actually saw, and verifyRun() checks a finished journal cold. The same records feed versioned EvalSets and CI gates.',
+        proof: 'receipt · TraceStore · RunJournal · verifyRun · EvalSet',
+        ref: '/reference/run-journal/',
+        refLabel: 'Open the run journal',
       },
       {
         tag: 'your environment',
         title: 'Run where your data already lives.',
-        desc: 'Use cloud providers, a local endpoint, or an air-gapped deployment on your credentials. Tools are default-deny, and core has only three runtime dependencies.',
-        proof: 'offline · default-deny tools · 3 runtime deps',
-        ref: '/guides/production-checklist/',
-        refLabel: 'Open the production checklist',
+        desc: 'Cloud providers, a local endpoint, or an air-gapped deployment on your credentials, with three runtime dependencies. Tools are default-deny, an offline or allowlist egressPolicy bounds the built-in LLM adapters, a ShellExecutor decides where bash runs, and Claude Code, Codex, or Gemini CLI join the same task DAG over ACP.',
+        proof: 'default-deny tools · egressPolicy · ShellExecutor · ACP',
+        ref: '/reference/egress-policy/',
+        refLabel: 'Open the egress policy',
       },
     ],
     whyViewer: {
       eyebrow: 'Run evidence',
       title: 'Inspect what happened after every run.',
-      body: 'The offline Run Viewer turns a completed run into reviewable evidence, without sending it to a hosted OMA service.',
-      points: ['Task DAG and assignees', 'Model, provider, token, and cost rollups', 'Tool calls, status, and safe evidence details'],
+      body: 'The offline Run Viewer turns a completed run into reviewable evidence, without sending it to a hosted OMA service. With the run journal on, verifyRun() checks the same run again from its own events.',
+      points: ['Task DAG and assignees', 'Model, provider, token, and cost rollups', 'Tool calls, status, and safe evidence details', 'Journaled runs: every adapter call and every block the model saw'],
       link: 'Open the observability reference',
     },
     dashboard: {
@@ -465,8 +490,8 @@ export const en = {
       { q: 'How does the coordinator turn a goal into a DAG?', a: 'A coordinator agent plans the work: it breaks the goal into discrete tasks, infers dependencies between them, and emits a directed acyclic graph. Independent nodes run concurrently; dependent nodes wait on their inputs. Pass planOnly to inspect the DAG before any agent executes.' },
       { q: 'Can agents in one team use different model providers?', a: 'Yes. Each agent declares its own model, so a single team can mix a frontier cloud model, a self-hosted endpoint, and a local Ollama instance. The coordinator routes each task to the agent, and therefore the model, assigned to it.' },
       { q: 'How do tools get exposed to an agent?', a: 'Default-deny. An agent only has the tools it explicitly lists in its tools array; everything else is unavailable. External systems are connected through MCP servers under the same opt-in contract.' },
-      { q: 'What happens when a node fails?', a: 'A failed node is retried under its task policy when the error may be transient. Budget exhaustion, malformed input, deliberate aborts, and non-retryable client errors skip pointless retries. Persistent failures surface on the node with FAILED state and an error, downstream dependents are held, and independent branches can continue.' },
-      { q: 'How do I keep a multi-agent run from going off the rails?', a: 'Layered controls, all opt-in. onPlanReady gates the plan, onTaskDispatch gates one ready task (or onApproval retains legacy round gates), and onToolCall can require confirmation for one consequential action. Declared governance verifies required roles and order after execution; runConsensus and loop detection add result and behavior checks.' },
+      { q: 'What happens when a node fails?', a: 'A failed node is retried under its task policy when the error may be transient. Budget exhaustion, malformed input, deliberate aborts, and non-retryable client errors skip pointless retries. Persistent failures surface on the node with FAILED state and an error, downstream dependents are held, and independent branches can continue. With recovery.mode: \'repairable\', a Replanner can propose an append-only PlanPatch at that outcome barrier, so the unexecuted part of the graph is revised instead of carried forward.' },
+      { q: 'How do I keep a multi-agent run from going off the rails?', a: 'Layered controls, all opt-in. onPlanReady gates the plan, onTaskDispatch gates one ready task (or onApproval retains legacy round gates), and onToolCall can require confirmation for one consequential action. Declared governance verifies required roles and order after execution; runConsensus and loop detection add result and behavior checks. Any of these gates can return { action: \'suspend\' } to persist the request and decide from another process.' },
       { q: 'How do I cap what a run costs?', a: 'Use maxCostBudget with estimateCost. Your estimator owns the per-model USD price table; OMA accumulates that estimate across the run and stops issuing further calls once the cap is crossed. The check happens at turn and task boundaries, so it can overshoot by one model turn rather than stopping mid-call. maxTokenBudget provides the parallel cumulative-token ceiling, and modelRouting can put cheaper models on leaf tasks.' },
       { q: 'Does it stream, or only return at the end?', a: 'Both. You can stream tokens and node-state transitions as the DAG fills, or simply await runTeam() for a typed, schema-validated result object once the graph resolves.' },
       { q: "How does open-multi-agent relate to Claude Code's dynamic workflows?", a: "They make the same bet: the model plans the work at runtime instead of you wiring a fixed graph. Claude's dynamic workflows run inside Claude Code, where Claude writes its own orchestration scripts and fans out parallel subagents in a session. open-multi-agent embeds that same goal-to-DAG idea in your own Node.js backend as an MIT library, on any provider, with the plan kept as inspectable, replayable data. The two also compose: over ACP an open-multi-agent team can run Claude Code itself as one of its agents." },

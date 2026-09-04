@@ -197,7 +197,8 @@
 .section-head-row > div { min-width: 0; max-width: 760px; }
 .section-head-link { flex: none; margin-bottom: 4px; }
 
-.why-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.why-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 1024px) { .why-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .why-card { display: flex; flex-direction: column; min-width: 0; }
 .why-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
 .why-num, .why-tag {

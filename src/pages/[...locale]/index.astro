@@ -195,10 +195,10 @@ const caseTr = (c: (typeof SHOWCASE)[number]) => scEntries[c.pkg] ?? { desc: c.d
 // CAPABILITY_COPY_REVIEWED_FOR in src/i18n/en.ts; that constant is the single
 // sign-off, so this comment does not carry a version of its own.
 //
-// These three cards are a deliberate summary of the core loop, not an inventory
-// of the surface — a new release does not automatically owe them an entry.
-// (Adaptive recovery and semantic routing were pending here while they were
-// main-only; both shipped in 1.14.0 and are now fair game for this copy.)
+// Six cards, one per pillar of the framework README's "Why OMA" section — the
+// homepage tells the README's story, so a release that changes the README's
+// pillars owes this list a matching edit, and one that does not can leave it
+// alone. The per-card limits the copy must respect are in the dictionary.
 const WHY = l.why;
 
 // The first three featured Use-case Recipes come from catalog featuredOrder.
@@ -219,9 +219,12 @@ const BUILDS = getFeaturedUseCases().flatMap((example) => {
 });
 
 // Keep the visible set focused on runtime decisions not already answered by the
-// capability cards. In particular, the cost answer must surface maxCostBudget;
-// model mixing is already covered in capability 02 and the stack section.
-const FAQS = [l.faqs[0], l.faqs[3], l.faqs[5]];
+// capability cards: how the DAG comes to exist, what a failed node does, and
+// how OMA relates to Claude Code's dynamic workflows — the one differentiator
+// no card states outright, and the pair the /compare page is built around.
+// The cost answer (maxCostBudget) stays in the pool; budgets are already on
+// card 04.
+const FAQS = [l.faqs[0], l.faqs[3], l.faqs[7]];
 
 const title = l.seo.title;
 const description = l.seo.description;
@@ -581,7 +584,6 @@ const jsonLd = {
                 <span class="sr-only">{l.copy} </span><span class="prompt">$</span><span class="text">{HERO_INSTALL}</span><span class="copy" aria-hidden="true" title={l.copy}><svg class="copy-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="check-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>
               </button>
               <span class="copy-feedback" aria-live="polite"></span>
-              <span class="cmd-note">{l.hero.demoNote}</span>
             </div>
           </div>
         </div>

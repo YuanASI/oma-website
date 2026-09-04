@@ -1,6 +1,6 @@
 // Ecosystem entries — the single source for both the landing "production proof"
 // section (the `featured` subset) and the /showcase page (all of them). Mirrors
-// the framework README "## Ecosystem" section; each entry was checked with
+// the framework README "## Built with OMA" section; each entry was checked with
 // `gh api` (repo exists + actually uses OMA) per the §5 honesty discipline.
 //
 // The `practitioner` kind (Mark Galyan / apollo-mg) is not a project but a named
@@ -48,6 +48,11 @@ export const SHOWCASE: ShowcaseEntry[] = [
     tone: 'neutral', tag: 'coding agent', status: 'built with OMA', kind: 'built-with',
   },
   {
+    pkg: 'Reports to Charts Studio', by: 'NARNIX0/Evident-Project', href: 'https://github.com/NARNIX0/Evident-Project',
+    desc: 'Turns documents and research tables into slide-ready charts. A five-role extraction council — segmenter, planner, extractor, validator, curator — runs each role through runAgent with schema-validated structured outputs.',
+    tone: 'info', tag: 'data extraction', status: 'built with OMA', kind: 'built-with',
+  },
+  {
     pkg: 'Engram', by: 'engram-memory.com', href: 'https://github.com/Agentscreator/engram-memory',
     desc: '“Git for AI memory” — shared memory across agents with conflict detection, via an OMA MemoryStore + ToolRegistry toolkit.',
     tone: 'info', tag: 'memory', status: 'toolkit', kind: 'integration', featured: true,
@@ -61,5 +66,15 @@ export const SHOWCASE: ShowcaseEntry[] = [
     pkg: 'CodingScaffold', by: 'JRS1986/CodingScaffold', href: 'https://github.com/JRS1986/CodingScaffold',
     desc: 'Agentic-coding scaffold that lists OMA as an optional orchestration backend, with a runTeam workflow template.',
     tone: 'info', tag: 'scaffold', status: 'optional backend', kind: 'integration',
+  },
+  {
+    pkg: 'Bilig WorkPaper', by: 'proompteng/bilig', href: 'https://github.com/proompteng/bilig',
+    desc: 'Formula-workbook MCP server. An OMA agent connects it through connectMCPTools() to edit inputs, recalculate formulas, verify readback, and persist WorkPaper JSON without driving a spreadsheet UI.',
+    tone: 'neutral', tag: 'mcp · spreadsheets', status: 'MCP server', kind: 'integration',
+  },
+  {
+    pkg: 'baize-oma', by: 'timywel/baize-oma', href: 'https://github.com/timywel/baize-oma',
+    desc: 'HTTP adapter that exposes OMA runAgent() and runTeam() as Baize slot capabilities, so a Baize loop can call an OMA team across processes.',
+    tone: 'info', tag: 'http adapter', status: 'adapter', kind: 'integration',
   },
 ];
