@@ -195,8 +195,11 @@ a { color: inherit; }
    "A self-organizing agent team," / "in an environment you control."
    (zh already breaks here). */
 .hero h1 .accent { color: var(--oma-accent); display: block; }
+/* 52ch, not 46: the two-sentence subtitle is 172 characters, and the hero's
+   left column is ~490px wide at the 1160px container — wide enough for 52ch of
+   16px Geist (~430px) — so the tighter cap was buying a fifth line for nothing. */
 .hero-sub {
-  margin: 18px 0 0; max-width: 46ch; font-size: 16px; line-height: 1.62;
+  margin: 18px 0 0; max-width: 52ch; font-size: 16px; line-height: 1.62;
   color: var(--oma-fg-2);
 }
 /* zh sub is two sentences forced onto their own lines with <br />; drop the
@@ -295,6 +298,7 @@ a { color: inherit; }
   .cmd .copy svg, .cmd .copy .check-i polyline,
   .artifact-goal-icon,
   .dag-mobile summary::after,
+  .io-cap-link, .io-cap-link .arrow, .dag-replay,
   .faq-icon,
   .live-dot::after { transition: none; animation: none; }
 }

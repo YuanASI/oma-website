@@ -15,6 +15,23 @@ interface Props {
   selected?: boolean;
   compact?: boolean;
   locale?: Locale;
+  /**
+   * Render the queued / running / done variants of the mark, status line and
+   * badge alongside the served status, so a client script can move the node
+   * between them by setting `data-status` — no re-render, no string of
+   * localized labels to ship separately. `replayId` is how that script finds
+   * the node (the same captured task can appear in the desktop and the mobile
+   * DAG). With JS off the served status is the only one that is visible, so
+   * the markup degrades to exactly what a plain TaskNode renders.
+   */
+  replayId?: string | null;
+  /**
+   * Reserve two title lines. Set it on nodes that stand side by side, so a
+   * one-line title next to a two-line one still lines its status and badges up
+   * with its neighbour's; a node that is alone on its row does not pay for the
+   * blank line it would never use.
+   */
+  alignTitle?: boolean;
 }
 const {
   id = '#NODE_001',
@@ -25,6 +42,8 @@ const {
   selected = false,
   compact = false,
   locale = 'en',
+  replayId = null,
+  alignTitle = false,
 } = Astro.props;
 const t = useTranslations(locale);
 
@@ -37,22 +56,53 @@ const STATUS_STYLE: Record<string, { color: string }> = {
 };
 const s = STATUS_STYLE[status] ?? STATUS_STYLE.done;
 const label = t.taskStatus[status as Status] ?? t.taskStatus.done;
-const mark = status === 'done' ? '✓' : status === 'failed' ? '✕' : status === 'running' ? '◓' : '○';
+const MARK: Record<string, string> = { done: '✓', failed: '✕', running: '◓', queued: '○', skipped: '○' };
+const mark = MARK[status] ?? MARK.done;
+// Only the three states a replay moves through get an alternate variant; a
+// captured failure or skip is a served fact, not a frame of an animation.
+const REPLAY_STATES: Status[] = ['queued', 'running', 'done'];
 ---
 
-<div class={`ds-tasknode${selected ? ' is-selected' : ''}${compact ? ' is-compact' : ''}`}>
+<div
+  class={`ds-tasknode${selected ? ' is-selected' : ''}${compact ? ' is-compact' : ''}${replayId ? ' is-replayable' : ''}${alignTitle ? ' is-title-aligned' : ''}`}
+  data-status={replayId ? status : undefined}
+  data-replay-id={replayId ?? undefined}
+>
   <div class="ds-tasknode__top">
     <span class="ds-tasknode__id">{id}</span>
-    <span class="ds-tasknode__mark" style={`color:${s.color}`}>{mark}</span>
+    {replayId ? (
+      <span class="ds-tasknode__mark">
+        {REPLAY_STATES.map((st) => (
+          <span data-when={st} style={`color:${STATUS_STYLE[st].color}`}>{MARK[st]}</span>
+        ))}
+      </span>
+    ) : (
+      <span class="ds-tasknode__mark" style={`color:${s.color}`}>{mark}</span>
+    )}
   </div>
   <div class="ds-tasknode__title">{title}</div>
-  <div class="ds-tasknode__status">{t.taskStatus.statusPrefix}<span style={`color:${s.color};font-weight:500`}>{label}</span>{duration ? ` (${duration})` : ''}</div>
+  {replayId ? (
+    <div class="ds-tasknode__status">{t.taskStatus.statusPrefix}{REPLAY_STATES.map((st) => (
+      <span data-when={st} style={`color:${STATUS_STYLE[st].color};font-weight:500`}>{t.taskStatus[st]}</span>
+    ))}{duration && <span data-when="done">{` (${duration})`}</span>}</div>
+  ) : (
+    <div class="ds-tasknode__status">{t.taskStatus.statusPrefix}<span style={`color:${s.color};font-weight:500`}>{label}</span>{duration ? ` (${duration})` : ''}</div>
+  )}
   {role && (
     <div class="ds-tasknode__badges">
       <Badge tone="neutral">{role}</Badge>
-      {status === 'done' && <Badge tone="accent">{t.taskStatus.badge.stable}</Badge>}
-      {status === 'running' && <Badge tone="warning" dot>{t.taskStatus.badge.live}</Badge>}
-      {status === 'failed' && <Badge tone="danger">{t.taskStatus.badge.error}</Badge>}
+      {replayId ? (
+        <Fragment>
+          <span data-when="done"><Badge tone="accent">{t.taskStatus.badge.stable}</Badge></span>
+          <span data-when="running"><Badge tone="warning" dot>{t.taskStatus.badge.live}</Badge></span>
+        </Fragment>
+      ) : (
+        <Fragment>
+          {status === 'done' && <Badge tone="accent">{t.taskStatus.badge.stable}</Badge>}
+          {status === 'running' && <Badge tone="warning" dot>{t.taskStatus.badge.live}</Badge>}
+          {status === 'failed' && <Badge tone="danger">{t.taskStatus.badge.error}</Badge>}
+        </Fragment>
+      )}
     </div>
   )}
 </div>
@@ -76,6 +126,29 @@ const mark = status === 'done' ? '✓' : status === 'failed' ? '✕' : status ==
   .ds-tasknode.is-compact { padding: 9px 12px; }
   .ds-tasknode.is-compact .ds-tasknode__id,
   .ds-tasknode.is-compact .ds-tasknode__status { font-size: 10px; }
-  .ds-tasknode.is-compact .ds-tasknode__title { margin: 4px 0; font-size: 13px; }
+  /* Captured task titles are a full clause ("Attack surface review:
+     authentication, endpoints, and trust boundaries"), so in the two-up
+     parallel row they wrap. Reserve two lines whether the title needs one or
+     two, so nodes standing side by side keep their status lines and badges on
+     the same baseline; clamp at two so a longer capture cannot push one card
+     taller than its neighbour. */
+  .ds-tasknode.is-compact .ds-tasknode__title {
+    margin: 4px 0; font-size: 13px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .ds-tasknode.is-compact.is-title-aligned .ds-tasknode__title { min-height: calc(2 * 1.3 * 13px); }
   .ds-tasknode.is-compact .ds-tasknode__badges { margin-top: 6px; }
+
+  /* Replay variants: the served status is the visible one, the other two wait
+     for a client script to flip data-status. */
+  .ds-tasknode.is-replayable [data-when] { display: none; }
+  .ds-tasknode.is-replayable[data-status='queued'] .ds-tasknode__mark [data-when='queued'],
+  .ds-tasknode.is-replayable[data-status='running'] .ds-tasknode__mark [data-when='running'],
+  .ds-tasknode.is-replayable[data-status='done'] .ds-tasknode__mark [data-when='done'],
+  .ds-tasknode.is-replayable[data-status='queued'] .ds-tasknode__status [data-when='queued'],
+  .ds-tasknode.is-replayable[data-status='running'] .ds-tasknode__status [data-when='running'],
+  .ds-tasknode.is-replayable[data-status='done'] .ds-tasknode__status [data-when='done'] { display: inline; }
+  .ds-tasknode.is-replayable[data-status='done'] .ds-tasknode__badges [data-when='done'],
+  .ds-tasknode.is-replayable[data-status='running'] .ds-tasknode__badges [data-when='running'] { display: inline-flex; }
 </style>
