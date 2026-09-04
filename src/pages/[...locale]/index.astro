@@ -218,13 +218,12 @@ const BUILDS = getFeaturedUseCases().flatMap((example) => {
   }];
 });
 
-// Keep the visible set focused on runtime decisions not already answered by the
-// capability cards: how the DAG comes to exist, what a failed node does, and
-// how OMA relates to Claude Code's dynamic workflows — the one differentiator
-// no card states outright, and the pair the /compare page is built around.
-// The cost answer (maxCostBudget) stays in the pool; budgets are already on
-// card 04.
-const FAQS = [l.faqs[0], l.faqs[3], l.faqs[7]];
+// Show every question the capability cards do not already answer: how the
+// DAG comes to exist, mixing providers in one team, how tools are exposed,
+// what a failed node does, the cost cap (maxCostBudget), streaming, and how
+// OMA relates to Claude Code's dynamic workflows. The one left in the pool is
+// "off the rails" — card 03 restates its answer (gates and suspend) verbatim.
+const FAQS = [l.faqs[0], l.faqs[1], l.faqs[2], l.faqs[3], l.faqs[5], l.faqs[6], l.faqs[7]];
 
 const title = l.seo.title;
 const description = l.seo.description;
