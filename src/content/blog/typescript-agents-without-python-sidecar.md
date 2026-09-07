@@ -1,21 +1,22 @@
 ---
-title: "Multi-Agent AI in a TypeScript Service, Without the Python Sidecar"
-description: "Three agents behind one Express route, in the Node process you already deploy: per-agent model tiers, validated JSON handoffs, a run-level token ceiling, and cancellation that actually cancels."
+title: "Multi-Agent AI in a TypeScript Service, No Python Sidecar"
+description: "Three agents behind one Express route, in the Node process you deploy: per-agent model tiers, validated JSON handoffs, a token ceiling, and an egress policy."
 pubDate: 2026-08-02
+updatedDate: 2026-09-07
 tags: ["typescript", "nodejs", "multi-agent", "express"]
 contentType: decision-guide
 useCases: ["ticket triage", "backend orchestration"]
 industries: ["software"]
 evidence:
   kind: runnable-demo
-  note: "The pipeline mirrors the repository's Express Customer Support example; the runtime controls are documented v1.14 API surface. Model choice, prompts, and provider are the article's, and throughput at production volume is untested here."
+  note: "The pipeline mirrors the repository's Express Customer Support example. The route and the failure behaviors below were executed against @open-multi-agent/core 1.18.0 with deterministic adapters standing in for model calls — real scheduler, real validation, no network. Model choice, prompts, provider, and throughput at production volume are untested here."
 related:
   solutions: ["mixed-model-teams", "goal-driven-orchestration"]
   examples: ["express-customer-support", "task-pipeline"]
   integrations: ["anthropic", "openai-compatible"]
   comparisons: ["langgraph", "vercel-ai-sdk", "crewai"]
 featured: false
-readingMinutes: 8
+readingMinutes: 11
 ---
 
 You just got out of sprint planning. The ask: add AI-powered ticket handling to the API. Three agents — one classifies the ticket, one drafts a reply, one QA-reviews it. They run in order, share context, and return structured JSON to an Express route.
@@ -24,7 +25,7 @@ Your stack is TypeScript, Node.js, PostgreSQL. The route, the auth, the migratio
 
 So you search. And the thing you find first is that the old answer — *the agent ecosystem is Python, go stand up a sidecar* — is no longer true.
 
-## What the search actually turns up in 2026
+## What the search turns up in 2026
 
 **LangGraph** is not a Python-only argument any more. It ships a first-party TypeScript package, `@langchain/langgraph`, and it is GA. You define nodes, edges, and shared state over a `StateGraph`, and you get thread-scoped checkpoints, human intervention, and time travel over that graph. What you are signing up for is authoring the topology yourself — deliberately low-level, on purpose.
 
@@ -42,7 +43,7 @@ So the question stopped being *Python or TypeScript*. It is: **how much of the o
 2. **Agent-to-agent dependencies.** Classifier first. Drafter waits for it. QA waits for both. The framework resolves the DAG and runs the independent parts together; you declare the edges.
 3. **Structured output that is enforced, not requested.** Each agent returns typed JSON, validated against a schema. Not `JSON.parse` inside a `try` block.
 4. **Per-agent model selection.** Cheap model for classification, mid-tier for drafting, top-tier for review — one pipeline, one run, one bill.
-5. **Guardrails that hold.** A token ceiling so a runaway loop does not quietly spend $50. Loop detection. A timeout wired to an `AbortSignal` that actually cancels in-flight model calls.
+5. **Guardrails that hold.** A token ceiling so a runaway loop does not quietly spend $50. Loop detection. A timeout wired to an `AbortSignal` that cancels in-flight model calls.
 
 Not "50 integrations." Not a visual graph builder. Just the things between you and shipping.
 
@@ -82,15 +83,18 @@ const qaReviewer: AgentConfig = {
   systemPrompt: 'Review the draft for tone and factual consistency. Respond ONLY with valid JSON.',
 }
 
-const orchestrator = new OpenMultiAgent({ maxTokenBudget: 100_000 })
+// The token ceiling and the concurrency limit are orchestrator settings.
+const orchestrator = new OpenMultiAgent({
+  maxTokenBudget: 100_000,
+  maxConcurrency: 3,
+})
 const team = orchestrator.createTeam('support', {
   name: 'support',
   agents: [classifier, drafter, qaReviewer],
-  maxConcurrency: 3,
 })
 ```
 
-Then the part you actually write — the handler:
+Then the part you write — the handler:
 
 ```typescript
 app.post('/tickets', async (req, res) => {
@@ -149,11 +153,13 @@ app.post('/tickets', async (req, res) => {
 
 That is the whole thing. The dependencies are data — `dependsOn: ['Classify ticket']` — so the runtime resolves the DAG, starts each task as soon as its own prerequisites are satisfied, and validates every output against its schema. You did not write a state machine or a task queue.
 
-Two details worth pausing on, because they are the ones people get wrong:
+Three details worth pausing on, because they are the ones people get wrong:
 
-**`dependencyPayload: 'structured'` changes what the next agent reads.** By default a dependency hands its downstream task the previous agent's raw prose output. With `'structured'`, the drafter receives the classifier's *validated JSON* — category and urgency as fields — and if that structured value is missing or unserializable, the dependent task fails with a machine-readable validation error instead of quietly proceeding on narrative text. Prose-shaped handoffs are the failure mode that only shows up in production, on the ticket that phrased things unusually.
+**`dependencyPayload: 'structured'` changes what the next agent reads.** By default a dependency hands its downstream task the previous agent's raw prose output. With `'structured'`, the drafter receives the classifier's *validated JSON* — category and urgency as fields, under a `Validated structured result` heading in its prompt — and if that structured value is missing or unserializable, the dependent task fails with `DEPENDENCY_STRUCTURED_RESULT_MISSING` instead of quietly proceeding on narrative text. Prose-shaped handoffs are the failure mode that only shows up in production, on the ticket that phrased things unusually.
 
-**Parse at the boundary.** `AgentRunResult.structured` is `unknown` in the type system — the runtime validated it, but TypeScript has no way to know which schema produced it. One `Schema.parse()` per result turns that back into a typed object, and gives you a single obvious place where a contract violation surfaces.
+**Parse at the boundary.** `AgentRunResult.structured` is `unknown` in the type system — the runtime validated it, but TypeScript has no way to know which schema produced it. One `Schema.parse()` per result turns that back into a typed object, and gives you a single obvious place where a contract violation surfaces. The key is the agent's own name: internally a result is filed under `agentName:taskId`, and the run result collapses those back to one entry per agent, so `agentResults.get('classifier')` is what you read even though the classifier ran as a task.
+
+**`maxConcurrency` is an orchestrator setting.** It bounds how many agent runs are in flight across the whole run, and it belongs on the `OpenMultiAgent` constructor — not on `createTeam`, where it will not bound anything. The default is 5. This particular pipeline is a straight chain, so nothing overlaps anyway; the limit starts mattering the moment you add a task that does not wait on the ones before it.
 
 Also note what is *not* in the config: `temperature`. Anthropic's current top-tier models (Opus 5, Sonnet 5) reject the sampling parameters outright, so tiering here is model choice plus prompt, not knobs. `temperature` is still a per-agent field for providers that accept it — and every agent can point at a different provider, including a local OpenAI-compatible endpoint.
 
@@ -161,21 +167,33 @@ Also note what is *not* in the config: `temperature`. Anthropic's current top-ti
 
 The happy path is ~60 lines. The unhappy paths are why the framework is there at all.
 
-**The model returns something that isn't your schema.** The agent validates, and on the first failure retries once with the validation error fed back into the conversation. If the retry also fails, the run reports a validation failure rather than handing you a half-parsed object. One retry — not an unbounded loop that bills you for optimism.
+**The model returns something that isn't your schema.** The agent validates, and on the first failure retries once with the validation error fed back into the conversation. If the retry also fails, the run reports `STRUCTURED_OUTPUT_VALIDATION_FAILED` and leaves `structured` undefined, rather than handing you a half-parsed object. One retry — not an unbounded loop that bills you for optimism.
 
-**The ticket is 8,000 words of ranting.** `maxTokenBudget` on the orchestrator is a run-level ceiling, checked between model calls and at task dispatch. Crossing it stops new work; already-started work settles first, then remaining tasks are marked skipped. Be precise about the boundary: a single in-flight model turn can carry you past the ceiling, because the check happens between calls, not mid-generation.
+**The ticket is 8,000 words of ranting.** `maxTokenBudget` on the orchestrator is a run-level ceiling, checked between model calls and at task dispatch. Crossing it stops new work; work that has started settles first, then the remaining tasks are marked `skipped` and the run resolves with `status.code: 'budget_exhausted'`. Be precise about the boundary: a single in-flight model turn can carry you past the ceiling, because the check happens between calls, not mid-generation.
 
 **The drafter keeps regenerating the same reply.** `loopDetection` on the agent catches the repeating pattern. The default action injects a "you appear stuck" message and gives the model one more chance; `onLoopDetected: 'terminate'` stops the run immediately instead.
 
-**The pipeline runs long.** The `AbortSignal` cancels in-flight model calls. One thing to know: `runTasks` does not throw on abort — it drains, marks the rest skipped, and resolves with `success: false`, which is why the handler above distinguishes a timeout from a generic failure by checking `signal.aborted`. If you need to answer the client the instant the timer fires rather than after in-flight calls settle, race the run against a timeout promise the way the repository example does.
+**The pipeline runs long.** The `AbortSignal` cancels in-flight model calls. One thing to know: `runTasks` does not throw on abort — it stops admitting new tasks, waits for the in-flight ones to settle, and resolves with `success: false` and `status.code: 'cancelled'`. That is why the handler above distinguishes a timeout from a generic failure by checking `signal.aborted`. Do not expect the abandoned tasks to read `skipped`, though: the cancelled task itself fails, and in a chain like this one everything downstream fails with it. `skipped` is what you get when a run stops for a reason other than a dependency failing — the budget case above, where the task in flight completes and the two behind it are skipped. If you need to answer the client the instant the timer fires rather than after in-flight calls settle, race the run against a timeout promise the way the repository example does.
 
-**You need to know what happened.** `onProgress` gives per-agent events; `onTrace` gives spans you can persist to a `TraceStore` and render offline in the run viewer. No hosted service in the path.
+**You need to know what happened.** `onProgress` on the orchestrator gives per-agent events; `onTrace` gives spans you can persist to a `TraceStore` and render offline in the run viewer. No hosted service in the path.
 
 None of that is exotic. It is the difference between "it worked in staging on Tuesday" and "it is still working on Friday."
 
-## What staying in-process actually buys
+## The network boundary and the run record
 
-The orchestration is a library call inside the process that already owns the request. The task payloads never get serialized across a network hop. The trace and your application logs are in the same place, correlated by the same request ID. Your deploy is unchanged: same image, same CI, same rollback. And the dependency footprint stays small — three runtime dependencies in the core (`@anthropic-ai/sdk`, `openai`, `zod`); extra providers and MCP load only if you opt in.
+Two controls shipped after this post first went up — an egress policy in v1.16, a run journal in v1.17 — and both answer questions that arrive the first time a service like this reaches a review.
+
+**Where the model calls are allowed to go.** [`egressPolicy`](/reference/egress-policy/) restricts the origins the built-in LLM adapters may open: `{ mode: 'offline' }` for loopback only, or `{ mode: 'allowlist', allowedOrigins: [...] }` for exactly the origins you name. Set it on the orchestrator, on one agent, or on a single run — the scopes intersect, so a narrower one can restrict further but never widen. A denied origin fails the agent before the provider SDK is even loaded, with a non-retryable `EGRESS_POLICY_DENIED`, and every guarded fetch uses `redirect: 'error'` so a permitted endpoint cannot bounce a credential-bearing request somewhere else.
+
+The boundary is as important as the feature. It is enforced on the built-in provider adapters OMA constructs itself, Copilot included. It fails closed rather than pretending on Gemini, Bedrock, and any adapter you hand in — an AI SDK bridge among them. It does not reach MCP child processes, the built-in `bash` tool, custom tools, or trace exporters, all of which open their own sockets. And it checks a URL before the fetch rather than pinning DNS or intercepting the socket, so it is a configuration control, not a sandbox; pair it with a network namespace or an egress proxy when you need containment. Where a granted `bash` command runs is a separate seam — a `ShellExecutor`, swappable per agent — and the default `LocalShellExecutor` executes with the host Node process's permissions. It is not a sandbox or a security boundary.
+
+**What the run wrote down.** The [run journal](/reference/run-journal/) is an append-only log of what entered each conversation, which blocks the model saw, which tools ran and what they returned, and how the plan moved. You pass the backend — `InMemoryRunJournal` or `JsonlRunJournal` — to the orchestrator or to one call; it is off by default, costs nothing when off, and its writes are best-effort. `verifyRun()` reads a finished journal back cold and checks sequence integrity, referential integrity, and whether the events a request cites reproduce the blocks it sent.
+
+Read the verdict for what it is: it detects drift, not tampering. There is no hash chain, no signature, and no WORM storage, so anything that can write the file can edit an event and recompute the hash that cites it in the same pass. It is an integrity check on what OMA wrote. If you need tamper-evidence, put the journal on storage that provides it.
+
+## What staying in-process buys
+
+The orchestration is a library call inside the process that owns the request. The task payloads never get serialized across a network hop. The trace and your application logs are in the same place, correlated by the same request ID. Your deploy is unchanged: same image, same CI, same rollback. And the dependency footprint stays small — three runtime dependencies in the core (`@anthropic-ai/sdk`, `openai`, `zod`); extra providers and MCP load only if you opt in.
 
 The honest cost: your Node process now owns LLM latency and token spend, so concurrency and budget become service-level concerns rather than someone else's service. That is what `maxConcurrency` and `maxTokenBudget` are for, and it is a trade many teams will take over operating a second runtime.
 
@@ -187,13 +205,13 @@ If you have one agent and the hard part is the interface — token streaming, to
 
 If you want agents, workflows, memory, a server, and evals under one framework boundary, look at **Mastra** before assembling those parts yourself.
 
-And two boundaries on this approach specifically. Checkpoint recovery is task-grained: a completed task can be reused after a restart, but an interrupted task starts over — if you need process-independent timers and infrastructure-managed durable execution, evaluate a workflow runtime on purpose. And this is a library, not a platform: no visual editor, no hosted control plane, nothing to log into.
+And two boundaries on this approach specifically. Checkpoint recovery is per-process: a restart resumes from the last snapshot, and for the built-in LLM runner that now includes an interrupted task's completed turns, token usage, and tool-call state, with committed tool results replayed verbatim instead of executed a second time, and the model-issued `toolCallId` persisted so a call with no commit record can re-run under the same idempotency key. Process and ACP backends stay task-grained, because they own their private loops. What none of it gives you is process-independent timers or infrastructure-managed durable execution; if you need those, evaluate a workflow runtime on purpose. And this is a library, not a platform: no visual editor, no hosted control plane, nothing to log into.
 
-But if you are a TypeScript team adding coordinated agents to a product you are already shipping, and you would rather your stack stay one stack — that is the case this is built for.
+But if you are a TypeScript team adding coordinated agents to a product you are shipping, and you would rather your stack stay one stack — that is the case this is built for.
 
 ---
 
-[open-multi-agent](https://github.com/open-multi-agent/open-multi-agent) is MIT-licensed and TypeScript-native. `@open-multi-agent/core` v1.14.0 runs on Node 20+ with three runtime dependencies:
+[open-multi-agent](https://github.com/open-multi-agent/open-multi-agent) is MIT-licensed and TypeScript-native. `@open-multi-agent/core` v1.18.0 runs on Node 20+ with three runtime dependencies:
 
 ```bash
 npm install @open-multi-agent/core

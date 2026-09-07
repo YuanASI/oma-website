@@ -1,21 +1,22 @@
 ---
 title: "在 TypeScript 服务里做多智能体，不必再挂一个 Python 边车"
-description: "三个 Agent 挂在一条 Express 路由后面，跑在你本来就要部署的 Node 进程里：逐 Agent 选模型档位、经校验的 JSON 交接、运行级 token 上限，以及真正能取消的取消。"
+description: "三个 Agent 挂在一条 Express 路由后面，跑在你要部署的 Node 进程里：逐 Agent 选模型档位、经校验的 JSON 交接、运行级 token 上限，以及一条出网策略。"
 pubDate: 2026-08-02
+updatedDate: 2026-09-07
 tags: ["typescript", "nodejs", "multi-agent", "express"]
 contentType: decision-guide
 useCases: ["ticket triage", "backend orchestration"]
 industries: ["software"]
 evidence:
   kind: runnable-demo
-  note: "流水线取自仓库中的 Express 客服示例，运行时控制项均为 v1.14 已公开的 API。模型选择、提示词与提供方由本文自行设定；生产量级下的吞吐未在此验证。"
+  note: "流水线取自仓库中的 Express 客服示例。文中的路由与各项失败行为均在 @open-multi-agent/core 1.18.0 上实际执行验证：以确定性适配器替代模型调用，调度与校验路径为真实实现，全程不联网。模型选择、提示词、提供方以及生产量级下的吞吐未在此验证。"
 related:
   solutions: ["mixed-model-teams", "goal-driven-orchestration"]
   examples: ["express-customer-support", "task-pipeline"]
   integrations: ["anthropic", "openai-compatible"]
   comparisons: ["langgraph", "vercel-ai-sdk", "crewai"]
 featured: false
-readingMinutes: 8
+readingMinutes: 11
 ---
 
 你刚开完排期会。需求是：给 API 加上 AI 工单处理。三个 Agent——一个给工单分类，一个起草回复，一个做 QA 复核。它们按顺序执行、共享上下文，并把结构化 JSON 返回给一条 Express 路由。
@@ -24,7 +25,7 @@ readingMinutes: 8
 
 于是你开始搜。你首先会发现的事实是：那个老答案——*Agent 生态在 Python，去起一个边车服务吧*——已经不成立了。
 
-## 2026 年搜出来的真实结果
+## 2026 年搜索给出的结果
 
 **LangGraph** 已经不再是"只有 Python"的论据。它提供了官方的 TypeScript 包 `@langchain/langgraph`，并且已经 GA。你在 `StateGraph` 之上定义节点、边与共享状态，换来线程级检查点、人工介入以及围绕这张图的时间回溯。你要承担的是自己编写拓扑——它刻意做得很底层，这是设计取向。
 
@@ -42,7 +43,7 @@ readingMinutes: 8
 2. **Agent 之间的依赖。** 分类先跑，起草等它，QA 等前两个。框架负责解析 DAG 并把互不依赖的部分并行跑起来；你只负责声明这些边。
 3. **被强制执行、而非只是请求的结构化输出。** 每个 Agent 返回带类型的 JSON，并对 schema 做校验。不是在 `try` 块里 `JSON.parse` 然后祈祷。
 4. **逐 Agent 选择模型。** 分类用便宜模型，起草用中档，复核用顶配——一条流水线、一次运行、一份账单。
-5. **真正兜得住的护栏。** 一道 token 上限，让失控的循环不会悄悄烧掉 50 美元。循环检测。一个接到 `AbortSignal` 的超时，并且它真的能取消在途的模型调用。
+5. **真正兜得住的护栏。** 一道 token 上限，让失控的循环不会悄悄烧掉 50 美元。循环检测。一个接到 `AbortSignal` 的超时，它会取消在途的模型调用。
 
 不是"50 个集成"，不是可视化图形编辑器。就是横在你与上线之间的那些东西。
 
@@ -82,15 +83,18 @@ const qaReviewer: AgentConfig = {
   systemPrompt: 'Review the draft for tone and factual consistency. Respond ONLY with valid JSON.',
 }
 
-const orchestrator = new OpenMultiAgent({ maxTokenBudget: 100_000 })
+// The token ceiling and the concurrency limit are orchestrator settings.
+const orchestrator = new OpenMultiAgent({
+  maxTokenBudget: 100_000,
+  maxConcurrency: 3,
+})
 const team = orchestrator.createTeam('support', {
   name: 'support',
   agents: [classifier, drafter, qaReviewer],
-  maxConcurrency: 3,
 })
 ```
 
-然后是你真正要写的那部分——处理函数：
+然后是你要写的那部分——处理函数：
 
 ```typescript
 app.post('/tickets', async (req, res) => {
@@ -149,11 +153,13 @@ app.post('/tickets', async (req, res) => {
 
 这就是全部。依赖关系是数据——`dependsOn: ['Classify ticket']`——运行时据此解析 DAG，一旦某个任务自己的前置条件满足就立刻启动它，并对每一份输出按 schema 校验。你没有写状态机，也没有写任务队列。
 
-有两个细节值得停一下，因为它们正是最容易被写错的地方：
+有三个细节值得停一下，因为它们正是最容易被写错的地方：
 
-**`dependencyPayload: 'structured'` 改变了下一个 Agent 读到的东西。** 默认情况下，依赖交给下游任务的是上一个 Agent 的原始叙述性输出。设为 `'structured'` 后，起草 Agent 收到的是分类 Agent *经过校验的 JSON*——类别与紧急程度都是字段；而如果该结构化值缺失或无法序列化，依赖它的任务会以一个机器可读的校验错误失败，而不是悄悄拿着叙述性文本继续跑。以散文形态交接，正是那种只在生产环境、只在措辞不寻常的那张工单上才暴露的失败模式。
+**`dependencyPayload: 'structured'` 改变了下一个 Agent 读到的东西。** 默认情况下，依赖交给下游任务的是上一个 Agent 的原始叙述性输出。设为 `'structured'` 后，起草 Agent 收到的是分类 Agent *经过校验的 JSON*——类别与紧急程度都是字段，出现在其提示词的「Validated structured result」小节下；而如果该结构化值缺失或无法序列化，依赖它的任务会以 `DEPENDENCY_STRUCTURED_RESULT_MISSING` 失败，而不是悄悄拿着叙述性文本继续跑。以散文形态交接，正是那种只在生产环境、只在措辞不寻常的那张工单上才暴露的失败模式。
 
-**在边界处做一次解析。** `AgentRunResult.structured` 在类型系统里是 `unknown`——运行时已经校验过它，但 TypeScript 无从知道它出自哪个 schema。每个结果调用一次 `Schema.parse()`，就把类型拿了回来，同时给了你一个明确的位置，让契约被违反时能在那里暴露。
+**在边界处做一次解析。** `AgentRunResult.structured` 在类型系统里是 `unknown`——运行时已经校验过它，但 TypeScript 无从知道它出自哪个 schema。每个结果调用一次 `Schema.parse()`，就把类型拿了回来，同时给了你一个明确的位置，让契约被违反时能在那里暴露。键名就是 Agent 自己的名字：结果在内部以 `agentName:taskId` 归档，运行结果会把它们收拢回逐 Agent 的一条记录，所以即便分类 Agent 是以任务形式执行的，你读的仍然是 `agentResults.get('classifier')`。
+
+**`maxConcurrency` 是编排器上的设置。** 它约束整次运行中同时在途的 Agent 运行数量，位置在 `OpenMultiAgent` 构造函数上，而不是 `createTeam` 上——写在后者不会产生任何约束。默认值为 5。本文这条流水线是一条直链，本来就不会并行；一旦你加入一个不依赖前序任务的任务，这个上限才开始起作用。
 
 另外注意配置里*没有*的东西：`temperature`。Anthropic 当前的顶配模型（Opus 5、Sonnet 5）直接拒收采样参数，所以这里的档位来自模型选择与提示词，而不是旋钮。对仍然接受它的提供方，`temperature` 依旧是逐 Agent 的字段——而每个 Agent 都可以指向不同的提供方，包括本地的 OpenAI 兼容端点。
 
@@ -161,21 +167,33 @@ app.post('/tickets', async (req, res) => {
 
 顺利路径大约 60 行。不顺利的路径才是框架存在的理由。
 
-**模型返回的东西不符合你的 schema。** Agent 会做校验，并在第一次失败时带着校验错误反馈重试一次。如果重试仍然失败，这次运行报告的是校验失败，而不是把一个解析了一半的对象交给你。只重试一次——不是一个为乐观情绪持续付费的无界循环。
+**模型返回的东西不符合你的 schema。** Agent 会做校验，并在第一次失败时带着校验错误反馈重试一次。如果重试仍然失败，这次运行报告 `STRUCTURED_OUTPUT_VALIDATION_FAILED` 并把 `structured` 留为 undefined，而不是把一个解析了一半的对象交给你。只重试一次——不是一个为乐观情绪持续付费的无界循环。
 
-**工单是 8000 字的长篇抱怨。** 编排器上的 `maxTokenBudget` 是运行级上限，在模型调用之间与任务派发处检查。越过上限会停止投放新工作；已经开始的工作先结算，剩余任务随后被标记为跳过。边界要说准确：单个在途的模型回合可能带你越过上限，因为检查发生在调用之间，而不是生成途中。
+**工单是 8000 字的长篇抱怨。** 编排器上的 `maxTokenBudget` 是运行级上限，在模型调用之间与任务派发处检查。越过上限会停止投放新工作；已经启动的工作先结算，剩余任务随后被标记为 `skipped`，本次运行以 `status.code: 'budget_exhausted'` 结束。边界要说准确：单个在途的模型回合可能带你越过上限，因为检查发生在调用之间，而不是生成途中。
 
 **起草 Agent 反复生成同一份回复。** Agent 上的 `loopDetection` 会捕捉这种重复模式。默认动作是注入一条"你似乎卡住了"的消息，再给模型一次机会；`onLoopDetected: 'terminate'` 则直接立刻停止本次运行。
 
-**流水线跑得太久。** `AbortSignal` 会取消在途的模型调用。有一点要知道：`runTasks` 在中止时并不抛异常——它会排空、把剩余任务标记为跳过，然后以 `success: false` 正常 resolve；这正是上面那个处理函数用 `signal.aborted` 来区分超时与一般失败的原因。如果你需要在计时器触发的那一刻就回应客户端、而不是等在途调用结算完，就像仓库示例那样，把这次运行与一个超时 promise 做 race。
+**流水线跑得太久。** `AbortSignal` 会取消在途的模型调用。有一点要知道：`runTasks` 在中止时并不抛异常——它会停止投放新任务、等待在途任务结算，然后以 `success: false` 和 `status.code: 'cancelled'` 正常 resolve；这正是上面那个处理函数用 `signal.aborted` 来区分超时与一般失败的原因。但不要指望被放弃的任务显示为 `skipped`：被取消的那个任务本身是失败，在本文这样的直链里，它下游的任务会跟着一起失败。`skipped` 出现在运行因依赖失败以外的原因停下来的时候——比如上面的预算场景，在途任务完成，排在它后面的两个被标记为跳过。如果你需要在计时器触发的那一刻就回应客户端、而不是等在途调用结算完，就像仓库示例那样，把这次运行与一个超时 promise 做 race。
 
-**你需要知道到底发生了什么。** `onProgress` 给出逐 Agent 的事件；`onTrace` 给出可以持久化到 `TraceStore` 并在离线运行查看器里渲染的 span。链路上没有托管服务。
+**你需要知道到底发生了什么。** 编排器上的 `onProgress` 给出逐 Agent 的事件；`onTrace` 给出可以持久化到 `TraceStore` 并在离线运行查看器里渲染的 span。链路上没有托管服务。
 
 这些都不新奇。它们只是"周二在预发布环境能跑"和"周五在生产环境还在跑"之间的差别。
 
-## 留在进程内到底换来什么
+## 出网边界与运行记录
 
-编排是一次库调用，发生在本来就持有这个请求的进程里。任务载荷不必跨网络跳转做序列化。链路数据和你的应用日志在同一个地方，由同一个请求 ID 串起来。部署方式不变：同一个镜像、同一套 CI、同一条回滚路径。依赖足迹也保持很小——内核只有三个运行时依赖（`@anthropic-ai/sdk`、`openai`、`zod`），额外的提供方与 MCP 只在你按需启用时才加载。
+这篇文章发出之后又落地了两项控制——v1.16 的出网策略与 v1.17 的运行日志——它们回答的正是这样一个服务第一次走到评审时会被问到的问题。
+
+**模型调用被允许发往哪里。** [`egressPolicy`](/zh/reference/egress-policy/) 限定内置 LLM 适配器可以打开的来源：`{ mode: 'offline' }` 只放行回环地址，`{ mode: 'allowlist', allowedOrigins: [...] }` 只放行你点名的那些来源。它可以设在编排器上、单个 Agent 上，或者某一次运行上——各作用域取交集，因此更窄的一层只能进一步收紧，不能放宽。被拒绝的来源会在提供方 SDK 被加载之前就让该 Agent 失败，给出不可重试的 `EGRESS_POLICY_DENIED`；并且每一次受保护的 fetch 都使用 `redirect: 'error'`，所以被放行的端点无法把一个携带凭据的请求转到别处。
+
+边界与功能同样重要。它在 OMA 自己构造的内置提供方适配器上强制生效，包括 Copilot。对 Gemini、Bedrock 以及任何你自己传入的适配器（含 AI SDK 桥接），它选择直接失败，而不是假装已经生效。它管不到 MCP 子进程、内置 `bash` 工具、自定义工具和链路导出器——这些都自行打开套接字。而且它是在 fetch 之前检查 URL，而不是钉住 DNS 或拦截套接字，所以它是一项配置控制，不是沙箱；需要真正的隔离时，请配合网络命名空间或出网代理。被授权的 `bash` 命令在哪里执行是另一条接缝——`ShellExecutor`，可逐 Agent 替换——默认的 `LocalShellExecutor` 以宿主 Node 进程的权限执行。它不是沙箱，也不是安全边界。
+
+**这次运行记下了什么。** [运行日志](/zh/reference/run-journal/)是一份只追加的记录：哪些消息进入了对话、模型实际看到了哪些块、哪些工具执行过、返回了什么，以及计划如何推进。后端由你传入——`InMemoryRunJournal` 或 `JsonlRunJournal`——可以传给编排器，也可以只传给某一次调用；它默认关闭，关闭时不产生任何开销，写入为尽力而为。`verifyRun()` 会把一份已结束的日志冷读回来，检查序号完整性、引用完整性，以及某次请求所引用的事件能否复现它发出的那些块。
+
+这个结论要按它本来的分量来读：它检测的是漂移，不是篡改。这里没有哈希链、没有签名、也没有 WORM 存储，因此任何能写这个文件的一方，都可以在同一遍操作里改掉某个事件并重算引用它的哈希。它是对 OMA 写下的内容做完整性核对。如果你需要防篡改，请把日志放到本身提供该性质的存储上。
+
+## 留在进程内换来什么
+
+编排是一次库调用，发生在持有这个请求的进程里。任务载荷不必跨网络跳转做序列化。链路数据和你的应用日志在同一个地方，由同一个请求 ID 串起来。部署方式不变：同一个镜像、同一套 CI、同一条回滚路径。依赖足迹也保持很小——内核只有三个运行时依赖（`@anthropic-ai/sdk`、`openai`、`zod`），额外的提供方与 MCP 只在你按需启用时才加载。
 
 诚实的代价是：你的 Node 进程现在持有 LLM 延迟与 token 开销，于是并发和预算成了这个服务自己要管的事，而不是别人那个服务的事。`maxConcurrency` 与 `maxTokenBudget` 就是为此存在的；比起再运维一个运行时，很多团队愿意做这笔交换。
 
@@ -187,13 +205,13 @@ app.post('/tickets', async (req, res) => {
 
 如果你想要 Agent、工作流、记忆、服务端与评测都收在同一个框架边界内，那么在自己拼装这些部件之前，先看看 **Mastra**。
 
-还有两条属于这套方案本身的边界。检查点恢复是任务粒度的：已完成的任务在重启后可以复用，但被中断的任务会重新开始——如果你需要独立于进程的定时器与由基础设施托管的持久化执行，那就明确地去评估一个工作流运行时。以及，这是一个库，不是平台：没有可视化编辑器，没有托管控制台，也没有什么可以登录的地方。
+还有两条属于这套方案本身的边界。检查点恢复以进程为界：重启后从最近一次快照恢复，对于内置 LLM 运行器，如今这还包含被中断任务已完成的回合、token 用量与工具调用状态，已提交的工具结果原样回放，而不是重新执行一遍；模型下发的 `toolCallId` 会被持久化，因此没有提交记录的调用可以在同一个幂等键下重跑。process 与 ACP 后端仍然是任务粒度的，因为它们持有自己的私有循环。这一切都不提供独立于进程的定时器，也不提供由基础设施托管的持久化执行；如果你需要这两样，那就明确地去评估一个工作流运行时。以及，这是一个库，不是平台：没有可视化编辑器，没有托管控制台，也没有什么可以登录的地方。
 
 但如果你是一支 TypeScript 团队，要给一个正在交付的产品加上协同工作的 Agent，并且希望自己的技术栈保持为一套技术栈——它就是为这种情况准备的。
 
 ---
 
-[open-multi-agent](https://github.com/open-multi-agent/open-multi-agent) 采用 MIT 许可、TypeScript 原生。`@open-multi-agent/core` v1.14.0 运行在 Node 20+ 上，只有三个运行时依赖：
+[open-multi-agent](https://github.com/open-multi-agent/open-multi-agent) 采用 MIT 许可、TypeScript 原生。`@open-multi-agent/core` v1.18.0 运行在 Node 20+ 上，只有三个运行时依赖：
 
 ```bash
 npm install @open-multi-agent/core
