@@ -12,9 +12,17 @@ export const MAINTAINER_GITHUB = 'https://github.com/JackChen-me';
 export const MAINTAINER_DEVTO = 'https://dev.to/jackchenme';
 export const FORGE = 'https://github.com/open-multi-agent/oma-forge';
 export const NPM = 'https://www.npmjs.com/package/@open-multi-agent/core';
-// Enterprise / commercial-support site (YuanASI). Separate business entity that
-// offers paid delivery + consulting on OMA; the OSS site stays zero-commercial.
+// Enterprise / commercial-support site (YuanASI). The company that maintains OMA
+// and sells paid delivery + consulting on it; the OSS site stays zero-commercial.
 export const YUANASI = 'https://yuanasi.com';
+// The registered legal name, for structured data. Page copy names the company in
+// the reader's language; JSON-LD carries the one legal form, from here, so the
+// homepage Organization node and the article publisher node cannot drift apart.
+export const YUANASI_LEGAL_NAME = 'Shenzhen YuanASI Technology Co., Ltd.';
+// The company's own GitHub organization — distinct from GITHUB_ORG above, which
+// is the project's. Both are run by the company, which is what lets the
+// Organization node claim them as identifying accounts.
+export const YUANASI_GITHUB = 'https://github.com/YuanASI';
 // Commercial contact channels shown on the homepage FAQ. The email is the one
 // /contact publishes. WHATSAPP is a wa.me link; leave it empty and the link is
 // simply not rendered — never a placeholder number.
@@ -86,8 +94,15 @@ export function ghStats(): GhStats {
 // this site. One helper so the footer's Enterprise-support link, the
 // EnterpriseCta block, and the nav's For Companies entry all resolve the same
 // target — the URL contract lives here, not copied at each call site.
-export function yuanasiHref(locale: string): string {
+//
+// `medium` names the position the link sits in, so YuanASI's analytics can tell a
+// commercial CTA apart from the maintainer credit in the two footers, which is a
+// credit rather than a pitch and would otherwise inflate the CTA funnel. These
+// values are not governed by ATTRIBUTION.md: that registry covers inbound links
+// to open-multi-agent.com, and these point the other way, at a domain with its
+// own analytics and its own naming.
+export function yuanasiHref(locale: string, medium = 'enterprise-cta'): string {
   const base = locale === 'zh' ? YUANASI : `${YUANASI}/en`;
   const campaign = locale === 'zh' ? 'zh' : 'en';
-  return `${base}?utm_source=open-multi-agent.com&utm_medium=enterprise-cta&utm_campaign=${campaign}`;
+  return `${base}?utm_source=open-multi-agent.com&utm_medium=${medium}&utm_campaign=${campaign}`;
 }

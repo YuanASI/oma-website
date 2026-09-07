@@ -8,10 +8,11 @@ and the docs at https://open-multi-agent.com.
 
 - Install: `npm create oma-app@latest`
 - Package: `@open-multi-agent/core` (npm)
-- Latest release: v1.14.0
+- Latest release: v1.18.0
 - License: MIT
 - Runtime: Node.js 20+ (Node 18 reached end of life on 2025-04-30; Node 22 or 24 recommended), three runtime dependencies (Anthropic SDK, OpenAI SDK, Zod)
 - Repository: https://github.com/open-multi-agent/open-multi-agent
+- Maintainer: YuanASI (Shenzhen YuanASI Technology Co., Ltd.), https://yuanasi.com
 
 ## What it is
 

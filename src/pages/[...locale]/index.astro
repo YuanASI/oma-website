@@ -23,7 +23,7 @@ import heroRunEn from '../../data/hero-run.json';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import EnterpriseLink from '../../components/EnterpriseLink.astro';
-import { REPO, NPM, GITHUB_ORG, MAINTAINER_GITHUB, MAINTAINER_DEVTO, CONTACT_EMAIL, WHATSAPP, ghStats, yuanasiHref } from '../../lib/site';
+import { REPO, NPM, GITHUB_ORG, MAINTAINER_GITHUB, MAINTAINER_DEVTO, CONTACT_EMAIL, WHATSAPP, YUANASI_GITHUB, YUANASI_LEGAL_NAME, ghStats, yuanasiHref } from '../../lib/site';
 import { SHOWCASE } from '../../lib/showcase';
 import { detailSlugs, getFeaturedUseCases } from '../../lib/examples';
 import { computeReplaySchedule } from '../../lib/hero-replay';
@@ -273,9 +273,17 @@ const jsonLd = {
       '@type': 'Organization',
       '@id': orgId,
       name: 'YuanASI',
-      alternateName: '元定义科技',
+      // The registered entity, in both the form the footer prints and the two
+      // Chinese forms readers see on the site. `legalName` is the one schema.org
+      // field for it; `alternateName` carries the trading name and the full
+      // Chinese registration.
+      legalName: YUANASI_LEGAL_NAME,
+      alternateName: ['元定义科技', '深圳元定义科技有限公司'],
       url: 'https://yuanasi.com',
       logo: new URL('/logo-mark-dark.svg', Astro.site).href,
+      // Accounts that identify the company from outside: its own GitHub
+      // organization, and the project organization it runs.
+      sameAs: [YUANASI_GITHUB, GITHUB_ORG],
       // Same address the /about page publishes — one contact fact, two places.
       contactPoint: {
         '@type': 'ContactPoint',
@@ -312,7 +320,9 @@ const jsonLd = {
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
       author: { '@id': orgId },
       publisher: { '@id': orgId },
-      maintainer: { '@id': personId },
+      // Both nodes, in the order /about states it: the company maintains OMA,
+      // with Jack Chen as lead maintainer.
+      maintainer: [{ '@id': orgId }, { '@id': personId }],
       sameAs: [REPO, NPM, GITHUB_ORG],
     },
     {

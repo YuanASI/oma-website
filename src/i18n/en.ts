@@ -112,7 +112,18 @@ export const en = {
     resourcesEnterprise: 'Enterprise support',
     legal: { about: 'About', contact: 'Contact', privacy: 'Privacy', terms: 'Terms' },
     mitLicensed: 'MIT licensed · @open-multi-agent',
-    builtBy: 'Built by',
+    // The maintainer credit — bottom-right of the custom-page footer, end of the
+    // docs footer's legal row. Three parts rather than one string because the
+    // company sits at the end of the English sentence and in the middle of the
+    // Chinese one ('由 X 维护'), which a fixed prefix-plus-link shape cannot
+    // render. `after` is empty here on purpose: the English sentence ends with
+    // the link. The URL is not spelled out in either dictionary — the footers
+    // resolve it through yuanasiHref(locale, 'footer').
+    maintainedBy: {
+      before: 'Maintained by ',
+      name: 'YuanASI (Shenzhen YuanASI Technology Co., Ltd.)',
+      after: '',
+    },
   },
 
   // /about, /privacy, /terms — the three trust pages. Every claim here is
@@ -140,7 +151,7 @@ export const en = {
         {
           h: 'Who maintains it',
           body: [
-            'OMA is authored and maintained by Jack Chen, founder of 元定义科技 (YuanASI), with contributions from the wider community — {contributors} contributors and {stars} GitHub stars at the time this page was built.',
+            'OMA is maintained by YuanASI (Shenzhen YuanASI Technology Co., Ltd.), with Jack Chen — the company\'s founder — as lead maintainer, and contributions from the wider community: {contributors} contributors and {stars} GitHub stars at the time this page was built.',
             'The project is not backed by a foundation or a venture-funded company product team. Direction is set in public through GitHub issues and releases.',
           ],
         },
@@ -148,7 +159,7 @@ export const en = {
           h: 'How it is funded',
           body: [
             'This site carries no advertising, no sponsored placements, and no data-driven monetization. The framework is free to use under MIT and always will be.',
-            'YuanASI, a separate commercial entity, offers paid delivery, integration, and support for teams that want OMA implemented on a deadline. That is the funding model — the open-source project itself stays uncommercial.',
+            'The same company sells paid delivery, integration, and support to teams that want OMA implemented on a deadline. That is the funding model — the open-source project itself stays uncommercial.',
           ],
         },
         {
@@ -192,7 +203,7 @@ export const en = {
         {
           h: 'Commercial delivery and support',
           body: [
-            'Paid implementation, integration, and support are handled by 元定义科技 (YuanASI), a separate commercial entity — see <a href="https://yuanasi.com/en">yuanasi.com</a>, email <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>, or message <a href="https://wa.me/8613760249135">WhatsApp</a>. The framework stays MIT-licensed and free to use either way.',
+            'Paid implementation, integration, and support are handled by YuanASI (Shenzhen YuanASI Technology Co., Ltd.), the company that maintains OMA — see <a href="https://yuanasi.com/en">yuanasi.com</a>, email <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>, or message <a href="https://wa.me/8613760249135">WhatsApp</a>. The framework stays MIT-licensed and free to use either way.',
           ],
         },
         {
