@@ -870,6 +870,8 @@ export const en = {
       comparisons: 'Comparison',
       open: 'Open',
     },
+    // Shown next to the published date when a post carries updatedDate.
+    updated: 'Updated',
     minRead: 'min read',
     allPosts: '← All posts',
     // en posts show "Originally published on dev.to"; zh translations show the
