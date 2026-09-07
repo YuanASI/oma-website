@@ -901,6 +901,8 @@ export const zh: UiDict = {
       comparisons: '框架对比',
       open: '打开',
     },
+    // 文章带 updatedDate 时显示在发布日期之后。
+    updated: '更新于',
     minRead: '分钟阅读',
     allPosts: '← 所有文章',
     originallyOn: '最初发表于',
