@@ -24,6 +24,21 @@
 // pluggable shell execution, and 1.17.0's run journal, now folded into the
 // governance, production-control, observability, and evidence entries.
 //
+// 2026-09-07: that 2026-09-03 pass fixed OMA's shared column but missed the
+// per-competitor cells, which still carried the same wrong claim. Corrected
+// here against the framework source and docs/checkpoint.md (:76, :277, :285,
+// :350): the LangGraph howDiffer said "an interrupted task starts again", and
+// the Mastra howDiffer and AgentKit whenUs described recovery at completed
+// task boundaries. The built-in runner resumes mid-task; only process and ACP
+// backends stay task-grained. Two competitor facts were corrected in the same
+// pass, both verified against the vendor's own material: the Vercel AI SDK
+// class is ToolLoopAgent (renamed in AI SDK 6) and @ai-sdk/workflow now ships
+// WorkflowAgent for durable tool steps, so the "no durability" framing was
+// stale; and the "beta" label on Mastra's Harness/AgentController was dropped
+// because neither mastra.ai nor its docs carry that label. A maturity label a
+// primary source does not support is an invented weakness, which this file
+// does not ship.
+//
 // (Previously re-verified for v1.14.0 on 2026-08-06, which added hybrid
 // semantic routing and adaptive plan recovery to the paradigm axis.)
 //
@@ -205,8 +220,8 @@ export const COMPARISONS: Comparison[] = [
       observability: { en: 'First-party LangSmith tracing (near-zero-config) + OpenTelemetry export', zh: '一方 LangSmith 链路追踪（近乎零配置）+ OpenTelemetry 导出' },
     },
     howDiffer: {
-      en: 'LangGraph compiles the nodes, edges, and conditional routing of a declarative graph into an invokable you run. open-multi-agent runs a coordinator that decomposes the goal into a task DAG <em>at runtime</em> and auto-parallelizes independent nodes. Both checkpoint and resume. OMA snapshots completed tasks over any <code>MemoryStore</code> and resumes with <code>restore()</code>, though recovery is task-grained, so an interrupted task starts again. LangGraph additionally exposes state history and time travel over its graph.',
-      zh: 'LangGraph 把声明式图中的节点、边与条件路由编译成一个可调用对象。open-multi-agent 则运行协调器，<em>在运行时</em>把目标拆解成任务 DAG，并自动并行相互独立的节点。两者都支持检查点与恢复。OMA 在任意 <code>MemoryStore</code> 上保存已完成任务，并通过 <code>restore()</code> 恢复，不过恢复以任务为粒度，被中断的任务会重新开始。LangGraph 还提供围绕图的状态历史与时间回溯。',
+      en: 'LangGraph compiles the nodes, edges, and conditional routing of a declarative graph into an invokable you run. open-multi-agent runs a coordinator that decomposes the goal into a task DAG <em>at runtime</em> and auto-parallelizes independent nodes. Both checkpoint and resume. OMA snapshots over any <code>MemoryStore</code> and resumes with <code>restore()</code>; the built-in runner resumes mid-task, replaying a committed tool result rather than executing it again. LangGraph additionally exposes state history and time travel over its graph.',
+      zh: 'LangGraph 把声明式图中的节点、边与条件路由编译成一个可调用对象。open-multi-agent 则运行协调器，<em>在运行时</em>把目标拆解成任务 DAG，并自动并行相互独立的节点。两者都支持检查点与恢复。OMA 在任意 <code>MemoryStore</code> 上保存快照，并通过 <code>restore()</code> 恢复；内置运行器可在任务中途恢复，已提交的工具结果按记录回放，而不是再执行一次。LangGraph 还提供围绕图的状态历史与时间回溯。',
     },
     whenThem: {
       en: 'LangGraph fits when the orchestration topology is known and should be authored explicitly, or when state history and time-travel debugging over that graph are requirements. Its TypeScript package is GA and it integrates with the wider LangChain stack.',
@@ -451,8 +466,8 @@ export const COMPARISONS: Comparison[] = [
       observability: { en: 'OpenTelemetry-based tracing with auto-derived metrics and the Mastra Studio dashboard', zh: '基于 OpenTelemetry 的链路追踪，自动提取指标，配 Mastra Studio 仪表盘' },
     },
     howDiffer: {
-      en: 'Mastra bundles the whole surface; <em>agents</em>, graph-based <em>workflows</em> you wire by hand with <code>.then()</code>/<code>.branch()</code>, memory, RAG, and evals; into one framework, with a separate beta <em>Harness</em> (AgentController) for interactive apps. That breadth is the cost: ~32 direct dependencies in the core (atop the Vercel AI SDK provider layer), Node 22.13+, and workflow durability that leans on a storage backend and a running server to resume. open-multi-agent keeps the core to three dependencies and hands a coordinator a goal, which it decomposes into a task DAG <em>at runtime</em> and auto-parallelizes — so the plan is generated, reviewable data you can freeze and replay, not a graph you wire by hand. Its checkpoints resume completed tasks over any <code>MemoryStore</code> with no durable-execution backend, and its evaluation, tracing, and offline Run Viewer need no hosted service.',
-      zh: 'Mastra 把整个面都打包进一个框架；<em>智能体</em>、需你用 <code>.then()</code>/<code>.branch()</code> 手工接线的图式 <em>workflow</em>、记忆、RAG 与 evals；另有一个独立的 beta <em>Harness</em>（AgentController）用于交互应用。这份“全”是有代价的：内核约 32 个直接依赖（叠在 Vercel AI SDK 提供方层之上）、要求 Node 22.13+，且 workflow 的持久性要靠一个存储后端与一个常驻 server 才能恢复。open-multi-agent 把内核控制在三个依赖，把目标交给协调器，由它<em>在运行时</em>拆解成任务 DAG 并自动并行——于是计划是生成出来、可审阅可重放的数据，而非你手工接线的图。它的检查点在任意 <code>MemoryStore</code> 上恢复已完成任务、无需持久化执行后端，而 evaluation、链路追踪与离线 Run Viewer 也都无需一个托管服务。',
+      en: 'Mastra bundles the whole surface; <em>agents</em>, graph-based <em>workflows</em> you wire by hand with <code>.then()</code>/<code>.branch()</code>, memory, RAG, and evals; into one framework, with a separate <em>Harness</em> (AgentController) for interactive apps. That breadth is the cost: ~32 direct dependencies in the core (atop the Vercel AI SDK provider layer), Node 22.13+, and workflow durability that leans on a storage backend and a running server to resume. open-multi-agent keeps the core to three dependencies and hands a coordinator a goal, which it decomposes into a task DAG <em>at runtime</em> and auto-parallelizes — so the plan is generated, reviewable data you can freeze and replay, not a graph you wire by hand. Its checkpoints resume over any <code>MemoryStore</code> with no durable-execution backend, and the built-in runner resumes mid-task, and its evaluation, tracing, and offline Run Viewer need no hosted service.',
+      zh: 'Mastra 把整个面都打包进一个框架；<em>智能体</em>、需你用 <code>.then()</code>/<code>.branch()</code> 手工接线的图式 <em>workflow</em>、记忆、RAG 与 evals；另有一个独立的 <em>Harness</em>（AgentController）用于交互应用。这份“全”是有代价的：内核约 32 个直接依赖（叠在 Vercel AI SDK 提供方层之上）、要求 Node 22.13+，且 workflow 的持久性要靠一个存储后端与一个常驻 server 才能恢复。open-multi-agent 把内核控制在三个依赖，把目标交给协调器，由它<em>在运行时</em>拆解成任务 DAG 并自动并行——于是计划是生成出来、可审阅可重放的数据，而非你手工接线的图。它的检查点在任意 <code>MemoryStore</code> 上恢复、无需持久化执行后端，内置运行器还能在任务中途恢复，而 evaluation、链路追踪与离线 Run Viewer 也都无需一个托管服务。',
     },
     whenThem: {
       en: 'Mastra fits when you want a batteries-included stack and are willing to author the workflow graph yourself: bundled memory, RAG, evals, and a studio, with suspend/resume durability if you run the storage and server it needs. Its dedicated Harness (still beta) targets interactive, multi-mode agent apps rather than task orchestration.',
@@ -487,19 +502,19 @@ export const COMPARISONS: Comparison[] = [
     },
     them: {
       language: { en: 'TypeScript-native; the leanest of the group', zh: 'TypeScript 原生；本组里最精简' },
-      paradigm: { en: 'A single-agent tool-calling loop (generateText / streamText / Agent, stopWhen); multi-agent is manual composition you build', zh: '单智能体的工具调用循环（generateText / streamText / Agent，stopWhen）；多智能体是你自己搭的手工组合' },
+      paradigm: { en: 'A single-agent tool-calling loop (generateText / streamText / ToolLoopAgent, stopWhen); multi-agent is manual composition you build', zh: '单智能体的工具调用循环（generateText / streamText / ToolLoopAgent，stopWhen）；多智能体是你自己搭的手工组合' },
       deps: { en: '3 direct (@ai-sdk/gateway, provider, provider-utils)', zh: '3 个直接依赖（@ai-sdk/gateway、provider、provider-utils）' },
       mixedModel: { en: 'Yes; provider-neutral by design, one model per agent loop', zh: '支持，设计上提供方中立，每个智能体循环一个模型' },
       budget: { en: 'No hard token cap; stopWhen / stepCountIs are step conditions', zh: '无硬性 token 上限，stopWhen / stepCountIs 是步数条件' },
       observability: { en: 'experimental_telemetry emits OpenTelemetry spans', zh: 'experimental_telemetry 发出 OpenTelemetry span' },
     },
     howDiffer: {
-      en: 'The Vercel AI SDK is <em>primitives</em>: a provider-neutral interface for model calls, tool use, and streaming, plus an <code>Agent</code> abstraction that runs a single tool-calling loop until <code>stopWhen</code>. Multi-agent coordination is something you compose yourself on top. open-multi-agent is that coordination layer; a coordinator decomposes a goal into a task DAG at runtime, runs independent tasks in parallel, and hands you a typed result. They’re complementary as much as competing: OMA ships an AI SDK bridge, so the SDK can be the model layer under an OMA team.',
-      zh: 'Vercel AI SDK 是<em>原语</em>：一套提供方中立的接口，负责模型调用、工具使用与流式，外加一个 <code>Agent</code> 抽象，跑单个工具调用循环直到 <code>stopWhen</code>。多智能体协作是你自己在其上组合出来的。open-multi-agent 就是那一层协作，协调器在运行时把目标拆解成任务 DAG，并行运行相互独立的任务，交给你一个带类型的结果。二者与其说竞争，不如说互补：OMA 自带一个 AI SDK bridge，于是 SDK 可以作为 OMA 团队之下的模型层。',
+      en: 'The Vercel AI SDK is <em>primitives</em>: a provider-neutral interface for model calls, tool use, and streaming, plus a <code>ToolLoopAgent</code> abstraction that runs a single tool-calling loop until <code>stopWhen</code>, and a separate <code>WorkflowAgent</code> that makes each tool execution a durable step surviving a restart. Multi-agent coordination is something you compose yourself on top. open-multi-agent is that coordination layer; a coordinator decomposes a goal into a task DAG at runtime, runs independent tasks in parallel, and hands you a typed result. They’re complementary as much as competing: OMA ships an AI SDK bridge, so the SDK can be the model layer under an OMA team.',
+      zh: 'Vercel AI SDK 是<em>原语</em>：一套提供方中立的接口，负责模型调用、工具使用与流式，外加一个 <code>ToolLoopAgent</code> 抽象，跑单个工具调用循环直到 <code>stopWhen</code>，以及一个把每次工具执行变成可扛重启的持久步骤的 <code>WorkflowAgent</code>。多智能体协作是你自己在其上组合出来的。open-multi-agent 就是那一层协作，协调器在运行时把目标拆解成任务 DAG，并行运行相互独立的任务，交给你一个带类型的结果。二者与其说竞争，不如说互补：OMA 自带一个 AI SDK bridge，于是 SDK 可以作为 OMA 团队之下的模型层。',
     },
     whenThem: {
-      en: 'The Vercel AI SDK fits when you want provider-neutral model, tool, and streaming primitives and intend to own the control flow. Its Agent abstraction handles one tool-calling loop, while multi-agent coordination remains application code.',
-      zh: '当你需要提供方中立的模型、工具与流式原语，并打算自己掌控控制流时，Vercel AI SDK 合适。它的 Agent 抽象处理单个工具调用循环，多智能体协作则保留在应用代码中。',
+      en: 'The Vercel AI SDK fits when you want provider-neutral model, tool, and streaming primitives and intend to own the control flow. Its ToolLoopAgent abstraction handles one tool-calling loop and WorkflowAgent makes that loop durable, while multi-agent coordination remains application code.',
+      zh: '当你需要提供方中立的模型、工具与流式原语，并打算自己掌控控制流时，Vercel AI SDK 合适。它的 ToolLoopAgent 抽象处理单个工具调用循环，WorkflowAgent 让该循环具备持久性，多智能体协作则保留在应用代码中。',
     },
     whenUs: {
       en: 'open-multi-agent fits when you want the orchestration handed to you rather than hand-built: a coordinator that plans the task DAG from a goal, mixed-model teams in one run, and a run-level <code>maxTokenBudget</code> checked between calls. And you don’t have to choose; run OMA over the AI SDK and keep the SDK’s provider layer underneath.',
@@ -586,8 +601,8 @@ export const COMPARISONS: Comparison[] = [
       zh: '当你想要自己编写的、确定且可审视的路由，以及底下 Inngest 那种可持久、可重放的执行时，选 AgentKit，当一次运行必须扛过重启、且每个路由决策都要显式可复现时，这很有价值。它还在 pre-1.0，要预期一些变动，并且默认你的技术栈里有 Inngest。',
     },
     whenUs: {
-      en: 'open-multi-agent fits when you’d rather describe the goal than author the routing, and you want to stay dependency-light: the coordinator plans the task DAG at runtime, there’s no orchestration service to stand up, and <code>maxTokenBudget</code> stops further calls at run boundaries. Checkpoint/restore covers crash recovery at completed task boundaries over any MemoryStore, without a separate durable-execution backend.',
-      zh: 'open-multi-agent 适合你更愿意描述目标、而非编写路由，并且想保持依赖轻量：协调器在运行时规划任务 DAG，无需另立一个编排服务，<code>maxTokenBudget</code> 在运行边界停止后续调用。检查点/恢复在任意 MemoryStore 上以已完成任务边界覆盖崩溃恢复，无需一个单独的持久化执行后端。',
+      en: 'open-multi-agent fits when you’d rather describe the goal than author the routing, and you want to stay dependency-light: the coordinator plans the task DAG at runtime, there’s no orchestration service to stand up, and <code>maxTokenBudget</code> stops further calls at run boundaries. Checkpoint/restore covers crash recovery over any MemoryStore without a separate durable-execution backend, and the built-in runner resumes mid-task.',
+      zh: 'open-multi-agent 适合你更愿意描述目标、而非编写路由，并且想保持依赖轻量：协调器在运行时规划任务 DAG，无需另立一个编排服务，<code>maxTokenBudget</code> 在运行边界停止后续调用。检查点/恢复在任意 MemoryStore 上覆盖崩溃恢复，无需一个单独的持久化执行后端，且内置运行器可在任务中途恢复。',
     },
   },
   {
