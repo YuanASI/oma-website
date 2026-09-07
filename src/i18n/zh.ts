@@ -70,7 +70,15 @@ export const zh: UiDict = {
     resourcesEnterprise: '企业服务',
     legal: { about: '关于', contact: '联系', privacy: '隐私', terms: '条款' },
     mitLicensed: 'MIT 许可 · @open-multi-agent',
-    builtBy: '出自',
+    // 维护方署名：自定义页页脚右下角，以及文档页脚法务链接行的末尾。拆成三段而非
+    // 一整句，是因为公司名在中文句子中间（「由 X 维护」）、在英文句子末尾，固定的
+    // 「前缀 + 链接」拼法两边都放不下。链接地址不写进字典——两处页脚统一走
+    // yuanasiHref(locale, 'footer') 解析。
+    maintainedBy: {
+      before: '由',
+      name: '深圳元定义科技有限公司（YuanASI）',
+      after: '维护',
+    },
   },
 
   // /zh/about、/zh/privacy、/zh/terms —— 三个信任页。页面上的每条陈述都可以
@@ -97,7 +105,7 @@ export const zh: UiDict = {
         {
           h: '由谁维护',
           body: [
-            'OMA 由元定义科技（YuanASI）创始人 Jack Chen 编写和维护，并接受社区贡献——本页构建时，仓库共有 {contributors} 位贡献者、{stars} 个 star。',
+            'OMA 由深圳元定义科技有限公司（YuanASI）维护，公司创始人 Jack Chen 担任主要维护者，同时接受社区贡献——本页构建时，仓库共有 {contributors} 位贡献者、{stars} 个 star。',
             '项目没有基金会背书，也不是某家风险投资公司的产品线。技术方向通过公开的 GitHub issue 和发布记录确定。',
           ],
         },
@@ -105,7 +113,7 @@ export const zh: UiDict = {
           h: '如何维持运转',
           body: [
             '本站没有广告、没有软文位，也不做基于数据的变现。框架在 MIT 许可下免费使用，今后也是如此。',
-            '元定义科技（YuanASI）是独立的商业主体，为需要按期落地 OMA 的团队提供付费交付、集成与技术支持。这是项目的经济来源——开源项目本身保持非商业化。',
+            '同一家公司为需要按期落地 OMA 的团队提供付费交付、集成与技术支持。这是项目的经济来源——开源项目本身保持非商业化。',
           ],
         },
         {
@@ -149,7 +157,7 @@ export const zh: UiDict = {
         {
           h: '商业交付与支持',
           body: [
-            '付费实施、集成与技术支持由独立商业主体元定义科技（YuanASI）承接——见 <a href="https://yuanasi.com">yuanasi.com</a>，直接发邮件至 <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>，或通过 <a href="https://wa.me/8613760249135">WhatsApp</a> 联系；站内「企业服务」入口中也附有微信二维码。无论是否走商业渠道，框架本身都保持 MIT 许可、免费使用。',
+            '付费实施、集成与技术支持由维护 OMA 的深圳元定义科技有限公司（YuanASI）承接——见 <a href="https://yuanasi.com">yuanasi.com</a>，直接发邮件至 <a href="mailto:jack@yuanasi.com">jack@yuanasi.com</a>，或通过 <a href="https://wa.me/8613760249135">WhatsApp</a> 联系；站内「企业服务」入口中也附有微信二维码。无论是否走商业渠道，框架本身都保持 MIT 许可、免费使用。',
           ],
         },
         {

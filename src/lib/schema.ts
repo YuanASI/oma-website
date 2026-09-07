@@ -13,6 +13,7 @@
 // one is not.
 
 import pageDates from '../data/page-dates.json';
+import { YUANASI_LEGAL_NAME } from './site';
 
 /**
  * Both fields present or both absent — a path is either in the snapshot or it
@@ -35,13 +36,15 @@ export const AUTHOR = {
  * Publisher node. Takes `site` (Astro.site) so the logo and the `@id` resolve
  * against the deploy origin; the `@id` matches the Organization the homepage
  * declares, so every article points at that one entity instead of minting a
- * duplicate.
+ * duplicate. `legalName` comes from the same constant the homepage node uses, so
+ * the two cannot state different names for one `@id`.
  */
 export function publisher(site: URL | undefined) {
   return {
     '@type': 'Organization',
     '@id': new URL('/#organization', site).href,
     name: 'YuanASI',
+    legalName: YUANASI_LEGAL_NAME,
     logo: new URL('/logo-mark-dark.svg', site).href,
   };
 }
