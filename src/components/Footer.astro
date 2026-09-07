@@ -2,7 +2,7 @@
 // Global footer. Shared by every custom page. `locale` localizes the labels and
 // the in-site links. External URLs (GitHub/npm/license/llms.txt/RSS) stay as-is —
 // those resources have a single, English form.
-import { REPO, NPM } from '../lib/site';
+import { REPO, NPM, yuanasiHref } from '../lib/site';
 import { useTranslations, localizePath, type Locale } from '../i18n';
 import EnterpriseLink from './EnterpriseLink.astro';
 
@@ -12,6 +12,10 @@ interface Props {
 const { locale = 'en' } = Astro.props;
 const t = useTranslations(locale);
 const L = (p: string) => localizePath(p, locale);
+// Maintainer credit. `medium: 'footer'` keeps it out of the enterprise-CTA funnel
+// on YuanASI's side — this is attribution, not a pitch.
+const by = t.footer.maintainedBy;
+const byHref = yuanasiHref(locale, 'footer');
 ---
 
 <footer class="footer">
@@ -70,7 +74,7 @@ const L = (p: string) => localizePath(p, locale);
           <a href={L('/terms/')}>{t.footer.legal.terms}</a>
         </span>
       </span>
-      <span class="footer-meta">{t.footer.builtBy} <a class="by" href="https://yuanasi.com" target="_blank" rel="noreferrer">元定义科技 (YuanASI)</a></span>
+      <span class="footer-meta">{by.before}<a class="by" href={byHref} target="_blank" rel="noreferrer">{by.name}</a>{by.after}</span>
     </div>
   </div>
 </footer>
