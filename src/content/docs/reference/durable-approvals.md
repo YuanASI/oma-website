@@ -190,5 +190,5 @@ checkpoint and shared-memory redaction.
   [#313](https://github.com/open-multi-agent/open-multi-agent/issues/313).
 
 See the no-key runnable
-[`durable-approval`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/patterns/durable-approval.ts)
+[`durable-approval`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.18.0/packages/core/examples/patterns/durable-approval.ts)
 example for the complete suspend/decide/fresh-orchestrator flow.
