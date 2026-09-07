@@ -1,7 +1,8 @@
 ---
 title: "Adding Multi-Agent Orchestration to a Vercel AI SDK App"
-description: "Add multi-agent orchestration to an existing Vercel AI SDK app: the AI SDK streams tokens and talks to models while open-multi-agent's runTeam() decomposes the goal and coordinates the agents — sharing a single Next.js API route."
+description: "A multi-agent orchestration layer for the Vercel AI SDK: open-multi-agent's runTeam() plans and runs the agents, the AI SDK streams the result to the browser."
 pubDate: 2026-04-15
+updatedDate: 2026-09-07
 tags: ["ai","nextjs","webdev","typescript"]
 contentType: application
 useCases: ["streaming agent apps", "Next.js orchestration"]
@@ -16,7 +17,7 @@ related:
   comparisons: ["vercel-ai-sdk"]
 featured: false
 devtoUrl: "https://dev.to/jackchenme/adding-multi-agent-orchestration-to-a-vercel-ai-sdk-app-4536"
-readingMinutes: 7
+readingMinutes: 11
 ---
 I hit a wall recently. I had a working AI SDK app -- `streamText`, `useChat`, the whole thing -- and then I needed it to do something that a single agent can't: research a topic with one agent, then hand that research to a second agent for writing.
 
@@ -24,17 +25,16 @@ You can do this manually. Glue two `generateText` calls together, pass context a
 
 So I wired [open-multi-agent](https://github.com/open-multi-agent/open-multi-agent) (OMA) into a Next.js API route next to the AI SDK, and the two libraries turned out to work well together. This is how.
 
-## Where each library sits
+## Where the orchestration layer sits above the AI SDK
 
 AI SDK and OMA do different jobs. They don't overlap much.
 
 | | Vercel AI SDK | open-multi-agent |
 |---|---|---|
-| **What it is** | LLM call layer + streaming UI | Multi-agent orchestration framework |
-| **Core strength** | Unified API for 60+ providers, `useChat`, `streamText`, structured outputs | `runTeam()` -- auto task decomposition, parallel execution, shared memory |
-| **Agent model** | Single agent with tool loop (`ToolLoopAgent`) | Team of agents with coordinator pattern |
-| **Streaming** | First-class (`toUIMessageStreamResponse`) | Not streaming-native (batch results) |
-| **Ecosystem** | 23,400+ GitHub stars, 10M+ weekly downloads | 5,700+ GitHub stars, 3 runtime deps |
+| **What it is** | LLM call layer + streaming UI | Multi-agent orchestration layer |
+| **Core strength** | Provider-neutral model calls, `useChat`, `streamText`, structured outputs | `runTeam()` -- task decomposition from a goal, dependency scheduling, shared memory |
+| **Agent model** | Single agent with a tool loop (`ToolLoopAgent`, running until `stopWhen`) | Team of agents planned by a coordinator |
+| **Streaming** | Token deltas all the way to the browser (`toUIMessageStream` + `createUIMessageStreamResponse`) | `Agent.stream()` and `onAgentStream`, per turn and per tool call |
 
 AI SDK talks to models and streams tokens. OMA sits above that: given a goal and a roster of agents, it breaks the goal into tasks, runs them in dependency order, and collects the results. The two can share the same API route.
 
@@ -63,13 +63,15 @@ useChat renders streamed response
 
 Phase 1: OMA runs the team. A coordinator agent (created automatically by `runTeam`) analyzes the goal, produces a task plan, and executes it. The researcher's output lands in shared memory so the writer can reference it.
 
-Phase 2: the coordinator's final output gets piped into AI SDK's `streamText`, which streams it to the browser through `useChat`. This is the bridge between OMA's batch output and AI SDK's streaming protocol.
+Phase 2: the coordinator's final output gets piped into AI SDK's `streamText`, which streams it to the browser through `useChat`. This is the bridge between OMA's completed team result and AI SDK's streaming protocol.
 
 ## Step 1: Project setup
 
 ```bash
 mkdir with-vercel-ai-sdk && cd with-vercel-ai-sdk
 ```
+
+Check your Node version first. AI SDK 7 requires Node.js 22 or newer; OMA core's own floor is Node 20, so the pair lands on 22.
 
 **package.json**:
 
@@ -81,16 +83,18 @@ mkdir with-vercel-ai-sdk && cd with-vercel-ai-sdk
     "build": "next build"
   },
   "dependencies": {
-    "@ai-sdk/openai-compatible": "^2.0.0",
-    "@ai-sdk/react": "^3.0.0",
-    "@open-multi-agent/open-multi-agent": "^1.1.0",
-    "ai": "^6.0.0",
+    "@ai-sdk/openai-compatible": "^3.0.0",
+    "@ai-sdk/react": "^4.0.0",
+    "@open-multi-agent/core": "^1.18.0",
+    "ai": "^7.0.0",
     "next": "^16.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   }
 }
 ```
+
+OMA declares `ai` as an optional peer with the range `^5.0.0 || ^6.0.0 || ^7.0.0`, so an older AI SDK app doesn't have to upgrade to add orchestration. The example this post follows is on 7.
 
 We're using `@ai-sdk/openai-compatible` here because the demo points at DeepSeek. If you use Anthropic or OpenAI directly, swap in their provider package instead.
 
@@ -105,16 +109,22 @@ One API route, two phases. The interesting part is how little glue code the inte
 **app/api/chat/route.ts**:
 
 ```typescript
-import { streamText, convertToModelMessages, type UIMessage } from 'ai'
+import {
+  streamText,
+  convertToModelMessages,
+  createUIMessageStreamResponse,
+  toUIMessageStream,
+  type UIMessage,
+} from 'ai'
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible'
-import { OpenMultiAgent } from '@open-multi-agent/open-multi-agent'
-import type { AgentConfig } from '@open-multi-agent/open-multi-agent'
+import { OpenMultiAgent } from '@open-multi-agent/core'
+import type { AgentConfig } from '@open-multi-agent/core'
 
-export const maxDuration = 120
+export const maxDuration = 360
 
 // --- Provider setup (swap this for your preferred LLM) ---
 const BASE_URL = 'https://api.deepseek.com'
-const MODEL = 'deepseek-chat'
+const MODEL = 'deepseek-v4-flash'
 
 const provider = createOpenAICompatible({
   name: 'deepseek',
@@ -150,7 +160,9 @@ with clear headings and concise paragraphs.`,
 }
 ```
 
-OMA's `provider: 'openai'` means "use the OpenAI-compatible chat completions API." It works with DeepSeek, Ollama, Together, or anything that speaks that protocol.
+OMA's `provider: 'openai'` means "use the OpenAI-compatible chat completions API." It works with DeepSeek, Ollama, vLLM, LM Studio, OpenRouter, Groq, or anything else that speaks that protocol. DeepSeek also has a built-in shortcut (`provider: 'deepseek'` + `DEEPSEEK_API_KEY`) that supplies the base URL for you; the explicit form above is what the example uses so the endpoint stays visible.
+
+One model-name note: `deepseek-chat` and `deepseek-reasoner` were retired on 2026-07-24. The current ids are `deepseek-v4-flash` and `deepseek-v4-pro`.
 
 Now the request handler:
 
@@ -183,10 +195,30 @@ export async function POST(req: Request) {
   const teamResult = await orchestrator.runTeam(
     team,
     `Research and write an article about: ${lastText}`,
+    // Execution routing sends a short goal down the single-agent path. An
+    // explicit mode outranks the router, so this keeps the demo on the
+    // researcher + writer team topology.
+    { mode: 'team' },
   )
 
+  // The team path publishes the synthesized answer under 'coordinator'; the
+  // single-agent path publishes it under the winning agent's own name. Read
+  // both so this route survives whichever topology runs.
   const teamOutput =
-    teamResult.agentResults.get('coordinator')?.output ?? ''
+    teamResult.agentResults.get('coordinator')?.output
+    ?? teamResult.agentResults.get('writer')?.output
+    ?? ''
+
+  // A failed run still leaves the coordinator's unparsed plan under
+  // 'coordinator', so check `success` rather than testing for an empty string.
+  if (!teamResult.success || teamOutput === '') {
+    return new Response(
+      `The agent team did not produce an article: ${
+        teamResult.errorInfo?.message ?? teamResult.status?.code ?? 'unknown error'
+      }`,
+      { status: 500 },
+    )
+  }
 
   // --- Phase 2: Stream result via Vercel AI SDK ---
   const result = streamText({
@@ -200,23 +232,31 @@ ${teamOutput}`,
     messages: await convertToModelMessages(messages),
   })
 
-  return result.toUIMessageStreamResponse()
+  return createUIMessageStreamResponse({
+    stream: toUIMessageStream({ stream: result.fullStream }),
+  })
 }
 ```
 
+`mode: 'team'` is an execution-routing override. OMA routes a `runTeam()` call between a single agent and a coordinator-planned team, and a goal this short routes to the single agent; an explicit mode outranks the router, so the demo runs the topology this post describes.
+
+The `success` check is there for a related reason: a failed run still leaves the coordinator's unparsed plan under the `'coordinator'` key, so reading that key alone can stream planning scratch to the user as if it were the article.
+
+If you wrote this route on AI SDK 6, the last line is the one that moved. `result.toUIMessageStreamResponse()` is deprecated in AI SDK 7 in favour of the standalone `toUIMessageStream` and `createUIMessageStreamResponse` helpers, and it's slated for removal in the next major.
+
 What `runTeam()` does internally:
 
-1. A **coordinator** agent receives the goal plus the agent roster
-2. It produces a JSON task plan -- tasks, assignments, dependency edges
-3. OMA's `TaskQueue` topologically sorts the plan. Independent tasks run in parallel; dependent tasks wait.
+1. A **coordinator** agent receives the goal plus a bounded roster manifest -- each agent's name, model, role summary, capabilities, and tools
+2. One model call produces a JSON array of task specs -- title, description, assignee, `dependsOn`
+3. `TaskQueue` loads the plan and resolves the `dependsOn` edges. A task goes ready the moment its dependencies settle, so independent branches run in parallel; `AgentPool`'s semaphore is the concurrency authority.
 4. Each agent writes its output to `SharedMemory`, so the writer can see what the researcher found
-5. The coordinator synthesizes everything into a final output
+5. A second coordinator call synthesizes the completed task outputs into the final answer
 
-You define agents and a goal. The coordinator decides the task graph.
+You define agents and a goal. The coordinator decides the task graph. It plans once, before execution, and is never consulted again mid-run.
 
 ## Step 3: The frontend
 
-AI SDK v6's `useChat` handles streaming. A few things changed from v3 that tripped me up: there's no built-in `handleSubmit` or `input` state anymore, and messages use `parts` instead of a `content` string. The `isLoading` boolean is gone too -- replaced by a `status` field with four states (`'ready'`, `'submitted'`, `'streaming'`, `'error'`).
+`useChat` from `@ai-sdk/react` handles streaming, and its shape is worth reading before you port an older component. It hands back `messages`, `sendMessage`, `status`, and `error` -- no built-in `handleSubmit` or `input` state, and message text lives in `parts` rather than a `content` string. There's no loading boolean either: `status` is `'ready' | 'submitted' | 'streaming' | 'error'`, and you derive the rest yourself.
 
 **app/page.tsx**:
 
@@ -260,7 +300,7 @@ export default function Home() {
       ))}
 
       {isLoading && status === 'submitted' && (
-        <p>Agents are collaborating -- this may take a minute...</p>
+        <p>Agents are collaborating -- this takes a few minutes...</p>
       )}
 
       {error && <p style={{ color: 'red' }}>Error: {error.message}</p>}
@@ -293,7 +333,7 @@ Open `http://localhost:3000` and try a topic.
 
 ![Entering a topic in the chat UI -- agents are collaborating](/blog/vercel-ai-sdk-1.png)
 
-The OMA orchestration phase takes 30-60 seconds (coordinator planning + two agents running sequentially), then the streaming phase kicks in and you get the article token by token.
+Expect a wait before anything appears. The whole orchestration phase has to finish before `streamText` gets a single character to work with. That's why the `status === 'submitted'` branch above renders a message instead of an empty box. Seven runs of the topic above, on `deepseek-v4-flash` with thinking left at the model's default, took 137-311s (median 217s) from a machine in China; the spread tracks how much article the model decides to write. Once phase 2 starts, the article arrives token by token.
 
 
 
@@ -301,25 +341,59 @@ The OMA orchestration phase takes 30-60 seconds (coordinator planning + two agen
 ![The streamed article output produced by the researcher and writer agents](/blog/vercel-ai-sdk-3.png)
 
 
-One gotcha: `@ai-sdk/openai` v2 defaults to OpenAI's new Responses API (`/responses` endpoint). If your provider doesn't support it (most don't yet), use `@ai-sdk/openai-compatible` instead, or call `provider.chat('model-name')` explicitly rather than `provider('model-name')`. Burned about 20 minutes on this.
+One gotcha: `@ai-sdk/openai`'s callable provider resolves to OpenAI's Responses API -- `provider('gpt-4o')` gives you a Responses model, not a Chat Completions one. If your provider doesn't support that endpoint, use `@ai-sdk/openai-compatible` instead, or call `provider.chat('model-name')` explicitly. Burned about 20 minutes on this.
 
-## Under the hood
+## Under the hood: one request through the orchestrator
 
 The full request lifecycle:
 
 1. `useChat` POSTs to `/api/chat` with the message history
-2. `runTeam()` starts. Coordinator agent receives the goal.
-3. Coordinator produces a task plan via LLM call (JSON with tasks, assignments, dependencies)
-4. `TaskQueue` topologically sorts the tasks
+2. `runTeam()` starts. Coordinator agent receives the goal and the roster.
+3. Coordinator produces a task plan via one LLM call (JSON specs with assignees and `dependsOn`)
+4. `TaskQueue` resolves the dependency edges and starts emitting ready tasks
 5. Researcher agent runs, output goes to `SharedMemory`
 6. Writer agent runs (reads researcher's output from shared memory), produces the article
-7. Coordinator synthesizes the final output
-8. `streamText()` takes that output and streams it through AI SDK's wire protocol
+7. Coordinator synthesizes the final output in a second call
+8. `streamText()` takes that output; `toUIMessageStream` + `createUIMessageStreamResponse` put it on AI SDK's wire protocol
 9. `useChat` renders the tokens in the browser
 
 Steps 3-7 happen inside `runTeam()`. That's where OMA earns its keep -- you declare agents and a goal, it handles decomposition, ordering, and state passing.
 
-## When to use what
+## What streams, and at what granularity
+
+The two libraries both say "streaming" and mean different things, so it's worth being exact about which one you get where.
+
+On the OMA side, `Agent.stream(input, runOptions?)` returns an `AsyncGenerator<StreamEvent>`, and `OrchestratorConfig.onAgentStream` pushes the same events tagged with the agent name. Configuring the callback switches worker agents from `agent.run()` to `agent.stream()` for every agent dispatched through the task queue, which covers both `runTeam()` and `runTasks()`. `OpenMultiAgent.runAgent()` has no streaming form at all -- it awaits a single `AgentRunResult`.
+
+The granularity is per turn and per tool call, not token deltas. The agent loop calls `adapter.chat()`, never `adapter.stream()`, so a `text` event carries a whole turn's text once that turn's model call returns, alongside a `tool_use` per requested call and a `tool_result` per completed one. Token deltas live one layer down on `LLMAdapter.stream()`, which the framework paths don't call.
+
+Two more things `onAgentStream` doesn't cover: coordinator decomposition and final synthesis both call `agent.run()`, and so do `delegate_to_agent` sub-runs. In the route above that means the browser sees nothing until the team result is in hand and `streamText` starts -- which is exactly what phase 2 is for. If you want the wait to show progress instead, wire `onAgentStream` into your own UI stream and render each agent's turns and tool calls as they land.
+
+## Egress policy stops at the AI SDK bridge
+
+There's a second way to combine these two libraries. Instead of giving OMA its own provider credentials, you can route an OMA agent through an AI SDK model:
+
+```typescript
+import { openai } from '@ai-sdk/openai'
+import { AISdkAdapter } from '@open-multi-agent/core/ai-sdk'
+
+const researcher: AgentConfig = {
+  name: 'researcher',
+  model: 'gpt-4o',
+  adapter: new AISdkAdapter(openai('gpt-4o')),
+  systemPrompt: 'You are a research specialist.',
+}
+```
+
+When `adapter` is set, `provider`, `apiKey`, `baseURL`, and `region` are ignored for that agent. Mixed teams work: only the agents carrying an `adapter` go through the AI SDK.
+
+One constraint travels with that choice. `egressPolicy`, added in v1.16, restricts which origins OMA's built-in LLM adapters may reach -- `mode: 'offline'` for loopback only, or `mode: 'allowlist'` for a list of HTTP(S) origins. An AI SDK model is an opaque application-supplied transport: it exposes no reliable target-and-transport contract to OMA. So when `egressPolicy` is configured, OMA rejects `AISdkAdapter` before invocation rather than claiming it constrained a request it never saw. The failure is closed and explicit -- stable code `EGRESS_POLICY_UNSUPPORTED`, an unsuccessful agent result with `status.code: 'rejected'` and `errorInfo.kind: 'validation'`, and no retry, because another attempt can't widen a policy.
+
+The same rule covers any custom `LLMAdapter`, including one you constructed from an OMA adapter class. If you need an egress boundary underneath the bridge, it belongs in the provider's own transport controls or an infrastructure firewall.
+
+The two-phase route in this post is unaffected: OMA runs on the built-in `openai` adapter with an explicit `baseURL`, which is a surface `egressPolicy` enforces.
+
+## When you need an orchestrator on top of the AI SDK
 
 **AI SDK alone** handles most single-agent work: chatbots, RAG, tool-calling agents, structured extraction. If one agent can finish the job in a single conversation loop, adding OMA would just be extra complexity.
 
@@ -329,12 +403,11 @@ Trade-offs, since every library has them:
 
 | | AI SDK | OMA |
 |---|---|---|
-| Provider support | 60+ (official + community) | Anthropic, OpenAI-compatible, Gemini, Grok |
-| DevTools | Built-in DevTools, Telemetry integration | `onProgress` / `onTrace` callbacks |
-| Community | Massive (10M+ weekly downloads) | Smaller (5,700+ stars) |
-| Maturity | Years of production use | Newer, iterating fast |
+| Provider support | Provider-neutral by design; official + community provider packages | 13 built-in shortcuts (Anthropic, OpenAI, Azure OpenAI, Gemini, Bedrock, Copilot, Grok, DeepSeek, Doubao, Hunyuan, MiniMax, MiMo, Qiniu) plus any OpenAI-compatible endpoint |
+| Budget ceilings | `stopWhen` / `stepCountIs` are step conditions | Run-level `maxTokenBudget`, checked at turn and task boundaries |
+| Observability | `experimental_telemetry` emits OpenTelemetry spans | `onProgress` / `onTrace` / `onAgentStream` callbacks, plus an offline Run Viewer that renders a finished run as a task DAG and span waterfall |
 
-OMA's strengths are orchestration-specific: automatic task decomposition, dependency DAGs, shared memory, concurrency control with semaphores. Its provider coverage and tooling ecosystem are thinner. Whether that matters depends on your project.
+OMA's surface is orchestration: decomposition from a goal, dependency scheduling, shared memory, a semaphore-bounded agent pool. The AI SDK's surface is the model call and the wire to the browser. Neither one replaces the other, which is why the route above runs both.
 
 ## Full example
 
@@ -343,6 +416,6 @@ The working code is in the open-multi-agent repo:
 
 [github.com/open-multi-agent/open-multi-agent/tree/main/packages/core/examples/integrations/with-vercel-ai-sdk](https://github.com/open-multi-agent/open-multi-agent/tree/main/packages/core/examples/integrations/with-vercel-ai-sdk)
 
-Clone it, set your API key, `npm install && npm run dev`.
+Clone the repo, `npm install` at the root, then `npm install` in the example directory and set `DEEPSEEK_API_KEY`. `npm run dev` builds OMA before starting Next.js via a `predev` script, so there's no separate build step.
 
 If multi-agent orchestration is new to you, the [single-agent example](https://github.com/open-multi-agent/open-multi-agent/blob/main/packages/core/examples/basics/single-agent.ts) might be a better starting point.
