@@ -104,6 +104,14 @@
     "enBodySha256": "921956faad0e75badc6bf7fdd2bc5e46b0104bc00a808971c2ae304a68af0bc7",
     "translatedAt": "2026-09-03"
   },
+  "reference/run-store": {
+    "enBodySha256": "8c7cde61583920ca0045acce83a94fadff0e6529ae44c15808af808fdb8a0448",
+    "translatedAt": "2026-09-13"
+  },
+  "reference/self-hosting": {
+    "enBodySha256": "8f3778ba30158a4fe1d571859856463841df7d4520a666ac6283d4b42f6f186b",
+    "translatedAt": "2026-09-13"
+  },
   "reference/shared-memory": {
     "enBodySha256": "16cec06d3a1045c8dbc37c756fb195feb946b35c06ddae3d83bd5613dcc341eb",
     "translatedAt": "2026-07-18"
