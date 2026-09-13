@@ -316,10 +316,12 @@ export default defineConfig({
 						{ label: 'Observability performance', slug: 'reference/observability-performance', translations: { 'zh-CN': '可观测性性能' } },
 						{ label: 'Run event journal', slug: 'reference/run-journal', translations: { 'zh-CN': '运行事件日志' } },
 						{ label: 'Checkpoint & resume', slug: 'reference/checkpoint', translations: { 'zh-CN': '检查点与恢复' } },
+						{ label: 'Run store & leases', slug: 'reference/run-store', translations: { 'zh-CN': '运行记录与租约' } },
 						{ label: 'Adaptive recovery', slug: 'reference/adaptive-recovery', translations: { 'zh-CN': '自适应恢复' } },
 						{ label: 'Context management', slug: 'reference/context-management', translations: { 'zh-CN': '上下文管理' } },
 						{ label: 'Evaluation', slug: 'reference/evaluation', translations: { 'zh-CN': '评估' } },
 						{ label: 'Egress policy', slug: 'reference/egress-policy', translations: { 'zh-CN': '出网策略' } },
+						{ label: 'Self-hosting & data residency', slug: 'reference/self-hosting', translations: { 'zh-CN': '自托管与数据驻留' } },
 					],
 				},
 				{

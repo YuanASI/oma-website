@@ -385,7 +385,7 @@ TraceStore 的保留策略只影响该存储。它无法删除已经导出到 OT
 | TraceStore | 追加/查询遥测、保留策略和 trace 删除 | 尽力而为；无 CAS、租约、挂起或恢复 |
 | CheckpointStore | 由 `restore()` 消费的、按安全边界的执行快照 | 执行恢复状态；不是一个 trace 查询系统 |
 | RunJournal | 按需开启的仅追加记录，记录发生了什么、以及每次模型调用看到了什么 | 执行状态；写入尽力而为，恢复从不要求有它 |
-| 未来的 RunStore | 权威的、持久的运行状态机 | Observability v2 未实现 |
+| [RunStore](/zh/reference/run-store/) | 权威、持久的运行生命周期、执行租约与 fencing token | 主执行状态；可选开启，且是本表中唯一写入 fail-closed 的一行 |
 
 丢失遥测绝不能回滚一次持久的运行。删除 trace 绝不能删除检查点、共享内存或已远程
 导出的 OTel 数据。
