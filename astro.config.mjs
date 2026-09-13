@@ -184,7 +184,7 @@ export default defineConfig({
 				alt: 'Open Multi-Agent',
 			},
 			description:
-				'TypeScript-native multi-agent orchestration. From a goal to a task DAG, automatically — three runtime dependencies, drops into any Node.js backend.',
+				'Self-hosted TypeScript agent runtime. Consequential actions wait for durable, tamper-evident approvals, and every run leaves a record you can verify offline.',
 			// Multilingual docs: English at the root (/), 简体中文 at /zh/. Adding a
 			// locale later is one line here + a src/content/docs/<key>/ tree — the page
 			// templates never fork. `lang: 'zh-CN'` (not 'zh') is what matches

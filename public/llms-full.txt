@@ -1,6 +1,6 @@
 # Open Multi-Agent — full text for LLMs
 
-> TypeScript-native AI Agent framework for multi-agent orchestration. Describe a goal and a coordinator agent turns it into a task DAG, parallelizes the independent nodes, and synthesizes a typed, schema-validated result. Drops into any Node.js backend.
+> Self-hosted TypeScript agent runtime for multi-agent systems. Consequential actions wait for durable, tamper-evident approvals, and every run leaves a record you can verify offline, byte for byte. No telemetry and no hosted control plane. Drops into any Node.js backend.
 
 This document assembles the substantive copy from open-multi-agent.com into a single
 plain-text file for LLM ingestion. Source of truth for the API is the GitHub repository
@@ -8,7 +8,7 @@ and the docs at https://open-multi-agent.com.
 
 - Install: `npm create oma-app@latest`
 - Package: `@open-multi-agent/core` (npm)
-- Latest release: v1.18.0
+- Latest release: v1.19.0
 - License: MIT
 - Runtime: Node.js 20+ (Node 18 reached end of life on 2025-04-30; Node 22 or 24 recommended), three runtime dependencies (Anthropic SDK, OpenAI SDK, Zod)
 - Repository: https://github.com/open-multi-agent/open-multi-agent

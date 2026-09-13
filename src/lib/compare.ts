@@ -11,9 +11,10 @@
 // against Anthropic's official agent setup, multiagent orchestration,
 // self-hosted sandbox, event-streaming, rate-limit, and security-model docs.
 //
-// OMA's column was re-verified for core v1.17.0 on 2026-09-03, against the
-// vendored release notes (1.15.0 / 1.16.0 / 1.16.1 / 1.17.0) and the synced
-// reference docs — not against the framework source, which is why claims here
+// OMA's column is current as of core v1.19.0 (re-verified 2026-09-13; see the
+// note below). The pass that follows was made for core v1.17.0 on 2026-09-03,
+// against the vendored release notes (1.15.0 / 1.16.0 / 1.16.1 / 1.17.0) and
+// the synced reference docs — not against the framework source, which is why claims here
 // stay at the level those documents actually support. One claim was found
 // WRONG rather than merely thin: the scheduling capability said retries and
 // checkpoints "resume from completed task boundaries", which stopped being true
@@ -38,6 +39,21 @@
 // because neither mastra.ai nor its docs carry that label. A maturity label a
 // primary source does not support is an invented weakness, which this file
 // does not ship.
+//
+// 2026-09-13: OMA's column re-verified for core v1.19.0 against the vendored
+// 1.18.0 / 1.19.0 release notes and docs/run-store.md. Two findings. (a) 1.19.0
+// shipped an opt-in authoritative run store — a durable lifecycle record, an
+// execution lease, and a fencing token, with ownership and lifecycle writes
+// failing closed rather than best-effort — which no capability entry mentioned;
+// folded into "Production controls". It is NOT exactly-once for external side
+// effects (docs/run-store.md "What this is not"), and MemoryStoreRunStore
+// defaults to atomicity: 'process' — FileStore must never be presented as a
+// multi-worker lease backend. (b) 1.18.0 added opt-in tool input/output capture
+// on execute_tool v2 spans behind a trace capture policy; the observability
+// axis and the "Inspect, trace, and evaluate" entry already describe TraceStore
+// at the level the docs support, so neither was widened. No competitor cell was
+// touched in this pass — the per-competitor them-cells remain unverified since
+// July 2026 except where the 2026-09-07 note says otherwise.
 //
 // (Previously re-verified for v1.14.0 on 2026-08-06, which added hybrid
 // semantic routing and adaptive plan recovery to the paradigm axis.)
@@ -129,8 +145,8 @@ export const OMA_CAPABILITIES: OmaCapability[] = [
   {
     title: { en: 'Production controls', zh: '生产控制' },
     body: {
-      en: 'Bound each run with turn, token, estimated-cost, timeout, context, and loop limits. <code>maxTokenBudget</code> and <code>maxCostBudget</code> stop further calls after a boundary check; one in-flight model turn can cross the ceiling. Model routes support ordered fallbacks. Built-in tools are default-deny, framework-owned model traffic can be confined to loopback or an origin allowlist, the built-in shell runs through an executor you choose, and trace payloads redact detected secrets on a best-effort basis.',
-      zh: '用轮次、token、估算成本、超时、上下文与循环上限约束每次运行。<code>maxTokenBudget</code> 与 <code>maxCostBudget</code> 在边界检查后停止后续调用；一个已在途的模型回合可能越过上限。模型路由支持有序 fallback。内置工具默认拒绝授权，框架自有的模型流量可以被限制在回环地址或一份源允许清单内，内置 shell 通过你选择的执行器运行，链路数据则以尽力而为方式脱敏检测到的敏感信息。',
+      en: 'Bound each run with turn, token, estimated-cost, timeout, context, and loop limits. <code>maxTokenBudget</code> and <code>maxCostBudget</code> stop further calls after a boundary check; one in-flight model turn can cross the ceiling. Model routes support ordered fallbacks. Built-in tools are default-deny, framework-owned model traffic can be confined to loopback or an origin allowlist, the built-in shell runs through an executor you choose, and trace payloads redact detected secrets on a best-effort basis. An opt-in run store makes a long-running workflow a durably managed job: one authoritative record per logical run, an execution lease, and a fencing token, so one worker at a time advances it and a worker that was taken over cannot write after the takeover. Ownership and lifecycle writes fail closed rather than best-effort — but external side effects are still not exactly-once, and cross-process atomicity is a claim you make about your own backend.',
+      zh: '用轮次、token、估算成本、超时、上下文与循环上限约束每次运行。<code>maxTokenBudget</code> 与 <code>maxCostBudget</code> 在边界检查后停止后续调用；一个已在途的模型回合可能越过上限。模型路由支持有序 fallback。内置工具默认拒绝授权，框架自有的模型流量可以被限制在回环地址或一份源允许清单内，内置 shell 通过你选择的执行器运行，链路数据则以尽力而为方式脱敏检测到的敏感信息。可选开启的运行记录（run store）让长时运行成为一个被持久托管的作业：每个逻辑运行一份权威记录、一份执行租约和一个 fencing token，使同一时刻只有一个 worker 推进它，被接管的 worker 在接管之后无法再写入。所有权与生命周期写入采用 fail-closed 而非尽力而为——但外部副作用仍然不是 exactly-once，跨进程原子性也是你对自己后端作出的声称。',
     },
   },
   {
