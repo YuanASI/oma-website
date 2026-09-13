@@ -1,12 +1,12 @@
 # Open Multi-Agent
 
-> TypeScript-native AI Agent framework for multi-agent orchestration. Describe a goal and a coordinator agent turns it into a task DAG, parallelizes the independent nodes, and synthesizes a typed, schema-validated result. Drops into any Node.js backend.
+> Self-hosted TypeScript agent runtime for multi-agent systems. Consequential actions wait for durable, tamper-evident approvals, and every run leaves a record you can verify offline, byte for byte. No telemetry and no hosted control plane. Drops into any Node.js backend.
 
-Open Multi-Agent (OMA) is a goal-driven agent runtime for TypeScript backends. Instead of wiring a graph of nodes and edges ahead of time, you hand it a goal: a coordinator agent decomposes the goal into a task DAG at runtime, runs the independent nodes in parallel, and returns a typed, schema-validated result. Every agent in a team can name its own model (Anthropic, OpenAI, Gemini, Bedrock, Azure OpenAI, DeepSeek, a local Ollama, or any OpenAI-compatible endpoint), and they cooperate inside one team. Tools and Model Context Protocol (MCP) servers follow a default-deny contract: an agent gets only the capabilities it is granted. The core stays lean — three runtime dependencies — and extra providers, MCP, and the Vercel AI SDK bridge load only when you opt in.
+Open Multi-Agent (OMA) is a self-hosted agent runtime for TypeScript backends: a library with no OMA backend, account, or hosted control plane, and no telemetry. A plan, task dispatch, or tool-call gate can suspend a run; the request is stored beside the checkpoint, bound to a SHA-256 hash of exactly what the reviewer saw, and the decision is atomic and first-wins. With the opt-in run journal attached, `verifyRun()` reads a finished run back cold and offline and checks that each block the model saw still reproduces byte for byte from its named source event. Every agent in a team can name its own model (Anthropic, OpenAI, Gemini, Bedrock, Azure OpenAI, DeepSeek, a local Ollama, or any OpenAI-compatible endpoint). Tools and Model Context Protocol (MCP) servers follow a default-deny contract: an agent gets only the capabilities it is granted. `runAgent()` runs one agent, `runTasks()` executes a task graph you wrote, and `runTeam()` plans one from a goal with an optional coordinator. The core stays lean — three runtime dependencies — and extra providers, MCP, and the Vercel AI SDK bridge load only when you opt in.
 
 - Install: `npm create oma-app@latest`
 - Package: `@open-multi-agent/core` (npm)
-- Latest release: v1.18.0
+- Latest release: v1.19.0
 - License: MIT
 - Runtime: Node.js 20+ (Node 18 reached end of life on 2025-04-30), three runtime dependencies (Anthropic SDK, OpenAI SDK, Zod)
 - Maintainer: YuanASI (Shenzhen YuanASI Technology Co., Ltd.), https://yuanasi.com

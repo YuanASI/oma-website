@@ -63,7 +63,7 @@ export const zh: UiDict = {
   },
 
   footer: {
-    blurb: '自动分工的智能体团队，<br />跑在你掌控的环境里。',
+    blurb: '所有权、审批权、审计权，<br />归于使用 Agent 的组织。',
     product: { head: '产品', capabilities: '能力', useCases: '应用场景', integrations: '集成', faq: '常见问题' },
     resources: { head: '资源', docs: '文档', architecture: '架构', examples: '示例', showcase: '案例', compare: '对比', blog: '博客', changelog: '更新日志' },
     project: { head: '项目', github: 'GitHub', npm: 'npm', mitLicense: 'MIT 许可证', llmsTxt: 'llms.txt', rss: 'RSS' },
@@ -280,13 +280,13 @@ export const zh: UiDict = {
   landing: {
     seo: {
       title: 'Open Multi-Agent：开源 TypeScript 多智能体框架',
-      description: '开源、TypeScript 原生的多智能体框架：给一个目标，自动分工的智能体团队并行完成，跑在你自己的环境里，云端或完全离线均可。',
+      description: '自托管的 TypeScript 多智能体运行时：关键操作要等一条持久化、防篡改的审批，每次运行都留下一份可离线逐字节核验的记录。',
     },
     hero: {
-      eyebrow: '开源多智能体框架，TypeScript 原生',
-      h1: '自动分工的智能体团队，',
-      h1Accent: '跑在你自己的环境里。',
-      subtitle: '万物皆接口，每次运行皆可回溯。你只描述目标，协调者规划其余，每一步仍由你掌控。',
+      eyebrow: '开源自托管的 TypeScript Agent 运行时',
+      h1: 'Agent 的所有权、审批权与审计权，',
+      h1Accent: '归于使用它的组织。',
+      subtitle: '关键操作要等一条持久化、防篡改的审批，每次运行留下一份可离线逐字节核验的记录。',
       meta: ['端云模型混用', 'MIT 许可'],
       trust: { stars: 'GitHub Star', contributors: '贡献者', releases: '发布次数', license: '许可证' },
       fullScript: '完整脚本',
@@ -824,8 +824,8 @@ export const zh: UiDict = {
       title: '这套运行时做什么，也明确不声称什么。',
       body: '官网跟随同时发布到 GitHub 与 npm 的最新包。只存在于 main 的开发功能，在正式发布前不会进入已交付能力面。',
       items: [
-        { label: '已发布', value: '路由、治理、事件驱动调度、派发审批、可挂起的持久化审批、运行凭证、结构化 handoff、模型 fallback、出网策略、可插拔的 shell 执行、可选开启的运行事件日志、计划修订与混合语义路由，都在已发布的包里。' },
-        { label: '恢复', value: '检查点从运行器的安全边界恢复，并回放已提交的工具结果而不是重跑它们；但进程与 ACP 这类外部后端仍是任务粒度的，而一个已经运行、结果却没能写入存储的工具会再跑一次——请把暴露出来的 toolCallId 当作幂等键使用。快照始终是恢复的锚点：运行事件日志只是延长它，这里也没有具备 exactly-once 语义的权威 RunStore。计划修订只向前：它追加替代任务，不会撤销某个任务已经产生的外部副作用。' },
+        { label: '已发布', value: '路由、治理、事件驱动调度、派发审批、可挂起的持久化审批、运行凭证、结构化 handoff、模型 fallback、出网策略、可插拔的 shell 执行、可选开启的运行事件日志、可选开启的权威运行记录（含执行租约）、计划修订与混合语义路由，都在已发布的包里。' },
+        { label: '恢复', value: '检查点从运行器的安全边界恢复，并回放已提交的工具结果而不是重跑它们；但进程与 ACP 这类外部后端仍是任务粒度的，而一个已经运行、结果却没能写入存储的工具会再跑一次——请把暴露出来的 toolCallId 当作幂等键使用。快照始终是恢复的锚点，运行事件日志只是延长它。可选开启的运行记录（run store）会补上一份权威的生命周期记录、一份执行租约和一个 fencing token，使同一时刻只有一个 worker 推进该运行；但它不会让外部副作用变成 exactly-once，也只在你明确声明后端具备跨进程原子性时才作此声称。计划修订只向前：它追加替代任务，不会撤销某个任务已经产生的外部副作用。' },
         { label: '产品层', value: 'OMA 是自托管运行时库，不声称拥有托管的租户、项目、Thread、席位或 RBAC 控制面。' },
       ],
     },

@@ -29,7 +29,7 @@
 // next release while still describing the previous surface, silently.
 // scripts/check-version-drift.mjs reports (never fails on) a gap between this
 // and the newest release.
-export const CAPABILITY_COPY_REVIEWED_FOR = '1.17.0';
+export const CAPABILITY_COPY_REVIEWED_FOR = '1.19.0';
 
 /** The release forms copy interpolates. Supplied by src/lib/release.ts. */
 export interface ReleaseRef {
@@ -105,7 +105,7 @@ export const en = {
   },
 
   footer: {
-    blurb: 'A self-organizing agent team,<br />in an environment you control.',
+    blurb: 'Agents your organization can<br />own, approve, and audit.',
     product: { head: 'Product', capabilities: 'Capabilities', useCases: 'Use cases', integrations: 'Integrations', faq: 'FAQ' },
     resources: { head: 'Resources', docs: 'Docs', architecture: 'Architecture', examples: 'Examples', showcase: 'Showcase', compare: 'Compare', blog: 'Blog', changelog: 'Changelog' },
     project: { head: 'Project', github: 'GitHub', npm: 'npm', mitLicense: 'MIT license', llmsTxt: 'llms.txt', rss: 'RSS' },
@@ -333,30 +333,39 @@ export const en = {
       // evidence; "AI agents" is the broader category. Each lives in one
       // surface (title vs. h1/description) so neither query surface is lost.
       title: 'Open Multi-Agent — TypeScript multi-agent framework',
-      // ~153 chars — stays inside the ~160 SERP truncation window so the
-      // "cloud or fully offline" differentiator survives to the snippet.
-      description: 'TypeScript-native multi-agent framework: one goal in, a self-organizing team of AI agents runs it in parallel — in your environment, cloud or fully offline.',
+      // ~159 wide — stays inside the 160 SERP budget (scripts/check-meta-lengths.mjs)
+      // so "verify offline" survives to the snippet. This string is also the
+      // SoftwareApplication node's `description` in the homepage JSON-LD
+      // (index.astro reads l.seo.description), so the two cannot drift apart.
+      description: 'Self-hosted TypeScript multi-agent runtime: consequential actions wait for durable, tamper-evident approvals; every run leaves a record you can verify offline.',
     },
     hero: {
-      // Word order matches the <title> so the head term reads as one phrase
-      // rather than two halves a crawler has to reassemble. "TypeScript-native"
-      // still carries the same claim further down (subtitle + meta description).
-      eyebrow: 'open-source TypeScript multi-agent framework',
-      h1: 'A self-organizing team of AI agents, ',
-      h1Accent: 'in an environment you control.',
-      // The README's principle line, then what it means for you. The two
-      // fragments come first because they are the design stance; the closing
-      // sentence spends the remaining room on what the reader does with it.
-      // Fits three lines of the hero column at the 52ch cap.
+      // The <title> keeps "multi-agent framework" — the head term with
+      // historical ranking evidence — and this surface carries the framework's
+      // own category line instead ("a self-hosted TypeScript agent runtime").
+      // Deliberate split: the query surface stays in the title, the positioning
+      // in the h1 block.
+      eyebrow: 'open-source self-hosted TypeScript agent runtime',
+      // The framework tagline, split so the accent lands on the three rights.
+      h1: 'Agents your organization can ',
+      h1Accent: 'own, approve, and audit.',
+      // The framework's sub-tagline, minus the "self-hosted TypeScript agent
+      // runtime" clause the eyebrow above already carries. 134 wide — the same
+      // three lines at the 52ch cap the previous subtitle occupied.
+      //
+      // PROVENANCE. The previous line ("Every seam, an interface. Every run, a
+      // record. Describe the goal; the coordinator plans the rest…") was lifted
+      // from the framework README's principle line by PR #350. Upstream #604
+      // deleted that line and the whole "Why OMA" section with it, so the copy
+      // had no source left to be checked against. Do not restore it.
       //
       // Each clause is a published behaviour, not a positioning word:
-      // seam/interface → reference/execution-routing + tool and model
-      // boundaries; record → reference/observability (onTrace spans,
-      // TraceStore) and the run journal; the coordinator plans →
-      // reference/execution-routing (the Coordinator builds a Team plan);
-      // stays in your hands → reference/durable-approvals plus maxTokenBudget /
-      // maxCostBudget (see the FAQ and /compare).
-      subtitle: 'Every seam, an interface. Every run, a record. Describe the goal; the coordinator plans the rest, and every step stays in your hands.',
+      // consequential actions wait → reference/durable-approvals (a gate
+      // returns { action: 'suspend' }, the request is bound to a SHA-256 hash
+      // of what the reviewer saw); verify offline, byte for byte →
+      // reference/run-journal (verifyRun() replays each block from its named
+      // source event; an evicted window reports inconclusive, not failure).
+      subtitle: 'Consequential actions wait for durable, tamper-evident approvals, and every run leaves a record you can verify offline, byte for byte.',
       meta: ['cloud + local models', 'MIT license'],
       // Three measurable facts, each one checkable from the cell it sits in:
       // stars and release link to GitHub, and the licence is the repo's own.
@@ -790,8 +799,8 @@ export const en = {
         // Deliberately unversioned. This names capabilities that are in the
         // published package; it does not claim to be that release's full change
         // list, so interpolating the current version would overstate it.
-        { label: 'Published', value: 'Routing, governance, event-driven scheduling, dispatch approval, suspendable durable approvals, receipts, structured handoffs, model fallbacks, egress policy, pluggable shell execution, the opt-in run journal, plan revision, and hybrid semantic routing are all in the published package.' },
-        { label: 'Recovery', value: 'Checkpoint restore resumes at safe runner boundaries and replays committed tool results instead of re-running them, but external process and ACP backends stay task-grained, and a tool that ran without its result reaching the store runs again — use the exposed toolCallId as an idempotency key. The snapshot stays the recovery anchor: the run journal only extends it, and there is no authoritative exactly-once RunStore. Plan revision is forward-only: it appends replacement work and never undoes a side effect a task already performed.' },
+        { label: 'Published', value: 'Routing, governance, event-driven scheduling, dispatch approval, suspendable durable approvals, receipts, structured handoffs, model fallbacks, egress policy, pluggable shell execution, the opt-in run journal, the opt-in authoritative run store with execution leases, plan revision, and hybrid semantic routing are all in the published package.' },
+        { label: 'Recovery', value: 'Checkpoint restore resumes at safe runner boundaries and replays committed tool results instead of re-running them, but external process and ACP backends stay task-grained, and a tool that ran without its result reaching the store runs again — use the exposed toolCallId as an idempotency key. The snapshot stays the recovery anchor and the run journal only extends it. An opt-in run store adds an authoritative lifecycle record, an execution lease, and a fencing token, so one worker at a time advances a run; it does not make external side effects exactly-once, and it claims cross-process atomicity only where you declare a backend that has it. Plan revision is forward-only: it appends replacement work and never undoes a side effect a task already performed.' },
         { label: 'Product layer', value: 'OMA is a self-hosted runtime library. It does not claim a hosted tenant, project, thread, seat, or RBAC control plane.' },
       ],
     },
