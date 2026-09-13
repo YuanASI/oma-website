@@ -235,7 +235,29 @@ const ENTERPRISE_LINKS = [
   ...(WHATSAPP ? [{ label: 'WhatsApp', href: WHATSAPP }] : []),
 ];
 type Faq = { q: string; a: string; links?: { label: string; href: string }[] };
-const FAQS: Faq[] = [l.faqs[0], l.faqs[1], l.faqs[3], l.faqs[5], { ...l.faqs[8], links: ENTERPRISE_LINKS }];
+// Five of the dict's questions, by index. THESE INDICES ARE COUPLED TO THE
+// ORDER OF `faqs` IN src/i18n/en.ts — reorder or insert there and you must
+// update them here, in the same commit. Nothing type-checks this: every entry
+// has the same shape, so a wrong index silently ships the wrong question.
+// (It already happened once: inserting the run-journal question at the head
+// shifted every later entry by one and attached ENTERPRISE_LINKS to the
+// Claude-dynamic-workflows answer.)
+//
+//   0 — proving what an agent did (run journal, verifyRun)
+//   1 — keeping a run from going off the rails (gates, suspend)
+//   3 — mixing model providers in one team
+//   6 — capping what a run costs
+//
+// The enterprise answer is addressed from the end instead, because "we have no
+// engineering team" is by convention the last question in the dict and the only
+// one that must carry ENTERPRISE_LINKS.
+const FAQS: Faq[] = [
+  l.faqs[0],
+  l.faqs[1],
+  l.faqs[3],
+  l.faqs[6],
+  { ...l.faqs[l.faqs.length - 1], links: ENTERPRISE_LINKS },
+];
 
 const title = l.seo.title;
 const description = l.seo.description;
