@@ -987,13 +987,13 @@ export const zh: UiDict = {
     seo: {
       title: 'Claude 动态工作流，自托管 —— open-multi-agent',
       description:
-        '同一个赌注——让模型在运行时规划工作；不同的形态：动态工作流跑在 Claude Code 内部，open-multi-agent 跑在你自己的后端、任意模型上。',
+        '同一个赌注——让模型在运行时规划工作。差别在于：当这套编排跑进你自己的产品，你能拥有什么、审批什么、事后又能证明什么。',
     },
     hero: {
       eyebrow: '背景',
       backToHub: '全部对比',
       h1: 'Claude 动态工作流，与 open-multi-agent',
-      lede: '2026 年 5 月，Anthropic 在 Claude Code 里推出了动态工作流（dynamic workflows）：由模型在运行时自己规划、编排工作。open-multi-agent 押的是同一个赌注，只是形态不同。',
+      lede: '2026 年 5 月，Anthropic 在 Claude Code 里推出了动态工作流（dynamic workflows）：由模型在运行时自己规划、编排工作。open-multi-agent 押的是同一个赌注——而由于它跑在你自己的后端里，它还必须回答：一次高影响操作由谁批准，以及这次运行事后你能证明什么。',
     },
     cards: {
       dwLabel: 'Claude 动态工作流',
@@ -1002,38 +1002,45 @@ export const zh: UiDict = {
       dwLink: '阅读官方公告',
       omaLabel: 'open-multi-agent',
       omaBody:
-        '一个 MIT 许可的 TypeScript 库。协调器在运行时把你的目标拆成任务 DAG，并在你自己的后端、任意模型提供方上运行——计划以可检视、可重放的数据形式暴露出来。',
+        '一个 MIT 许可、装进你自己后端的 TypeScript 库。这里同样可以让模型在运行时规划工作——而高影响操作会等一条持久化的审批，每次运行还会留下一份你能离线核验的记录。',
       omaLink: '快速开始',
     },
     bet: {
       eyebrow: '共同的赌注',
       title: '同一个赌注：让模型来规划工作。',
-      body: '两者都是模型驱动的。你不必事先接好一张固定的图——你交出一个目标，模型在运行时规划工作，把它拆成可并行的步骤再把结果汇拢。Claude 的动态工作流在 Claude Code 内部这么做；open-multi-agent 的协调器在你的后端这么做。思路相同——所以这一页不会去争谁<em>更 dynamic</em>。真正有用的问题是：编排在哪里运行，以及你能拿这份计划做什么。',
+      body: '两者都是模型驱动的。你不必事先接好一张固定的图——你交出一个目标，模型在运行时规划工作，把它拆成可并行的步骤再把结果汇拢。Claude 的动态工作流在 Claude Code 内部这么做；open-multi-agent 的协调器在你的后端这么做。思路相同——所以这一页不会去争谁<em>更 dynamic</em>。真正有用的问题，是这套编排成为你要交付的产品的一部分之后才出现的那个：你要为它负什么责？',
     },
     form: {
       eyebrow: '差别',
-      title: '差别在于形态。',
+      title: '差别在于你要为什么负责。',
       intro: '它们不是同一类东西。Claude 动态工作流是 Claude Code 内部的一项能力，编排的是 Claude 子智能体。open-multi-agent 是一个你装进 TypeScript 后端、指向任意模型提供方的库。下面把两者并排来看。',
       th: { dimension: '维度', dw: 'Claude 动态工作流', oma: 'open-multi-agent' },
       rows: [
         { k: '在哪里运行', dw: 'Claude Code 内部——CLI、桌面端与 IDE', oma: '你自己的 Node.js 后端——用 npm 安装，无需迁移到托管服务' },
         { k: '它是什么', dw: 'Claude Code 的一项能力', oma: '一个你嵌入的开源（MIT）库' },
         { k: '模型', dw: 'Claude 子智能体', oma: '任意提供方——OpenAI、Anthropic、Gemini、Bedrock，或任意本地 / OpenAI 兼容模型' },
-        { k: '语言 / 载体', dw: '从 Claude Code 使用', oma: 'TypeScript，可用于任意 Node.js 20+ 后端' },
         { k: '计划', dw: 'Claude 在会话里写下并运行的编排脚本，返回前自行检查', oma: '一张可作为数据检视与重放的任务 DAG——planOnly、createPlanArtifact、runFromPlan' },
+        { k: '高影响操作之前', dw: 'Claude 在结果交到你手上之前自行检查', oma: "关卡可以返回 { action: 'suspend' }：请求与检查点一同持久化，绑定到审阅者所见内容的 SHA-256 哈希，决定是原子的、先到先得" },
+        { k: '事后', dw: '编排在一次 Claude Code 会话中运行', oma: 'verifyRun() 冷读、离线地重读日志，核对每个块是否仍能从它指名的源事件复现——而治理关卡依据的是 execution receipt，从不依据智能体的答案文本' },
       ],
     },
     compose: {
       eyebrow: '可组合',
       title: '可组合，不只是并行。',
-      body: '两者并不互斥。open-multi-agent 讲 Agent Client Protocol（ACP），所以一个 OMA 团队可以把外部编码智能体——包括 Claude Code 本身——当作团队里的一个智能体来驱动。你在 Claude Code 里得到的模型规划式编排，可以成为一次更大的、由你端到端掌控、且中立于提供方的运行中的一个节点。',
+      body: '两者并不互斥。open-multi-agent 讲 Agent Client Protocol（ACP），所以一个 OMA 团队可以把外部编码智能体——包括 Claude Code 本身——当作团队里的一个智能体来驱动。你在 Claude Code 里得到的模型规划式编排，可以成为一次更大的、由你端到端掌控、且中立于提供方的运行中的一个节点。依赖它之前值得先读一读权限边界：ACP 子进程运行在 OMA 的逐次工具关卡、文件系统沙箱与出网策略之外。',
       cta: '查看 ACP 集成与权限边界',
     },
     fit: {
       eyebrow: 'OMA 适合什么',
       title: 'open-multi-agent 适合什么。',
-      body: '当编排需要活在你自己的产品内部时，选 open-multi-agent：一个你 <code>npm install</code> 进 Node.js 后端的开源（MIT）库，运行在任意提供方上——OpenAI、Anthropic、Gemini、Bedrock，或一个本地的 OpenAI 兼容模型。协调器在运行时规划任务 DAG，而这份计划是你可以检视、重放、把关的数据——<code>planOnly</code> 在任何东西运行前审阅，<code>createPlanArtifact</code> 把它存下来，<code>runFromPlan</code> 执行一份你已经审过的计划。',
+      body: '当编排必须活在你自己的产品内部、而你又必须为它负责时，选 open-multi-agent。它是一个你 <code>npm install</code> 进 Node.js 后端的 MIT 库，运行在任意提供方上——云端、本地或气隙环境。用 <code>governanceIntent: \'required\'</code> 配 <code>requiredRoles</code> 声明，这次运行便依据它的 execution receipt 受判定：哪些角色跑了、以什么顺序。那道关卡从不读取智能体的答案文本，因此模型无法靠在输出里写下"审阅者已批准"来满足它。框架自身不发起任何分析、许可证、更新或回传请求。',
       cta: '快速开始',
+    },
+    limits: {
+      eyebrow: '仍然要你自己建的',
+      title: '框架不会给你什么。',
+      body: '挂起/决定/恢复的 API 与那条持久化记录是存在的；审阅者 UI、通知与升级路径并不存在——那些是你的。这里没有身份认证、没有 RBAC、也没有租户模型。运行事件日志是一条审计线索，不是防篡改存储：它没有哈希链、没有签名、也没有 WORM 后端，而 <code>verifyRun()</code> 校验的是它仍能读到的那个窗口，而不是整次运行。随包提供的只有内存与单文件存储；任何具备跨进程保证的实现都要你自己写。',
+      cta: '阅读自托管边界',
     },
     seeAlso: {
       eyebrow: '在对比框架？',
@@ -1044,12 +1051,11 @@ export const zh: UiDict = {
     hubCard: {
       label: '背景',
       name: 'open-multi-agent 与 Claude 动态工作流',
-      blurb: '同一个赌注——让模型规划工作——只是形态不同。OMA 与 Anthropic 在 Claude Code 里的动态工作流是什么关系。',
+      blurb: '同一个赌注——让模型规划工作。差别在于它跑进你的产品之后，你能拥有、审批和审计什么。',
       cta: '阅读',
     },
   },
 
-  // 用例（solutions）页。仅 chrome——每个用例的文案在 src/lib/solutions.ts。
   solutions: {
     seo: {
       title: '应用场景 —— TypeScript 多智能体编排',
