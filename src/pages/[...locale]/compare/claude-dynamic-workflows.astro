@@ -2,17 +2,38 @@
 // /compare/claude-dynamic-workflows and /zh/compare/claude-dynamic-workflows —
 // a STANDALONE page (deliberately NOT a src/lib/compare.ts COMPARISONS entry, so
 // it never renders in the competitor grid or "vs" cross-links). It captures the
-// "claude dynamic workflows" search and routes it to OMA with the framing the
-// repo README uses in its "vs. Claude Code's dynamic workflows" entry: the SAME
-// bet (the model plans the work at runtime), a DIFFERENT form factor, and the two
-// are composable over ACP.
+// "claude dynamic workflows" search and routes it to OMA: the SAME bet (the model
+// plans the work at runtime), and the two are composable over ACP.
+//
+// AXIS (rewritten 2026-09-14, after upstream #604 repositioned the framework
+// around own/approve/audit). The page used to land on "the difference is form
+// factor" — where the orchestration runs. That is still true but it is no longer
+// the point: form factor is a deployment detail, while the question that actually
+// separates the two is what you have to answer for once this orchestration ships
+// inside your product. So the comparison table now ends on "before a consequential
+// action" and "afterwards", and a `limits` section states what the framework does
+// NOT give you. A page arguing you can own, approve, and audit a run has to say
+// where that stops, or it reads as marketing.
 //
 // GUARDRAILS (encoded here + in the i18n copy): never call OMA an "alternative
 // to" dynamic workflows — that word is reserved for the framework comparisons the
 // see-also section links to; never argue who is "more dynamic" (both are
 // model-driven); never assert what dynamic workflows lacks. Every "Claude dynamic
-// workflows" cell states only what the official post says it does. Facts verified
-// against claude.com/blog/introducing-dynamic-workflows-in-claude-code (May 2026).
+// workflows" cell states only what the official post says it does — including the
+// two new rows, where the `dw` cells restate the announcement's own "checks its
+// work before anything reaches you" rather than implying an absence. Facts
+// verified against claude.com/blog/introducing-dynamic-workflows-in-claude-code
+// (May 2026).
+//
+// OMA CLAIMS ON THIS PAGE were audited against the v1.19.0 source on 2026-09-14,
+// not against the README: suspend → orchestrator.ts:2032; content binding and
+// first-wins decisions → approval/durable.ts (sha256 of a stable JSON payload,
+// compare-and-set, APPROVAL_ATOMIC_STORE_REQUIRED when the store has no CAS);
+// offline verification → journal/verify.ts; "never reads agent answer text" →
+// observability/execution-receipt.ts:27 and :387; "no phone-home" → every
+// outbound host in packages/core/src is a model-provider API (plus Copilot's
+// api.github.com token call, itself behind assertEgressAllowed at
+// llm/adapter.ts:117); there is no analytics, licence, or update endpoint.
 //
 // All copy comes from the type-checked i18n dict (t.dynamicWorkflows), so a
 // missing zh key fails `pnpm check`. Page chrome reuses the shared Nav/Footer/
@@ -158,6 +179,26 @@ const jsonLd = {
         <p class="dw-prose" set:html={t.fit.body} />
         <div class="dw-fit-cta">
           <a class="text-link" href={L('/getting-started/quick-start/')}><span>{t.fit.cta}</span><span class="arrow">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- What the framework does NOT give you. Sits immediately after the "where
+         it fits" pitch on purpose: a page that argues you can own, approve, and
+         audit a run has to say where that stops, or the claim reads as marketing.
+         Every item here came out of the 2026-09-14 capability audit against
+         v1.19.0 — the reviewer UI, auth/RBAC, and tamper-evident storage are
+         genuinely absent, and the run journal proves lineage and content, not
+         that a file was never edited. -->
+    <section class="section dw-fit-section">
+      <div class="container dw-narrow">
+        <div class="section-head">
+          <div class="eyebrow"><span class="idx">05</span> {t.limits.eyebrow}</div>
+          <h2 class="section-title">{t.limits.title}</h2>
+        </div>
+        <p class="dw-prose" set:html={t.limits.body} />
+        <div class="dw-fit-cta">
+          <a class="text-link" href={L('/reference/self-hosting/')}><span>{t.limits.cta}</span><span class="arrow">→</span></a>
         </div>
       </div>
     </section>
