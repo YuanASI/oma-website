@@ -71,10 +71,19 @@ const isOwnLine = (version, current) =>
   version.split('.')[0] === current.version.split('.')[0];
 
 // Comment text is not reader-visible, so a stale version in one misleads the next
-// maintainer rather than the audience — reported, never fatal. The check is the
-// line's leading token, which fits this codebase (`//` throughout, `*` inside the
-// occasional block); a trailing comment after code is treated as code.
-const isComment = (line) => /^\s*(\/\/|\*|\/\*|<!--)/.test(line);
+// maintainer rather than the audience — reported, never fatal. Track multiline
+// comments too: their middle lines need not start with `*` or `<!--`.
+function commentLine(line, activeComment) {
+  if (activeComment) {
+    return { comment: true, activeComment: line.includes(activeComment) ? null : activeComment };
+  }
+  const trimmed = line.trimStart();
+  const opener = trimmed.startsWith('<!--') ? '-->' : trimmed.startsWith('/*') ? '*/' : null;
+  if (opener) {
+    return { comment: true, activeComment: trimmed.slice(opener === '-->' ? 4 : 2).includes(opener) ? null : opener };
+  }
+  return { comment: /^(\/\/|\*)/.test(trimmed), activeComment: null };
+}
 
 // Whether a line is talking about OMA at all. Applied only in advisory files,
 // where a version number is as likely to belong to a competitor as to core.
@@ -148,7 +157,10 @@ function findLiterals(file, current, { requireOwnPackage = false } = {}) {
     .replace(/\sd="[^"]*"/g, ' d=""')
     .split('\n');
   const hits = [];
+  let activeComment = null;
   lines.forEach((line, i) => {
+    const state = commentLine(line, activeComment);
+    activeComment = state.activeComment;
     if (line.includes(SIGNOFF_NAME)) return;
     for (const match of line.matchAll(VERSION_PATTERN)) {
       const version = match[1] ?? match[2];
@@ -157,7 +169,7 @@ function findLiterals(file, current, { requireOwnPackage = false } = {}) {
         || version === current.version.split('.').slice(0, 2).join('.');
       if (isCurrent || ALLOWLIST.has(version) || !isOwnLine(version, current)) continue;
       if (requireOwnPackage && !namesOwnPackage(line)) continue;
-      hits.push({ file, line: i + 1, version, comment: isComment(line), text: line.trim() });
+      hits.push({ file, line: i + 1, version, comment: state.comment, text: line.trim() });
     }
   });
   return hits;
