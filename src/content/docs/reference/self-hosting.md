@@ -130,7 +130,7 @@ permissions. The sandbox root does not constrain it, and neither does the
 per-call gate unless you configure one. Granting `bash` is granting shell
 access to the host; see [tool configuration](/reference/tool-configuration/) for the
 grant model and the per-call `onToolCall` gate, and
-[sandbox and shell execution](https://github.com/open-multi-agent/open-multi-agent/blob/v1.19.0/docs/sandbox-and-shell.md) for the sandbox root, its
+[sandbox and shell execution](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/sandbox-and-shell.md) for the sandbox root, its
 resolution rules, and replaceable shell executors.
 
 ## Redaction

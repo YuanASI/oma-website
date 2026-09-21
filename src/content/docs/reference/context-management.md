@@ -24,7 +24,7 @@ const agent: AgentConfig = {
 | `compact` | Rule-based: truncate large assistant text blocks and tool results, keep recent turns intact. No extra LLM call. |
 | `custom` | Supply your own `compress(messages, estimatedTokens)` function. |
 
-## Auditing What a Strategy Replaced
+## Auditing what a strategy replaced
 
 Every strategy above rewrites the conversation destructively: the messages it
 produces are what the next request carries, and the originals are gone from the
@@ -58,7 +58,7 @@ strategy. A pass that changes nothing emits nothing, and `summarize`'s memo
 cache reuses the event that first recorded a summary rather than writing it
 twice.
 
-## Compressing Tool Results
+## Compressing tool results
 
 Tool outputs persist in the conversation history across turns even after the agent has acted on them. In long runs this can consume a significant portion of the context budget.
 
@@ -90,7 +90,7 @@ const agent: AgentConfig = {
   placeholders before asking the summary model to compress old turns.
 - Works alongside `contextStrategy`; combine both for maximum context headroom.
 
-## Truncating Tool Output
+## Truncating tool output
 
 `maxToolOutputChars` caps the raw output length for implicit string tool
 results. Outputs longer than the limit are truncated to a head + tail excerpt
@@ -108,7 +108,7 @@ const agent: AgentConfig = {
 
 Per-tool `maxOutputChars` (set on `ToolDefinition`) takes priority over the agent-level `maxToolOutputChars`.
 
-## Preserving Reasoning Across Providers
+## Preserving reasoning across providers
 
 Reasoning models (OpenAI o-series, DeepSeek reasoner, Anthropic extended thinking, Gemini thought summaries) emit intermediate reasoning that the framework extracts as `ReasoningBlock`s with a `provenance` field identifying the producing adapter. By default, only same-provider blocks with a valid signature are echoed back; everything else is silently dropped on outbound conversion to avoid the receiving model rejecting an unsigned thinking block or to keep prompt size predictable.
 
@@ -145,6 +145,6 @@ Redacted reasoning (Anthropic safety-filtered) emits the placeholder `<thinking>
 **Notes:**
 - Disabled by default to avoid silently inflating prompt tokens.
 - Default-on truncation (`compressReasoningText`) is mandatory for safety on long chain-of-thought; disable only when debugging.
-- Some local OpenAI-compatible models may echo `<thinking>` text back into their assistant response, which can trip the loop detector. See [`examples/patterns/cross-provider-reasoning.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/patterns/cross-provider-reasoning.ts) for the failure mode and mitigations.
+- Some local OpenAI-compatible models may echo `<thinking>` text back into their assistant response, which can trip the loop detector. See [`examples/patterns/cross-provider-reasoning.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/patterns/cross-provider-reasoning.ts) for the failure mode and mitigations.
 - Bedrock has `capabilities.echoesReasoning === 'own-issued'`: signed reasoning blocks (`reasoningContent.reasoningText.signature`) and redacted blocks (`reasoningContent.redactedContent`) round-trip natively on both `chat()` and `stream()`, in both inbound extraction and outbound serialization (see #223).
 - `'tool-use-only'` (DeepSeek V4) is the only capability where same-provider echo works **without** the user opting into `preserveReasoningAsText` — it's forced on internally because the DeepSeek API requires it.

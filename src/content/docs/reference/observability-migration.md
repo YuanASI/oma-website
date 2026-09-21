@@ -8,14 +8,14 @@ running while transport, storage, and OpenTelemetry are migrated one layer at a
 time. There is no stop-the-world rewrite.
 
 The copyable snippets on this page are mirrored by the compile-only
-[`public-snippets.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/observability-v2/public-snippets.ts)
+[`public-snippets.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/integrations/observability-v2/public-snippets.ts)
 fixture and typechecked in the Node 20/22/24 test matrix.
 
 ## Compatibility contract
 
-- `onTrace` remains supported throughout the current 1.x line and is **not**
-  marked deprecated in this release.
-- The seven-member `TraceEvent` union, completion/event timing, UUID `spanId`,
+- `onTrace` is supported throughout the 1.x line and is **not** marked
+  deprecated; the compatibility window is open.
+- The eight-member `TraceEvent` union, completion/event timing, UUID `spanId`,
   UUID `parentId` tree, and best-effort-redacted legacy tool payloads remain
   unchanged.
 - A synchronous callback throw or asynchronous rejection never changes an
@@ -97,7 +97,7 @@ short `retryable` retries only the remaining suffix. Rejection, timeout, queue
 overflow, and permanent failure are visible in `getStats()`, diagnostics, and
 flush results but never alter business results.
 
-Runnable version: [`batching-exporter.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/observability-v2/batching-exporter.ts).
+Runnable version: [`batching-exporter.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/integrations/observability-v2/batching-exporter.ts).
 
 ### Stage 3A: choose a TraceStore
 
@@ -117,16 +117,18 @@ Use `InMemoryTraceStore` for tests and local inspection. Use the Node-only
 single-process services. It is not a shared database and must not have two
 processes writing the same path.
 
-Runnable versions: [`in-memory-store.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/observability-v2/in-memory-store.ts)
-and [`file-trace-store.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/observability-v2/file-trace-store.ts).
+Runnable versions: [`in-memory-store.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/integrations/observability-v2/in-memory-store.ts)
+and [`file-trace-store.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/integrations/observability-v2/file-trace-store.ts).
 
 ### Stage 3B: choose the OpenTelemetry adapter
 
-The first compatible install pair is:
-
 ```bash
-npm install @open-multi-agent/core@^1.11.0 @open-multi-agent/otel@^0.1.0
+npm install @open-multi-agent/core @open-multi-agent/otel @opentelemetry/api
 ```
+
+The adapter depends on `@open-multi-agent/core@^1.11.0`, the first release
+carrying the v2 APIs it maps, and declares `@opentelemetry/api@^1.9.0` as a peer
+dependency.
 
 ```ts
 import { createOtelTraceSink } from '@open-multi-agent/otel'
@@ -140,7 +142,7 @@ exporter. The adapter does not use the global provider. Provider shutdown is
 off by default; after draining the OMA sink, the application shuts down the
 provider it owns.
 
-Runnable in-memory-provider version: [`otel-provider.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/observability-v2/otel-provider.ts).
+Runnable in-memory-provider version: [`otel-provider.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/integrations/observability-v2/otel-provider.ts).
 
 ### Stage 4: own lifecycle explicitly
 
@@ -152,9 +154,9 @@ Runnable in-memory-provider version: [`otel-provider.ts`](https://github.com/ope
 
 OMA does not install signal handlers, call `process.exit()`, close a supplied
 store, or shut down an application-owned provider. See the runnable
-[`CLI`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/observability-v2/cli-lifecycle.ts),
-[`SIGTERM server`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/observability-v2/server-lifecycle.ts),
-and [`FaaS`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.17.0/packages/core/examples/integrations/observability-v2/serverless-lifecycle.ts)
+[`CLI`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/integrations/observability-v2/cli-lifecycle.ts),
+[`SIGTERM server`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/integrations/observability-v2/server-lifecycle.ts),
+and [`FaaS`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/integrations/observability-v2/serverless-lifecycle.ts)
 examples.
 
 ## Privacy difference to account for

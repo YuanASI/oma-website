@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import {
   EXCLUDE,
+  EXCLUDE_DIRECTORIES,
   classifyUpstreamEntries,
   compareSlugSets,
   discoveryHasBlockers,
@@ -38,15 +39,31 @@ test('discovers vendored docs while excluding deliberate GitHub-only pages', () 
     { type: 'file', name: 'cli.md' },
     { type: 'file', name: 'featured-partner.md' },
     { type: 'file', name: 'new-capability.md' },
+    { type: 'dir', name: 'internal' },
     { type: 'dir', name: 'providers' },
   ];
-  const result = classifyUpstreamEntries(entries, ['cli'], EXCLUDE);
+  const result = classifyUpstreamEntries(entries, ['cli'], EXCLUDE, EXCLUDE_DIRECTORIES);
 
   assert.deepEqual(result.vendored, ['cli']);
   assert.deepEqual(result.pending, ['new-capability']);
   assert.deepEqual(result.unsupportedDirectories, ['providers']);
   assert.match(formatDiscoveryGate(result), /docs\/new-capability\.md/);
   assert.match(formatDiscoveryGate(result), /docs\/providers\//);
+  assert.equal(discoveryHasBlockers(result), true);
+});
+
+test('keeps the directory exclusion exact and fails closed on future directories', () => {
+  const result = classifyUpstreamEntries(
+    [
+      { type: 'dir', name: 'internal' },
+      { type: 'dir', name: 'internal-tools' },
+    ],
+    [],
+    EXCLUDE,
+    EXCLUDE_DIRECTORIES,
+  );
+
+  assert.deepEqual(result.unsupportedDirectories, ['internal-tools']);
   assert.equal(discoveryHasBlockers(result), true);
 });
 

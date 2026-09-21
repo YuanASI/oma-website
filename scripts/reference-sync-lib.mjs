@@ -11,6 +11,29 @@ export const BLOB = (ref = 'main') => `https://github.com/${REPO}/blob/${ref}`;
 // These upstream docs intentionally remain links to GitHub until they are
 // reviewed and given a local page, sidebar entry, and translation.
 export const EXCLUDE = new Set([
+  // Upstream's docs hub duplicates the hand-written /reference/ landing page.
+  'README',
+  // These operational guides are already covered by the site's maintained
+  // Guides section. Keep the deeper framework versions release-pinned on
+  // GitHub until they have a bilingual information-architecture review.
+  'budgets-and-limits',
+  'production-checklist',
+  // Supplemental evaluation playbooks remain upstream until they can be
+  // integrated alongside the existing bilingual Evaluation reference.
+  'evaluation-ci',
+  'evaluation-routing',
+  // Newly published advanced references remain release-pinned on GitHub until
+  // curated metadata, sidebar placement, and a Chinese translation are ready.
+  // Listing them explicitly keeps the discovery gate closed to every future
+  // unknown document instead of silently widening sync coverage.
+  'coordinator',
+  'errors',
+  'glossary',
+  'hooks-and-callbacks',
+  'mcp',
+  'run-viewer',
+  'sandbox-and-shell',
+  'streaming',
   'featured-partner',
   // Release-audit evidence, rather than a user-facing product guide.
   'observability-release-readiness',
@@ -23,6 +46,10 @@ export const EXCLUDE = new Set([
   // flat sync model has no notion of a locale-suffixed upstream file.
   'providers-atlascloud_zh',
 ]);
+
+// Release-audit records moved under docs/internal in v1.19.0. This is an
+// exact-name allowlist: any other upstream directory still fails discovery.
+export const EXCLUDE_DIRECTORIES = new Set(['internal']);
 
 // The Reference section index (reference/index.md) is a hand-written hub for the
 // /reference/ URL: it links the pages under it, has no upstream counterpart in
@@ -117,7 +144,12 @@ export function listLocalFlatReferences(dir = REFDIR) {
     .sort();
 }
 
-export function classifyUpstreamEntries(entries, localReferences, exclude = EXCLUDE) {
+export function classifyUpstreamEntries(
+  entries,
+  localReferences,
+  exclude = EXCLUDE,
+  excludeDirectories = EXCLUDE_DIRECTORIES,
+) {
   const local = new Set(localReferences);
   const vendored = [];
   const pending = [];
@@ -125,6 +157,7 @@ export function classifyUpstreamEntries(entries, localReferences, exclude = EXCL
 
   for (const entry of entries) {
     if (entry.type === 'dir') {
+      if (excludeDirectories.has(entry.name)) continue;
       unsupportedDirectories.push(entry.name);
       continue;
     }
