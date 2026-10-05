@@ -30,6 +30,7 @@ export const EXCLUDE = new Set([
   'errors',
   'glossary',
   'hooks-and-callbacks',
+  'image-generation',
   'mcp',
   'run-viewer',
   'sandbox-and-shell',
