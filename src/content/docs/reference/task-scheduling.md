@@ -184,7 +184,7 @@ a no-op callback returning `true` retains batch scheduling without introducing
 a second overlapping mode flag.
 
 For each callback's arguments, timing, and throw behavior alongside the other
-approval hooks, see [hooks and callbacks](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/hooks-and-callbacks.md#approval-gates).
+approval hooks, see [hooks and callbacks](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/docs/hooks-and-callbacks.md#approval-gates).
 
 ## Interruption, budgets, and checkpoints
 
@@ -199,7 +199,7 @@ This prevents a task from being reported as skipped while its agent continues
 running. Budget state is checked before dispatch and again after each completion.
 Crossing a budget stops new tasks; already-started work still settles. Every
 ceiling that can trigger this path is in
-[budgets and limits](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/budgets-and-limits.md).
+[budgets and limits](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/docs/budgets-and-limits.md).
 
 Checkpointing persists safe built-in-runner turn/tool boundaries as well as
 task completions. Writes are serialized through the existing save chain;
@@ -221,7 +221,7 @@ If a UI must retain round grouping during migration, configure `onApproval` and
 return `true`.
 
 See
-[`examples/patterns/event-driven-dag.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/patterns/event-driven-dag.ts)
+[`examples/patterns/event-driven-dag.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/patterns/event-driven-dag.ts)
 for a no-key deferred-promise demonstration. It shows only the supported claim:
 the downstream task starts when its dependency is satisfied, without waiting
 for an unrelated task from the same ready set.
