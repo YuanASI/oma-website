@@ -40,14 +40,14 @@ The framework ships a wired-in provider name for each of these. Set `provider` a
 | GitHub Copilot | `provider: 'copilot'` | `GITHUB_COPILOT_TOKEN` (falls back to `GITHUB_TOKEN`) | `gpt-4o` | Custom token-exchange flow on top of OpenAI protocol. |
 | Grok (xAI) | `provider: 'grok'` | `XAI_API_KEY` | `grok-4` | OpenAI-compatible; endpoint is `api.x.ai/v1`. |
 | DeepSeek | `provider: 'deepseek'` | `DEEPSEEK_API_KEY` | `deepseek-flash` | OpenAI-compatible Chat Completions. `deepseek-flash` is DeepSeek-V4.1-Flash and `deepseek-v4-pro` is DeepSeek-V4-Pro-0813. `deepseek-flash` carries no version because DeepSeek moves the name to the current Flash generation; the older `deepseek-v4-flash` is still accepted but that model is retired and those requests are served by V4.1-Flash. Both support 1M context, 384K max output, and enable thinking by default (opt out with `thinking: { enabled: false }`). Both endpoints also offer DeepSeek's native Responses API, while OMA's built-in adapter uses Chat Completions. Legacy `deepseek-chat` / `deepseek-reasoner` were retired on 2026-07-24. |
-| Doubao (Volcengine) | `provider: 'doubao'` | `ARK_API_KEY` | `doubao-seed-1-8-251228` | OpenAI-compatible. ByteDance Volcengine Ark endpoint `https://ark.cn-beijing.volces.com/api/v3`. See [`providers/doubao`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/providers/doubao.ts). |
-| Hunyuan (Tencent MaaS / TokenHub) | `provider: 'hunyuan'` | `HUNYUAN_API_KEY` | `hy3-preview` | OpenAI-compatible. Default endpoint `https://tokenhub.tencentmaas.com/v1` (Tencent's current platform; `sk-...` keys, Hunyuan 3 models). Tool calling verified on `hy3-preview`. See [`providers/hunyuan`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/providers/hunyuan.ts). |
+| Doubao (Volcengine) | `provider: 'doubao'` | `ARK_API_KEY` | `doubao-seed-1-8-251228` | OpenAI-compatible. ByteDance Volcengine Ark endpoint `https://ark.cn-beijing.volces.com/api/v3`. See [`providers/doubao`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/providers/doubao.ts). |
+| Hunyuan (Tencent MaaS / TokenHub) | `provider: 'hunyuan'` | `HUNYUAN_API_KEY` | `hy3-preview` | OpenAI-compatible. Default endpoint `https://tokenhub.tencentmaas.com/v1` (Tencent's current platform; `sk-...` keys, Hunyuan 3 models). Tool calling verified on `hy3-preview`. See [`providers/hunyuan`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/providers/hunyuan.ts). |
 | Hunyuan (legacy Tencent Cloud) | `provider: 'hunyuan'` + `HUNYUAN_BASE_URL` | `HUNYUAN_API_KEY` | `hunyuan-turbos-latest` | Legacy endpoint `https://api.hunyuan.cloud.tencent.com/v1` (console.cloud.tencent.com/hunyuan key; separate key namespace). Tencent has announced this platform is being retired (sales stop 2026-06-30, full shutdown 2026-09-30). Set `HUNYUAN_BASE_URL=https://api.hunyuan.cloud.tencent.com/v1` to target it until then. Tool calling verified on `hunyuan-turbos` and `hunyuan-functioncall`. |
 | MiniMax (global) | `provider: 'minimax'` | `MINIMAX_API_KEY` | `MiniMax-M3` | OpenAI-compatible; `MiniMax-M3` accepts text, image, and video content blocks. |
 | MiniMax (China) | `provider: 'minimax'` + `MINIMAX_BASE_URL` | `MINIMAX_API_KEY` | `MiniMax-M3` | Set `MINIMAX_BASE_URL=https://api.minimaxi.com/v1`; `MiniMax-M3` accepts text, image, and video content blocks. |
-| MiMo | `provider: 'mimo'` | `MIMO_API_KEY` (+ optional `MIMO_BASE_URL`) | `mimo-v2.5-pro` | OpenAI-compatible. Defaults to pay-as-you-go endpoint `https://api.xiaomimimo.com/v1`; Token Plan keys (`tp-...`) require the cluster base URL from your subscription page, such as `https://token-plan-cn.xiaomimimo.com/v1`. Supports reasoning/tool-call loops through the built-in MiMo adapter. See [`providers/mimo`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/providers/mimo.ts). |
+| MiMo | `provider: 'mimo'` | `MIMO_API_KEY` (+ optional `MIMO_BASE_URL`) | `mimo-v2.5-pro` | OpenAI-compatible. Defaults to pay-as-you-go endpoint `https://api.xiaomimimo.com/v1`; Token Plan keys (`tp-...`) require the cluster base URL from your subscription page, such as `https://token-plan-cn.xiaomimimo.com/v1`. Supports reasoning/tool-call loops through the built-in MiMo adapter. See [`providers/mimo`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/providers/mimo.ts). |
 | Qiniu | `provider: 'qiniu'` | `QINIU_API_KEY` | `deepseek-v3` | OpenAI-compatible. Endpoint `https://api.qnaigc.com/v1`; multiple model families, see [Qiniu AI docs](https://developer.qiniu.com/aitokenapi/12882/ai-inference-api). |
-| AWS Bedrock | `provider: 'bedrock'` | none (AWS SDK credential chain) | `anthropic.claude-3-5-haiku-20241022-v1:0` | No API key. Set `AWS_REGION` or pass `region` as the 4th arg to `createAdapter`. Credentials come from env vars, shared config, or IAM role. Newer Claude models can require a cross-region inference profile prefix such as `us.`. Also supports Llama, Mistral, and Cohere. See [`providers/bedrock`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/providers/bedrock.ts). Requires `npm install @aws-sdk/client-bedrock-runtime`. |
+| AWS Bedrock | `provider: 'bedrock'` | none (AWS SDK credential chain) | `anthropic.claude-3-5-haiku-20241022-v1:0` | No API key. Set `AWS_REGION` or pass `region` as the 4th arg to `createAdapter`. Credentials come from env vars, shared config, or IAM role. Newer Claude models can require a cross-region inference profile prefix such as `us.`. Also supports Llama, Mistral, and Cohere. See [`providers/bedrock`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/providers/bedrock.ts). Requires `npm install @aws-sdk/client-bedrock-runtime`. |
 
 ## OpenAI-compatible providers
 
@@ -61,18 +61,18 @@ No bundled shortcut is needed when a server speaks OpenAI Chat Completions. Use 
 | llama.cpp server (local) | `provider: 'openai'` + `baseURL` | none | server-loaded | |
 | OpenRouter | `provider: 'openai'` + `baseURL: 'https://openrouter.ai/api/v1'` + `apiKey` | `OPENROUTER_API_KEY` | `openai/gpt-4o-mini` | |
 | Groq | `provider: 'openai'` + `baseURL: 'https://api.groq.com/openai/v1'` | `GROQ_API_KEY` | `llama-3.3-70b-versatile` | |
-| Mistral | `provider: 'openai'` + `baseURL: 'https://api.mistral.ai/v1'` | `MISTRAL_API_KEY` | `mistral-large-latest` | See [`providers/mistral`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/providers/mistral.ts). |
+| Mistral | `provider: 'openai'` + `baseURL: 'https://api.mistral.ai/v1'` | `MISTRAL_API_KEY` | `mistral-large-latest` | See [`providers/mistral`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/providers/mistral.ts). |
 | MiMo | `provider: 'openai'` + `baseURL: 'https://api.xiaomimimo.com/v1'` | `MIMO_API_KEY` | `mimo-v2.5-pro` | Prefer the built-in `mimo` provider when using tool-calling agent loops. Token Plan users should set their `token-plan-*.xiaomimimo.com/v1` base URL. |
-| Zhipu GLM | `provider: 'openai'` + `baseURL: 'https://open.bigmodel.cn/api/paas/v4'` | `ZHIPU_API_KEY` | `glm-4-plus` | See [`providers/zhipu`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/providers/zhipu.ts). |
-| Qwen (DashScope) | `provider: 'openai'` + `baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1'` | `DASHSCOPE_API_KEY` | `qwen-plus` | See [`providers/qwen`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/providers/qwen.ts). |
-| Moonshot AI (Kimi) | `provider: 'openai'` + `baseURL: 'https://api.moonshot.ai/v1'` | `MOONSHOT_API_KEY` | `kimi-k2.5` | See [`providers/moonshot`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/providers/moonshot.ts). |
+| Zhipu GLM | `provider: 'openai'` + `baseURL: 'https://open.bigmodel.cn/api/paas/v4'` | `ZHIPU_API_KEY` | `glm-4-plus` | See [`providers/zhipu`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/providers/zhipu.ts). |
+| Qwen (DashScope) | `provider: 'openai'` + `baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1'` | `DASHSCOPE_API_KEY` | `qwen-plus` | See [`providers/qwen`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/providers/qwen.ts). |
+| Moonshot AI (Kimi) | `provider: 'openai'` + `baseURL: 'https://api.moonshot.ai/v1'` | `MOONSHOT_API_KEY` | `kimi-k2.5` | See [`providers/moonshot`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/providers/moonshot.ts). |
 | LiteLLM (proxy) | `provider: 'openai'` + `baseURL: 'http://localhost:4000/v1'` + `apiKey` | `LITELLM_API_KEY` (if proxy auth enabled) | any model on your proxy | [LiteLLM](https://github.com/BerriAI/litellm) unifies 100+ providers (OpenAI, Anthropic, Azure, Bedrock, Vertex, etc.) behind one OpenAI-compatible endpoint. Run `litellm --config config.yaml` and point `baseURL` at the proxy. |
 
 Other services can be connected the same way if they implement the OpenAI Chat Completions API, but they are not listed as verified providers here. For services where the key is not `OPENAI_API_KEY`, pass it explicitly via `apiKey`; otherwise the `openai` adapter falls back to `OPENAI_API_KEY`.
 
 ### Sponsor listing
 
-[Atlas Cloud](https://www.atlascloud.ai/console/coding-plan) is a paid sponsor of `open-multi-agent`; sponsorship does not affect technical decisions or model recommendations. It is reachable through the same OpenAI-compatible path (`provider: 'openai'` + `baseURL: 'https://api.atlascloud.ai/v1'` + `apiKey`) and is listed here as a sponsor rather than an OMA-verified provider. See the [Atlas Cloud setup guide](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/providers-atlascloud.md).
+[Atlas Cloud](https://www.atlascloud.ai/console/coding-plan) is a paid sponsor of `open-multi-agent`; sponsorship does not affect technical decisions or model recommendations. It is reachable through the same OpenAI-compatible path (`provider: 'openai'` + `baseURL: 'https://api.atlascloud.ai/v1'` + `apiKey`) and is listed here as a sponsor rather than an OMA-verified provider. See the [Atlas Cloud setup guide](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/docs/providers-atlascloud.md).
 
 OMA registers JSON-schema `function` tools. If an OpenAI-compatible response
 contains the separate `custom` tool-call variant, the adapter raises
@@ -219,7 +219,7 @@ policy choice, not a prediction that a particular plan would exceed budget.
 
 This section covers only the provider-facing side of budgeting. For every
 ceiling OMA enforces, where each one is checked, and what a run reports when one
-trips, see [budgets and limits](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/budgets-and-limits.md).
+trips, see [budgets and limits](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/docs/budgets-and-limits.md).
 
 ## Vercel AI SDK (optional)
 
@@ -250,7 +250,18 @@ await oma.runAgent(
 )
 ```
 
-The coordinator accepts the same hook via `runTeam(team, goal, { coordinator: { adapter: new AISdkAdapter(...) } })`. For a full application, see [`integrations/with-vercel-ai-sdk`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/integrations/with-vercel-ai-sdk/).
+The coordinator accepts the same hook via `runTeam(team, goal, { coordinator: { adapter: new AISdkAdapter(...) } })`. For a full application, see [`integrations/with-vercel-ai-sdk`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/integrations/with-vercel-ai-sdk/).
+
+## Image models
+
+Image generation and editing do not go through `provider` or `LLMAdapter`. They
+use `ImageModelAdapter` and `runImage()`, with built-in adapters for the OpenAI
+Images API (`OPENAI_API_KEY`, `OPENAI_BASE_URL`), OpenRouter
+(`OPENROUTER_API_KEY`), Seedream on Volcengine Ark (`ARK_API_KEY`), and Black
+Forest Labs (`BFL_API_KEY`). The
+OpenRouter image adapter is separate from the text route above because its
+image endpoint has its own request shape. See
+[image generation](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/docs/image-generation.md).
 
 ## Extended thinking / reasoning
 
@@ -266,18 +277,18 @@ const agent = {
 }
 ```
 
-- `budgetTokens` maps to Anthropic `thinking.budget_tokens` and Gemini `thinkingConfig.thinkingBudget`.
+- `budgetTokens` maps to Anthropic `thinking.budget_tokens` and Gemini `thinkingConfig.thinkingBudget`. Claude Opus 4.7, Sonnet 5, and later models reject `budget_tokens`; omit `budgetTokens` and the Anthropic adapter sends adaptive thinking instead. Models from before adaptive thinking (Sonnet 3.7 through the 4.5 generation) still receive a 1024-token default budget.
 - `effort` (`'low' | 'medium' | 'high'`) maps to OpenAI-compatible `reasoning_effort`. Values outside the framework union (such as `'minimal'` or `'none'`) can be passed via `extraBody: { reasoning_effort: '<value>' }`.
 - DeepSeek additionally maps `enabled` to `thinking: { type: 'enabled' | 'disabled' }` and accepts `effort: 'max'`. DeepSeek V4 enables thinking by default at `high` effort when no framework-level thinking config is supplied. Other built-in OpenAI-family adapters ignore the DeepSeek-only `max` value. Explicit `extraBody` values take precedence.
 - Adapters ignore fields they don't recognise, so one config is safe across a mixed-provider team.
 
-Reasoning is streamed as `reasoning` events. Preserving reasoning across a provider switch is opt-in via `preserveReasoningAsText`; see [context management](/reference/context-management/) and [`patterns/cross-provider-reasoning`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/patterns/cross-provider-reasoning.ts).
+Reasoning is streamed as `reasoning` events. Preserving reasoning across a provider switch is opt-in via `preserveReasoningAsText`; see [context management](/reference/context-management/) and [`patterns/cross-provider-reasoning`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/patterns/cross-provider-reasoning.ts).
 
 ## Local model tool-calling
 
 The framework supports tool-calling with local models served by Ollama, vLLM, LM Studio, or llama.cpp. Tool-calling is handled natively through the OpenAI-compatible API.
 
-The local models exercised so far are the ones behind the runnable examples in this repository: Gemma 4 on Ollama ([`providers/gemma4-local`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/providers/gemma4-local.ts)), Llama 3.1 on Ollama ([`providers/ollama`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/providers/ollama.ts)), and a quantized Qwen2.5 on vLLM or llama-server ([`providers/local-quantized`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/providers/local-quantized.ts)). Those examples are run by hand against a local server you start yourself.
+The local models exercised so far are the ones behind the runnable examples in this repository: Gemma 4 on Ollama ([`providers/gemma4-local`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/providers/gemma4-local.ts)), Llama 3.1 on Ollama ([`providers/ollama`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/providers/ollama.ts)), and a quantized Qwen2.5 on vLLM or llama-server ([`providers/local-quantized`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/providers/local-quantized.ts)). Those examples are run by hand against a local server you start yourself.
 
 The automated coverage underneath them is narrower: `packages/core/tests/text-tool-extractor.test.ts` unit-tests the text tool-call extractor against the formats it recognizes, including bare JSON, fenced code blocks, and Hermes-style `<tool_call>` tags. It pins those output shapes, not any particular model. **No local model is covered by the end-to-end suite.** `packages/core/tests/e2e/` contains only hosted-provider cases; the whole directory is excluded from `npm test` unless `RUN_E2E` is set, and each suite then skips itself without its provider's credentials. Treat any other local model, and any other quantization or serving stack, as unverified here and check it against your own workload. Ollama publishes its tool-capable models at [ollama.com/search?c=tools](https://ollama.com/search?c=tools).
 
@@ -297,7 +308,7 @@ const localAgent = {
 }
 ```
 
-Highly quantized MoE models on consumer hardware can fall into repetition loops or hallucinate tool-call schemas under default sampling. A local OpenAI-compatible server is the one target that accepts the full set: `temperature`, `topP`, `topK`, `minP`, `frequencyPenalty`, `presencePenalty`, `parallelToolCalls`, and `extraBody` for server-specific knobs such as vLLM's `repetition_penalty`. See [sampling parameters](#sampling-parameters) for what each adapter forwards, and [`providers/local-quantized`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/providers/local-quantized.ts) for a complete setup.
+Highly quantized MoE models on consumer hardware can fall into repetition loops or hallucinate tool-call schemas under default sampling. A local OpenAI-compatible server is the one target that accepts the full set: `temperature`, `topP`, `topK`, `minP`, `frequencyPenalty`, `presencePenalty`, `parallelToolCalls`, and `extraBody` for server-specific knobs such as vLLM's `repetition_penalty`. See [sampling parameters](#sampling-parameters) for what each adapter forwards, and [`providers/local-quantized`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/providers/local-quantized.ts) for a complete setup.
 
 ## Troubleshooting
 

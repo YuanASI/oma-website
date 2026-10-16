@@ -123,7 +123,7 @@ are returned in `result.planRevisions`.
 
 ## Complete cookbook recipe
 
-[`commission-reconciliation-recovery.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/cookbook/commission-reconciliation-recovery.ts)
+[`commission-reconciliation-recovery.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/cookbook/commission-reconciliation-recovery.ts)
 is a no-key, synthetic example of the full outcome-barrier flow. Three
 source-scoped investigations produce an initial temporal-evidence gap, a named
 `Replanner` adds targeted agreement and policy history tasks, and replacement

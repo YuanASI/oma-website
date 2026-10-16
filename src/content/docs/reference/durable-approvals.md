@@ -239,5 +239,5 @@ An integrator therefore supplies three things:
   [#313](https://github.com/open-multi-agent/open-multi-agent/issues/313).
 
 See the no-key runnable
-[`durable-approval`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/patterns/durable-approval.ts)
+[`durable-approval`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/patterns/durable-approval.ts)
 example for the complete suspend/decide/fresh-orchestrator flow.

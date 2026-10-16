@@ -8,7 +8,7 @@ structured trace spans, and an offline single-run DAG/Waterfall Viewer.
 
 For an existing callback integration, follow the staged
 [`onTrace` migration guide](/reference/observability-migration/). The offline Viewer
-has its own page: [Run Viewer](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/run-viewer.md).
+has its own page: [Run Viewer](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/docs/run-viewer.md).
 
 ## Run identity and outcome
 
@@ -580,10 +580,10 @@ The adapter intentionally provides no OTLP convenience subpath. The
 application selects its own OTel SDK and OTLP/exporter implementation, avoiding
 eager OTLP imports, implicit global-provider configuration, and a second
 SDK/exporter compatibility matrix.
-[`observability-v2/otlp-backend.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/integrations/observability-v2/otlp-backend.ts)
+[`observability-v2/otlp-backend.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/integrations/observability-v2/otlp-backend.ts)
 wires that path end to end against a loopback listener it starts itself, so the
 exporter, Resource, headers, and shutdown order are all visible without an
-account anywhere. See [`packages/otel/README.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/otel/README.md)
+account anywhere. See [`packages/otel/README.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/otel/README.md)
 for the full API and mapping table.
 
 ## Flush and shutdown
@@ -677,7 +677,7 @@ callback.
 Absolute timings depend on the Node version, CPU, filesystem, and load, so no
 number is promised here. One recorded snapshot, with the hardware and method it
 was taken on, is in
-[`internal/observability-performance.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/internal/observability-performance.md).
+[`internal/observability-performance.md`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/docs/internal/observability-performance.md).
 
 ## Progress events
 
@@ -691,7 +691,7 @@ const orchestrator = new OpenMultiAgent({
 })
 ```
 
-Common event types include `task_start`, `task_complete`, `task_retry`, `task_skipped`, `agent_start`, `agent_complete`, `budget_exceeded`, and `error`. A `task_retry` event's `data.nextDelayMs` is the actual, post-jitter delay before the next attempt, not the nominal backoff schedule. Incremental model output is a separate channel and never arrives here; see [streaming](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/streaming.md).
+Common event types include `task_start`, `task_complete`, `task_retry`, `task_skipped`, `agent_start`, `agent_complete`, `budget_exceeded`, and `error`. A `task_retry` event's `data.nextDelayMs` is the actual, post-jitter delay before the next attempt, not the nominal backoff schedule. Incremental model output is a separate channel and never arrives here; see [streaming](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/docs/streaming.md).
 
 ## Trace spans
 
@@ -707,7 +707,7 @@ const orchestrator = new OpenMultiAgent({
 })
 ```
 
-Forward trace spans to OpenTelemetry, Datadog, Honeycomb, Langfuse, or your own run database only after deciding what data is safe for that sink. See [`integrations/trace-observability`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/integrations/trace-observability.ts) for a runnable example.
+Forward trace spans to OpenTelemetry, Datadog, Honeycomb, Langfuse, or your own run database only after deciding what data is safe for that sink. See [`integrations/trace-observability`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/packages/core/examples/integrations/trace-observability.ts) for a runnable example.
 
 Every `runTeam()` topology choice emits a `routing_decision` legacy event and
 a v2 span with kind `routing` named `decide_execution_route`. The
@@ -747,7 +747,7 @@ The copyable stage-by-stage path is in
 
 Span parentage is best-effort and uses the causal structure known to the runtime. In team runs, worker agent spans point to their task span, and LLM/tool/stream spans point to the agent span. Root spans such as top-level agent runs omit `parentId`.
 
-When streaming is active, each forwarded chunk also produces a `stream_chunk` span event and a legacy `agent_stream` trace event; [streaming](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/streaming.md#relationship-to-traces-progress-events-and-the-run-viewer) covers both and how they relate to progress events.
+When streaming is active, each forwarded chunk also produces a `stream_chunk` span event and a legacy `agent_stream` trace event; [streaming](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/docs/streaming.md#relationship-to-traces-progress-events-and-the-run-viewer) covers both and how they relate to progress events.
 
 ## Post-run Run Viewer
 
@@ -759,7 +759,7 @@ own file output. The embedded payload is allowlisted and redacted, so it carries
 no prompts, completions, tool payloads, or reasoning content.
 
 The renderer API, the three input modes, the CLI paths, and the privacy boundary
-are on the [Run Viewer](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/run-viewer.md) page.
+are on the [Run Viewer](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.2/docs/run-viewer.md) page.
 
 ## What to persist
 
