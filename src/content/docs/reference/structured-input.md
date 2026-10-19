@@ -101,7 +101,7 @@ Invalid message/content shapes or data that cannot be cloned throw
 `InvalidMessageError` before `beforeRun`, provider/backend execution, progress,
 or online evaluation. Invalid `prompt()` input is not appended to history.
 For `stream()`, whose events are documented in
-[streaming](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/streaming.md), this validation happens when `stream()` is called,
+[streaming](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.3/docs/streaming.md), this validation happens when `stream()` is called,
 before the returned iterator starts.
 
 ## `beforeRun` semantics

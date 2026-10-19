@@ -469,7 +469,7 @@ JSON, Markdown, and JUnit reports under `<out>/<evalRunId>/` and optionally
 applying a gate to set the exit code. The target module default-exports an
 `EvalTarget` or `{ target, scorers? }`, and the CLI imports it with the current
 process permissions, so it must be trusted. See
-[evaluation in CI](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/evaluation-ci.md#run-evaluations-from-the-cli) for the full
+[evaluation in CI](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.3/docs/evaluation-ci.md#run-evaluations-from-the-cli) for the full
 workflow and [the CLI reference](/reference/cli/#oma-eval-run) for the argument and
 exit-code contract.
 
@@ -480,7 +480,7 @@ exit-code contract.
 target health limits, and optional baseline-regression checks. `oma eval gate`
 applies the same logic to an existing report when report generation and
 enforcement are separate CI stages. See
-[evaluation in CI](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/evaluation-ci.md#gate-quality-in-ci) for the policy
+[evaluation in CI](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.3/docs/evaluation-ci.md#gate-quality-in-ci) for the policy
 reference, the baseline workflow, and GitHub Actions wiring.
 
 ## Routing stability regression EvalSet
@@ -489,7 +489,7 @@ A frozen EvalSet measures whether equivalent `runTeam()` goals keep the same
 executed topology when prompt length or language changes, and gates
 declared-governance families at zero flips. It runs inside the ordinary `npm
 test` matrix with no network access. See
-[routing evaluation](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/evaluation-routing.md#routing-stability-regression-evalset).
+[routing evaluation](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.3/docs/evaluation-routing.md#routing-stability-regression-evalset).
 
 ## Semantic routing policy EvalSet
 
@@ -497,7 +497,7 @@ A second frozen EvalSet pins the Hybrid routing policy contract against reviewed
 `TaskProfile` fixtures, so policy behavior is proven independently of any one
 provider's current classification. An opt-in real-provider Shadow gate runs the
 same deterministic policy against a live profiler as release evidence. See
-[routing evaluation](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/evaluation-routing.md#semantic-routing-policy-evalset).
+[routing evaluation](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.3/docs/evaluation-routing.md#semantic-routing-policy-evalset).
 
 ## Memory evaluation metrics
 

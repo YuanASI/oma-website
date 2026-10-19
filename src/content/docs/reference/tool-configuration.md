@@ -6,8 +6,8 @@ description: "Grant built-in tools (default-deny), presets and allowlists, the f
 Agents can be configured with fine-grained tool access control using presets, allowlists, and denylists.
 
 Two subsystems that used to live on this page now have their own:
-[sandbox and shell execution](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/sandbox-and-shell.md) and
-[MCP tools](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/mcp.md).
+[sandbox and shell execution](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.3/docs/sandbox-and-shell.md) and
+[MCP tools](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.3/docs/mcp.md).
 
 ## Declared governance roles in `runTeam()`
 
@@ -242,7 +242,7 @@ This holds uniformly across `runAgent`, `runTeam` / `runTasks`, the `runTeam` si
 
 **Two things stay true once a tool is granted — design around them:**
 
-- **`bash` is not sandboxed.** Granting it gives the agent arbitrary shell on the host (see [sandbox and shell execution](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/sandbox-and-shell.md)). Only the filesystem tools are path-contained.
+- **`bash` is not sandboxed.** Granting it gives the agent arbitrary shell on the host (see [sandbox and shell execution](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.3/docs/sandbox-and-shell.md)). Only the filesystem tools are path-contained.
 - **Tool output flows to your model provider.** Every tool result is appended to the conversation and sent to the configured LLM on the next turn. Anything a tool reads — file contents, command output, fetched pages — leaves your process and reaches the provider. Grant read access deliberately.
 
 **Custom / runtime tools are exempt from the grant requirement** — registering them _is_ the grant. Tools passed via `customTools` or `agent.addTool()` are always available (they still respect `disallowedTools`); see [_Custom tools_](#custom-tools). **`delegate_to_agent`** (team orchestration handoff) follows the default-deny rule like any other built-in: grant it with `tools: ['delegate_to_agent']` on each agent you want to be able to delegate, and see [_Delegation with `delegate_to_agent`_](#delegation-with-delegate_to_agent) for the extra registration rule that applies to it.
@@ -418,7 +418,7 @@ scheduling strategy may fall back to an ineligible agent.
 
 The layers above answer **"which tools are reachable?"** by operating on tool _names_. The `onToolCall` gate answers a different question one layer down: **"should _this specific invocation_ run right now?"** `bash` is a single allowed name that covers `ls -la` and `rm -rf /` equally; the gate inspects the actual arguments and can veto individual calls.
 
-The hook is **opt-in and off by default**. It runs once per tool invocation, after Zod input validation and before the tool implementation, and returns a decision. [Hooks and callbacks](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/hooks-and-callbacks.md#ontoolcall) places it among the other function-typed fields:
+The hook is **opt-in and off by default**. It runs once per tool invocation, after Zod input validation and before the tool implementation, and returns a decision. [Hooks and callbacks](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.3/docs/hooks-and-callbacks.md#ontoolcall) places it among the other function-typed fields:
 
 ```typescript
 import type { ToolCallContext, ToolCallDecision } from '@open-multi-agent/core'
@@ -450,7 +450,7 @@ Key semantics:
 - **Orthogonal to task dispatch approval.** `OrchestratorConfig.onApproval` gates legacy task rounds and `onTaskDispatch` gates one ready task before dispatch; `onToolCall` gates a single tool invocation during execution. They operate at different layers and compose. The two task-level approval modes are mutually exclusive with each other.
 - **Observability.** When a gate runs, the `tool_call` trace event carries `gated: true`, `gateAction: 'allow' | 'deny' | 'suspend'`, and an optional redacted `gateReason`. Durable decisions come from the approval ledger and may be summarized in an execution receipt; telemetry is not their source of truth.
 
-> **Not a security boundary.** A gate that returns `deny` still relies on cooperating code; it is a coordination layer, not containment. `bash` remains un-sandboxed (see [sandbox and shell execution](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/sandbox-and-shell.md#what-the-sandbox-covers)). For an actually-untrusted shell, use process-level isolation (a container / VM / seccomp); the gate is for *policy*, not *isolation*.
+> **Not a security boundary.** A gate that returns `deny` still relies on cooperating code; it is a coordination layer, not containment. `bash` remains un-sandboxed (see [sandbox and shell execution](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.3/docs/sandbox-and-shell.md#what-the-sandbox-covers)). For an actually-untrusted shell, use process-level isolation (a container / VM / seccomp); the gate is for *policy*, not *isolation*.
 
 ### Shell risk classifier
 
@@ -477,7 +477,7 @@ const orchestrator = new OpenMultiAgent({
 
 Compound commands are segmented on shell separators (`&&`, `||`, `;`, `|`, substitutions) and the **highest** risk found wins, so a safe prefix cannot smuggle a destructive suffix (`ls && rm -rf /` becomes `high`). Quoted spans are stripped first, so `echo "rm -rf /"` stays `safe`.
 
-The classifier is a **shallow heuristic, not a parser**; it can be fooled by obfuscation (variable indirection, base64-decode-then-exec, exotic quoting). It is convenience only: extend the tables, wrap it, or replace it entirely. See [`examples/patterns/risk-gated-bash.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/patterns/risk-gated-bash.ts) for an end-to-end demo.
+The classifier is a **shallow heuristic, not a parser**; it can be fooled by obfuscation (variable indirection, base64-decode-then-exec, exotic quoting). It is convenience only: extend the tables, wrap it, or replace it entirely. See [`examples/patterns/risk-gated-bash.ts`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.3/packages/core/examples/patterns/risk-gated-bash.ts) for an end-to-end demo.
 
 ## Shell executors
 
@@ -490,7 +490,7 @@ bypass `disallowedTools` or the `onToolCall` gate.
 
 The `ShellExecutor` contract, the `start()` / `dispose()` lifecycle under
 overlapping runs, and the host-versus-remote filesystem divergence are in
-[sandbox and shell execution](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/sandbox-and-shell.md#shell-executors).
+[sandbox and shell execution](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.3/docs/sandbox-and-shell.md#shell-executors).
 
 ## Filesystem working directory
 
@@ -506,7 +506,7 @@ for that scope.
 filesystem built-ins rather than a boundary against arbitrary command
 execution. The three typical configurations, the resolution order, and the full
 statement of that invariant are in
-[sandbox and shell execution](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/sandbox-and-shell.md#filesystem-working-directory).
+[sandbox and shell execution](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.3/docs/sandbox-and-shell.md#filesystem-working-directory).
 
 ## Custom tools
 
@@ -624,7 +624,7 @@ validation and context controls compose with the rich-result contract.
 > `ToolDefinition` (shown below) validates a single **tool's** `ToolResult.data`
 > — string tools use `ZodSchema<string>`, while tools with application-owned
 > object data can use the corresponding object schema. The `outputSchema` on
-> [`AgentConfig`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/patterns/structured-output.ts)
+> [`AgentConfig`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.3/packages/core/examples/patterns/structured-output.ts)
 > is different: it validates the **agent's final answer** as parsed JSON
 > against an arbitrary Zod schema (see _Structured output_ in `packages/core/examples/`).
 > Different scopes — pick the one that matches the layer you're working at.
@@ -754,7 +754,7 @@ the runner's tool loop. Adapter tests validate local wire conversion without
 contacting provider APIs; verify the exact provider/model combination you plan
 to operate before relying on media support in production.
 
-See the runnable [`rich-tool-results` example](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/patterns/rich-tool-results.ts).
+See the runnable [`rich-tool-results` example](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.3/packages/core/examples/patterns/rich-tool-results.ts).
 
 **Truncation.** Cap an individual tool result to a head + tail excerpt with a marker in between:
 
@@ -799,4 +799,4 @@ in `AgentConfig.tools` unless they are passed through `customTools`.
 and `egressPolicy` does not reach inside the MCP child process.
 
 Options and defaults, name prefixing, input validation, result mapping, error
-handling, and the runnable examples are in [MCP tools](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/docs/mcp.md).
+handling, and the runnable examples are in [MCP tools](https://github.com/open-multi-agent/open-multi-agent/blob/v1.21.3/docs/mcp.md).
