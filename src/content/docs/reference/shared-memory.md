@@ -116,8 +116,8 @@ What the *next* task sees is chosen by two task fields rather than by reading th
 
 Two runnable integrations implement `MemoryStore` against a real backend and are worth reading before writing your own:
 
-- [`integrations/with-engram`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/integrations/with-engram/) backs shared memory with Engram's REST API, where facts committed by one agent are visible to every agent in the workspace.
-- [`integrations/with-tencentdb-memory`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.20.0/packages/core/examples/integrations/with-tencentdb-memory/) pairs the exact key-value semantics OMA needs with TencentDB-Agent-Memory's distillation pipeline, and shows what to do when a backend cannot read a stored value back by key.
+- [`integrations/with-engram`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.22.0/packages/core/examples/integrations/with-engram/) backs shared memory with Engram's REST API, where facts committed by one agent are visible to every agent in the workspace.
+- [`integrations/with-tencentdb-memory`](https://github.com/open-multi-agent/open-multi-agent/blob/v1.22.0/packages/core/examples/integrations/with-tencentdb-memory/) pairs the exact key-value semantics OMA needs with TencentDB-Agent-Memory's distillation pipeline, and shows what to do when a backend cannot read a stored value back by key.
 
 ## Redacting persisted secrets
 
