@@ -4,6 +4,13 @@ Repository instructions for coding agents and automated contributors. These
 instructions apply to the entire repository unless a more specific `AGENTS.md`
 exists in a subdirectory.
 
+Directory-specific rules live next to the files they govern. Read the matching
+file before editing there:
+
+- `src/content/AGENTS.md`: the vendored reference docs and changelog.
+- `src/i18n/AGENTS.md`: custom-page strings and dictionary parity.
+- `src/data/AGENTS.md`: GitHub snapshots, hero runs, and `GITHUB_TOKEN`.
+
 ## Project scope
 
 This repository is the documentation and marketing site for Open Multi-Agent,
@@ -11,7 +18,7 @@ deployed at `open-multi-agent.com`. It is not the framework repository. Framewor
 changes belong in `open-multi-agent/open-multi-agent`, which publishes
 `@open-multi-agent/core`.
 
-The site uses Astro 6 and Starlight:
+The site uses Astro and Starlight (versions are pinned in `package.json`):
 
 - Starlight renders the documentation.
 - Custom Astro pages render the landing page, examples, showcase, architecture,
@@ -20,47 +27,22 @@ The site uses Astro 6 and Starlight:
 
 ## Environment and commands
 
-Use Node.js 22 and the pnpm version pinned in `package.json`.
-
-```bash
-pnpm install --frozen-lockfile
-pnpm dev       # local server at http://localhost:4321
-pnpm check     # TypeScript/i18n key-parity check
-pnpm build     # production build in dist/
-pnpm preview   # preview the production build
-```
+Use Node.js 22 and the pnpm version pinned in `package.json`. Install with
+`pnpm install --frozen-lockfile`; the available commands are the `package.json`
+scripts.
 
 Do not substitute npm or yarn or regenerate the lockfile unless the task
 explicitly requires a dependency change.
 
-## Architecture map
+## Layout constraints
 
-- `astro.config.mjs`: Starlight, locales, redirects, sidebar, sitemap, and code
-  theme configuration.
 - `src/pages/[...locale]/`: locale-aware custom page templates. One template
   must generate both English and Chinese routes.
-- `src/content/docs/`: English documentation maintained in this repository.
-- `src/content/docs/zh/`: Simplified Chinese documentation.
-- `src/content/docs/reference/`: vendored framework reference documentation;
-  see the editing boundary below.
-- `src/content/blog/` and `src/content/blog/zh/`: English and Chinese blog posts.
-- `src/content/changelog/`: vendored release notes, one file per published
-  framework release; see the editing boundary below.
-- `src/i18n/`: strings and routing helpers for custom pages. `en.ts` is the
-  source of truth; `zh.ts` must remain key-for-key compatible.
-- `src/layouts/BaseLayout.astro`: locale-aware metadata, canonical URLs,
-  hreflang, Open Graph metadata, and JSON-LD for custom pages.
-- `src/styles/tokens.css`: design-token source of truth.
-- `src/lib/`: site constants and build-time data loaders.
-- `src/data/hero-run*.json`: captured real OMA runs used by the landing page.
-- `scripts/`: content sync, translation drift, migration, and hero capture tools.
-- `TRANSLATING.md`: translation terminology and workflow requirements.
-- `ATTRIBUTION.md`: the registry of campaign values used on outbound links,
-  and the rule for when a link gets a `/go/` short link instead. Add a channel
-  with `pnpm add:channel`, which updates it and `public/_redirects` together;
-  `pnpm check:attribution` holds the two in agreement and runs in `pnpm check`.
-- `public/_redirects`: Cloudflare Pages edge redirects, including those short
-  links. Copied verbatim at build time, so no check in this repository reads it.
+- `src/content/docs/reference/` and `src/content/changelog/` are vendored from
+  the framework repository; see `src/content/AGENTS.md` before touching them.
+- Do not place `AGENTS.md`, `CLAUDE.md`, or other notes inside `src/pages/`,
+  `public/`, or a content collection directory: they would be routed, published,
+  or loaded as content.
 
 ## Working rules
 
@@ -72,22 +54,9 @@ logic in this repository.
 
 ### Respect content ownership
 
-`src/content/docs/reference/` is synchronized from the framework repository.
-Do not directly edit its substantive content: make the change upstream and then
-run the reference sync workflow. Getting Started and Guides are maintained here
-and may be edited directly.
-
-The sync discovers every top-level upstream `docs/*.md` file except the explicit
-`EXCLUDE` set in `scripts/reference-sync-lib.mjs`. A newly discovered document
-or directory must fail the discovery gate until it is either integrated with
-front-matter, sidebar placement, and translation, or deliberately excluded.
-
-`src/content/changelog/` is synchronized from the framework's GitHub releases by
-the `sync-releases` workflow. Do not edit a release body here: correct the
-release upstream and re-run the sync. The releases — not upstream
-`CHANGELOG.md`, which keeps only the most recent versions — are the source, and
-the sync is additive, so this directory is the complete archive. Release bodies
-stay in English on every locale; only `/changelog` chrome is translated.
+`src/content/docs/reference/` and `src/content/changelog/` are synchronized from
+the framework repository; their editing boundary is in `src/content/AGENTS.md`.
+Getting Started and Guides are maintained here and may be edited directly.
 
 ### Keep documentation activation-focused
 
@@ -99,12 +68,12 @@ comparisons belong under `/compare/`, not in documentation body content.
 ### Preserve the i18n architecture
 
 - Keep English at `/` and Chinese at `/zh/`.
-- For custom pages, add user-facing strings to `src/i18n/en.ts` and
-  `src/i18n/zh.ts`; do not fork separate `zh` page templates.
+- For custom pages, user-facing strings go through `src/i18n/` (see
+  `src/i18n/AGENTS.md`); do not fork separate `zh` page templates.
 - Follow `TRANSLATING.md` for terminology and text that must remain unchanged.
 - Keep localized metadata, canonical URLs, and hreflang behavior intact.
-- A localized hero run must be captured with the corresponding language through
-  `scripts/capture-hero-dag.mjs`; do not hand-translate captured run JSON.
+- Localized hero runs are captured, never hand-translated; see
+  `src/data/AGENTS.md`.
 
 ### Tag outbound links from the registry
 
@@ -122,24 +91,20 @@ link carrying them is recorded as a fresh external arrival.
 Short links belong to positions that render a link as the URL itself; a link
 with anchor text carries the canonical URL instead. `ATTRIBUTION.md` explains
 the distinction and how to verify a redirect, which no build check covers.
+`public/_redirects` holds the Cloudflare Pages edge redirects, including those
+short links; it is copied verbatim at build time, so the build never reads it.
 
 Add a short link with `pnpm add:channel` rather than editing the two files by
 hand — it writes both, in both spellings a rule needs. `pnpm check:attribution`
-fails on a value that is not registered, a link present in one file but not the
-other, a rule that is not a 302, or a rule missing one of its two spellings.
+(part of `pnpm check`) fails on a value that is not registered, a link present
+in one file but not the other, a rule that is not a 302, or a rule missing one
+of its two spellings.
 
 ### Keep live data live
 
-Repository statistics and the examples inventory are refreshed by the scheduled
-`refresh-gh-data` workflow and committed as snapshots under `src/data/`. Normal
-builds consume those snapshots; the landing page may additionally refresh stars
-and forks in the browser. Do not hard-code exact stars, forks, contributors, or
-example counts as durable claims. Preserve the snapshot validation and graceful
-fallbacks for GitHub API failures, rate limits, or stale data.
-
-`GITHUB_TOKEN` is needed only when deliberately running a script or workflow that
-refreshes data from GitHub; normal local builds do not require it. Never commit,
-print, or expose a token.
+Do not hard-code exact stars, forks, contributors, or example counts as durable
+claims. They come from refreshed snapshots under `src/data/`; see
+`src/data/AGENTS.md`.
 
 ### Follow existing design and content patterns
 
@@ -175,10 +140,17 @@ deleting them unless permanent deletion was explicitly authorized.
 - Inspect the current Git state before editing; automated worktrees may use a
   detached `HEAD`.
 - Do not overwrite unrelated user changes.
-- Do not push, deploy, publish, open or update pull requests, or modify other
-  external systems unless the user explicitly requests that action.
+- You may create a branch, commit, push the feature branch, and open or update
+  a pull request without asking.
 - Do not push directly to `main` or another default branch unless the user
   explicitly requests it.
+- Merging to `main` is a production release: Cloudflare Pages builds and deploys
+  `open-multi-agent.com` from every push to `main`, and the IndexNow workflow
+  then submits the sitemap. Squash-merge a pull request only after its required
+  verification and CI have passed.
+- Do not deploy by any other route (Wrangler, the Cloudflare dashboard, manually
+  dispatched workflows), publish, or modify other external systems unless the
+  user explicitly requests that action.
 - Keep commits focused and describe the verification performed.
 
 ## Source-of-truth priority
