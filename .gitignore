@@ -32,7 +32,6 @@ _internal/
 design/
 
 # private planning and local agent context
-CLAUDE.md
 DESIGN.md
 docs/growth/seo-benchmark.md
 
