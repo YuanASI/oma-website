@@ -146,8 +146,14 @@ deleting them unless permanent deletion was explicitly authorized.
   explicitly requests it.
 - Merging to `main` is a production release: Cloudflare Pages builds and deploys
   `open-multi-agent.com` from every push to `main`, and the IndexNow workflow
-  then submits the sitemap. Squash-merge a pull request only after its required
-  verification and CI have passed.
+  then submits the sitemap. Because a merge ships to production, merging needs
+  the user's explicit approval for that pull request each time: once its required
+  verification and CI have passed, ask before squash-merging. Do not enable
+  GitHub auto-merge. (Decided 2026-11-13.)
+- SUPERSEDED 2026-11-13, kept for history: "Squash-merge a pull request only
+  after its required verification and CI have passed." That wording allowed
+  merging without asking once checks passed; merges now need approval each time
+  (see the previous item).
 - Do not deploy by any other route (Wrangler, the Cloudflare dashboard, manually
   dispatched workflows), publish, or modify other external systems unless the
   user explicitly requests that action.
